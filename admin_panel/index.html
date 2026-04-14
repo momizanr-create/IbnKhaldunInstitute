@@ -1307,7 +1307,7 @@ textarea{resize:vertical;min-height:90px}
 const RENDER_URL = 'https://ibn-khaldun-backend.onrender.com'; // ← এখানে Render URL দিন
 
 const API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-  ? 'https://ibnkhalduninstitute.onrender.com/api'
+  ? 'https://ibnkhalduninstitute.onrender.com/api' 
   : RENDER_URL + '/api';
 let token = localStorage.getItem('admin_token') || '';
 let adminUser = localStorage.getItem('admin_user') || 'Admin';
