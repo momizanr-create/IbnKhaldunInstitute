@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>eMarket - The Ultimate Multi-vendor Theme</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  * { font-family: 'Roboto', sans-serif; box-sizing: border-box; }
+  .fn { font-family: 'Nunito', sans-serif; }
+
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: #f1f1f1; }
+  ::-webkit-scrollbar-thumb { background: #f5a623; border-radius: 3px; }
+
+  .carousel-wrap { overflow: hidden; }
+  .carousel-track { display: flex; transition: transform 0.5s cubic-bezier(.4,0,.2,1); will-change: transform; }
+  .slide { min-width: 100%; position: relative; overflow: hidden; }
+
+  .bdot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.55); cursor: pointer; transition: all .3s; display: inline-block; }
+  .bdot.on { background: #e53e3e; width: 22px; border-radius: 4px; }
+
+  .nav-item { position: relative; }
+  .nav-item:hover > .drop { display: block; }
+  .drop { display: none; position: absolute; top: 100%; left: 0; min-width: 190px; background: #fff; box-shadow: 0 6px 20px rgba(0,0,0,.12); z-index: 200; border-top: 2px solid #f5a623; }
+  .drop a { display: block; padding: 9px 16px; font-size: 13px; color: #444; }
+  .drop a:hover { background: #fff8ee; color: #f5a623; }
+
+  .pcard { transition: all .3s; cursor: pointer; }
+  .pcard:hover { box-shadow: 0 8px 28px rgba(0,0,0,.13); transform: translateY(-3px); }
+  .pcard:hover .acart { opacity: 1; transform: translateY(0); }
+  .acart { opacity: 0; transform: translateY(8px); transition: all .3s; }
+
+  .stars { color: #f5a623; font-size: 11px; }
+
+  .tbox { background: #1a1a2e; color: #fff; border-radius: 4px; min-width: 38px; text-align: center; padding: 3px 7px; }
+
+  .stitle { position: relative; padding-bottom: 6px; }
+  .stitle::after { content:''; position:absolute; bottom:0; left:0; width:36px; height:3px; background:#f5a623; border-radius:2px; }
+
+  .nbar { background: linear-gradient(90deg,#1a237e,#3949ab,#1a237e); animation: nbg 4s linear infinite; background-size: 200%; }
+  @keyframes nbg { 0%{background-position:0%} 100%{background-position:200%} }
+
+  .swoosh { position:absolute; inset:0; pointer-events:none; }
+
+  #dealTrack { display:flex; transition: transform .4s ease; }
+
+  .hscroll { overflow-x:auto; scrollbar-width:thin; }
+  .hscroll::-webkit-scrollbar { height:3px; }
+</style>
+</head>
+<body class="bg-gray-100 m-0 p-0">
+
+<!-- TOP NOTIFICATION BAR -->
+<div class="nbar text-white text-xs py-1.5 text-center tracking-wide">
+  <span class="mr-8">📦 FREE SHIPPING on orders over $45</span>
+  <span class="mr-8">🔒 SECURE PAYMENT – 100% protected</span>
+  <span>🎁 GIFT PROMOTION – Free gift with every purchase</span>
+</div>
+
+<!-- HEADER -->
+<header class="bg-white shadow-sm sticky top-0 z-50">
+  <!-- Top info bar -->
+  <div class="border-b border-gray-100 py-1">
+    <div class="max-w-7xl mx-auto px-4 flex items-center justify-between text-xs text-gray-500">
+      <span class="flex items-center gap-1 cursor-pointer hover:text-orange-500">
+        <i class="fas fa-map-marker-alt text-orange-500"></i> Store Location
+      </span>
+      <div class="flex items-center gap-5">
+        <span class="flex items-center gap-1 cursor-pointer hover:text-orange-500"><i class="fas fa-phone text-orange-500"></i> 1800 - 123 - 0150</span>
+        <span class="flex items-center gap-1 cursor-pointer hover:text-orange-500"><i class="fas fa-tag text-orange-500"></i> Offers</span>
+        <span class="flex items-center gap-1 cursor-pointer hover:text-orange-500"><i class="fas fa-question-circle text-orange-500"></i> Help</span>
+        <span class="flex items-center gap-1 cursor-pointer hover:text-orange-500"><i class="far fa-user"></i> Sign In</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logo + Search + Cart -->
+  <div class="py-3">
+    <div class="max-w-7xl mx-auto px-4 flex items-center gap-4">
+      <a href="#" class="flex items-center gap-1 mr-2 flex-shrink-0">
+        <div class="bg-orange-500 text-white font-black px-2 py-1 rounded text-lg fn">e</div>
+        <span class="font-black text-xl text-gray-800 fn">market</span>
+      </a>
+      <button class="flex items-center gap-2 bg-orange-500 text-white px-3 py-2 rounded text-sm font-semibold whitespace-nowrap hover:bg-orange-600 transition flex-shrink-0">
+        <i class="fas fa-th-large text-xs"></i> Select Category <i class="fas fa-chevron-down text-xs"></i>
+      </button>
+      <div class="flex flex-1">
+        <input type="text" placeholder="Search for products..." class="flex-1 border border-gray-300 rounded-l px-4 py-2 text-sm focus:outline-none focus:border-orange-400">
+        <button class="bg-orange-500 text-white px-5 rounded-r hover:bg-orange-600 transition"><i class="fas fa-search"></i></button>
+      </div>
+      <div class="flex items-center gap-4 flex-shrink-0">
+        <div class="relative cursor-pointer">
+          <i class="far fa-heart text-2xl text-gray-500 hover:text-orange-500 transition"></i>
+          <span class="absolute -top-2 -right-2 bg-orange-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">0</span>
+        </div>
+        <button class="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded font-semibold text-sm hover:bg-orange-600 transition">
+          <i class="fas fa-shopping-cart"></i> My Cart (0)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="border-t border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 flex items-center">
+      <a href="#" class="text-sm font-semibold text-orange-500 border-b-2 border-orange-500 px-4 py-3">Home</a>
+      <div class="nav-item"><a href="#" class="flex items-center gap-1 text-sm text-gray-700 px-4 py-3 hover:text-orange-500">Shop <i class="fas fa-chevron-down text-xs"></i></a><div class="drop"><a href="#">Electronics</a><a href="#">Fashion</a><a href="#">Home &amp; Garden</a><a href="#">Sports</a></div></div>
+      <div class="nav-item"><a href="#" class="flex items-center gap-1 text-sm text-gray-700 px-4 py-3 hover:text-orange-500">Promotions <i class="fas fa-chevron-down text-xs"></i></a><div class="drop"><a href="#">Flash Sale</a><a href="#">Daily Deals</a><a href="#">Clearance</a></div></div>
+      <a href="#" class="text-sm text-gray-700 px-4 py-3 hover:text-orange-500">About Us</a>
+      <div class="nav-item"><a href="#" class="flex items-center gap-1 text-sm text-gray-700 px-4 py-3 hover:text-orange-500">Blog <i class="fas fa-chevron-down text-xs"></i></a><div class="drop"><a href="#">Latest Posts</a><a href="#">Categories</a></div></div>
+      <div class="nav-item"><a href="#" class="flex items-center gap-1 text-sm text-gray-700 px-4 py-3 hover:text-orange-500">Pages <i class="fas fa-chevron-down text-xs"></i></a><div class="drop"><a href="#">About</a><a href="#">Contact</a><a href="#">FAQ</a></div></div>
+    </div>
+  </nav>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="max-w-7xl mx-auto px-4 py-4">
+
+  <!-- ═══ HERO SECTION ═══ -->
+  <div class="flex gap-3 mb-0" style="height:300px;">
+
+    <!-- Big Carousel -->
+    <div class="flex-1 carousel-wrap rounded overflow-hidden relative" style="height:300px;">
+      <div id="mainCarousel" class="carousel-track h-full">
+
+        <!-- SLIDE 1 – SUMMER -->
+        <div class="slide h-full relative" style="background:linear-gradient(118deg,#f5a200 0%,#fbc02d 55%,#e65c00 100%);">
+          <svg class="swoosh" viewBox="0 0 800 300" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M350 0 L580 0 L330 300 L100 300Z" fill="rgba(255,255,255,0.07)"/>
+            <path d="M500 0 L730 0 L480 300 L250 300Z" fill="rgba(255,255,255,0.05)"/>
+            <path d="M620 0 L800 0 L650 300 L420 300Z" fill="rgba(255,255,255,0.04)"/>
+          </svg>
+          <div class="absolute left-10 top-1/2 -translate-y-1/2 z-10">
+            <p class="text-gray-800 text-sm font-medium mb-0.5">Exclusive apply,</p>
+            <h2 class="fn font-black leading-tight text-gray-900" style="font-size:2.8rem;">Get ready for</h2>
+            <h2 class="fn font-black leading-none text-red-600" style="font-size:3.2rem;">SUMMER</h2>
+            <p class="text-gray-700 text-xs mt-2 mb-4">Offer ends in 7/7/2026.</p>
+            <button class="bg-red-600 text-white font-bold px-8 py-2.5 rounded text-sm hover:bg-red-700 transition shadow-lg">SHOP NOW</button>
+          </div>
+          <div class="absolute right-0 bottom-0" style="width:52%;height:100%;">
+            <span style="position:absolute;bottom:8px;left:2%;font-size:3rem;filter:drop-shadow(0 3px 6px rgba(0,0,0,.25))">🖥️</span>
+            <span style="position:absolute;bottom:18px;left:18%;font-size:5.5rem;filter:drop-shadow(0 4px 10px rgba(0,0,0,.25))">🧊</span>
+            <span style="position:absolute;bottom:14px;left:40%;font-size:4.8rem;filter:drop-shadow(0 4px 10px rgba(0,0,0,.25))">🫧</span>
+            <span style="position:absolute;bottom:6px;left:60%;font-size:3.2rem;filter:drop-shadow(0 3px 6px rgba(0,0,0,.2))">🔊</span>
+            <span style="position:absolute;bottom:4px;right:1%;font-size:3.8rem;filter:drop-shadow(0 3px 6px rgba(0,0,0,.2))">📺</span>
+            <span style="position:absolute;bottom:0;left:28%;font-size:2.4rem;filter:drop-shadow(0 2px 4px rgba(0,0,0,.2))">🧹</span>
+            <span style="position:absolute;bottom:0;left:50%;font-size:2rem;filter:drop-shadow(0 2px 4px rgba(0,0,0,.2))">💻</span>
+          </div>
+          <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
+            <span class="bdot on" onclick="goSlide(0)"></span>
+            <span class="bdot" onclick="goSlide(1)"></span>
+            <span class="bdot" onclick="goSlide(2)"></span>
+          </div>
+        </div>
+
+        <!-- SLIDE 2 – NEW ARRIVALS -->
+        <div class="slide h-full relative" style="background:linear-gradient(118deg,#f5a200 0%,#fdd835 55%,#fb8c00 100%);">
+          <svg class="swoosh" viewBox="0 0 800 300" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M350 0 L580 0 L330 300 L100 300Z" fill="rgba(255,255,255,0.07)"/>
+            <path d="M500 0 L730 0 L480 300 L250 300Z" fill="rgba(255,255,255,0.05)"/>
+          </svg>
+          <div class="absolute left-10 top-1/2 -translate-y-1/2 z-10">
+            <p class="text-gray-800 text-sm mb-1 font-medium">Best Electronics</p>
+            <h2 class="fn font-black leading-tight text-gray-900" style="font-size:2.8rem;">NEW</h2>
+            <h2 class="fn font-black leading-none text-red-600" style="font-size:3.2rem;">ARRIVALS</h2>
+            <p class="text-gray-700 text-xs mt-2 mb-4">Discover the latest gadgets &amp; devices</p>
+            <button class="bg-red-600 text-white font-bold px-8 py-2.5 rounded text-sm hover:bg-red-700 transition shadow-lg">SHOP NOW</button>
+          </div>
+          <div class="absolute right-16 top-1/2 -translate-y-1/2 text-9xl" style="filter:drop-shadow(0 8px 18px rgba(0,0,0,.2))">📱</div>
+          <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
+            <span class="bdot" onclick="goSlide(0)"></span>
+            <span class="bdot on" onclick="goSlide(1)"></span>
+            <span class="bdot" onclick="goSlide(2)"></span>
+          </div>
+        </div>
+
+        <!-- SLIDE 3 – FLASH SALE -->
+        <div class="slide h-full relative" style="background:linear-gradient(118deg,#f57c00 0%,#ffb300 55%,#f5a200 100%);">
+          <svg class="swoosh" viewBox="0 0 800 300" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M350 0 L580 0 L330 300 L100 300Z" fill="rgba(255,255,255,0.07)"/>
+            <path d="M500 0 L730 0 L480 300 L250 300Z" fill="rgba(255,255,255,0.05)"/>
+          </svg>
+          <div class="absolute left-10 top-1/2 -translate-y-1/2 z-10">
+            <p class="text-gray-800 text-sm mb-1 font-medium">Flash Sale – Limited Time</p>
+            <h2 class="fn font-black leading-tight text-gray-900" style="font-size:2.8rem;">UP TO</h2>
+            <h2 class="fn font-black leading-none text-red-600" style="font-size:3.2rem;">70% OFF</h2>
+            <p class="text-gray-700 text-xs mt-2 mb-4">Hurry! Offer ends soon.</p>
+            <button class="bg-red-600 text-white font-bold px-8 py-2.5 rounded text-sm hover:bg-red-700 transition shadow-lg">GET DEAL</button>
+          </div>
+          <div class="absolute right-16 top-1/2 -translate-y-1/2 text-9xl" style="filter:drop-shadow(0 8px 18px rgba(0,0,0,.2))">💻</div>
+          <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
+            <span class="bdot" onclick="goSlide(0)"></span>
+            <span class="bdot" onclick="goSlide(1)"></span>
+            <span class="bdot on" onclick="goSlide(2)"></span>
+          </div>
+        </div>
+
+      </div>
+      <button onclick="prevSlide()" class="absolute left-2 top-1/2 -translate-y-1/2 bg-white bg-opacity-70 text-gray-700 w-7 h-7 rounded-full flex items-center justify-center hover:bg-orange-500 hover:text-white transition shadow z-30 text-xs"><i class="fas fa-chevron-left"></i></button>
+      <button onclick="nextSlide()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-white bg-opacity-70 text-gray-700 w-7 h-7 rounded-full flex items-center justify-center hover:bg-orange-500 hover:text-white transition shadow z-30 text-xs"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- Right: 2 stacked side banners -->
+    <div class="flex flex-col gap-0 flex-shrink-0" style="width:224px;height:300px;">
+      <!-- TV Banner -->
+      <div class="flex-1 relative overflow-hidden cursor-pointer hover:brightness-105 transition" style="background:linear-gradient(135deg,#ffa000,#ffca28);border-bottom:2px solid rgba(255,255,255,0.3);">
+        <div class="absolute inset-0 p-4 flex flex-col justify-center">
+          <p class="fn font-black text-gray-900 text-sm leading-snug">TV Has Never<br>Been This Smart</p>
+          <p class="text-gray-800 text-xs mt-1">Starting from <span class="font-bold">$889.99</span></p>
+          <button class="mt-2 bg-red-600 text-white text-xs font-bold px-4 py-1.5 rounded w-fit hover:bg-red-700 transition">BUY NOW</button>
+        </div>
+        <span class="absolute right-1 top-1/2 -translate-y-1/2 text-5xl" style="filter:drop-shadow(2px 2px 5px rgba(0,0,0,.2))">📺</span>
+      </div>
+      <!-- Microwave Banner -->
+      <div class="flex-1 relative overflow-hidden cursor-pointer hover:brightness-105 transition" style="background:linear-gradient(135deg,#f57c00,#ffb300);">
+        <div class="absolute inset-0 p-4 flex flex-col justify-center">
+          <p class="text-gray-900 text-xs font-semibold">All in One</p>
+          <p class="fn font-black text-gray-900 text-lg leading-tight">MICROWAVE</p>
+          <p class="text-gray-800 text-xs mt-0.5">Cooks all. Grills easily.</p>
+        </div>
+        <span class="absolute right-1 top-1/2 -translate-y-1/2 text-5xl" style="filter:drop-shadow(2px 2px 5px rgba(0,0,0,.2))">🍳</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FEATURE BADGES BAR ═══ -->
+  <div class="bg-white shadow-sm mb-4 px-6 py-3 flex items-center justify-between border-t-2 border-orange-500">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 bg-orange-50 rounded-full flex items-center justify-center text-xl">🚚</div>
+      <div><p class="font-bold text-gray-800 text-xs">FREE SHIPPING</p><p class="text-gray-400 text-xs">On orders over $45</p></div>
+    </div>
+    <div class="w-px h-10 bg-gray-200"></div>
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 bg-orange-50 rounded-full flex items-center justify-center text-xl">💰</div>
+      <div><p class="font-bold text-gray-800 text-xs">MONEY GUARANTEE</p><p class="text-gray-400 text-xs">30 days money back</p></div>
+    </div>
+    <div class="w-px h-10 bg-gray-200"></div>
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 bg-orange-50 rounded-full flex items-center justify-center text-xl">📞</div>
+      <div><p class="font-bold text-gray-800 text-xs">ONLINE SUPPORT</p><p class="text-gray-400 text-xs">24 Hrs a day</p></div>
+    </div>
+    <div class="w-px h-10 bg-gray-200"></div>
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 bg-orange-50 rounded-full flex items-center justify-center text-xl">🎁</div>
+      <div><p class="font-bold text-gray-800 text-xs">GIFT PROMOTION</p><p class="text-gray-400 text-xs">Money back guarantee</p></div>
+    </div>
+    <div class="w-px h-10 bg-gray-200"></div>
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 bg-orange-50 rounded-full flex items-center justify-center text-xl">💳</div>
+      <div><p class="font-bold text-gray-800 text-xs">PAYMENT METHOD</p><p class="text-gray-400 text-xs">Online 24/24 on day</p></div>
+    </div>
+  </div>
+
+  <!-- ═══ FESTIVE BANNER ═══ -->
+  <div class="rounded mb-4 flex items-center justify-between px-10 py-4 bg-orange-500">
+    <div class="flex items-center gap-4 text-3xl">📺 🖥️</div>
+    <div class="text-center text-white">
+      <p class="text-lg font-bold fn">This festive season</p>
+      <p class="text-2xl font-black fn">for home electronics</p>
+    </div>
+    <div class="text-center">
+      <p class="text-5xl font-black text-white fn leading-none">50%</p>
+      <p class="text-white text-xs font-bold mt-0.5">FOR ALL PRODUCTS</p>
+    </div>
+    <div class="flex items-center gap-4 text-3xl">💻 ⌨️</div>
+  </div>
+
+  <!-- ═══ COMBO PRODUCTS ═══ -->
+  <div class="bg-white rounded shadow-sm mb-4 p-4">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="font-bold text-sm text-gray-800 stitle">COMBO PRODUCTS: UP TO 50% OFF ADDITIONAL PRODUCT</h2>
+      <div class="flex gap-2">
+        <button onclick="doHScroll('combo',-1)" class="w-7 h-7 border border-gray-300 rounded flex items-center justify-center hover:bg-orange-500 hover:text-white hover:border-orange-500 transition text-xs"><i class="fas fa-chevron-left"></i></button>
+        <button onclick="doHScroll('combo',1)"  class="w-7 h-7 border border-gray-300 rounded flex items-center justify-center hover:bg-orange-500 hover:text-white hover:border-orange-500 transition text-xs"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div>
+    <!-- Active combo -->
+    <div class="border border-orange-200 rounded-lg p-4 bg-orange-50 flex items-center gap-4 mb-3">
+      <div class="flex items-center gap-2 flex-wrap flex-1">
+        <div class="text-center"><div class="w-20 h-20 bg-white rounded border flex items-center justify-center text-3xl">📱</div><p class="text-xs mt-1 text-gray-600">Samsung S9</p><p class="text-xs text-orange-500 font-bold">$850.00</p></div>
+        <span class="text-orange-400 text-2xl font-black">+</span>
+        <div class="text-center"><div class="w-20 h-20 bg-white rounded border flex items-center justify-center text-3xl">📱</div><p class="text-xs mt-1 text-gray-600">Back Cover</p><p class="text-xs text-orange-500 font-bold">$76.00</p></div>
+        <span class="text-orange-400 text-2xl font-black">+</span>
+        <div class="text-center"><div class="w-20 h-20 bg-white rounded border flex items-center justify-center text-3xl">🎧</div><p class="text-xs mt-1 text-gray-600">Earphone</p><p class="text-xs text-orange-500 font-bold">$28.69</p></div>
+        <span class="text-orange-400 text-2xl font-black">+</span>
+        <div class="text-center"><div class="w-20 h-20 bg-white rounded border flex items-center justify-center text-3xl">🔌</div><p class="text-xs mt-1 text-gray-600">Data Cable</p><p class="text-xs text-orange-500 font-bold">$9.95</p></div>
+      </div>
+      <div class="text-right ml-4 flex-shrink-0">
+        <p class="text-xs text-gray-400 line-through">$960.00</p>
+        <p class="text-xs text-gray-500">Combo Price</p>
+        <p class="text-3xl font-black text-orange-500 fn">$896.95</p>
+        <p class="text-xs text-green-600 font-semibold">You save $63.05</p>
+        <button class="mt-2 bg-orange-500 text-white font-bold px-5 py-2 rounded hover:bg-orange-600 transition text-sm">GET THIS COMBO</button>
+      </div>
+    </div>
+    <!-- Thumbnail row -->
+    <div id="combo" class="hscroll flex gap-3 pb-1">
+      <div class="pcard text-center flex-shrink-0 w-28 border border-gray-100 rounded p-2 hover:border-orange-300"><div class="w-full h-20 bg-gray-50 rounded flex items-center justify-center text-2xl">📱</div><p class="text-xs mt-1 text-gray-600 truncate">Samsung S9</p><div class="stars">★★★★☆</div><p class="text-xs"><span class="text-gray-400 line-through">$850</span> <span class="text-orange-500 font-bold">$650</span></p></div>
+      <div class="pcard text-center flex-shrink-0 w-28 border border-gray-100 rounded p-2 hover:border-orange-300"><div class="w-full h-20 bg-gray-50 rounded flex items-center justify-center text-2xl">🎧</div><p class="text-xs mt-1 text-gray-600 truncate">Earphone</p><div class="stars">★★★★★</div><p class="text-xs"><span class="text-gray-400 line-through">$28</span> <span class="text-orange-500 font-bold">$18</span></p></div>
+      <div class="pcard text-center flex-shrink-0 w-28 border border-gray-100 rounded p-2 hover:border-orange-300"><div class="w-full h-20 bg-gray-50 rounded flex items-center justify-center text-2xl">🔌</div><p class="text-xs mt-1 text-gray-600 truncate">Data Cable</p><div class="stars">★★★★☆</div><p class="text-xs"><span class="text-gray-400 line-through">$9</span> <span class="text-orange-500 font-bold">$5</span></p></div>
+      <div class="pcard text-center flex-shrink-0 w-28 border border-gray-100 rounded p-2 hover:border-orange-300"><div class="w-full h-20 bg-gray-50 rounded flex items-center justify-center text-2xl">⌚</div><p class="text-xs mt-1 text-gray-600 truncate">Smart Watch</p><div class="stars">★★★★☆</div><p class="text-xs"><span class="text-gray-400 line-through">$199</span> <span class="text-orange-500 font-bold">$149</span></p></div>
+      <div class="pcard text-center flex-shrink-0 w-28 border border-gray-100 rounded p-2 hover:border-orange-300"><div class="w-full h-20 bg-gray-50 rounded flex items-center justify-center text-2xl">🔋</div><p class="text-xs mt-1 text-gray-600 truncate">Power Bank</p><div class="stars">★★★★☆</div><p class="text-xs"><span class="text-gray-400 line-through">$45</span> <span class="text-orange-500 font-bold">$32</span></p></div>
+      <div class="pcard text-center flex-shrink-0 w-28 border border-gray-100 rounded p-2 hover:border-orange-300"><div class="w-full h-20 bg-gray-50 rounded flex items-center justify-center text-2xl">🖱️</div><p class="text-xs mt-1 text-gray-600 truncate">Gaming Mouse</p><div class="stars">★★★★★</div><p class="text-xs"><span class="text-gray-400 line-through">$80</span> <span class="text-orange-500 font-bold">$59</span></p></div>
+      <div class="pcard text-center flex-shrink-0 w-28 border border-gray-100 rounded p-2 hover:border-orange-300"><div class="w-full h-20 bg-gray-50 rounded flex items-center justify-center text-2xl">💾</div><p class="text-xs mt-1 text-gray-600 truncate">SSD 1TB</p><div class="stars">★★★★☆</div><p class="text-xs"><span class="text-gray-400 line-through">$150</span> <span class="text-orange-500 font-bold">$119</span></p></div>
+    </div>
+  </div>
+
+  <!-- ═══ TWO PROMO BANNERS ═══ -->
+  <div class="grid grid-cols-2 gap-4 mb-4">
+    <div class="rounded overflow-hidden relative cursor-pointer hover:opacity-90 transition flex items-center px-8 py-5" style="background:linear-gradient(135deg,#1a237e,#3949ab);height:90px;">
+      <div class="text-white"><span class="text-4xl font-black fn">20%</span><span class="text-white text-lg font-bold ml-2">APPLIANCES</span><p class="text-xs opacity-70 mt-0.5">10% or more on selected items</p></div>
+      <div class="absolute right-6 text-4xl">🏠</div>
+    </div>
+    <div class="rounded overflow-hidden relative cursor-pointer hover:opacity-90 transition flex items-center px-8 py-5" style="background:linear-gradient(135deg,#1a1a2e,#2d1b69);height:90px;">
+      <div class="text-white"><p class="text-orange-400 font-bold text-xs uppercase tracking-wider">Limited Time</p><p class="text-2xl font-black fn">BLACK FRIDAY <span class="text-orange-400">SALE</span></p></div>
+      <div class="absolute right-6 text-4xl">🖤</div>
+    </div>
+  </div>
+
+  <!-- ═══ SUPER DEAL – FLASH SALE ═══ -->
+  <div class="bg-white rounded shadow-sm mb-4 overflow-hidden">
+    <div class="flex items-stretch">
+      <!-- Left panel -->
+      <div class="w-52 flex-shrink-0 bg-orange-500 flex flex-col items-center justify-center p-5 text-white">
+        <p class="text-2xl font-black fn">SUPER DEAL</p>
+        <p class="font-bold text-lg fn">UP TO 70% OFF</p>
+        <div class="mt-3 flex gap-1.5">
+          <div class="tbox"><p class="text-lg font-black leading-none" id="th">03</p><p class="text-xs opacity-60">H</p></div>
+          <div class="tbox"><p class="text-lg font-black leading-none" id="tm">45</p><p class="text-xs opacity-60">M</p></div>
+          <div class="tbox"><p class="text-lg font-black leading-none" id="ts">22</p><p class="text-xs opacity-60">S</p></div>
+        </div>
+        <div class="mt-3 w-full">
+          <div class="flex justify-between text-xs mb-1"><span>Sold: 378</span><span>Left: 45</span></div>
+          <div class="h-2 bg-orange-300 rounded-full overflow-hidden"><div class="h-full bg-white rounded-full" style="width:89%"></div></div>
+        </div>
+      </div>
+      <!-- Products slider -->
+      <div class="flex-1 overflow-hidden relative">
+        <div id="dealTrack">
+          <div class="pcard flex-shrink-0 w-44 border-r border-gray-100 p-3"><div class="relative"><div class="w-full h-32 bg-gray-50 rounded flex items-center justify-center text-4xl mb-2">📺</div><span class="absolute top-1 left-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded">-30%</span></div><p class="text-xs text-gray-700 font-medium truncate">Samsung QLED TV</p><div class="stars">★★★★☆</div><p class="text-xs mt-0.5"><span class="text-gray-400 line-through">$1200</span> <span class="text-orange-500 font-bold">$840</span></p><button class="acart mt-2 w-full bg-orange-500 text-white text-xs py-1.5 rounded hover:bg-orange-600">Add to Cart</button></div>
+          <div class="pcard flex-shrink-0 w-44 border-r border-gray-100 p-3"><div class="relative"><div class="w-full h-32 bg-gray-50 rounded flex items-center justify-center text-4xl mb-2">👗</div><span class="absolute top-1 left-1 bg-green-500 text-white text-xs px-1.5 py-0.5 rounded">NEW</span></div><p class="text-xs text-gray-700 font-medium truncate">Summer Dress</p><div class="stars">★★★★★</div><p class="text-xs mt-0.5"><span class="text-gray-400 line-through">$85</span> <span class="text-orange-500 font-bold">$49</span></p><button class="acart mt-2 w-full bg-orange-500 text-white text-xs py-1.5 rounded hover:bg-orange-600">Add to Cart</button></div>
+          <div class="pcard flex-shrink-0 w-44 border-r border-gray-100 p-3"><div class="relative"><div class="w-full h-32 bg-gray-50 rounded flex items-center justify-center text-4xl mb-2">👟</div><span class="absolute top-1 left-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded">-20%</span></div><p class="text-xs text-gray-700 font-medium truncate">Nike Air Max</p><div class="stars">★★★★☆</div><p class="text-xs mt-0.5"><span class="text-gray-400 line-through">$180</span> <span class="text-orange-500 font-bold">$144</span></p><button class="acart mt-2 w-full bg-orange-500 text-white text-xs py-1.5 rounded hover:bg-orange-600">Add to Cart</button></div>
+          <div class="pcard flex-shrink-0 w-44 border-r border-gray-100 p-3"><div class="relative"><div class="w-full h-32 bg-gray-50 rounded flex items-center justify-center text-4xl mb-2">🏖️</div><span class="absolute top-1 left-1 bg-blue-500 text-white text-xs px-1.5 py-0.5 rounded">HOT</span></div><p class="text-xs text-gray-700 font-medium truncate">Beach Set</p><div class="stars">★★★★☆</div><p class="text-xs mt-0.5"><span class="text-gray-400 line-through">$60</span> <span class="text-orange-500 font-bold">$35</span></p><button class="acart mt-2 w-full bg-orange-500 text-white text-xs py-1.5 rounded hover:bg-orange-600">Add to Cart</button></div>
+          <div class="pcard flex-shrink-0 w-44 border-r border-gray-100 p-3"><div class="relative"><div class="w-full h-32 bg-gray-50 rounded flex items-center justify-center text-4xl mb-2">👙</div><span class="absolute top-1 left-1 bg-purple-500 text-white text-xs px-1.5 py-0.5 rounded">-50%</span></div><p class="text-xs text-gray-700 font-medium truncate">Swimwear Set</p><div class="stars">★★★★★</div><p class="text-xs mt-0.5"><span class="text-gray-400 line-through">$80</span> <span class="text-orange-500 font-bold">$40</span></p><button class="acart mt-2 w-full bg-orange-500 text-white text-xs py-1.5 rounded hover:bg-orange-600">Add to Cart</button></div>
+          <div class="pcard flex-shrink-0 w-44 p-3"><div class="relative"><div class="w-full h-32 bg-gray-50 rounded flex items-center justify-center text-4xl mb-2">📷</div><span class="absolute top-1 left-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded">-15%</span></div><p class="text-xs text-gray-700 font-medium truncate">Canon EOS M50</p><div class="stars">★★★★★</div><p class="text-xs mt-0.5"><span class="text-gray-400 line-through">$750</span> <span class="text-orange-500 font-bold">$637</span></p><button class="acart mt-2 w-full bg-orange-500 text-white text-xs py-1.5 rounded hover:bg-orange-600">Add to Cart</button></div>
+        </div>
+        <button onclick="moveDeal(-1)" class="absolute left-1 top-1/2 -translate-y-1/2 bg-white shadow-md text-gray-600 w-7 h-7 rounded-full flex items-center justify-center hover:bg-orange-500 hover:text-white transition z-10 text-xs"><i class="fas fa-chevron-left"></i></button>
+        <button onclick="moveDeal(1)"  class="absolute right-1 top-1/2 -translate-y-1/2 bg-white shadow-md text-gray-600 w-7 h-7 rounded-full flex items-center justify-center hover:bg-orange-500 hover:text-white transition z-10 text-xs"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FEATURED VENDORS ═══ -->
+  <div class="bg-white rounded shadow-sm mb-4 p-4">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-bold text-sm text-gray-800 stitle">FEATURED VENDORS</h2>
+      <div class="flex gap-2">
+        <button class="w-7 h-7 border border-gray-300 rounded flex items-center justify-center hover:bg-orange-500 hover:text-white hover:border-orange-500 transition text-xs"><i class="fas fa-chevron-left"></i></button>
+        <button class="w-7 h-7 border border-gray-300 rounded flex items-center justify-center hover:bg-orange-500 hover:text-white hover:border-orange-500 transition text-xs"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div>
+    <div class="flex gap-4">
+      <!-- Beach banner -->
+      <div class="w-40 flex-shrink-0 rounded overflow-hidden cursor-pointer hover:opacity-90 transition" style="background:linear-gradient(135deg,#00bcd4,#0097a7);min-height:220px;">
+        <div class="p-4 text-white flex flex-col justify-center h-full">
+          <p class="text-xs font-bold">Summer</p>
+          <p class="text-2xl font-black fn leading-tight">BEACH<br>PARTY</p>
+          <p class="text-3xl font-black text-yellow-300 fn">25%</p>
+          <p class="text-xs opacity-80 mt-0.5">OFF selected items</p>
+          <div class="mt-3 text-2xl">🌊☀️</div>
+        </div>
+      </div>
+      <!-- Vendor grid -->
+      <div class="flex-1 grid grid-cols-6 gap-3">
+        <div class="pcard text-center p-2 border border-gray-100 rounded-lg hover:border-orange-300 transition"><div class="w-full h-20 bg-gray-50 rounded flex items-center justify-center text-3xl mb-1">🍓</div><div class="stars">★★★★☆</div><p class="text-xs text-orange-500 font-bold">$17.00</p><p class="text-xs text-gray-400 line-through">$40.00</p></div>
+        <div class="pcard text-center p-2 border border-gray-100 rounded-lg hover:border-orange-300 transition"><div class="w-full h-20 bg-gray-50 rounded flex items-center justify-center text-3xl mb-1">🥭</div><div class="stars">★★★★★</div><p class="text-xs text-orange-500 font-bold">$17.00</p><p class="text-xs text-gray-400 line-through">$34.00</p></div>
+        <div class="pcard text-center p-2 border border-gray-100 rounded-lg hover:border-orange-300 transition"><div class="w-full h-20 bg-gray-50 rounded flex items-center justify-center text-3xl mb-1">🍐</div><div class="stars">★★★★☆</div><p class="text-xs text-orange-500 font-bold">$17.00</p><p class="text-xs text-gray-400 line-through">$24.00</p></div>
+        <div class="pcard text-center p-2 border border-gray-100 rounded-lg hover:border-orange-300 transition"><div class="w-full h-20 bg-gray-50 rounded flex items-center justify-center text-3xl mb-1">💊</div><div class="stars">★★★★☆</div><p class="text-xs text-orange-500 font-bold">$9.00</p><p class="text-xs text-gray-400 line-through">$24.00</p></div>
+        <div class="pcard text-center p-2 border border-gray-100 rounded-lg hover:border-orange-300 transition"><div class="w-full h-20 bg-gray-50 rounded flex items-center justify-center text-3xl mb-1">💉</div><div class="stars">★★★★☆</div><p class="text-xs text-orange-500 font-bold">$17.00</p><p class="text-xs text-gray-400 line-through">$32.00</p></div>
+        <div class="pcard text-center p-2 border border-gray-100 rounded-lg hover:border-orange-300 transition"><div class="w-full h-20 bg-gray-50 rounded flex items-center justify-center text-3xl mb-1">🩺</div><div class="stars">★★★★★</div><p class="text-xs text-orange-500 font-bold">$17.00</p><p class="text-xs text-gray-400 line-through">$40.00</p></div>
+      </div>
+    </div>
+    <div class="flex gap-3 mt-2 ml-44 pl-4">
+      <div class="flex-1 grid grid-cols-6 gap-3 text-center">
+        <div><p class="text-xs font-semibold text-gray-600">trippets</p><p class="text-xs text-gray-400">11 products</p></div>
+        <div><p class="text-xs font-semibold text-gray-600">trippets</p><p class="text-xs text-gray-400">8 products</p></div>
+        <div></div><div></div><div></div><div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ HOME APPLIANCES + TECHNOLOGY DEVICES ═══ -->
+  <div class="grid grid-cols-2 gap-4 mb-4">
+    <!-- Home Appliances -->
+    <div class="bg-white rounded shadow-sm p-4">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-bold text-sm text-gray-800 stitle">HOME APPLIANCES</h2>
+        <div class="flex gap-2">
+          <button class="w-7 h-7 border border-gray-300 rounded flex items-center justify-center hover:bg-orange-500 hover:text-white hover:border-orange-500 transition text-xs"><i class="fas fa-chevron-left"></i></button>
+          <button class="w-7 h-7 border border-gray-300 rounded flex items-center justify-center hover:bg-orange-500 hover:text-white hover:border-orange-500 transition text-xs"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+      <div class="flex gap-3">
+        <div class="w-32 flex-shrink-0 rounded overflow-hidden flex items-center justify-center cursor-pointer" style="background:linear-gradient(135deg,#fff8e1,#ffe082);min-height:180px;">
+          <div class="text-center p-3"><p class="text-xs font-bold text-gray-600">IT'S ALL ABOUT</p><p class="text-xl font-black text-orange-600 fn leading-tight">TO CHANGE</p><div class="mt-2 text-4xl">🪑</div></div>
+        </div>
+        <div class="flex-1 grid grid-cols-2 gap-2">
+          <div class="pcard text-center p-2 border border-gray-100 rounded hover:border-orange-300 transition"><div class="w-full h-20 bg-gray-50 rounded flex items-center justify-center text-3xl mb-1">🪑</div><p class="text-xs text-gray-700 truncate">Pink Chair</p><div class="stars">★★★★☆</div><p class="text-xs text-orange-500 font-bold">$55.00</p></div>
+          <div class="pcard text-center p-2 border border-gray-100 rounded hover:border-orange-300 transition"><div class="w-full h-20 bg-gray-50 rounded flex items-center justify-center text-3xl mb-1">🛋️</div><p class="text-xs text-gray-700 truncate">Modern Sofa</p><div class="stars">★★★★★</div><p class="text-xs text-orange-500 font-bold">$299.00</p></div>
+          <div class="pcard text-center p-2 border border-gray-100 rounded hover:border-orange-300 transition"><div class="w-full h-20 bg-gray-50 rounded flex items-center justify-center text-3xl mb-1">🪞</div><p class="text-xs text-gray-700 truncate">Wall Mirror</p><div class="stars">★★★★☆</div><p class="text-xs text-orange-500 font-bold">$79.00</p></div>
+          <div class="pcard text-center p-2 border border-gray-100 rounded hover:border-orange-300 transition"><div class="w-full h-20 bg-gray-50 rounded flex items-center justify-center text-3xl mb-1">🪴</div><p class="text-xs text-gray-700 truncate">Indoor Plant</p><div class="stars">★★★★☆</div><p class="text-xs text-orange-500 font-bold">$24.00</p></div>
+        </div>
+      </div>
+    </div>
+    <!-- Technology Devices -->
+    <div class="bg-white rounded shadow-sm p-4">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-bold text-sm text-gray-800 stitle">TECHNOLOGY DEVICES</h2>
+        <div class="flex gap-2">
+          <button class="w-7 h-7 border border-gray-300 rounded flex items-center justify-center hover:bg-orange-500 hover:text-white hover:border-orange-500 transition text-xs"><i class="fas fa-chevron-left"></i></button>
+          <button class="w-7 h-7 border border-gray-300 rounded flex items-center justify-center hover:bg-orange-500 hover:text-white hover:border-orange-500 transition text-xs"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+      <div class="flex gap-3">
+        <div class="w-32 flex-shrink-0 rounded overflow-hidden flex items-center justify-center cursor-pointer" style="background:linear-gradient(135deg,#1a1a2e,#16213e);min-height:180px;">
+          <div class="text-center p-3 text-white"><p class="text-xs opacity-80">Discover</p><p class="text-xl font-black fn text-orange-400 leading-tight">SMART<br>TECH</p><div class="mt-2 text-4xl">📱</div></div>
+        </div>
+        <div class="flex-1 grid grid-cols-2 gap-2">
+          <div class="pcard text-center p-2 border border-gray-100 rounded hover:border-orange-300 transition"><div class="w-full h-20 bg-gray-50 rounded flex items-center justify-center text-3xl mb-1">📱</div><p class="text-xs text-gray-700 truncate">Samsung S25</p><div class="stars">★★★★★</div><p class="text-xs text-orange-500 font-bold">$899.00</p></div>
+          <div class="pcard text-center p-2 border border-gray-100 rounded hover:border-orange-300 transition"><div class="w-full h-20 bg-gray-50 rounded flex items-center justify-center text-3xl mb-1">💻</div><p class="text-xs text-gray-700 truncate">MacBook Pro</p><div class="stars">★★★★★</div><p class="text-xs text-orange-500 font-bold">$1299.00</p></div>
+          <div class="pcard text-center p-2 border border-gray-100 rounded hover:border-orange-300 transition"><div class="w-full h-20 bg-gray-50 rounded flex items-center justify-center text-3xl mb-1">⌚</div><p class="text-xs text-gray-700 truncate">Smart Watch</p><div class="stars">★★★★☆</div><p class="text-xs text-orange-500 font-bold">$199.00</p></div>
+          <div class="pcard text-center p-2 border border-gray-100 rounded hover:border-orange-300 transition"><div class="w-full h-20 bg-gray-50 rounded flex items-center justify-center text-3xl mb-1">🎧</div><p class="text-xs text-gray-700 truncate">AirPods Pro</p><div class="stars">★★★★★</div><p class="text-xs text-orange-500 font-bold">$249.00</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ BEST SELLERS ═══ -->
+  <div class="bg-white rounded shadow-sm mb-4 p-4">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-bold text-sm text-gray-800 stitle">BEST SELLERS</h2>
+      <a href="#" class="text-orange-500 text-sm hover:underline font-medium">View All →</a>
+    </div>
+    <div class="grid grid-cols-6 gap-3">
+      <div class="pcard text-center p-3 border border-gray-100 rounded-lg hover:border-orange-300 transition"><div class="relative"><div class="w-full h-28 bg-gray-50 rounded flex items-center justify-center text-4xl mb-2">📸</div><span class="absolute top-1 left-1 bg-red-500 text-white text-xs px-1 py-0.5 rounded">-15%</span><button class="absolute top-1 right-1 text-gray-300 hover:text-red-400 transition"><i class="far fa-heart text-sm"></i></button></div><p class="text-xs text-gray-700 font-medium truncate">Canon EOS Camera</p><div class="stars">★★★★☆</div><p class="text-xs mt-1"><span class="text-gray-400 line-through">$620</span> <span class="text-orange-500 font-bold">$520</span></p><button class="acart mt-2 w-full bg-orange-500 text-white text-xs py-1.5 rounded hover:bg-orange-600">Add to Cart</button></div>
+      <div class="pcard text-center p-3 border border-gray-100 rounded-lg hover:border-orange-300 transition"><div class="relative"><div class="w-full h-28 bg-gray-50 rounded flex items-center justify-center text-4xl mb-2">🖨️</div><button class="absolute top-1 right-1 text-gray-300 hover:text-red-400 transition"><i class="far fa-heart text-sm"></i></button></div><p class="text-xs text-gray-700 font-medium truncate">HP LaserJet Pro</p><div class="stars">★★★★☆</div><p class="text-xs mt-1"><span class="text-gray-400 line-through">$350</span> <span class="text-orange-500 font-bold">$279</span></p><button class="acart mt-2 w-full bg-orange-500 text-white text-xs py-1.5 rounded hover:bg-orange-600">Add to Cart</button></div>
+      <div class="pcard text-center p-3 border border-gray-100 rounded-lg hover:border-orange-300 transition"><div class="relative"><div class="w-full h-28 bg-gray-50 rounded flex items-center justify-center text-4xl mb-2">🖥️</div><span class="absolute top-1 left-1 bg-green-500 text-white text-xs px-1 py-0.5 rounded">NEW</span><button class="absolute top-1 right-1 text-gray-300 hover:text-red-400 transition"><i class="far fa-heart text-sm"></i></button></div><p class="text-xs text-gray-700 font-medium truncate">Dell 27" Monitor</p><div class="stars">★★★★★</div><p class="text-xs mt-1"><span class="text-gray-400 line-through">$450</span> <span class="text-orange-500 font-bold">$389</span></p><button class="acart mt-2 w-full bg-orange-500 text-white text-xs py-1.5 rounded hover:bg-orange-600">Add to Cart</button></div>
+      <div class="pcard text-center p-3 border border-gray-100 rounded-lg hover:border-orange-300 transition"><div class="relative"><div class="w-full h-28 bg-gray-50 rounded flex items-center justify-center text-4xl mb-2">⌨️</div><button class="absolute top-1 right-1 text-gray-300 hover:text-red-400 transition"><i class="far fa-heart text-sm"></i></button></div><p class="text-xs text-gray-700 font-medium truncate">Logitech Keyboard</p><div class="stars">★★★★☆</div><p class="text-xs mt-1"><span class="text-gray-400 line-through">$120</span> <span class="text-orange-500 font-bold">$89</span></p><button class="acart mt-2 w-full bg-orange-500 text-white text-xs py-1.5 rounded hover:bg-orange-600">Add to Cart</button></div>
+      <div class="pcard text-center p-3 border border-gray-100 rounded-lg hover:border-orange-300 transition"><div class="relative"><div class="w-full h-28 bg-gray-50 rounded flex items-center justify-center text-4xl mb-2">🖱️</div><span class="absolute top-1 left-1 bg-red-500 text-white text-xs px-1 py-0.5 rounded">-25%</span><button class="absolute top-1 right-1 text-gray-300 hover:text-red-400 transition"><i class="far fa-heart text-sm"></i></button></div><p class="text-xs text-gray-700 font-medium truncate">Gaming Mouse Pro</p><div class="stars">★★★★★</div><p class="text-xs mt-1"><span class="text-gray-400 line-through">$80</span> <span class="text-orange-500 font-bold">$59</span></p><button class="acart mt-2 w-full bg-orange-500 text-white text-xs py-1.5 rounded hover:bg-orange-600">Add to Cart</button></div>
+      <div class="pcard text-center p-3 border border-gray-100 rounded-lg hover:border-orange-300 transition"><div class="relative"><div class="w-full h-28 bg-gray-50 rounded flex items-center justify-center text-4xl mb-2">💾</div><button class="absolute top-1 right-1 text-gray-300 hover:text-red-400 transition"><i class="far fa-heart text-sm"></i></button></div><p class="text-xs text-gray-700 font-medium truncate">SSD 1TB Drive</p><div class="stars">★★★★☆</div><p class="text-xs mt-1"><span class="text-gray-400 line-through">$150</span> <span class="text-orange-500 font-bold">$119</span></p><button class="acart mt-2 w-full bg-orange-500 text-white text-xs py-1.5 rounded hover:bg-orange-600">Add to Cart</button></div>
+    </div>
+  </div>
+
+  <!-- ═══ NEWSLETTER BANNER ═══ -->
+  <div class="rounded mb-4 flex items-center justify-between px-10 py-6" style="background:linear-gradient(135deg,#1a237e 0%,#3949ab 100%);">
+    <div class="text-white">
+      <p class="text-sm opacity-70 uppercase tracking-widest">Subscribe to our Newsletter</p>
+      <p class="text-2xl font-black fn mt-1">Get Exclusive Deals &amp; Offers!</p>
+    </div>
+    <div class="flex">
+      <input type="email" placeholder="Enter your email address..." class="px-4 py-2.5 rounded-l text-sm w-72 focus:outline-none focus:ring-2 focus:ring-orange-300">
+      <button class="bg-orange-500 text-white font-bold px-6 py-2.5 rounded-r hover:bg-orange-600 transition text-sm">SUBSCRIBE</button>
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="bg-gray-900 text-gray-400 mt-4">
+  <div class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-5 gap-6 text-xs">
+    <div>
+      <div class="flex items-center gap-1 mb-4">
+        <div class="bg-orange-500 text-white font-black px-2 py-0.5 rounded text-base fn">e</div>
+        <span class="font-black text-lg text-white fn">market</span>
+      </div>
+      <p class="leading-relaxed mb-4">The best multi-vendor marketplace for your online shopping needs. Find amazing deals every day!</p>
+      <div class="flex gap-3 text-base">
+        <a href="#" class="hover:text-orange-500 transition"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="hover:text-orange-500 transition"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="hover:text-orange-500 transition"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="hover:text-orange-500 transition"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <div>
+      <h3 class="text-white font-bold text-sm mb-4">Quick Links</h3>
+      <ul class="space-y-2"><li><a href="#" class="hover:text-orange-500 transition">About Us</a></li><li><a href="#" class="hover:text-orange-500 transition">Contact Us</a></li><li><a href="#" class="hover:text-orange-500 transition">Privacy Policy</a></li><li><a href="#" class="hover:text-orange-500 transition">Terms of Service</a></li><li><a href="#" class="hover:text-orange-500 transition">Sitemap</a></li></ul>
+    </div>
+    <div>
+      <h3 class="text-white font-bold text-sm mb-4">My Account</h3>
+      <ul class="space-y-2"><li><a href="#" class="hover:text-orange-500 transition">Sign In</a></li><li><a href="#" class="hover:text-orange-500 transition">Register</a></li><li><a href="#" class="hover:text-orange-500 transition">Order History</a></li><li><a href="#" class="hover:text-orange-500 transition">Wishlist</a></li><li><a href="#" class="hover:text-orange-500 transition">Track Order</a></li></ul>
+    </div>
+    <div>
+      <h3 class="text-white font-bold text-sm mb-4">Customer Service</h3>
+      <ul class="space-y-2"><li><a href="#" class="hover:text-orange-500 transition">Help Center</a></li><li><a href="#" class="hover:text-orange-500 transition">Returns &amp; Refunds</a></li><li><a href="#" class="hover:text-orange-500 transition">Shipping Info</a></li><li><a href="#" class="hover:text-orange-500 transition">Payment Methods</a></li><li><a href="#" class="hover:text-orange-500 transition">Vendor Support</a></li></ul>
+    </div>
+    <div>
+      <h3 class="text-white font-bold text-sm mb-4">Contact Info</h3>
+      <ul class="space-y-2">
+        <li class="flex items-start gap-2"><i class="fas fa-map-marker-alt text-orange-500 mt-0.5"></i><span>123 Market Street, NY 10001</span></li>
+        <li class="flex items-center gap-2"><i class="fas fa-phone text-orange-500"></i><span>1800 - 123 - 0150</span></li>
+        <li class="flex items-center gap-2"><i class="fas fa-envelope text-orange-500"></i><span>support@emarket.com</span></li>
+        <li class="flex items-center gap-2"><i class="fas fa-clock text-orange-500"></i><span>Mon – Fri: 9am – 6pm</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between text-xs">
+      <p>© 2026 eMarket. All Rights Reserved.</p>
+      <div class="flex items-center gap-2">
+        <span class="text-gray-500">We Accept:</span>
+        <span class="bg-gray-700 text-white px-2 py-0.5 rounded">VISA</span>
+        <span class="bg-gray-700 text-white px-2 py-0.5 rounded">MC</span>
+        <span class="bg-gray-700 text-white px-2 py-0.5 rounded">PayPal</span>
+        <span class="bg-gray-700 text-white px-2 py-0.5 rounded">Stripe</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- JAVASCRIPT -->
+<script>
+  /* ── Hero Carousel ── */
+  let curSlide = 0;
+  const SLIDES = 3;
+
+  function updateCarousel() {
+    document.getElementById('mainCarousel').style.transform = `translateX(-${curSlide * 100}%)`;
+    document.querySelectorAll('.bdot').forEach((d, i) => {
+      d.classList.toggle('on', (i % SLIDES) === curSlide);
+    });
+  }
+  function nextSlide() { curSlide = (curSlide + 1) % SLIDES; updateCarousel(); }
+  function prevSlide() { curSlide = (curSlide - 1 + SLIDES) % SLIDES; updateCarousel(); }
+  function goSlide(n)  { curSlide = n; updateCarousel(); }
+  setInterval(nextSlide, 4500);
+
+  /* ── Countdown Timer ── */
+  const endTime = Date.now() + (3 * 3600 + 45 * 60 + 22) * 1000;
+  function tick() {
+    const d = Math.max(0, endTime - Date.now());
+    document.getElementById('th').textContent = String(Math.floor(d / 3600000)).padStart(2,'0');
+    document.getElementById('tm').textContent = String(Math.floor((d % 3600000) / 60000)).padStart(2,'0');
+    document.getElementById('ts').textContent = String(Math.floor((d % 60000) / 1000)).padStart(2,'0');
+  }
+  setInterval(tick, 1000); tick();
+
+  /* ── Deal Slider ── */
+  let dealPos = 0;
+  function moveDeal(dir) {
+    const track = document.getElementById('dealTrack');
+    const maxPos = (track.children.length - 4) * 176;
+    dealPos = Math.max(0, Math.min(dealPos + dir * 176, maxPos));
+    track.style.transform = `translateX(-${dealPos}px)`;
+  }
+
+  /* ── Horizontal scroll ── */
+  function doHScroll(id, dir) {
+    document.getElementById(id).scrollBy({ left: dir * 180, behavior: 'smooth' });
+  }
+
+  /* ── Add to Cart feedback ── */
+  document.querySelectorAll('.acart').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const orig = btn.textContent;
+      btn.textContent = '✓ Added!';
+      btn.classList.replace('bg-orange-500','bg-green-500');
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.classList.replace('bg-green-500','bg-orange-500');
+      }, 1600);
+    });
+  });
+</script>
+</body>
+</html>

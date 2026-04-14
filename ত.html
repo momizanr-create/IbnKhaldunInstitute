@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>One Stop Destination – Food Landing Page</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Poppins', sans-serif; background: #2d1155; overflow-x: hidden; }
+
+  /* ── Background radial glow ── */
+  .bg-glow {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background: radial-gradient(ellipse 70% 60% at 55% 50%,
+      rgba(110, 50, 200, 0.55) 0%,
+      rgba(70, 20, 140, 0.3) 40%,
+      transparent 75%);
+  }
+
+  /* ── Decorative SVG pattern ── */
+  .bg-pattern {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.06;
+  }
+
+  /* ── Plate glow ── */
+  .plate-glow {
+    position: absolute; inset: -24px;
+    background: radial-gradient(circle, rgba(130,60,220,0.45) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: pulse 3s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:.6;transform:scale(1);} 50%{opacity:1;transform:scale(1.05);} }
+
+  /* ── Food image circle ── */
+  .plate-img {
+    width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
+    animation: floatUp 4s ease-in-out infinite;
+    filter: drop-shadow(0 30px 60px rgba(0,0,0,0.6));
+  }
+  @keyframes floatUp { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-12px);} }
+
+  /* ── Nav underline active ── */
+  .nav-active {
+    color: #f5a623 !important;
+    position: relative;
+  }
+  .nav-active::after {
+    content: '';
+    position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
+    width: 70%; height: 2px; background: #f5a623; border-radius: 2px;
+  }
+  .nav-active::before {
+    content: '◆';
+    position: absolute; bottom: -14px; left: 50%; transform: translateX(-50%);
+    font-size: 7px; color: #f5a623;
+  }
+
+  /* ── Order button ── */
+  .order-btn {
+    background: linear-gradient(135deg, #f5a623, #e8920d);
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 28px rgba(245,166,35,0.45);
+  }
+  .order-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 36px rgba(245,166,35,0.6);
+  }
+  .order-btn:active { transform: translateY(0); }
+
+  /* ── Food cards ── */
+  .food-card {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  .food-card:hover {
+    background: rgba(255,255,255,0.14);
+    border-color: rgba(255,255,255,0.25);
+    transform: translateX(-4px);
+  }
+
+  /* ── Slide dots ── */
+  .dot { transition: all 0.3s ease; cursor: pointer; }
+  .dot.active { width: 28px !important; border-radius: 4px; background: #f5a623 !important; }
+
+  /* ── Arrow buttons ── */
+  .arrow-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .arrow-btn:hover { background: rgba(245,166,35,0.3); border-color: #f5a623; color: #f5a623; }
+
+  /* ── Cart button ── */
+  .cart-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    transition: all 0.2s;
+  }
+  .cart-btn:hover { background: rgba(255,255,255,0.18); }
+
+  /* ── Fade-in animations ── */
+  .fade-in-left { animation: fadeLeft 0.8s ease forwards; }
+  .fade-in-right { animation: fadeRight 0.8s ease 0.3s forwards; opacity: 0; }
+  .fade-in-up { animation: fadeUp 0.8s ease 0.15s forwards; opacity: 0; }
+
+  @keyframes fadeLeft { from{opacity:0;transform:translateX(-40px);} to{opacity:1;transform:translateX(0);} }
+  @keyframes fadeRight { from{opacity:0;transform:translateX(40px);} to{opacity:1;transform:translateX(0);} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(30px);} to{opacity:1;transform:translateY(0);} }
+
+  /* ── Responsive ── */
+  @media (max-width: 1024px) {
+    .hero-grid { grid-template-columns: 1fr 1fr !important; }
+    .hero-right { display: none !important; }
+    .plate-wrap { width: 340px !important; height: 340px !important; }
+  }
+  @media (max-width: 640px) {
+    .hero-grid { grid-template-columns: 1fr !important; text-align: center; }
+    .hero-center { display: none !important; }
+    .plate-wrap { width: 280px !important; height: 280px !important; }
+    .hero-title { font-size: 42px !important; }
+  }
+</style>
+</head>
+<body class="min-h-screen relative">
+
+<!-- Background layers -->
+<div class="bg-glow"></div>
+<svg class="bg-pattern" viewBox="0 0 1200 750" xmlns="http://www.w3.org/2000/svg">
+  <!-- decorative food/leaf outlines -->
+  <circle cx="60" cy="90" r="55" stroke="white" stroke-width="1.2" fill="none"/>
+  <circle cx="60" cy="90" r="35" stroke="white" stroke-width="0.6" fill="none"/>
+  <circle cx="1140" cy="110" r="50" stroke="white" stroke-width="1.2" fill="none"/>
+  <circle cx="1140" cy="110" r="30" stroke="white" stroke-width="0.6" fill="none"/>
+  <circle cx="30" cy="500" r="42" stroke="white" stroke-width="1.2" fill="none"/>
+  <circle cx="1170" cy="560" r="48" stroke="white" stroke-width="1.2" fill="none"/>
+  <circle cx="1170" cy="560" r="28" stroke="white" stroke-width="0.6" fill="none"/>
+  <!-- leaf/swirl shapes -->
+  <path d="M80,300 C100,260 140,240 160,280 C140,320 100,340 80,300Z" stroke="white" stroke-width="1" fill="none"/>
+  <path d="M1100,380 C1120,340 1160,320 1180,360 C1160,400 1120,420 1100,380Z" stroke="white" stroke-width="1" fill="none"/>
+  <path d="M600,680 C620,640 660,630 670,660 C650,690 620,700 600,680Z" stroke="white" stroke-width="1" fill="none"/>
+  <!-- dots pattern -->
+  <circle cx="200" cy="50" r="3" fill="white" opacity="0.5"/>
+  <circle cx="240" cy="70" r="2" fill="white" opacity="0.4"/>
+  <circle cx="220" cy="90" r="2.5" fill="white" opacity="0.3"/>
+  <circle cx="950" cy="50" r="3" fill="white" opacity="0.5"/>
+  <circle cx="980" cy="30" r="2" fill="white" opacity="0.4"/>
+  <circle cx="970" cy="70" r="2.5" fill="white" opacity="0.3"/>
+</svg>
+
+<!-- ═══════════════════════════════════════
+     NAVBAR
+════════════════════════════════════════ -->
+<nav class="relative z-20 flex items-center justify-between px-10 py-5">
+  <!-- Logo -->
+  <div class="text-white font-bold text-xl tracking-widest">LOGO</div>
+
+  <!-- Nav links -->
+  <ul class="flex items-center gap-10 list-none">
+    <li>
+      <a href="#" class="nav-active text-sm font-medium tracking-wide">Home</a>
+    </li>
+    <li>
+      <a href="#" class="text-purple-300 text-sm font-medium tracking-wide hover:text-white transition-colors duration-200">Delivery</a>
+    </li>
+    <li>
+      <a href="#" class="text-purple-300 text-sm font-medium tracking-wide hover:text-white transition-colors duration-200">Take-away</a>
+    </li>
+  </ul>
+
+  <!-- Right: lock + cart -->
+  <div class="flex items-center gap-3">
+    <button class="cart-btn rounded-full w-9 h-9 flex items-center justify-center text-white text-base">
+      🔒
+    </button>
+    <button class="cart-btn rounded-full px-4 py-2 flex items-center gap-2 text-white text-sm font-medium">
+      <span class="bg-amber-400 text-amber-900 font-bold text-xs rounded-full w-5 h-5 flex items-center justify-center">1</span>
+      🛒 $35
+    </button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════
+     HERO
+════════════════════════════════════════ -->
+<main class="relative z-10 hero-grid grid items-center px-10 py-4"
+  style="grid-template-columns: 1fr 1.15fr 0.85fr; min-height: calc(100vh - 90px); gap: 0;">
+
+  <!-- LEFT: Copy -->
+  <div class="fade-in-left pr-6">
+    <h1 class="hero-title font-extrabold text-white leading-none" style="font-size: 58px; line-height: 1.05;">
+      One stop
+      <span class="block" style="color: #3ed4a0;">Destination</span>
+    </h1>
+    <p class="text-purple-300 text-sm leading-relaxed mt-4 mb-5" style="max-width: 290px; font-size: 13px; line-height: 1.85;">
+      Hunger pangs? You're at the right stop to drive it away! Order delicious food or reserve a table at your next café from the comfort of your home!
+    </p>
+    <p class="text-purple-300 text-sm mb-6 flex items-center gap-2">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1L10 6H15L11 9.5L12.5 15L8 11.5L3.5 15L5 9.5L1 6H6L8 1Z" stroke="#f5a623" stroke-width="1.2" fill="none"/></svg>
+      Price: <strong class="text-amber-400 font-semibold text-base">$40.00</strong>
+    </p>
+    <button class="order-btn text-amber-900 font-bold px-10 py-3.5 text-sm tracking-wide">
+      Order Now
+    </button>
+  </div>
+
+  <!-- CENTER: Food image -->
+  <div class="hero-center flex justify-center items-center fade-in-up">
+    <div class="plate-wrap relative" style="width: 400px; height: 400px;">
+      <div class="plate-glow"></div>
+      <img
+        src="https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&q=85"
+        alt="Food platter"
+        class="plate-img"
+        style="border-radius: 50%; width: 100%; height: 100%; object-fit: cover;"
+      />
+    </div>
+  </div>
+
+  <!-- RIGHT: Menu cards -->
+  <div class="hero-right fade-in-right flex flex-col gap-3 pl-4">
+
+    <!-- Card 1: Achar Gosht -->
+    <div class="food-card rounded-full flex items-center gap-4 pr-5 pl-2 py-2">
+      <div class="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-purple-400/30">
+        <img src="https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=120&q=80"
+             alt="Achar Gosht" class="w-full h-full object-cover"/>
+      </div>
+      <div>
+        <p class="text-white text-sm font-medium">Achar Gosht</p>
+        <p class="font-semibold mt-0.5" style="color: #3ed4a0; font-size: 15px;">$ 30</p>
+      </div>
+    </div>
+
+    <!-- Card 2: Fries -->
+    <div class="food-card rounded-full flex items-center gap-4 pr-5 pl-2 py-2">
+      <div class="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-purple-400/30">
+        <img src="https://images.unsplash.com/photo-1518013431117-eb1465fa5752?w=120&q=80"
+             alt="Fries" class="w-full h-full object-cover"/>
+      </div>
+      <div>
+        <p class="text-white text-sm font-medium">Fries</p>
+        <p class="font-semibold mt-0.5" style="color: #3ed4a0; font-size: 15px;">$ 14</p>
+      </div>
+    </div>
+
+    <!-- Card 3: Beef Burger -->
+    <div class="food-card rounded-full flex items-center gap-4 pr-5 pl-2 py-2">
+      <div class="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-purple-400/30">
+        <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=120&q=80"
+             alt="Beef Burger" class="w-full h-full object-cover"/>
+      </div>
+      <div>
+        <p class="text-white text-sm font-medium">Beef Burger</p>
+        <p class="font-semibold mt-0.5" style="color: #3ed4a0; font-size: 15px;">$ 24</p>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ═══════════════════════════════════════
+     SLIDER DOTS
+════════════════════════════════════════ -->
+<div class="relative z-10 flex items-center justify-center gap-3 pb-8 pt-2">
+  <button class="arrow-btn w-9 h-9 rounded-full flex items-center justify-center text-white text-base" id="prevBtn">&#8592;</button>
+  <div class="flex items-center gap-2" id="dotsContainer">
+    <div class="dot w-2 h-2 rounded-full bg-purple-400 opacity-50"></div>
+    <div class="dot active w-2 h-2 rounded-full" style="background:#f5a623;"></div>
+    <div class="dot w-2 h-2 rounded-full bg-purple-400 opacity-50"></div>
+    <div class="dot w-2 h-2 rounded-full bg-purple-400 opacity-50"></div>
+    <div class="dot w-2 h-2 rounded-full bg-purple-400 opacity-50"></div>
+  </div>
+  <button class="arrow-btn w-9 h-9 rounded-full flex items-center justify-center text-white text-base" id="nextBtn">&#8594;</button>
+</div>
+
+<script>
+  // Slider dot interactivity
+  const dots = document.querySelectorAll('.dot');
+  const slides = [
+    {
+      title: 'One stop',
+      sub: 'Destination',
+      desc: "Hunger pangs? You're at the right stop to drive it away! Order delicious food or reserve a table at your next café from the comfort of your home!",
+      price: '$40.00',
+      img: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&q=85',
+    },
+    {
+      title: 'Fresh &',
+      sub: 'Flavourful',
+      desc: 'Discover our handpicked seasonal menu crafted from the freshest local ingredients. A taste that brings warmth straight to your table.',
+      price: '$35.00',
+      img: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=85',
+    },
+    {
+      title: 'Quick &',
+      sub: 'Delicious',
+      desc: 'Fast delivery, zero compromise on taste. Our kitchen is always ready to serve hot meals right to your doorstep in under 30 minutes.',
+      price: '$28.00',
+      img: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=85',
+    },
+    {
+      title: 'Taste the',
+      sub: 'Difference',
+      desc: 'Premium ingredients, expert chefs, and a passion for perfection in every bite. Treat yourself to a dining experience like no other.',
+      price: '$45.00',
+      img: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=85',
+    },
+    {
+      title: 'Order &',
+      sub: 'Enjoy',
+      desc: 'From breakfast bites to midnight snacks — we have it all. Browse our full menu and enjoy exclusive deals on your first order today!',
+      price: '$22.00',
+      img: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=600&q=85',
+    },
+  ];
+
+  let current = 1;
+
+  function goToSlide(idx) {
+    current = (idx + slides.length) % slides.length;
+    dots.forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+      if (i === current) {
+        d.style.background = '#f5a623';
+        d.style.opacity = '1';
+      } else {
+        d.style.background = 'rgba(180,140,220,0.5)';
+        d.style.opacity = '1';
+        d.classList.remove('active');
+      }
+    });
+
+    const s = slides[current];
+    const title = document.querySelector('.hero-title');
+    const desc = document.querySelector('.hero-title ~ p');
+    const priceEl = document.querySelector('.text-amber-400');
+    const plateImg = document.querySelector('.plate-img');
+
+    title.style.opacity = '0';
+    title.style.transform = 'translateY(-10px)';
+    setTimeout(() => {
+      title.innerHTML = s.title + `<span class="block" style="color:#3ed4a0;">${s.sub}</span>`;
+      if (desc) desc.textContent = s.desc;
+      if (priceEl) priceEl.textContent = s.price;
+      plateImg.style.opacity = '0';
+      plateImg.src = s.img;
+      plateImg.onload = () => { plateImg.style.transition = 'opacity 0.5s'; plateImg.style.opacity = '1'; };
+      title.style.transition = 'all 0.4s ease';
+      title.style.opacity = '1';
+      title.style.transform = 'translateY(0)';
+    }, 200);
+  }
+
+  dots.forEach((d, i) => d.addEventListener('click', () => goToSlide(i)));
+  document.getElementById('nextBtn').addEventListener('click', () => goToSlide(current + 1));
+  document.getElementById('prevBtn').addEventListener('click', () => goToSlide(current - 1));
+
+  // Auto-slide every 4 seconds
+  setInterval(() => goToSlide(current + 1), 4000);
+</script>
+</body>
+</html>
