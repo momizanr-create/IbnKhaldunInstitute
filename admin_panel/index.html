@@ -9,18 +9,31 @@
     :root {
       --primary: #F5C518;
       --primary-dark: #d4a90e;
+      --primary-glow: rgba(245,197,24,0.18);
       --bg: #0f0f0f;
-      --bg2: #1a1a1a;
-      --bg3: #242424;
-      --border: #2e2e2e;
+      --bg2: #161616;
+      --bg3: #1e1e1e;
+      --bg4: #252525;
+      --border: #2a2a2a;
+      --border2: #333;
       --text: #f0f0f0;
-      --text2: #aaa;
+      --text2: #888;
+      --text3: #bbb;
       --green: #22c55e;
+      --green-bg: rgba(34,197,94,0.12);
       --red: #ef4444;
-      --blue: #3b82f6;
-      --orange: #f97316;
-      --radius: 8px;
-      --sidebar: 240px;
+      --red-bg: rgba(239,68,68,0.12);
+      --blue: #60a5fa;
+      --blue-bg: rgba(96,165,250,0.12);
+      --orange: #fb923c;
+      --orange-bg: rgba(251,146,60,0.12);
+      --teal: #2dd4bf;
+      --teal-bg: rgba(45,212,191,0.12);
+      --radius: 14px;
+      --radius-sm: 10px;
+      --sidebar: 250px;
+      --shadow: 0 4px 24px rgba(0,0,0,0.4);
+      --shadow-card: 0 2px 16px rgba(0,0,0,0.3);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Hind Siliguri', 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
@@ -28,47 +41,53 @@
     button { cursor: pointer; font-family: inherit; }
     input, textarea, select { font-family: inherit; }
 
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
     /* ── LOGIN ── */
     #login-screen {
       min-height: 100vh; display: flex; align-items: center; justify-content: center;
-      background: radial-gradient(ellipse at 60% 40%, #1a1200 0%, #0f0f0f 70%);
+      background: radial-gradient(ellipse at 55% 35%, rgba(245,197,24,0.06) 0%, #0f0f0f 65%);
     }
     .login-box {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 16px; padding: 48px 40px; width: 100%; max-width: 400px;
-      box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 20px; padding: 48px 40px; width: 100%; max-width: 400px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(245,197,24,0.05);
+      animation: fadeUp 0.5s ease both;
     }
-    .login-logo {
-      text-align: center; margin-bottom: 32px;
+    @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+    .login-logo { text-align: center; margin-bottom: 32px; }
+    .login-logo .logo-icon {
+      width: 56px; height: 56px; background: linear-gradient(135deg, var(--primary), #e6b800);
+      border-radius: 16px; display: flex; align-items: center; justify-content: center;
+      font-size: 26px; margin: 0 auto 14px; box-shadow: 0 8px 24px rgba(245,197,24,0.3);
     }
-    .login-logo .badge {
-      display: inline-block; background: var(--primary); color: #1a1a1a;
-      font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-      padding: 4px 12px; border-radius: 20px; margin-bottom: 12px;
-    }
-    .login-logo h1 { font-size: 22px; font-weight: 700; color: var(--text); }
-    .login-logo p  { font-size: 13px; color: var(--text2); margin-top: 4px; }
-    .form-group { margin-bottom: 18px; }
-    .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+    .login-logo h1 { font-size: 20px; font-weight: 700; color: var(--text); }
+    .login-logo p  { font-size: 13px; color: var(--text2); margin-top: 5px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text3); letter-spacing: 0.5px; margin-bottom: 7px; }
     .form-group input {
       width: 100%; padding: 12px 14px; background: var(--bg3);
-      border: 1px solid var(--border); border-radius: var(--radius);
-      color: var(--text); font-size: 15px; outline: none;
-      transition: border-color 0.2s;
+      border: 1px solid var(--border2); border-radius: var(--radius-sm);
+      color: var(--text); font-size: 14px; outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .form-group input:focus { border-color: var(--primary); }
+    .form-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
     .btn-login {
-      width: 100%; padding: 14px; background: var(--primary); color: #1a1a1a;
-      border: none; border-radius: var(--radius); font-size: 15px; font-weight: 700;
-      letter-spacing: 1px; transition: background 0.2s, transform 0.1s;
-      margin-top: 4px;
+      width: 100%; padding: 13px; background: linear-gradient(135deg, var(--primary), #e6b800); color: #111;
+      border: none; border-radius: var(--radius-sm); font-size: 15px; font-weight: 700;
+      letter-spacing: 0.5px; transition: all 0.2s; margin-top: 8px;
+      box-shadow: 0 4px 16px rgba(245,197,24,0.3);
     }
-    .btn-login:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .btn-login:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(245,197,24,0.4); }
     .btn-login:active { transform: translateY(0); }
     .btn-login:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
     #login-error {
-      display: none; background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3);
-      color: #fca5a5; border-radius: 6px; padding: 10px 14px;
+      display: none; background: var(--red-bg); border: 1px solid rgba(239,68,68,0.3);
+      color: #fca5a5; border-radius: 8px; padding: 10px 14px;
       font-size: 13px; margin-bottom: 16px; text-align: center;
     }
 
@@ -78,131 +97,249 @@
 
     /* ── SIDEBAR ── */
     .sidebar {
-      width: var(--sidebar); background: var(--bg2); border-right: 1px solid var(--border);
+      width: var(--sidebar); background: var(--bg2);
+      border-right: 1px solid var(--border);
       display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh;
-      z-index: 50; transition: transform 0.3s;
+      z-index: 50; transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
     }
     .sidebar-header {
-      padding: 20px 16px; border-bottom: 1px solid var(--border);
+      padding: 22px 20px 18px;
+      border-bottom: 1px solid var(--border);
     }
-    .sidebar-brand { font-size: 13px; font-weight: 700; color: var(--primary); letter-spacing: 1px; text-transform: uppercase; }
+    .sidebar-logo-row { display: flex; align-items: center; gap: 11px; }
+    .sidebar-icon {
+      width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), #d4a90e);
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0; box-shadow: 0 4px 12px rgba(245,197,24,0.25);
+    }
+    .sidebar-brand { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.2; }
     .sidebar-sub   { font-size: 11px; color: var(--text2); margin-top: 2px; }
-    .sidebar-nav   { flex: 1; padding: 12px 0; overflow-y: auto; }
-    .nav-section   { padding: 8px 16px 4px; font-size: 10px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 1.5px; }
+    .sidebar-nav   { flex: 1; padding: 14px 10px; overflow-y: auto; }
+    .nav-section   { padding: 10px 10px 5px; font-size: 10px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 1.5px; }
     .nav-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 16px; font-size: 14px; color: var(--text2);
-      cursor: pointer; border-radius: 0; transition: all 0.15s;
-      border-left: 3px solid transparent;
+      display: flex; align-items: center; gap: 11px;
+      padding: 10px 12px; font-size: 14px; color: var(--text2);
+      cursor: pointer; border-radius: var(--radius-sm); transition: all 0.18s;
+      margin-bottom: 2px;
     }
-    .nav-item:hover  { color: var(--text); background: rgba(255,255,255,0.04); }
-    .nav-item.active { color: var(--primary); background: rgba(245,197,24,0.08); border-left-color: var(--primary); }
-    .nav-item .icon  { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
-    .sidebar-footer  { padding: 16px; border-top: 1px solid var(--border); }
+    .nav-item:hover  { color: var(--text); background: var(--bg3); }
+    .nav-item.active {
+      color: #111; background: linear-gradient(135deg, var(--primary), #e6b800);
+      font-weight: 600; box-shadow: 0 4px 14px rgba(245,197,24,0.3);
+    }
+    .nav-item .icon  { font-size: 16px; width: 22px; text-align: center; flex-shrink: 0; }
+    .sidebar-footer  { padding: 14px; border-top: 1px solid var(--border); }
     .admin-badge {
       display: flex; align-items: center; gap: 10px;
-      padding: 8px 10px; background: var(--bg3); border-radius: var(--radius);
+      padding: 10px 12px; background: var(--bg3); border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
     }
-    .admin-avatar { width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #1a1a1a; flex-shrink: 0; }
+    .admin-avatar {
+      width: 34px; height: 34px; background: linear-gradient(135deg, var(--primary), #e6b800);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; color: #111; flex-shrink: 0;
+    }
     .admin-name  { font-size: 13px; font-weight: 600; }
     .admin-role  { font-size: 11px; color: var(--text2); }
-    .btn-logout  { width: 100%; margin-top: 8px; padding: 8px; background: transparent; border: 1px solid var(--border); border-radius: var(--radius); color: var(--text2); font-size: 13px; transition: all 0.2s; }
-    .btn-logout:hover { border-color: var(--red); color: var(--red); }
+    .btn-logout  { width: 100%; margin-top: 10px; padding: 9px; background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text2); font-size: 13px; transition: all 0.2s; }
+    .btn-logout:hover { border-color: var(--red); color: var(--red); background: var(--red-bg); }
 
     /* ── MAIN ── */
     .main { margin-left: var(--sidebar); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
     .topbar {
       background: var(--bg2); border-bottom: 1px solid var(--border);
-      padding: 0 24px; height: 56px; display: flex; align-items: center;
+      padding: 0 28px; height: 62px; display: flex; align-items: center;
       justify-content: space-between; position: sticky; top: 0; z-index: 40;
+      backdrop-filter: blur(12px);
     }
-    .topbar-title { font-size: 16px; font-weight: 600; }
-    .topbar-actions { display: flex; align-items: center; gap: 12px; }
-    .content { padding: 24px; flex: 1; }
+    .topbar-left { display: flex; flex-direction: column; }
+    .topbar-greeting { font-size: 18px; font-weight: 700; color: var(--text); }
+    .topbar-sub { font-size: 12px; color: var(--text2); margin-top: 1px; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; }
+    .topbar-user {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 12px 6px 6px; background: var(--bg3); border-radius: 40px;
+      border: 1px solid var(--border);
+    }
+    .topbar-avatar {
+      width: 30px; height: 30px; background: linear-gradient(135deg, var(--primary), #e6b800);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; color: #111;
+    }
+    .topbar-uname { font-size: 13px; font-weight: 600; }
+    .content { padding: 26px 28px; flex: 1; }
+
+    /* ── PAGE HEADER ── */
+    .page-header { margin-bottom: 22px; }
+    .page-header h2 { font-size: 20px; font-weight: 700; }
+    .page-header p  { font-size: 13px; color: var(--text2); margin-top: 4px; }
 
     /* ── PAGES ── */
     .page { display: none; }
-    .page.active { display: block; }
+    .page.active { display: block; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+    /* ── OVERVIEW STAT CARDS (HelloWord style) ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 16px; margin-bottom: 26px;
+    }
+    .stat-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 20px;
+      position: relative; overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: var(--shadow-card);
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+    .stat-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .stat-card.card-yellow::before { background: linear-gradient(90deg, var(--primary), #e6b800); }
+    .stat-card.card-green::before  { background: linear-gradient(90deg, var(--green), #16a34a); }
+    .stat-card.card-blue::before   { background: linear-gradient(90deg, var(--blue), #3b82f6); }
+    .stat-card.card-orange::before { background: linear-gradient(90deg, var(--orange), #ea580c); }
+    .stat-card.card-teal::before   { background: linear-gradient(90deg, var(--teal), #0d9488); }
+    .stat-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+    .stat-icon {
+      width: 46px; height: 46px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
+    }
+    .stat-icon.yellow { background: rgba(245,197,24,0.15); }
+    .stat-icon.green  { background: var(--green-bg); }
+    .stat-icon.blue   { background: var(--blue-bg); }
+    .stat-icon.orange { background: var(--orange-bg); }
+    .stat-icon.teal   { background: var(--teal-bg); }
+    .stat-trend {
+      font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 20px;
+    }
+    .stat-trend.up   { background: var(--green-bg); color: var(--green); }
+    .stat-trend.down { background: var(--red-bg); color: var(--red); }
+    .stat-info h3 { font-size: 28px; font-weight: 800; line-height: 1; color: var(--text); }
+    .stat-info p  { font-size: 13px; color: var(--text2); margin-top: 5px; }
 
     /* ── CARDS ── */
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 16px; margin-bottom: 28px; }
-    .stat-card {
-      background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 20px; display: flex; align-items: center; gap: 16px;
+    .card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; margin-bottom: 20px;
+      box-shadow: var(--shadow-card);
     }
-    .stat-icon { width: 48px; height: 48px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
-    .stat-info h3 { font-size: 24px; font-weight: 700; }
-    .stat-info p  { font-size: 12px; color: var(--text2); margin-top: 2px; }
+    .card-header {
+      padding: 18px 22px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card-header h3 { font-size: 15px; font-weight: 700; }
+    .card-header-left { display: flex; flex-direction: column; gap: 2px; }
+    .card-subtitle { font-size: 12px; color: var(--text2); }
+    .card-body { padding: 0; }
+
+    /* ── TWO COLUMN DASHBOARD LAYOUT ── */
+    .dashboard-grid { display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
+    @media (max-width: 1100px) { .dashboard-grid { grid-template-columns: 1fr; } }
 
     /* ── TABLE ── */
-    .card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 24px; }
-    .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-    .card-header h3 { font-size: 15px; font-weight: 600; }
-    .card-body { padding: 0; }
     table { width: 100%; border-collapse: collapse; }
-    th { padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; background: var(--bg3); border-bottom: 1px solid var(--border); white-space: nowrap; }
-    td { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    th {
+      padding: 11px 18px; text-align: left; font-size: 11px; font-weight: 700;
+      color: var(--text2); text-transform: uppercase; letter-spacing: 1px;
+      background: var(--bg3); border-bottom: 1px solid var(--border); white-space: nowrap;
+    }
+    td { padding: 13px 18px; font-size: 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: rgba(255,255,255,0.02); }
 
+    /* ── SCHEDULE / ACTIVITY WIDGET ── */
+    .schedule-list { padding: 8px 0; }
+    .schedule-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 22px; border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    .schedule-item:last-child { border-bottom: none; }
+    .schedule-item:hover { background: var(--bg3); }
+    .schedule-dot {
+      width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center;
+      justify-content: center; font-size: 18px; flex-shrink: 0;
+    }
+    .schedule-dot.yellow { background: rgba(245,197,24,0.15); }
+    .schedule-dot.blue   { background: var(--blue-bg); }
+    .schedule-dot.green  { background: var(--green-bg); }
+    .schedule-dot.orange { background: var(--orange-bg); }
+    .schedule-info { flex: 1; }
+    .schedule-title { font-size: 14px; font-weight: 600; }
+    .schedule-date  { font-size: 12px; color: var(--text2); margin-top: 3px; }
+    .schedule-arrow { color: var(--text2); font-size: 16px; }
+
     /* ── BUTTONS ── */
-    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius); border: none; font-size: 13px; font-weight: 600; transition: all 0.15s; cursor: pointer; }
-    .btn-primary { background: var(--primary); color: #1a1a1a; }
-    .btn-primary:hover { background: var(--primary-dark); }
-    .btn-danger  { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
-    .btn-danger:hover  { background: rgba(239,68,68,0.25); }
-    .btn-success { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
-    .btn-edit    { background: rgba(59,130,246,0.15); color: var(--blue); border: 1px solid rgba(59,130,246,0.3); }
-    .btn-edit:hover { background: rgba(59,130,246,0.25); }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 18px; border-radius: var(--radius-sm); border: none;
+      font-size: 13px; font-weight: 600; transition: all 0.15s; cursor: pointer;
+    }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), #e6b800); color: #111; box-shadow: 0 4px 12px rgba(245,197,24,0.3); }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(245,197,24,0.4); }
+    .btn-danger  { background: var(--red-bg); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+    .btn-danger:hover  { background: rgba(239,68,68,0.22); }
+    .btn-success { background: var(--green-bg); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+    .btn-edit    { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(96,165,250,0.3); }
+    .btn-edit:hover { background: rgba(96,165,250,0.22); }
     .btn-sm { padding: 5px 10px; font-size: 12px; }
     .btn-icon { padding: 6px 8px; }
 
     /* ── BADGE ── */
-    .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-    .badge-green  { background: rgba(34,197,94,0.15);  color: var(--green); }
-    .badge-red    { background: rgba(239,68,68,0.15);   color: var(--red); }
-    .badge-yellow { background: rgba(245,197,24,0.15);  color: var(--primary); }
-    .badge-blue   { background: rgba(59,130,246,0.15);  color: var(--blue); }
+    .badge { display: inline-block; padding: 4px 11px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .badge-green  { background: var(--green-bg);  color: var(--green); }
+    .badge-red    { background: var(--red-bg);    color: var(--red); }
+    .badge-yellow { background: rgba(245,197,24,0.15); color: var(--primary); }
+    .badge-blue   { background: var(--blue-bg);   color: var(--blue); }
 
     /* ── MODAL ── */
     .modal-overlay {
       display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
       z-index: 1000; align-items: center; justify-content: center; padding: 16px;
     }
     .modal-overlay.open { display: flex; }
     .modal {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 12px; width: 100%; max-width: 560px;
+      background: var(--bg2); border: 1px solid var(--border2);
+      border-radius: 18px; width: 100%; max-width: 560px;
       max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+      animation: modalIn 0.25s cubic-bezier(0.34,1.56,0.64,1);
     }
-    .modal-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-    .modal-header h3 { font-size: 16px; font-weight: 600; }
-    .modal-body   { padding: 20px 24px; }
-    .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
-    .btn-close { background: none; border: none; color: var(--text2); font-size: 20px; cursor: pointer; padding: 0 4px; line-height: 1; }
-    .btn-close:hover { color: var(--text); }
+    @keyframes modalIn { from { opacity:0; transform:scale(0.95) translateY(10px); } to { opacity:1; transform:scale(1) translateY(0); } }
+    .modal-header { padding: 22px 26px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .modal-header h3 { font-size: 16px; font-weight: 700; }
+    .modal-body   { padding: 22px 26px; }
+    .modal-footer { padding: 16px 26px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+    .btn-close { background: var(--bg3); border: 1px solid var(--border); color: var(--text2); font-size: 18px; cursor: pointer; padding: 2px 8px; line-height: 1.4; border-radius: 8px; transition: all 0.2s; }
+    .btn-close:hover { color: var(--text); background: var(--bg4); }
 
     /* ── FORM ── */
     .field { margin-bottom: 16px; }
-    .field label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+    .field label { display: block; font-size: 12px; font-weight: 600; color: var(--text3); letter-spacing: 0.5px; margin-bottom: 7px; }
     .field input, .field textarea, .field select {
-      width: 100%; padding: 10px 12px;
-      background: var(--bg3); border: 1px solid var(--border);
-      border-radius: var(--radius); color: var(--text); font-size: 14px; outline: none;
-      transition: border-color 0.2s;
+      width: 100%; padding: 11px 13px;
+      background: var(--bg3); border: 1px solid var(--border2);
+      border-radius: var(--radius-sm); color: var(--text); font-size: 14px; outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--primary); }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
     .field textarea { min-height: 90px; resize: vertical; }
     .field select option { background: var(--bg3); }
     .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
     /* ── TOAST ── */
     #toast {
-      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-      padding: 12px 20px; border-radius: var(--radius); font-size: 14px; font-weight: 500;
-      pointer-events: none; opacity: 0; transform: translateY(8px);
-      transition: all 0.3s; max-width: 320px;
+      position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+      padding: 13px 22px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600;
+      pointer-events: none; opacity: 0; transform: translateY(10px);
+      transition: all 0.3s cubic-bezier(0.34,1.2,0.64,1); max-width: 320px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
     }
     #toast.show { opacity: 1; transform: translateY(0); }
     #toast.success { background: var(--green); color: #fff; }
@@ -214,7 +351,7 @@
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* ── MOBILE ── */
-    .hamburger { display: none; background: none; border: none; color: var(--text); font-size: 22px; cursor: pointer; }
+    .hamburger { display: none; background: none; border: none; color: var(--text); font-size: 22px; cursor: pointer; padding: 4px; }
     @media (max-width: 768px) {
       .sidebar { transform: translateX(-100%); }
       .sidebar.open { transform: translateX(0); }
@@ -223,6 +360,7 @@
       .stats-grid { grid-template-columns: 1fr 1fr; }
       .row2 { grid-template-columns: 1fr; }
       .hide-mobile { display: none !important; }
+      .topbar-greeting { font-size: 15px; }
     }
     @media (max-width: 480px) {
       .stats-grid { grid-template-columns: 1fr; }
@@ -238,7 +376,7 @@
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo">
-      <div class="badge">Admin Panel</div>
+      <div class="logo-icon">🕌</div>
       <h1>ইবনে খালদুন ইনস্টিটিউট</h1>
       <p>অ্যাডমিন ড্যাশবোর্ডে প্রবেশ করুন</p>
     </div>
@@ -264,8 +402,13 @@
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
-        <div class="sidebar-brand">ইবনে খালদুন</div>
-        <div class="sidebar-sub">Admin Dashboard</div>
+        <div class="sidebar-logo-row">
+          <div class="sidebar-icon">🕌</div>
+          <div>
+            <div class="sidebar-brand">ইবনে খালদুন</div>
+            <div class="sidebar-sub">Admin Dashboard</div>
+          </div>
+        </div>
       </div>
       <nav class="sidebar-nav">
         <div class="nav-section">Main</div>
@@ -295,12 +438,19 @@
     <!-- MAIN -->
     <div class="main">
       <div class="topbar">
-        <div style="display:flex;align-items:center;gap:12px">
+        <div style="display:flex;align-items:center;gap:14px">
           <button class="hamburger" onclick="toggleSidebar()">☰</button>
-          <div class="topbar-title" id="page-title">ড্যাশবোর্ড</div>
+          <div class="topbar-left">
+            <div class="topbar-greeting" id="page-title">ড্যাশবোর্ড</div>
+            <div class="topbar-sub" id="topbar-sub-text">স্বাগতম, আবার দেখা হলো!</div>
+          </div>
         </div>
         <div class="topbar-actions">
           <a href="https://ibn-khaldun-institute-ucpf.vercel.app/" target="_blank" class="btn btn-sm" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2)">🌐 ওয়েবসাইট</a>
+          <div class="topbar-user">
+            <div class="topbar-avatar" id="topbar-avatar-letter">A</div>
+            <span class="topbar-uname" id="topbar-uname-display">Admin</span>
+          </div>
         </div>
       </div>
 
@@ -311,14 +461,67 @@
           <div class="stats-grid" id="stats-grid">
             <div class="loading"><div class="spinner"></div><div>লোড হচ্ছে...</div></div>
           </div>
-          <div class="card">
-            <div class="card-header"><h3>সাম্প্রতিক এনরোলমেন্ট</h3></div>
-            <div class="card-body">
-              <table><thead><tr>
-                <th>নাম</th><th>কোর্স</th><th>পরিমাণ</th><th>স্ট্যাটাস</th>
-              </tr></thead>
-              <tbody id="recent-enrollments"><tr><td colspan="4" class="loading">লোড হচ্ছে...</td></tr></tbody>
-              </table>
+          <div class="dashboard-grid">
+            <div>
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-header-left">
+                    <h3>সাম্প্রতিক এনরোলমেন্ট</h3>
+                    <span class="card-subtitle">সর্বশেষ ভর্তি কার্যক্রম</span>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <table><thead><tr>
+                    <th>নাম</th><th>কোর্স</th><th>পরিমাণ</th><th>স্ট্যাটাস</th>
+                  </tr></thead>
+                  <tbody id="recent-enrollments"><tr><td colspan="4" class="loading">লোড হচ্ছে...</td></tr></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-header-left">
+                    <h3>দ্রুত লিঙ্ক</h3>
+                    <span class="card-subtitle">শিডিউল ও কার্যক্রম</span>
+                  </div>
+                </div>
+                <div class="schedule-list">
+                  <div class="schedule-item" onclick="navTo('courses')" style="cursor:pointer">
+                    <div class="schedule-dot yellow">📚</div>
+                    <div class="schedule-info">
+                      <div class="schedule-title">কোর্স ম্যানেজমেন্ট</div>
+                      <div class="schedule-date">সব কোর্স দেখুন ও পরিচালনা করুন</div>
+                    </div>
+                    <div class="schedule-arrow">›</div>
+                  </div>
+                  <div class="schedule-item" onclick="navTo('enrollments')" style="cursor:pointer">
+                    <div class="schedule-dot blue">📋</div>
+                    <div class="schedule-info">
+                      <div class="schedule-title">এনরোলমেন্ট</div>
+                      <div class="schedule-date">ভর্তি অনুরোধ পর্যালোচনা করুন</div>
+                    </div>
+                    <div class="schedule-arrow">›</div>
+                  </div>
+                  <div class="schedule-item" onclick="navTo('notices')" style="cursor:pointer">
+                    <div class="schedule-dot orange">📢</div>
+                    <div class="schedule-info">
+                      <div class="schedule-title">নোটিশ বোর্ড</div>
+                      <div class="schedule-date">নতুন নোটিশ প্রকাশ করুন</div>
+                    </div>
+                    <div class="schedule-arrow">›</div>
+                  </div>
+                  <div class="schedule-item" onclick="navTo('instructors')" style="cursor:pointer">
+                    <div class="schedule-dot green">👨‍🏫</div>
+                    <div class="schedule-info">
+                      <div class="schedule-title">ইন্সট্রাক্টর</div>
+                      <div class="schedule-date">শিক্ষক তালিকা ব্যবস্থাপনা</div>
+                    </div>
+                    <div class="schedule-arrow">›</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -674,6 +877,8 @@ function showApp(username) {
   document.getElementById('app').style.display = 'block';
   document.getElementById('admin-name-display').textContent = username || 'Admin';
   document.getElementById('admin-avatar-letter').textContent = (username || 'A')[0].toUpperCase();
+  document.getElementById('topbar-uname-display').textContent = username || 'Admin';
+  document.getElementById('topbar-avatar-letter').textContent = (username || 'A')[0].toUpperCase();
   loadDashboard();
 }
 
@@ -722,28 +927,46 @@ async function loadDashboard() {
   try {
     const stats = await api('GET', '/api/admin/stats');
     document.getElementById('stats-grid').innerHTML = `
-      <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(245,197,24,0.15)">📚</div>
+      <div class="stat-card card-yellow">
+        <div class="stat-card-top">
+          <div class="stat-icon yellow">📚</div>
+          <span class="stat-trend up">+Active</span>
+        </div>
         <div class="stat-info"><h3>${stats.courses}</h3><p>মোট কোর্স</p></div>
       </div>
-      <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(59,130,246,0.15)">👨‍🏫</div>
+      <div class="stat-card card-blue">
+        <div class="stat-card-top">
+          <div class="stat-icon blue">👨‍🏫</div>
+          <span class="stat-trend up">+Active</span>
+        </div>
         <div class="stat-info"><h3>${stats.instructors}</h3><p>ইন্সট্রাক্টর</p></div>
       </div>
-      <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(34,197,94,0.15)">📋</div>
+      <div class="stat-card card-green">
+        <div class="stat-card-top">
+          <div class="stat-icon green">📋</div>
+          <span class="stat-trend up">▲ Total</span>
+        </div>
         <div class="stat-info"><h3>${stats.enrollments}</h3><p>মোট এনরোলমেন্ট</p></div>
       </div>
-      <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(249,115,22,0.15)">⏳</div>
+      <div class="stat-card card-orange">
+        <div class="stat-card-top">
+          <div class="stat-icon orange">⏳</div>
+          <span class="stat-trend down">Pending</span>
+        </div>
         <div class="stat-info"><h3>${stats.pendingEnrollments}</h3><p>পেন্ডিং</p></div>
       </div>
-      <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(245,197,24,0.15)">💰</div>
+      <div class="stat-card card-yellow">
+        <div class="stat-card-top">
+          <div class="stat-icon yellow">💰</div>
+          <span class="stat-trend up">▲ Revenue</span>
+        </div>
         <div class="stat-info"><h3>৳${(stats.revenue||0).toLocaleString()}</h3><p>মোট আয়</p></div>
       </div>
-      <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(139,92,246,0.15)">💬</div>
+      <div class="stat-card card-teal">
+        <div class="stat-card-top">
+          <div class="stat-icon teal">💬</div>
+          <span class="stat-trend up">+Reviews</span>
+        </div>
         <div class="stat-info"><h3>${stats.testimonials}</h3><p>রিভিউ</p></div>
       </div>
     `;
