@@ -445,9 +445,8 @@ async function ensureAdminExists() {
     if (count === 0) {
       const username = process.env.ADMIN_USERNAME || 'admin';
       const password = process.env.ADMIN_PASSWORD || 'admin123';
-      const email    = process.env.ADMIN_EMAIL    || '';
       const hashed   = await bcrypt.hash(password, 10);
-      await Admin.create({ username, password: hashed, email });
+      await Admin.create({ username, password: hashed });
       console.log(`✅ Admin তৈরি হয়েছে — username: "${username}"`);
     } else {
       console.log('ℹ️  Admin ইতিমধ্যে বিদ্যমান');

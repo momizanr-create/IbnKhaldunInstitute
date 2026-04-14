@@ -1301,9 +1301,8 @@ textarea{resize:vertical;min-height:90px}
 // ============================================================
 // CONFIG
 // ============================================================
-const API = window.location.hostname === 'localhost'
-  ? 'http://localhost:5000/api'
-  : 'https://ibn-khaldun-backend.onrender.com/api'; // ← আপনার Render URL দিন
+// যেকোনো server-এ কাজ করবে — localhost, Render, বা অন্য যেকোনো host
+const API = window.location.origin + '/api';
 let token = localStorage.getItem('admin_token') || '';
 let adminUser = localStorage.getItem('admin_user') || 'Admin';
 let mediaHistory = JSON.parse(localStorage.getItem('media_history') || '[]');
