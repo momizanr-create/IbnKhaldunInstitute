@@ -1,22 +1,23 @@
 // ============================================================
 // Ibn Khaldun Institute — Backend Server
 // Node.js + Express + MongoDB + Cloudinary
+// Deploy on: Render.com
 // ============================================================
 
 require('dotenv').config();
 
-const express = require('express');
+const express  = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
-const multer = require('multer');
+const cors     = require('cors');
+const multer   = require('multer');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const path = require('path');
-const jwt = require('jsonwebtoken');
+const path   = require('path');
+const jwt    = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-const app = express();
-const PORT = process.env.PORT || 5000;
+const app        = express();
+const PORT       = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'ibn_khaldun_secret_2024';
 
 // ── Cloudinary Config ──
@@ -26,139 +27,124 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// ── Middleware ──
-app.use(cors({ origin: '*' }));
+// ── CORS — Vercel frontend + localhost উভয়কে allow ──
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5000',
+  'http://127.0.0.1:5500',
+  'https://ibn-khaldun-institute.vercel.app',
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // Postman / direct call
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    callback(new Error('CORS: origin not allowed — ' + origin));
+  },
+  credentials: true,
+}));
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-
-// ── Serve static files ──
-app.use('/frontend', express.static(path.join(__dirname, '../frontend')));
-app.use('/admin', express.static(path.join(__dirname, '../admin_panel')));
 
 // ── Cloudinary Multer Storage ──
 const imageStorage = new CloudinaryStorage({
   cloudinary,
-  params: { folder: 'ibn-khaldun', allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'] },
+  params: {
+    folder: 'ibn-khaldun',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'],
+  },
 });
-const upload = multer({ storage: imageStorage });
-const memUpload = multer({ storage: multer.memoryStorage() });
+const upload    = multer({ storage: imageStorage });
 
 // ============================================================
 // SCHEMAS
 // ============================================================
 
-// Admin
 const adminSchema = new mongoose.Schema({
-  username: { type: String, unique: true },
-  password: String,
-  email: String,
+  username:  { type: String, unique: true },
+  password:  String,
   createdAt: { type: Date, default: Date.now },
 });
 const Admin = mongoose.model('Admin', adminSchema);
 
-// Course
 const courseSchema = new mongoose.Schema({
-  title: String,
-  slug: { type: String, unique: true },
-  category: String,
-  instructor: String,
-  price: Number,
+  title:         String,
+  slug:          { type: String, unique: true },
+  category:      String,
+  instructor:    String,
+  price:         Number,
   originalPrice: Number,
-  discount: Number,
-  description: String,
-  shortDesc: String,
-  thumbnail: String,
-  previewVideo: String,
-  duration: String,
-  lessons: Number,
-  students: { type: Number, default: 0 },
-  rating: { type: Number, default: 4.5 },
-  level: { type: String, default: 'সকলের জন্য' },
-  language: { type: String, default: 'বাংলা' },
-  tags: [String],
+  discount:      Number,
+  description:   String,
+  shortDesc:     String,
+  thumbnail:     String,
+  previewVideo:  String,
+  duration:      String,
+  lessons:       Number,
+  students:      { type: Number, default: 0 },
+  rating:        { type: Number, default: 4.5 },
+  level:         { type: String, default: 'সকলের জন্য' },
+  language:      { type: String, default: 'বাংলা' },
+  tags:          [String],
   curriculum: [{
     sectionTitle: String,
     lessons: [{
-      title: String,
-      duration: String,
-      videoId: String,
-      isFree: Boolean,
-    }]
+      title: String, duration: String, videoId: String, isFree: Boolean,
+    }],
   }],
-  featured: { type: Boolean, default: false },
+  featured:  { type: Boolean, default: false },
   published: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
 const Course = mongoose.model('Course', courseSchema);
 
-// Instructor
 const instructorSchema = new mongoose.Schema({
-  name: String,
-  slug: String,
-  title: String,
-  bio: String,
-  photo: String,
+  name: String, slug: String, title: String, bio: String, photo: String,
   specializations: [String],
   students: { type: Number, default: 0 },
-  courses: { type: Number, default: 0 },
-  rating: { type: Number, default: 4.8 },
-  social: {
-    facebook: String,
-    twitter: String,
-    linkedin: String,
-    youtube: String,
-  },
+  courses:  { type: Number, default: 0 },
+  rating:   { type: Number, default: 4.8 },
+  social: { facebook: String, twitter: String, linkedin: String, youtube: String },
   published: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now },
 });
 const Instructor = mongoose.model('Instructor', instructorSchema);
 
-// Testimonial
 const testimonialSchema = new mongoose.Schema({
-  name: String,
-  role: String,
-  text: String,
-  rating: { type: Number, default: 5 },
-  avatar: String,
+  name: String, role: String, text: String,
+  rating:    { type: Number, default: 5 },
+  avatar:    String,
   published: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now },
 });
 const Testimonial = mongoose.model('Testimonial', testimonialSchema);
 
-// Notice / Popup
 const noticeSchema = new mongoose.Schema({
-  title: String,
-  body: String,
-  imageUrl: String,
-  ctaText: String,
-  ctaLink: String,
-  active: { type: Boolean, default: true },
-  startDate: Date,
-  endDate: Date,
+  title: String, body: String, imageUrl: String, ctaText: String, ctaLink: String,
+  active:    { type: Boolean, default: true },
+  startDate: Date, endDate: Date,
   createdAt: { type: Date, default: Date.now },
 });
 const Notice = mongoose.model('Notice', noticeSchema);
 
-// Site Settings
 const settingsSchema = new mongoose.Schema({
-  key: { type: String, unique: true },
-  value: mongoose.Schema.Types.Mixed,
+  key:       { type: String, unique: true },
+  value:     mongoose.Schema.Types.Mixed,
   updatedAt: { type: Date, default: Date.now },
 });
 const Settings = mongoose.model('Settings', settingsSchema);
 
-// Enrollment
 const enrollmentSchema = new mongoose.Schema({
-  studentName: String,
-  studentEmail: String,
-  studentPhone: String,
-  courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
-  courseTitle: String,
-  amount: Number,
+  studentName: String, studentEmail: String, studentPhone: String,
+  courseId:      { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
+  courseTitle:   String,
+  amount:        Number,
   paymentMethod: String,
   transactionId: String,
-  status: { type: String, default: 'pending' }, // pending, approved, rejected
+  status:    { type: String, default: 'pending' },
   createdAt: { type: Date, default: Date.now },
 });
 const Enrollment = mongoose.model('Enrollment', enrollmentSchema);
@@ -178,57 +164,80 @@ function authMiddleware(req, res, next) {
 }
 
 // ============================================================
+// ROUTES — HEALTH
+// ============================================================
+app.get('/', (req, res) =>
+  res.json({ status: 'ok', message: 'Ibn Khaldun Institute API ✅', time: new Date().toISOString() })
+);
+app.get('/api/health', (req, res) =>
+  res.json({ status: 'ok', time: new Date().toISOString() })
+);
+
+// ============================================================
 // ROUTES — AUTH
 // ============================================================
 app.post('/api/admin/login', async (req, res) => {
-  const { username, password } = req.body;
-  const admin = await Admin.findOne({ username });
-  if (!admin) return res.status(401).json({ error: 'Invalid credentials' });
-  const ok = await bcrypt.compare(password, admin.password);
-  if (!ok) return res.status(401).json({ error: 'Invalid credentials' });
-  const token = jwt.sign({ id: admin._id, username }, JWT_SECRET, { expiresIn: '7d' });
-  res.json({ token, username });
+  try {
+    const { username, password } = req.body;
+    if (!username || !password)
+      return res.status(400).json({ error: 'username এবং password দিন' });
+    const admin = await Admin.findOne({ username });
+    if (!admin) return res.status(401).json({ error: 'Invalid credentials' });
+    const ok = await bcrypt.compare(password, admin.password);
+    if (!ok) return res.status(401).json({ error: 'Invalid credentials' });
+    const token = jwt.sign({ id: admin._id, username }, JWT_SECRET, { expiresIn: '7d' });
+    res.json({ token, username });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.post('/api/admin/setup', async (req, res) => {
-  const count = await Admin.countDocuments();
-  if (count > 0) return res.status(400).json({ error: 'Admin already exists' });
-  const hashed = await bcrypt.hash(req.body.password || 'admin123', 10);
-  const admin = new Admin({ username: req.body.username || 'admin', password: hashed, email: req.body.email || '' });
-  await admin.save();
-  res.json({ message: 'Admin created' });
+  try {
+    const count = await Admin.countDocuments();
+    if (count > 0) return res.status(400).json({ error: 'Admin already exists' });
+    const hashed = await bcrypt.hash(req.body.password || 'admin123', 10);
+    await Admin.create({ username: req.body.username || 'admin', password: hashed });
+    res.json({ message: 'Admin created' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ============================================================
-// ROUTES — COURSES (Public)
+// ROUTES — COURSES
 // ============================================================
 app.get('/api/courses', async (req, res) => {
-  const { category, featured, limit } = req.query;
-  let query = { published: true };
-  if (category) query.category = category;
-  if (featured) query.featured = true;
-  let q = Course.find(query).sort({ createdAt: -1 });
-  if (limit) q = q.limit(parseInt(limit));
-  res.json(await q);
+  try {
+    const { category, featured, limit } = req.query;
+    let query = { published: true };
+    if (category) query.category = category;
+    if (featured)  query.featured = true;
+    let q = Course.find(query).sort({ createdAt: -1 });
+    if (limit) q = q.limit(parseInt(limit));
+    res.json(await q);
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.get('/api/courses/:slug', async (req, res) => {
-  const course = await Course.findOne({ slug: req.params.slug });
-  if (!course) return res.status(404).json({ error: 'Not found' });
-  res.json(course);
+  try {
+    const course = await Course.findOne({ slug: req.params.slug });
+    if (!course) return res.status(404).json({ error: 'Not found' });
+    res.json(course);
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.get('/api/admin/courses', authMiddleware, async (req, res) => {
-  res.json(await Course.find().sort({ createdAt: -1 }));
+  try { res.json(await Course.find().sort({ createdAt: -1 })); }
+  catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.post('/api/admin/courses', authMiddleware, upload.single('thumbnail'), async (req, res) => {
   try {
     const data = { ...req.body };
     if (req.file) data.thumbnail = req.file.path;
-    if (data.tags && typeof data.tags === 'string') data.tags = data.tags.split(',').map(t => t.trim());
-    if (data.curriculum && typeof data.curriculum === 'string') data.curriculum = JSON.parse(data.curriculum);
-    data.slug = data.slug || data.title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+    if (data.tags && typeof data.tags === 'string')
+      data.tags = data.tags.split(',').map(t => t.trim());
+    if (data.curriculum && typeof data.curriculum === 'string')
+      data.curriculum = JSON.parse(data.curriculum);
+    if (!data.slug)
+      data.slug = data.title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
     const course = new Course(data);
     await course.save();
     res.json(course);
@@ -239,27 +248,31 @@ app.put('/api/admin/courses/:id', authMiddleware, upload.single('thumbnail'), as
   try {
     const data = { ...req.body, updatedAt: new Date() };
     if (req.file) data.thumbnail = req.file.path;
-    if (data.tags && typeof data.tags === 'string') data.tags = data.tags.split(',').map(t => t.trim());
-    if (data.curriculum && typeof data.curriculum === 'string') data.curriculum = JSON.parse(data.curriculum);
+    if (data.tags && typeof data.tags === 'string')
+      data.tags = data.tags.split(',').map(t => t.trim());
+    if (data.curriculum && typeof data.curriculum === 'string')
+      data.curriculum = JSON.parse(data.curriculum);
     const course = await Course.findByIdAndUpdate(req.params.id, data, { new: true });
     res.json(course);
   } catch (e) { res.status(400).json({ error: e.message }); }
 });
 
 app.delete('/api/admin/courses/:id', authMiddleware, async (req, res) => {
-  await Course.findByIdAndDelete(req.params.id);
-  res.json({ message: 'Deleted' });
+  try { await Course.findByIdAndDelete(req.params.id); res.json({ message: 'Deleted' }); }
+  catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ============================================================
 // ROUTES — INSTRUCTORS
 // ============================================================
 app.get('/api/instructors', async (req, res) => {
-  res.json(await Instructor.find({ published: true }).sort({ createdAt: -1 }));
+  try { res.json(await Instructor.find({ published: true }).sort({ createdAt: -1 })); }
+  catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.get('/api/admin/instructors', authMiddleware, async (req, res) => {
-  res.json(await Instructor.find().sort({ createdAt: -1 }));
+  try { res.json(await Instructor.find().sort({ createdAt: -1 })); }
+  catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.post('/api/admin/instructors', authMiddleware, upload.single('photo'), async (req, res) => {
@@ -287,158 +300,174 @@ app.put('/api/admin/instructors/:id', authMiddleware, upload.single('photo'), as
 });
 
 app.delete('/api/admin/instructors/:id', authMiddleware, async (req, res) => {
-  await Instructor.findByIdAndDelete(req.params.id);
-  res.json({ message: 'Deleted' });
+  try { await Instructor.findByIdAndDelete(req.params.id); res.json({ message: 'Deleted' }); }
+  catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ============================================================
 // ROUTES — TESTIMONIALS
 // ============================================================
 app.get('/api/testimonials', async (req, res) => {
-  res.json(await Testimonial.find({ published: true }).sort({ createdAt: -1 }));
+  try { res.json(await Testimonial.find({ published: true }).sort({ createdAt: -1 })); }
+  catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.get('/api/admin/testimonials', authMiddleware, async (req, res) => {
-  res.json(await Testimonial.find().sort({ createdAt: -1 }));
+  try { res.json(await Testimonial.find().sort({ createdAt: -1 })); }
+  catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.post('/api/admin/testimonials', authMiddleware, upload.single('avatar'), async (req, res) => {
-  const data = { ...req.body };
-  if (req.file) data.avatar = req.file.path;
-  const t = new Testimonial(data);
-  await t.save();
-  res.json(t);
+  try {
+    const data = { ...req.body };
+    if (req.file) data.avatar = req.file.path;
+    const t = new Testimonial(data);
+    await t.save();
+    res.json(t);
+  } catch (e) { res.status(400).json({ error: e.message }); }
 });
 
 app.put('/api/admin/testimonials/:id', authMiddleware, upload.single('avatar'), async (req, res) => {
-  const data = { ...req.body };
-  if (req.file) data.avatar = req.file.path;
-  const t = await Testimonial.findByIdAndUpdate(req.params.id, data, { new: true });
-  res.json(t);
+  try {
+    const data = { ...req.body };
+    if (req.file) data.avatar = req.file.path;
+    const t = await Testimonial.findByIdAndUpdate(req.params.id, data, { new: true });
+    res.json(t);
+  } catch (e) { res.status(400).json({ error: e.message }); }
 });
 
 app.delete('/api/admin/testimonials/:id', authMiddleware, async (req, res) => {
-  await Testimonial.findByIdAndDelete(req.params.id);
-  res.json({ message: 'Deleted' });
+  try { await Testimonial.findByIdAndDelete(req.params.id); res.json({ message: 'Deleted' }); }
+  catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ============================================================
-// ROUTES — NOTICES/POPUPS
+// ROUTES — NOTICES
 // ============================================================
 app.get('/api/notices', async (req, res) => {
-  res.json(await Notice.find({ active: true }));
+  try { res.json(await Notice.find({ active: true })); }
+  catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.get('/api/admin/notices', authMiddleware, async (req, res) => {
-  res.json(await Notice.find().sort({ createdAt: -1 }));
+  try { res.json(await Notice.find().sort({ createdAt: -1 })); }
+  catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.post('/api/admin/notices', authMiddleware, upload.single('image'), async (req, res) => {
-  const data = { ...req.body };
-  if (req.file) data.imageUrl = req.file.path;
-  const n = new Notice(data);
-  await n.save();
-  res.json(n);
+  try {
+    const data = { ...req.body };
+    if (req.file) data.imageUrl = req.file.path;
+    const n = new Notice(data);
+    await n.save();
+    res.json(n);
+  } catch (e) { res.status(400).json({ error: e.message }); }
 });
 
 app.put('/api/admin/notices/:id', authMiddleware, upload.single('image'), async (req, res) => {
-  const data = { ...req.body };
-  if (req.file) data.imageUrl = req.file.path;
-  const n = await Notice.findByIdAndUpdate(req.params.id, data, { new: true });
-  res.json(n);
+  try {
+    const data = { ...req.body };
+    if (req.file) data.imageUrl = req.file.path;
+    const n = await Notice.findByIdAndUpdate(req.params.id, data, { new: true });
+    res.json(n);
+  } catch (e) { res.status(400).json({ error: e.message }); }
 });
 
 app.delete('/api/admin/notices/:id', authMiddleware, async (req, res) => {
-  await Notice.findByIdAndDelete(req.params.id);
-  res.json({ message: 'Deleted' });
+  try { await Notice.findByIdAndDelete(req.params.id); res.json({ message: 'Deleted' }); }
+  catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ============================================================
-// ROUTES — SITE SETTINGS
+// ROUTES — SETTINGS
 // ============================================================
 app.get('/api/settings', async (req, res) => {
-  const settings = await Settings.find();
-  const obj = {};
-  settings.forEach(s => { obj[s.key] = s.value; });
-  res.json(obj);
+  try {
+    const settings = await Settings.find();
+    const obj = {};
+    settings.forEach(s => { obj[s.key] = s.value; });
+    res.json(obj);
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.post('/api/admin/settings', authMiddleware, async (req, res) => {
-  const updates = req.body;
-  for (const [key, value] of Object.entries(updates)) {
-    await Settings.findOneAndUpdate({ key }, { key, value, updatedAt: new Date() }, { upsert: true });
-  }
-  res.json({ message: 'Settings saved' });
+  try {
+    for (const [key, value] of Object.entries(req.body)) {
+      await Settings.findOneAndUpdate({ key }, { key, value, updatedAt: new Date() }, { upsert: true });
+    }
+    res.json({ message: 'Settings saved' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.post('/api/admin/settings/upload', authMiddleware, upload.single('file'), async (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'No file' });
-  res.json({ url: req.file.path });
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file' });
+    res.json({ url: req.file.path });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ============================================================
 // ROUTES — ENROLLMENTS
 // ============================================================
 app.post('/api/enrollments', async (req, res) => {
-  const e = new Enrollment(req.body);
-  await e.save();
-  res.json({ message: 'Enrollment submitted', id: e._id });
+  try {
+    const e = new Enrollment(req.body);
+    await e.save();
+    res.json({ message: 'Enrollment submitted', id: e._id });
+  } catch (e) { res.status(400).json({ error: e.message }); }
 });
 
 app.get('/api/admin/enrollments', authMiddleware, async (req, res) => {
-  const { status } = req.query;
-  let query = {};
-  if (status) query.status = status;
-  res.json(await Enrollment.find(query).sort({ createdAt: -1 }));
+  try {
+    const { status } = req.query;
+    let query = {};
+    if (status) query.status = status;
+    res.json(await Enrollment.find(query).sort({ createdAt: -1 }));
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.put('/api/admin/enrollments/:id', authMiddleware, async (req, res) => {
-  const e = await Enrollment.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  res.json(e);
+  try {
+    const e = await Enrollment.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(e);
+  } catch (e) { res.status(400).json({ error: e.message }); }
 });
 
 app.delete('/api/admin/enrollments/:id', authMiddleware, async (req, res) => {
-  await Enrollment.findByIdAndDelete(req.params.id);
-  res.json({ message: 'Deleted' });
+  try { await Enrollment.findByIdAndDelete(req.params.id); res.json({ message: 'Deleted' }); }
+  catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ============================================================
-// ROUTES — DASHBOARD STATS
+// ROUTES — STATS
 // ============================================================
 app.get('/api/admin/stats', authMiddleware, async (req, res) => {
-  const [courses, instructors, testimonials, enrollments] = await Promise.all([
-    Course.countDocuments(),
-    Instructor.countDocuments(),
-    Testimonial.countDocuments(),
-    Enrollment.countDocuments(),
-  ]);
-  const pendingEnrollments = await Enrollment.countDocuments({ status: 'pending' });
-  const totalRevenue = await Enrollment.aggregate([
-    { $match: { status: 'approved' } },
-    { $group: { _id: null, total: { $sum: '$amount' } } }
-  ]);
-  res.json({
-    courses,
-    instructors,
-    testimonials,
-    enrollments,
-    pendingEnrollments,
-    revenue: totalRevenue[0]?.total || 0,
-  });
+  try {
+    const [courses, instructors, testimonials, enrollments] = await Promise.all([
+      Course.countDocuments(), Instructor.countDocuments(),
+      Testimonial.countDocuments(), Enrollment.countDocuments(),
+    ]);
+    const pendingEnrollments = await Enrollment.countDocuments({ status: 'pending' });
+    const totalRevenue = await Enrollment.aggregate([
+      { $match: { status: 'approved' } },
+      { $group: { _id: null, total: { $sum: '$amount' } } },
+    ]);
+    res.json({ courses, instructors, testimonials, enrollments, pendingEnrollments,
+      revenue: totalRevenue[0]?.total || 0 });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// ── Upload image (standalone) ──
+// ── Upload image ──
 app.post('/api/admin/upload', authMiddleware, upload.single('file'), async (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-  res.json({ url: req.file.path, public_id: req.file.filename });
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    res.json({ url: req.file.path, public_id: req.file.filename });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// ── Root ──
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/index.html'));
-});
-
-// ── Auto-create Admin from .env on first run ──
+// ============================================================
+// AUTO-CREATE ADMIN (first run)
+// ============================================================
 async function ensureAdminExists() {
   try {
     const count = await Admin.countDocuments();
@@ -456,16 +485,13 @@ async function ensureAdminExists() {
   }
 }
 
-// ── MongoDB Connect & Start Server ──
-// NOTE: useNewUrlParser & useUnifiedTopology removed — deprecated since Mongoose/Driver v4+
+// ============================================================
+// START SERVER
+// ============================================================
 mongoose.connect(process.env.MONGODB_URI)
   .then(async () => {
     console.log('✅ MongoDB connected');
     await ensureAdminExists();
-    app.listen(PORT, () => {
-      console.log(`🚀 Ibn Khaldun Institute server running on http://localhost:${PORT}`);
-      console.log(`📋 Admin Panel: http://localhost:${PORT}/admin`);
-      console.log(`🌐 Frontend: http://localhost:${PORT}/frontend`);
-    });
+    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
   })
   .catch(err => console.error('❌ MongoDB error:', err));
