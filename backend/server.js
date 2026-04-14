@@ -3,6 +3,8 @@
 // Node.js + Express + MongoDB + Cloudinary
 // ============================================================
 
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -19,16 +21,15 @@ const JWT_SECRET = process.env.JWT_SECRET || 'ibn_khaldun_secret_2024';
 
 // ── Cloudinary Config ──
 cloudinary.config({
-  cloud_name: 'dtwodm2tk',
-  api_key: '645534351656872',
-  api_secret: 'GlD8B8hwIBaZGm2sEUWxoefW5Kg',
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key:    process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 // ── MongoDB ──
-mongoose.connect('mongodb+srv://momizanr_db_user:sPW6ojToMJB8GPrY@cluster0.crr3jw6.mongodb.net/IbnKhaldunInstitute?appName=Cluster0', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => console.log('✅ MongoDB connected'))
+// NOTE: useNewUrlParser & useUnifiedTopology removed — deprecated since Mongoose/Driver v4+
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log('✅ MongoDB connected'))
   .catch(err => console.error('❌ MongoDB error:', err));
 
 // ── Middleware ──
@@ -72,8 +73,8 @@ const courseSchema = new mongoose.Schema({
   discount: Number,
   description: String,
   shortDesc: String,
-  thumbnail: String,       // Cloudinary URL
-  previewVideo: String,    // YouTube ID or URL
+  thumbnail: String,
+  previewVideo: String,
   duration: String,
   lessons: Number,
   students: { type: Number, default: 0 },
@@ -223,9 +224,6 @@ app.get('/api/courses/:slug', async (req, res) => {
   res.json(course);
 });
 
-// ============================================================
-// ROUTES — COURSES (Admin)
-// ============================================================
 app.get('/api/admin/courses', authMiddleware, async (req, res) => {
   res.json(await Course.find().sort({ createdAt: -1 }));
 });
@@ -372,14 +370,13 @@ app.get('/api/settings', async (req, res) => {
 });
 
 app.post('/api/admin/settings', authMiddleware, async (req, res) => {
-  const updates = req.body; // { key: value, ... }
+  const updates = req.body;
   for (const [key, value] of Object.entries(updates)) {
     await Settings.findOneAndUpdate({ key }, { key, value, updatedAt: new Date() }, { upsert: true });
   }
   res.json({ message: 'Settings saved' });
 });
 
-// Upload image for settings (logo, hero bg, etc.)
 app.post('/api/admin/settings/upload', authMiddleware, upload.single('file'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file' });
   res.json({ url: req.file.path });
