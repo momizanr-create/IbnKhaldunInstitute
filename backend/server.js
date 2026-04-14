@@ -26,12 +26,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// ── MongoDB ──
-// NOTE: useNewUrlParser & useUnifiedTopology removed — deprecated since Mongoose/Driver v4+
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('✅ MongoDB connected'))
-  .catch(err => console.error('❌ MongoDB error:', err));
-
 // ── Middleware ──
 app.use(cors({ origin: '*' }));
 app.use(express.json({ limit: '10mb' }));
@@ -444,8 +438,35 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Ibn Khaldun Institute server running on http://localhost:${PORT}`);
-  console.log(`📋 Admin Panel: http://localhost:${PORT}/admin`);
-  console.log(`🌐 Frontend: http://localhost:${PORT}/frontend`);
-});
+// ── Auto-create Admin from .env on first run ──
+async function ensureAdminExists() {
+  try {
+    const count = await Admin.countDocuments();
+    if (count === 0) {
+      const username = process.env.ADMIN_USERNAME || 'admin';
+      const password = process.env.ADMIN_PASSWORD || 'admin123';
+      const email    = process.env.ADMIN_EMAIL    || '';
+      const hashed   = await bcrypt.hash(password, 10);
+      await Admin.create({ username, password: hashed, email });
+      console.log(`✅ Admin তৈরি হয়েছে — username: "${username}"`);
+    } else {
+      console.log('ℹ️  Admin ইতিমধ্যে বিদ্যমান');
+    }
+  } catch (err) {
+    console.error('❌ Admin তৈরিতে সমস্যা:', err.message);
+  }
+}
+
+// ── MongoDB Connect & Start Server ──
+// NOTE: useNewUrlParser & useUnifiedTopology removed — deprecated since Mongoose/Driver v4+
+mongoose.connect(process.env.MONGODB_URI)
+  .then(async () => {
+    console.log('✅ MongoDB connected');
+    await ensureAdminExists();
+    app.listen(PORT, () => {
+      console.log(`🚀 Ibn Khaldun Institute server running on http://localhost:${PORT}`);
+      console.log(`📋 Admin Panel: http://localhost:${PORT}/admin`);
+      console.log(`🌐 Frontend: http://localhost:${PORT}/frontend`);
+    });
+  })
+  .catch(err => console.error('❌ MongoDB error:', err));
