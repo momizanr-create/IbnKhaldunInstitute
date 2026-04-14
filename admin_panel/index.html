@@ -1,3 +1,4 @@
+<!-- admin_panel/index.html -->
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -114,7 +115,7 @@
     }
     .sidebar-brand { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.2; }
     .sidebar-sub   { font-size: 11px; color: var(--text2); margin-top: 2px; }
-    .sidebar-nav   { flex: 1; padding: 14px 10px; overflow-y: auto; }
+    .sidebar-nav   { flex: 1; padding: 14px 10px; overflow-y: auto; max-height: calc(100vh - 140px); }
     .nav-section   { padding: 10px 10px 5px; font-size: 10px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 1.5px; }
     .nav-item {
       display: flex; align-items: center; gap: 11px;
@@ -413,8 +414,18 @@
       <nav class="sidebar-nav">
         <div class="nav-section">Main</div>
         <div class="nav-item active" onclick="navTo('dashboard')"><span class="icon">📊</span> ড্যাশবোর্ড</div>
+        <div class="nav-section">সাইট কাস্টমাইজ</div>
+        <div class="nav-item" onclick="navTo('site-settings')"><span class="icon">🌐</span> সাইট সেটিংস</div>
+        <div class="nav-item" onclick="navTo('navigation-mgr')"><span class="icon">🔗</span> নেভিগেশন</div>
+        <div class="nav-item" onclick="navTo('hero-section')"><span class="icon">🖼️</span> হিরো সেকশন</div>
+        <div class="nav-item" onclick="navTo('featured-courses-mgr')"><span class="icon">⭐</span> ফিচার্ড কোর্স</div>
+        <div class="nav-item" onclick="navTo('cta-section')"><span class="icon">📣</span> CTA সেকশন</div>
+        <div class="nav-item" onclick="navTo('welcome-popup')"><span class="icon">🎉</span> ওয়েলকাম পপআপ</div>
+        <div class="nav-item" onclick="navTo('footer-mgr')"><span class="icon">🦶</span> ফুটার</div>
+        <div class="nav-item" onclick="navTo('theme-settings')"><span class="icon">🎨</span> থিম / রঙ</div>
         <div class="nav-section">Content</div>
         <div class="nav-item" onclick="navTo('courses')"><span class="icon">📚</span> কোর্স</div>
+        <div class="nav-item" onclick="navTo('course-detail-mgr')"><span class="icon">📝</span> কোর্স ডিটেইল</div>
         <div class="nav-item" onclick="navTo('instructors')"><span class="icon">👨‍🏫</span> ইন্সট্রাক্টর</div>
         <div class="nav-item" onclick="navTo('testimonials')"><span class="icon">💬</span> রিভিউ</div>
         <div class="nav-item" onclick="navTo('notices')"><span class="icon">📢</span> নোটিশ</div>
@@ -640,6 +651,443 @@
           </div>
         </div>
 
+
+        <!-- ══════════════════════════════════════════════════
+             [১] সাইট সেটিংস
+        ══════════════════════════════════════════════════ -->
+        <div class="page" id="page-site-settings">
+          <div class="page-header"><h2>🌐 সাইট সেটিংস</h2><p>সাইটের মূল পরিচয় ও চেহারা নিয়ন্ত্রণ করুন</p></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+            <!-- Basic Info -->
+            <div class="card">
+              <div class="card-header"><h3>📋 মূল তথ্য</h3></div>
+              <div class="card-body" style="padding:20px">
+                <div class="field"><label>সাইটের টাইটেল</label><input id="ss-title" placeholder="ইবনে খালদুন ইনস্টিটিউট"/></div>
+                <div class="field"><label>ট্যাগলাইন</label><input id="ss-tagline" placeholder="অনলাইনে নতুন দক্ষতা অর্জন করুন"/></div>
+                <div class="field"><label>ফেভিকন URL</label><input id="ss-favicon" placeholder="https://..."/></div>
+                <div class="field"><label>হেডার হাইট (px)</label><input id="ss-header-h" placeholder="70" type="number"/></div>
+              </div>
+            </div>
+            <!-- Colors -->
+            <div class="card">
+              <div class="card-header"><h3>🎨 কালার সেটিংস</h3></div>
+              <div class="card-body" style="padding:20px">
+                <div class="field"><label>প্রাইমারি কালার (--primary)</label>
+                  <div style="display:flex;gap:8px;align-items:center">
+                    <input type="color" id="ss-primary-color" value="#F5C518" style="width:48px;height:40px;padding:2px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);cursor:pointer"/>
+                    <input id="ss-primary-hex" placeholder="#F5C518" style="flex:1;padding:11px 13px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:14px;outline:none"/>
+                  </div>
+                </div>
+                <div class="field"><label>সেকেন্ডারি / গ্রিন কালার (--Green)</label>
+                  <div style="display:flex;gap:8px;align-items:center">
+                    <input type="color" id="ss-green-color" value="#066144" style="width:48px;height:40px;padding:2px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);cursor:pointer"/>
+                    <input id="ss-green-hex" placeholder="#066144" style="flex:1;padding:11px 13px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:14px;outline:none"/>
+                  </div>
+                </div>
+                <div class="field"><label>প্রাইমারি ডার্ক (--primary-dark)</label>
+                  <div style="display:flex;gap:8px;align-items:center">
+                    <input type="color" id="ss-primarydark-color" value="#d4a90e" style="width:48px;height:40px;padding:2px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);cursor:pointer"/>
+                    <input id="ss-primarydark-hex" placeholder="#d4a90e" style="flex:1;padding:11px 13px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:14px;outline:none"/>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Logo -->
+            <div class="card" style="grid-column:1/-1">
+              <div class="card-header"><h3>🖼️ লোগো আপলোড</h3></div>
+              <div class="card-body" style="padding:20px">
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+                  <div class="field"><label>হেডার লোগো URL</label><input id="ss-logo-header" placeholder="https://..."/></div>
+                  <div class="field"><label>ফুটার লোগো URL</label><input id="ss-logo-footer" placeholder="https://..."/></div>
+                  <div class="field"><label>ফেভিকন URL</label><input id="ss-favicon2" placeholder="https://..."/></div>
+                </div>
+                <div id="ss-logo-preview" style="display:flex;gap:16px;margin-top:12px;align-items:center">
+                  <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;min-width:120px">
+                    <div style="font-size:11px;color:var(--text2);margin-bottom:8px">হেডার প্রিভিউ</div>
+                    <img id="ss-header-logo-img" src="" alt="Header Logo" style="max-height:40px;max-width:120px;object-fit:contain;display:none"/>
+                    <div id="ss-header-logo-placeholder" style="color:var(--text2);font-size:12px">URL দিন</div>
+                  </div>
+                  <div style="background:#1a1a1a;border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;min-width:120px">
+                    <div style="font-size:11px;color:var(--text2);margin-bottom:8px">ফুটার প্রিভিউ</div>
+                    <img id="ss-footer-logo-img" src="" alt="Footer Logo" style="max-height:40px;max-width:120px;object-fit:contain;display:none"/>
+                    <div id="ss-footer-logo-placeholder" style="color:var(--text2);font-size:12px">URL দিন</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:16px;display:flex;gap:10px">
+            <button class="btn btn-primary" onclick="saveSiteSettings()">💾 সংরক্ষণ করুন</button>
+            <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="loadSiteSettings()">🔄 রিলোড</button>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════
+             [২] নেভিগেশন ম্যানেজার
+        ══════════════════════════════════════════════════ -->
+        <div class="page" id="page-navigation-mgr">
+          <div class="page-header"><h2>🔗 নেভিগেশন</h2><p>নেভ লিংক ও বাটনের টেক্সট পরিবর্তন করুন</p></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+            <div class="card">
+              <div class="card-header">
+                <h3>📋 নেভ লিংক সমূহ</h3>
+                <button class="btn btn-primary btn-sm" onclick="addNavLink()">+ লিংক যোগ</button>
+              </div>
+              <div class="card-body" style="padding:16px">
+                <div id="nav-links-list"></div>
+                <p style="font-size:12px;color:var(--text2);margin-top:8px">💡 টেনে ক্রম পরিবর্তন করুন</p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3>🔘 অ্যাকশন বাটন</h3></div>
+              <div class="card-body" style="padding:16px">
+                <div class="field"><label>লগইন বাটন টেক্সট</label><input id="nav-login-text" placeholder="লগইন"/></div>
+                <div class="field"><label>লগইন বাটন লিঙ্ক</label><input id="nav-login-link" placeholder="#login"/></div>
+                <div class="field"><label>রেজিস্ট্রেশন বাটন টেক্সট</label><input id="nav-reg-text" placeholder="রেজিস্ট্রেশন"/></div>
+                <div class="field"><label>রেজিস্ট্রেশন বাটন লিঙ্ক</label><input id="nav-reg-link" placeholder="#register"/></div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:16px"><button class="btn btn-primary" onclick="saveNavigation()">💾 সংরক্ষণ করুন</button></div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════
+             [৩] হিরো সেকশন
+        ══════════════════════════════════════════════════ -->
+        <div class="page" id="page-hero-section">
+          <div class="page-header"><h2>🖼️ হিরো সেকশন</h2><p>ওয়েবসাইটের প্রধান ব্যানার এলাকা সম্পাদনা</p></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+            <!-- Left: Main Content -->
+            <div class="card">
+              <div class="card-header"><h3>📝 মূল কন্টেন্ট</h3></div>
+              <div class="card-body" style="padding:20px">
+                <div class="field"><label>ব্যাকগ্রাউন্ড ইমেজ URL</label><input id="hero-bg" placeholder="/frontend/images/nobobi.png"/></div>
+                <div class="field"><label>Eyebrow টেক্সট (ছোট উপরের লাইন)</label><input id="hero-eyebrow" placeholder="অনলাইন শিক্ষার নতুন অভিজ্ঞতা"/></div>
+                <div class="field"><label>H1 লাইন ১</label><input id="hero-h1-1" placeholder="ইসলামী জ্ঞান"/></div>
+                <div class="field"><label>H1 লাইন ২ (হাইলাইট)</label><input id="hero-h1-2" placeholder="অনলাইনে শিখুন"/></div>
+                <div class="field"><label>H1 লাইন ৩</label><input id="hero-h1-3" placeholder="যেকোনো জায়গা থেকে"/></div>
+                <div class="field"><label>সাবটাইটেল / বর্ণনা</label><textarea id="hero-sub" placeholder="বিশেষজ্ঞ ইন্সট্রাক্টরদের কাছ থেকে কুরআন, আরবি ও ইসলামী বিষয়ে জ্ঞান অর্জন করুন।"></textarea></div>
+                <div class="row2">
+                  <div class="field"><label>"আরও জানুন" বাটন টেক্সট</label><input id="hero-btn-text" placeholder="আরও জানুন"/></div>
+                  <div class="field"><label>বাটন লিঙ্ক</label><input id="hero-btn-link" placeholder="#courses"/></div>
+                </div>
+              </div>
+            </div>
+            <!-- Right: Stats + Cards -->
+            <div>
+              <div class="card" style="margin-bottom:20px">
+                <div class="card-header"><h3>📊 হিরো স্ট্যাটস</h3></div>
+                <div class="card-body" style="padding:20px">
+                  <div id="hero-stats-list">
+                    <div class="hero-stat-row" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+                      <input class="hero-stat-num" placeholder="৫০K+" style="padding:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"/>
+                      <input class="hero-stat-label" placeholder="শিক্ষার্থী" style="padding:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"/>
+                    </div>
+                    <div class="hero-stat-row" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+                      <input class="hero-stat-num" placeholder="১২০+" style="padding:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"/>
+                      <input class="hero-stat-label" placeholder="কোর্স" style="padding:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"/>
+                    </div>
+                    <div class="hero-stat-row" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+                      <input class="hero-stat-num" placeholder="৪.৯★" style="padding:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"/>
+                      <input class="hero-stat-label" placeholder="রেটিং" style="padding:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header">
+                  <h3>🃏 হিরো কার্ড (স্ক্রলিং)</h3>
+                  <button class="btn btn-primary btn-sm" onclick="addHeroCard()">+ কার্ড যোগ</button>
+                </div>
+                <div class="card-body" style="padding:16px">
+                  <div id="hero-cards-list"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:16px"><button class="btn btn-primary" onclick="saveHeroSection()">💾 সংরক্ষণ করুন</button></div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════
+             [৪] ফিচার্ড কোর্স ম্যানেজার
+        ══════════════════════════════════════════════════ -->
+        <div class="page" id="page-featured-courses-mgr">
+          <div class="page-header"><h2>⭐ ফিচার্ড কোর্স সেকশন</h2><p>হোমপেজের কোর্স কার্ড ও ট্যাব পরিচালনা</p></div>
+          <div class="card" style="margin-bottom:20px">
+            <div class="card-header"><h3>🏷️ সেকশন শিরোনাম ও ট্যাব</h3></div>
+            <div class="card-body" style="padding:20px">
+              <div class="row2">
+                <div class="field"><label>সেকশন শিরোনাম</label><input id="fc-section-title" placeholder="ফিচার্ড কোর্সসমূহ"/></div>
+                <div class="field"><label>সেকশন সাবটাইটেল</label><input id="fc-section-sub" placeholder="সেরা কোর্সগুলো বেছে নিন"/></div>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:8px">
+                <div class="field"><label>ট্যাব ১ (top)</label><input id="fc-tab-top" placeholder="সেরা বিক্রেতা"/></div>
+                <div class="field"><label>ট্যাব ২ (new)</label><input id="fc-tab-new" placeholder="নতুন কোর্সসমূহ"/></div>
+                <div class="field"><label>ট্যাব ৩ (free)</label><input id="fc-tab-free" placeholder="ফ্রি কোর্সসমূহ"/></div>
+                <div class="field"><label>ট্যাব ৪ (popular)</label><input id="fc-tab-popular" placeholder="জনপ্রিয়"/></div>
+                <div class="field"><label>ট্যাব ৫ (bundle)</label><input id="fc-tab-bundle" placeholder="বান্ডেল"/></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <h3>📚 কোর্স কার্ড (Featured)</h3>
+              <button class="btn btn-primary" onclick="openFeaturedCourseModal()">+ নতুন কার্ড</button>
+            </div>
+            <div class="card-body">
+              <table><thead><tr>
+                <th>ID/Slug</th><th>শিরোনাম</th><th>ইন্সট্রাক্টর</th><th>মূল্য</th><th>ট্যাব</th><th>ব্যাজ</th><th>অ্যাকশন</th>
+              </tr></thead>
+              <tbody id="featured-courses-tbody"><tr><td colspan="7" class="loading">লোড হচ্ছে...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+          <div style="margin-top:12px"><button class="btn btn-primary" onclick="saveFeaturedCoursesConfig()">💾 শিরোনাম/ট্যাব সংরক্ষণ</button></div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════
+             [৫] কোর্স ডিটেইল ম্যানেজার
+        ══════════════════════════════════════════════════ -->
+        <div class="page" id="page-course-detail-mgr">
+          <div class="page-header"><h2>📝 কোর্স ডিটেইল পেজ</h2><p>প্রতিটি কোর্সের বিস্তারিত তথ্য ও কারিকুলাম সম্পাদনা</p></div>
+          <div class="card" style="margin-bottom:20px">
+            <div class="card-header"><h3>🔍 কোর্স বেছে নিন</h3></div>
+            <div class="card-body" style="padding:16px">
+              <div style="display:flex;gap:10px">
+                <select id="cd-course-select" onchange="loadCourseDetail(this.value)" style="flex:1;padding:10px 13px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:14px;outline:none">
+                  <option value="">— কোর্স বেছে নিন —</option>
+                </select>
+                <button class="btn btn-primary" onclick="populateCourseSelect()">🔄 রিফ্রেশ</button>
+              </div>
+            </div>
+          </div>
+          <div id="cd-editor" style="display:none">
+            <input type="hidden" id="cd-course-id"/>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+              <div class="card">
+                <div class="card-header"><h3>📋 মূল তথ্য</h3></div>
+                <div class="card-body" style="padding:20px">
+                  <div class="field"><label>YouTube প্রিভিউ ভিডিও ID</label><input id="cd-youtube-id" placeholder="LXb3EKWsInQ"/></div>
+                  <div class="field"><label>কোর্সের বর্ণনা</label><textarea id="cd-description" style="min-height:120px" placeholder="বিস্তারিত বর্ণনা..."></textarea></div>
+                  <div class="row2">
+                    <div class="field"><label>মূল্য (৳)</label><input type="number" id="cd-price" placeholder="1200"/></div>
+                    <div class="field"><label>পুরনো মূল্য (৳)</label><input type="number" id="cd-old-price" placeholder="2500"/></div>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header">
+                  <h3>✅ কোর্স অন্তর্ভুক্তি তালিকা</h3>
+                  <button class="btn btn-primary btn-sm" onclick="addIncludeItem()">+ যোগ করুন</button>
+                </div>
+                <div class="card-body" style="padding:16px">
+                  <div id="cd-includes-list"></div>
+                </div>
+              </div>
+            </div>
+            <!-- Curriculum -->
+            <div class="card">
+              <div class="card-header">
+                <h3>📚 কারিকুলাম</h3>
+                <button class="btn btn-primary" onclick="addCurriculumSection()">+ নতুন সেকশন</button>
+              </div>
+              <div class="card-body" style="padding:16px">
+                <div id="cd-curriculum-list"></div>
+              </div>
+            </div>
+            <div style="margin-top:16px"><button class="btn btn-primary" onclick="saveCourseDetail()">💾 কোর্স ডিটেইল সংরক্ষণ</button></div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════
+             [৮] CTA সেকশন
+        ══════════════════════════════════════════════════ -->
+        <div class="page" id="page-cta-section">
+          <div class="page-header"><h2>📣 CTA সেকশন</h2><p>Call to Action এলাকার কন্টেন্ট পরিবর্তন</p></div>
+          <div class="card" style="max-width:700px">
+            <div class="card-header"><h3>✏️ CTA সম্পাদনা</h3></div>
+            <div class="card-body" style="padding:20px">
+              <div class="field"><label>শিরোনাম লাইন ১</label><input id="cta-title1" placeholder="আজই শুরু করুন"/></div>
+              <div class="field"><label>শিরোনাম লাইন ২</label><input id="cta-title2" placeholder="আপনার ইসলামী শিক্ষার যাত্রা"/></div>
+              <div class="field"><label>সাবটেক্সট</label><textarea id="cta-subtext" placeholder="হাজার হাজার শিক্ষার্থীর সাথে যোগ দিন..."></textarea></div>
+              <div class="row2">
+                <div class="field"><label>বাটন টেক্সট</label><input id="cta-btn-text" placeholder="এখনই শুরু করুন"/></div>
+                <div class="field"><label>বাটন লিঙ্ক</label><input id="cta-btn-link" placeholder="#courses"/></div>
+              </div>
+              <div class="field"><label>ব্যাকগ্রাউন্ড কালার</label>
+                <div style="display:flex;gap:8px;align-items:center">
+                  <input type="color" id="cta-bg-color" value="#066144" style="width:48px;height:40px;padding:2px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);cursor:pointer"/>
+                  <input id="cta-bg-hex" placeholder="#066144" style="flex:1;padding:11px 13px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:14px;outline:none"/>
+                </div>
+              </div>
+              <button class="btn btn-primary" onclick="saveCtaSection()">💾 সংরক্ষণ করুন</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════
+             [৯] ওয়েলকাম পপআপ
+        ══════════════════════════════════════════════════ -->
+        <div class="page" id="page-welcome-popup">
+          <div class="page-header"><h2>🎉 ওয়েলকাম পপআপ</h2><p>ভিজিটর আসলে যে পপআপ দেখানো হয়</p></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+            <div class="card">
+              <div class="card-header"><h3>⚙️ পপআপ সেটিংস</h3></div>
+              <div class="card-body" style="padding:20px">
+                <div class="field">
+                  <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+                    <input type="checkbox" id="popup-enabled" checked style="width:18px;height:18px;accent-color:var(--primary)"/>
+                    পপআপ চালু রাখুন
+                  </label>
+                </div>
+                <div class="field"><label>শিরোনাম</label><input id="popup-title" placeholder="স্বাগতম!"/></div>
+                <div class="field"><label>সাবটেক্সট</label><textarea id="popup-subtext" placeholder="আমাদের সেরা কোর্সটি দেখুন..."></textarea></div>
+                <div class="row2">
+                  <div class="field"><label>প্রাইমারি বাটন টেক্সট</label><input id="popup-btn1-text" placeholder="কোর্সে যোগ দিন"/></div>
+                  <div class="field"><label>প্রাইমারি বাটন লিঙ্ক (কোর্স ID)</label><input id="popup-btn1-link" placeholder="quran-tajweed"/></div>
+                </div>
+                <div class="field"><label>সেকেন্ডারি বাটন টেক্সট</label><input id="popup-btn2-text" placeholder="পরে দেখব"/></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3>📦 হাইলাইট কোর্স</h3></div>
+              <div class="card-body" style="padding:20px">
+                <div class="field"><label>কোর্সের নাম</label><input id="popup-course-name" placeholder="কুরআন তাজওয়িদ সম্পূর্ণ কোর্স"/></div>
+                <div class="field"><label>কোর্স ছবি URL</label><input id="popup-course-img" placeholder="https://..."/></div>
+                <div class="row2">
+                  <div class="field"><label>মূল্য (৳)</label><input type="number" id="popup-price" placeholder="1200"/></div>
+                  <div class="field"><label>পুরনো মূল্য (৳)</label><input type="number" id="popup-old-price" placeholder="2500"/></div>
+                </div>
+                <div class="field"><label>ডিসকাউন্ট %</label><input type="number" id="popup-discount" placeholder="52"/></div>
+                <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px">
+                  <label style="font-size:12px;font-weight:600;color:var(--text3);letter-spacing:0.5px;display:block;margin-bottom:10px">স্ট্যাটস</label>
+                  <div class="row2">
+                    <div class="field"><label>শিক্ষার্থী</label><input id="popup-stat-students" placeholder="১০,৫০০+"/></div>
+                    <div class="field"><label>কোর্স</label><input id="popup-stat-courses" placeholder="১২০+"/></div>
+                  </div>
+                  <div class="field"><label>রেটিং</label><input id="popup-stat-rating" placeholder="৪.৯★"/></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:16px"><button class="btn btn-primary" onclick="saveWelcomePopup()">💾 সংরক্ষণ করুন</button></div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════
+             [১০] ফুটার ম্যানেজার
+        ══════════════════════════════════════════════════ -->
+        <div class="page" id="page-footer-mgr">
+          <div class="page-header"><h2>🦶 ফুটার</h2><p>সাইটের নিচের অংশ সম্পাদনা করুন</p></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+            <!-- Brand -->
+            <div class="card">
+              <div class="card-header"><h3>🏷️ ব্র্যান্ড তথ্য</h3></div>
+              <div class="card-body" style="padding:20px">
+                <div class="field"><label>ফুটার ট্যাগলাইন</label><input id="footer-tagline" placeholder="অনলাইনে নতুন দক্ষতা অর্জন..."/></div>
+                <div class="field"><label>বিবরণ টেক্সট</label><textarea id="footer-desc" placeholder="ইবনে খালদুন ইনস্টিটিউট..."></textarea></div>
+                <div class="field"><label>কপিরাইট টেক্সট</label><input id="footer-copyright" placeholder="© 2025 ইবনে খালদুন ইনস্টিটিউট"/></div>
+              </div>
+            </div>
+            <!-- Social -->
+            <div class="card">
+              <div class="card-header"><h3>📱 সোশ্যাল লিংক</h3></div>
+              <div class="card-body" style="padding:20px">
+                <div class="field"><label>Facebook URL</label><input id="footer-facebook" placeholder="https://facebook.com/..."/></div>
+                <div class="field"><label>YouTube URL</label><input id="footer-youtube" placeholder="https://youtube.com/..."/></div>
+                <div class="field"><label>Instagram URL</label><input id="footer-instagram" placeholder="https://instagram.com/..."/></div>
+                <div class="field"><label>Twitter/X URL</label><input id="footer-twitter" placeholder="https://twitter.com/..."/></div>
+              </div>
+            </div>
+            <!-- Contact -->
+            <div class="card">
+              <div class="card-header"><h3>📞 যোগাযোগ তথ্য</h3></div>
+              <div class="card-body" style="padding:20px">
+                <div class="field"><label>ঠিকানা</label><input id="footer-address" placeholder="ঢাকা, বাংলাদেশ"/></div>
+                <div class="field"><label>ইমেইল</label><input id="footer-email" placeholder="info@example.com"/></div>
+                <div class="field"><label>ফোন</label><input id="footer-phone" placeholder="+880 1234-567890"/></div>
+              </div>
+            </div>
+            <!-- Quick Links -->
+            <div class="card">
+              <div class="card-header">
+                <h3>🔗 কুইক লিংক</h3>
+                <button class="btn btn-primary btn-sm" onclick="addFooterLink()">+ লিংক যোগ</button>
+              </div>
+              <div class="card-body" style="padding:16px">
+                <div id="footer-links-list"></div>
+              </div>
+            </div>
+            <!-- Course Categories Column -->
+            <div class="card">
+              <div class="card-header">
+                <h3>📚 কোর্স বিভাগ কলাম</h3>
+                <button class="btn btn-primary btn-sm" onclick="addFooterCategory()">+ বিভাগ যোগ</button>
+              </div>
+              <div class="card-body" style="padding:16px">
+                <div id="footer-categories-list"></div>
+              </div>
+            </div>
+            <!-- Payment Methods -->
+            <div class="card">
+              <div class="card-header"><h3>💳 পেমেন্ট মেথড ইমেজ</h3></div>
+              <div class="card-body" style="padding:20px">
+                <div class="field"><label>পেমেন্ট ব্যাজ ইমেজ URL</label><input id="footer-payment-img" placeholder="https://..."/></div>
+                <div style="margin-top:10px">
+                  <img id="footer-payment-preview" src="" alt="Payment" style="max-width:100%;max-height:60px;object-fit:contain;display:none;background:white;padding:6px;border-radius:6px"/>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:16px"><button class="btn btn-primary" onclick="saveFooter()">💾 ফুটার সংরক্ষণ করুন</button></div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════
+             [১১] থিম / রঙ সেটিংস
+        ══════════════════════════════════════════════════ -->
+        <div class="page" id="page-theme-settings">
+          <div class="page-header"><h2>🎨 থিম / রঙ সেটিংস</h2><p>সব CSS ভ্যারিয়েবল লাইভ প্রিভিউ সহ পরিবর্তন</p></div>
+          <div style="display:grid;grid-template-columns:1fr 380px;gap:20px">
+            <div>
+              <div class="card">
+                <div class="card-header"><h3>🌈 CSS ভ্যারিয়েবল</h3></div>
+                <div class="card-body" style="padding:20px">
+                  <div id="theme-vars-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                    <!-- Populated by JS -->
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Live Preview Panel -->
+            <div class="card" style="position:sticky;top:80px;height:fit-content">
+              <div class="card-header"><h3>👁️ লাইভ প্রিভিউ</h3></div>
+              <div class="card-body" style="padding:16px">
+                <div id="theme-preview-panel" style="border-radius:10px;overflow:hidden;border:1px solid var(--border)">
+                  <!-- Mini site preview -->
+                  <div id="tp-header" style="padding:10px 16px;display:flex;align-items:center;justify-content:space-between">
+                    <div id="tp-logo" style="font-weight:900;font-size:14px">ইবনে খালদুন</div>
+                    <div id="tp-btn" style="padding:5px 12px;border-radius:4px;font-size:11px;font-weight:700">এনরোল করুন</div>
+                  </div>
+                  <div id="tp-hero" style="padding:24px 16px;text-align:center">
+                    <div id="tp-hero-title" style="font-weight:900;font-size:18px;margin-bottom:8px">ইসলামী জ্ঞান শিখুন</div>
+                    <div id="tp-hero-sub" style="font-size:11px;margin-bottom:12px;opacity:0.8">অনলাইনে সেরা কোর্সসমূহ</div>
+                    <div id="tp-hero-cta" style="display:inline-block;padding:8px 20px;border-radius:4px;font-size:12px;font-weight:700">আরও জানুন</div>
+                  </div>
+                  <div style="padding:12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                    <div id="tp-card1" style="padding:10px;border-radius:6px;font-size:11px;font-weight:600">📖 কুরআন কোর্স</div>
+                    <div id="tp-card2" style="padding:10px;border-radius:6px;font-size:11px;font-weight:600">🕌 সীরাহ কোর্স</div>
+                  </div>
+                  <div id="tp-footer" style="padding:10px 16px;font-size:10px;text-align:center;opacity:0.7">© 2025 ইবনে খালদুন ইনস্টিটিউট</div>
+                </div>
+                <div style="margin-top:14px;display:flex;gap:8px">
+                  <button class="btn btn-primary" style="flex:1" onclick="applyThemeToPage()">✅ প্রয়োগ করুন</button>
+                  <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="resetTheme()">↩️ রিসেট</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:16px"><button class="btn btn-primary" onclick="saveThemeSettings()">💾 থিম সংরক্ষণ করুন</button></div>
+        </div>
+
       </div><!-- /content -->
     </div><!-- /main -->
   </div><!-- /layout -->
@@ -648,6 +1096,69 @@
 <!-- ═══════════════════════════════════════════════
      MODALS
 ═══════════════════════════════════════════════ -->
+
+<!-- Featured Course Modal -->
+<div class="modal-overlay" id="featured-course-modal">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-header">
+      <h3 id="fc-modal-title">ফিচার্ড কোর্স কার্ড</h3>
+      <button class="btn-close" onclick="closeModal('featured-course-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="fc-card-index"/>
+      <div class="row2">
+        <div class="field"><label>কোর্স ID / Slug *</label><input id="fc-id" placeholder="quran-tajweed"/></div>
+        <div class="field"><label>ব্যাজ</label>
+          <select id="fc-badge">
+            <option value="">কোনো ব্যাজ নেই</option>
+            <option value="bestseller">সেরা বিক্রেতা</option>
+            <option value="new">নতুন</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>কোর্সের নাম/শিরোনাম *</label><input id="fc-name" placeholder="কুরআন তাজওয়িদ সম্পূর্ণ কোর্স"/></div>
+      <div class="field"><label>থাম্বনেইল ইমেজ URL</label><input id="fc-thumb" placeholder="https://..."/></div>
+      <div class="row2">
+        <div class="field"><label>ইন্সট্রাক্টর নাম</label><input id="fc-instructor" placeholder="শায়েখ আব্দুল্লাহ"/></div>
+        <div class="field"><label>রেটিং (★)</label><input type="number" id="fc-rating" placeholder="4.9" min="0" max="5" step="0.1"/></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>শিক্ষার্থী সংখ্যা</label><input id="fc-students" placeholder="১০,৫০০"/></div>
+        <div class="field"><label>মূল্য (৳)</label><input type="number" id="fc-price" placeholder="1200"/></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>ক্যাটাগরি</label>
+          <select id="fc-category">
+            <option value="quran">quran</option>
+            <option value="productivity">productivity</option>
+            <option value="family">family</option>
+            <option value="seerah">seerah</option>
+            <option value="sunnah">sunnah</option>
+            <option value="fiqh">fiqh</option>
+            <option value="arabic">arabic</option>
+            <option value="hadith">hadith</option>
+            <option value="aqidah">aqidah</option>
+          </select>
+        </div>
+        <div class="field"><label>কোন ট্যাবে দেখাবে</label>
+          <select id="fc-tab">
+            <option value="top">top (সেরা বিক্রেতা)</option>
+            <option value="new">new (নতুন)</option>
+            <option value="free">free (ফ্রি)</option>
+            <option value="popular">popular (জনপ্রিয়)</option>
+            <option value="bundle">bundle (বান্ডেল)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="closeModal('featured-course-modal')">বাতিল</button>
+      <button class="btn btn-primary" onclick="saveFeaturedCourseCard()">সংরক্ষণ করুন</button>
+    </div>
+  </div>
+</div>
+
+
 
 <!-- Course Modal -->
 <div class="modal-overlay" id="course-modal">
@@ -1357,7 +1868,805 @@ async function changePassword() {
   } catch (e) { toast('সমস্যা: ' + e.message, 'error'); }
 }
 
-// Close modal on overlay click
+
+// ────────────────────────────────────────────
+// NEW SECTION PAGES — navTo registration
+// ────────────────────────────────────────────
+// Extend the existing navTo to handle new pages
+const _origNavTo = window.navTo;
+window.navTo = function(section) {
+  const newPages = ['site-settings','navigation-mgr','hero-section','featured-courses-mgr',
+    'course-detail-mgr','cta-section','welcome-popup','footer-mgr','theme-settings'];
+  if (newPages.includes(section)) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const pg = document.getElementById('page-' + section);
+    if (pg) pg.classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => {
+      if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + section + "'"))
+        n.classList.add('active');
+    });
+    // Page title
+    const titles = {
+      'site-settings':'সাইট সেটিংস','navigation-mgr':'নেভিগেশন',
+      'hero-section':'হিরো সেকশন','featured-courses-mgr':'ফিচার্ড কোর্স',
+      'course-detail-mgr':'কোর্স ডিটেইল','cta-section':'CTA সেকশন',
+      'welcome-popup':'ওয়েলকাম পপআপ','footer-mgr':'ফুটার',
+      'theme-settings':'থিম / রঙ'
+    };
+    document.getElementById('page-title').textContent = titles[section] || section;
+    // Load data for section
+    if (section === 'site-settings') loadSiteSettings();
+    if (section === 'navigation-mgr') loadNavigation();
+    if (section === 'hero-section') loadHeroSection();
+    if (section === 'featured-courses-mgr') loadFeaturedCourses();
+    if (section === 'course-detail-mgr') populateCourseSelect();
+    if (section === 'cta-section') loadCtaSection();
+    if (section === 'welcome-popup') loadWelcomePopup();
+    if (section === 'footer-mgr') loadFooter();
+    if (section === 'theme-settings') loadThemeSettings();
+    if (window.innerWidth <= 768) {
+      document.getElementById('sidebar').classList.remove('open');
+    }
+  } else {
+    if (_origNavTo) _origNavTo(section);
+    else {
+      // fallback
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      const pg = document.getElementById('page-' + section);
+      if (pg) pg.classList.add('active');
+    }
+  }
+};
+
+// ────────────────────────────────────────────
+// SITE SETTINGS
+// ────────────────────────────────────────────
+async function loadSiteSettings() {
+  try {
+    const data = await api('GET', '/api/admin/site-settings');
+    if (data) {
+      document.getElementById('ss-title').value = data.title || '';
+      document.getElementById('ss-tagline').value = data.tagline || '';
+      document.getElementById('ss-favicon').value = data.favicon || '';
+      document.getElementById('ss-header-h').value = data.headerHeight || '70';
+      document.getElementById('ss-primary-hex').value = data.primaryColor || '#F5C518';
+      document.getElementById('ss-primary-color').value = data.primaryColor || '#F5C518';
+      document.getElementById('ss-green-hex').value = data.greenColor || '#066144';
+      document.getElementById('ss-green-color').value = data.greenColor || '#066144';
+      document.getElementById('ss-primarydark-hex').value = data.primaryDarkColor || '#d4a90e';
+      document.getElementById('ss-primarydark-color').value = data.primaryDarkColor || '#d4a90e';
+      document.getElementById('ss-logo-header').value = data.logoHeader || '';
+      document.getElementById('ss-logo-footer').value = data.logoFooter || '';
+      updateLogoPreview();
+    }
+  } catch(e) { /* new setup, empty */ }
+}
+
+function updateLogoPreview() {
+  const hUrl = document.getElementById('ss-logo-header').value;
+  const fUrl = document.getElementById('ss-logo-footer').value;
+  const hImg = document.getElementById('ss-header-logo-img');
+  const fImg = document.getElementById('ss-footer-logo-img');
+  if (hUrl) { hImg.src = hUrl; hImg.style.display='block'; document.getElementById('ss-header-logo-placeholder').style.display='none'; }
+  else { hImg.style.display='none'; document.getElementById('ss-header-logo-placeholder').style.display='block'; }
+  if (fUrl) { fImg.src = fUrl; fImg.style.display='block'; document.getElementById('ss-footer-logo-placeholder').style.display='none'; }
+  else { fImg.style.display='none'; document.getElementById('ss-footer-logo-placeholder').style.display='block'; }
+}
+
+// Sync color picker <-> text input
+['ss-primary','ss-green','ss-primarydark'].forEach(id => {
+  document.addEventListener('DOMContentLoaded', () => {
+    const picker = document.getElementById(id + '-color');
+    const hex = document.getElementById(id + '-hex');
+    if (picker && hex) {
+      picker.addEventListener('input', () => { hex.value = picker.value; });
+      hex.addEventListener('input', () => { if (/^#[0-9a-fA-F]{6}$/.test(hex.value)) picker.value = hex.value; });
+    }
+  });
+});
+
+async function saveSiteSettings() {
+  const body = {
+    title: document.getElementById('ss-title').value,
+    tagline: document.getElementById('ss-tagline').value,
+    favicon: document.getElementById('ss-favicon').value || document.getElementById('ss-favicon2').value,
+    headerHeight: document.getElementById('ss-header-h').value,
+    primaryColor: document.getElementById('ss-primary-hex').value,
+    greenColor: document.getElementById('ss-green-hex').value,
+    primaryDarkColor: document.getElementById('ss-primarydark-hex').value,
+    logoHeader: document.getElementById('ss-logo-header').value,
+    logoFooter: document.getElementById('ss-logo-footer').value,
+  };
+  try {
+    await api('POST', '/api/admin/site-settings', body);
+    toast('✅ সাইট সেটিংস সংরক্ষিত হয়েছে');
+  } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const lh = document.getElementById('ss-logo-header');
+  const lf = document.getElementById('ss-logo-footer');
+  if (lh) lh.addEventListener('input', updateLogoPreview);
+  if (lf) lf.addEventListener('input', updateLogoPreview);
+  // Color pickers sync
+  ['ss-primary','ss-green','ss-primarydark'].forEach(id => {
+    const picker = document.getElementById(id + '-color');
+    const hex = document.getElementById(id + '-hex');
+    if (picker && hex) {
+      picker.addEventListener('input', () => { hex.value = picker.value; });
+      hex.addEventListener('input', () => { if (/^#[0-9a-fA-F]{6}$/.test(hex.value)) picker.value = hex.value; });
+    }
+  });
+  // CTA color
+  const ctaPicker = document.getElementById('cta-bg-color');
+  const ctaHex = document.getElementById('cta-bg-hex');
+  if (ctaPicker && ctaHex) {
+    ctaPicker.addEventListener('input', () => { ctaHex.value = ctaPicker.value; });
+    ctaHex.addEventListener('input', () => { if (/^#[0-9a-fA-F]{6}$/.test(ctaHex.value)) ctaPicker.value = ctaHex.value; });
+  }
+  // Footer payment img preview
+  const fpImg = document.getElementById('footer-payment-img');
+  if (fpImg) fpImg.addEventListener('input', () => {
+    const prev = document.getElementById('footer-payment-preview');
+    if (fpImg.value) { prev.src = fpImg.value; prev.style.display='block'; } else prev.style.display='none';
+  });
+  // Init theme panel
+  initThemePanel();
+});
+
+// ────────────────────────────────────────────
+// NAVIGATION MANAGER
+// ────────────────────────────────────────────
+let navLinksData = [
+  {name:'হোম',link:'#home'},{name:'কোর্স',link:'#courses'},{name:'ইন্সট্রাক্টর',link:'#instructors'},
+  {name:'ব্লগ',link:'#blog'},{name:'যোগাযোগ',link:'#contact'}
+];
+
+async function loadNavigation() {
+  try {
+    const data = await api('GET', '/api/admin/navigation');
+    if (data) {
+      navLinksData = data.links || navLinksData;
+      document.getElementById('nav-login-text').value = data.loginText || 'লগইন';
+      document.getElementById('nav-login-link').value = data.loginLink || '#login';
+      document.getElementById('nav-reg-text').value = data.regText || 'রেজিস্ট্রেশন';
+      document.getElementById('nav-reg-link').value = data.regLink || '#register';
+    }
+  } catch(e) {}
+  renderNavLinks();
+}
+
+function renderNavLinks() {
+  const list = document.getElementById('nav-links-list');
+  if (!list) return;
+  list.innerHTML = navLinksData.map((lk, i) => `
+    <div style="display:grid;grid-template-columns:1fr 1fr auto auto;gap:8px;margin-bottom:8px;align-items:center">
+      <input value="${lk.name}" oninput="navLinksData[${i}].name=this.value"
+        style="padding:9px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"/>
+      <input value="${lk.link}" oninput="navLinksData[${i}].link=this.value"
+        style="padding:9px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"/>
+      <button class="btn btn-sm" style="background:var(--blue-bg);color:var(--blue);border:1px solid rgba(96,165,250,0.3)" onclick="moveNavLink(${i},-1)" ${i===0?'disabled':''}>↑</button>
+      <button class="btn btn-danger btn-sm" onclick="removeNavLink(${i})">🗑️</button>
+    </div>`).join('');
+}
+
+function addNavLink() { navLinksData.push({name:'নতুন লিংক',link:'#'}); renderNavLinks(); }
+function removeNavLink(i) { navLinksData.splice(i,1); renderNavLinks(); }
+function moveNavLink(i, dir) {
+  const j = i + dir;
+  if (j < 0 || j >= navLinksData.length) return;
+  [navLinksData[i], navLinksData[j]] = [navLinksData[j], navLinksData[i]];
+  renderNavLinks();
+}
+
+async function saveNavigation() {
+  const body = {
+    links: navLinksData,
+    loginText: document.getElementById('nav-login-text').value,
+    loginLink: document.getElementById('nav-login-link').value,
+    regText: document.getElementById('nav-reg-text').value,
+    regLink: document.getElementById('nav-reg-link').value,
+  };
+  try {
+    await api('POST', '/api/admin/navigation', body);
+    toast('✅ নেভিগেশন সংরক্ষিত হয়েছে');
+  } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
+}
+
+// ────────────────────────────────────────────
+// HERO SECTION
+// ────────────────────────────────────────────
+let heroCardsData = [
+  {label:'QURAN',link:'#quran',img:''},
+  {label:'SEERAH',link:'#seerah',img:''},
+  {label:'FIQH',link:'#fiqh',img:''},
+  {label:'AQIDAH',link:'#aqidah',img:''},
+  {label:'ARABIC',link:'#arabic',img:''},
+  {label:'TAFSIR',link:'#tafsir',img:''},
+  {label:'HADITH',link:'#hadith',img:''}
+];
+
+async function loadHeroSection() {
+  try {
+    const data = await api('GET', '/api/admin/hero-section');
+    if (data) {
+      document.getElementById('hero-bg').value = data.bgImage || '/frontend/images/nobobi.png';
+      document.getElementById('hero-eyebrow').value = data.eyebrow || '';
+      document.getElementById('hero-h1-1').value = data.h1Line1 || '';
+      document.getElementById('hero-h1-2').value = data.h1Line2 || '';
+      document.getElementById('hero-h1-3').value = data.h1Line3 || '';
+      document.getElementById('hero-sub').value = data.subtitle || '';
+      document.getElementById('hero-btn-text').value = data.btnText || 'আরও জানুন';
+      document.getElementById('hero-btn-link').value = data.btnLink || '#courses';
+      // Stats
+      const statRows = document.querySelectorAll('.hero-stat-row');
+      (data.stats || []).forEach((s, i) => {
+        if (statRows[i]) {
+          statRows[i].querySelector('.hero-stat-num').value = s.num || '';
+          statRows[i].querySelector('.hero-stat-label').value = s.label || '';
+        }
+      });
+      heroCardsData = data.cards || heroCardsData;
+    }
+  } catch(e) {}
+  renderHeroCards();
+}
+
+function renderHeroCards() {
+  const list = document.getElementById('hero-cards-list');
+  if (!list) return;
+  list.innerHTML = heroCardsData.map((c, i) => `
+    <div style="display:grid;grid-template-columns:auto 1fr 1fr auto;gap:8px;margin-bottom:8px;align-items:center">
+      <span style="color:var(--text2);font-size:13px;min-width:22px;text-align:center">${i+1}</span>
+      <input value="${c.label}" placeholder="QURAN" oninput="heroCardsData[${i}].label=this.value"
+        style="padding:8px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"/>
+      <input value="${c.link || ''}" placeholder="লিঙ্ক (যেমন: #quran)" oninput="heroCardsData[${i}].link=this.value"
+        style="padding:8px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"/>
+      <button class="btn btn-danger btn-sm" onclick="removeHeroCard(${i})">🗑️</button>
+    </div>`).join('');
+}
+
+function addHeroCard() { heroCardsData.push({label:'NEW',link:'#',img:''}); renderHeroCards(); }
+function removeHeroCard(i) { heroCardsData.splice(i,1); renderHeroCards(); }
+
+async function saveHeroSection() {
+  const statRows = document.querySelectorAll('.hero-stat-row');
+  const stats = Array.from(statRows).map(r => ({
+    num: r.querySelector('.hero-stat-num').value,
+    label: r.querySelector('.hero-stat-label').value,
+  }));
+  const body = {
+    bgImage: document.getElementById('hero-bg').value,
+    eyebrow: document.getElementById('hero-eyebrow').value,
+    h1Line1: document.getElementById('hero-h1-1').value,
+    h1Line2: document.getElementById('hero-h1-2').value,
+    h1Line3: document.getElementById('hero-h1-3').value,
+    subtitle: document.getElementById('hero-sub').value,
+    btnText: document.getElementById('hero-btn-text').value,
+    btnLink: document.getElementById('hero-btn-link').value,
+    stats, cards: heroCardsData,
+  };
+  try {
+    await api('POST', '/api/admin/hero-section', body);
+    toast('✅ হিরো সেকশন সংরক্ষিত হয়েছে');
+  } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
+}
+
+// ────────────────────────────────────────────
+// FEATURED COURSES MANAGER
+// ────────────────────────────────────────────
+let featuredCoursesData = [];
+
+async function loadFeaturedCourses() {
+  try {
+    const data = await api('GET', '/api/admin/featured-courses');
+    if (data) {
+      document.getElementById('fc-section-title').value = data.sectionTitle || 'ফিচার্ড কোর্সসমূহ';
+      document.getElementById('fc-section-sub').value = data.sectionSub || '';
+      document.getElementById('fc-tab-top').value = data.tabTop || 'সেরা বিক্রেতা';
+      document.getElementById('fc-tab-new').value = data.tabNew || 'নতুন কোর্সসমূহ';
+      document.getElementById('fc-tab-free').value = data.tabFree || 'ফ্রি কোর্সসমূহ';
+      document.getElementById('fc-tab-popular').value = data.tabPopular || 'জনপ্রিয়';
+      document.getElementById('fc-tab-bundle').value = data.tabBundle || 'বান্ডেল';
+      featuredCoursesData = data.cards || [];
+    }
+  } catch(e) {}
+  renderFeaturedCoursesTable();
+}
+
+function renderFeaturedCoursesTable() {
+  const tbody = document.getElementById('featured-courses-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = featuredCoursesData.length
+    ? featuredCoursesData.map((c, i) => `<tr>
+        <td><code style="font-size:11px;color:var(--blue)">${c.id || '—'}</code></td>
+        <td><strong>${c.name || '—'}</strong></td>
+        <td>${c.instructor || '—'}</td>
+        <td>৳${c.price || 0}</td>
+        <td><span class="badge badge-blue">${c.tab || '—'}</span></td>
+        <td>${c.badge ? `<span class="badge badge-yellow">${c.badge}</span>` : '—'}</td>
+        <td style="display:flex;gap:6px">
+          <button class="btn btn-edit btn-sm" onclick="editFeaturedCard(${i})">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteFeaturedCard(${i})">🗑️</button>
+        </td>
+      </tr>`).join('')
+    : '<tr><td colspan="7" style="text-align:center;color:var(--text2);padding:24px">কোনো কোর্স কার্ড নেই</td></tr>';
+}
+
+function openFeaturedCourseModal(i = null) {
+  document.getElementById('fc-modal-title').textContent = i !== null ? 'কার্ড এডিট' : 'নতুন কার্ড';
+  document.getElementById('fc-card-index').value = i !== null ? i : '';
+  const c = i !== null ? featuredCoursesData[i] : {};
+  document.getElementById('fc-id').value = c.id || '';
+  document.getElementById('fc-name').value = c.name || '';
+  document.getElementById('fc-thumb').value = c.thumbnail || '';
+  document.getElementById('fc-badge').value = c.badge || '';
+  document.getElementById('fc-instructor').value = c.instructor || '';
+  document.getElementById('fc-rating').value = c.rating || '';
+  document.getElementById('fc-students').value = c.students || '';
+  document.getElementById('fc-price').value = c.price || '';
+  document.getElementById('fc-category').value = c.category || 'quran';
+  document.getElementById('fc-tab').value = c.tab || 'top';
+  openModal('featured-course-modal');
+}
+
+function editFeaturedCard(i) { openFeaturedCourseModal(i); }
+
+function deleteFeaturedCard(i) {
+  if (!confirm('এই কার্ডটি মুছবেন?')) return;
+  featuredCoursesData.splice(i, 1);
+  renderFeaturedCoursesTable();
+  toast('✅ মুছে গেছে');
+}
+
+function saveFeaturedCourseCard() {
+  const idx = document.getElementById('fc-card-index').value;
+  const card = {
+    id: document.getElementById('fc-id').value,
+    name: document.getElementById('fc-name').value,
+    thumbnail: document.getElementById('fc-thumb').value,
+    badge: document.getElementById('fc-badge').value,
+    instructor: document.getElementById('fc-instructor').value,
+    rating: parseFloat(document.getElementById('fc-rating').value) || 4.5,
+    students: document.getElementById('fc-students').value,
+    price: parseInt(document.getElementById('fc-price').value) || 0,
+    category: document.getElementById('fc-category').value,
+    tab: document.getElementById('fc-tab').value,
+  };
+  if (!card.id || !card.name) { toast('ID ও নাম আবশ্যক', 'error'); return; }
+  if (idx !== '') { featuredCoursesData[parseInt(idx)] = card; }
+  else { featuredCoursesData.push(card); }
+  renderFeaturedCoursesTable();
+  closeModal('featured-course-modal');
+  toast('✅ কার্ড সংরক্ষিত হয়েছে (এখন "সংরক্ষণ করুন" বাটন চাপুন)');
+}
+
+async function saveFeaturedCoursesConfig() {
+  const body = {
+    sectionTitle: document.getElementById('fc-section-title').value,
+    sectionSub: document.getElementById('fc-section-sub').value,
+    tabTop: document.getElementById('fc-tab-top').value,
+    tabNew: document.getElementById('fc-tab-new').value,
+    tabFree: document.getElementById('fc-tab-free').value,
+    tabPopular: document.getElementById('fc-tab-popular').value,
+    tabBundle: document.getElementById('fc-tab-bundle').value,
+    cards: featuredCoursesData,
+  };
+  try {
+    await api('POST', '/api/admin/featured-courses', body);
+    toast('✅ ফিচার্ড কোর্স সেটিংস সংরক্ষিত হয়েছে');
+  } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
+}
+
+// ────────────────────────────────────────────
+// COURSE DETAIL MANAGER
+// ────────────────────────────────────────────
+async function populateCourseSelect() {
+  try {
+    const list = await api('GET', '/api/admin/courses');
+    const sel = document.getElementById('cd-course-select');
+    sel.innerHTML = '<option value="">— কোর্স বেছে নিন —</option>'
+      + (list || []).map(c => `<option value="${c._id}">${c.title || c._id}</option>`).join('');
+  } catch(e) { toast('কোর্স লোড হয়নি', 'error'); }
+}
+
+let cdCurriculumData = [];
+let cdIncludesData = [];
+
+async function loadCourseDetail(id) {
+  if (!id) { document.getElementById('cd-editor').style.display='none'; return; }
+  document.getElementById('cd-editor').style.display='block';
+  document.getElementById('cd-course-id').value = id;
+  try {
+    const data = await api('GET', '/api/admin/course-detail/' + id);
+    if (data) {
+      document.getElementById('cd-youtube-id').value = data.youtubeId || '';
+      document.getElementById('cd-description').value = data.description || '';
+      document.getElementById('cd-price').value = data.price || '';
+      document.getElementById('cd-old-price').value = data.oldPrice || '';
+      cdIncludesData = data.includes || [];
+      cdCurriculumData = data.curriculum || [];
+    } else {
+      cdIncludesData = [];
+      cdCurriculumData = [];
+    }
+  } catch(e) { cdIncludesData = []; cdCurriculumData = []; }
+  renderIncludesList();
+  renderCurriculum();
+}
+
+function renderIncludesList() {
+  const list = document.getElementById('cd-includes-list');
+  if (!list) return;
+  list.innerHTML = cdIncludesData.map((item, i) => `
+    <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+      <input value="${item}" oninput="cdIncludesData[${i}]=this.value"
+        style="flex:1;padding:9px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"/>
+      <button class="btn btn-danger btn-sm" onclick="cdIncludesData.splice(${i},1);renderIncludesList()">🗑️</button>
+    </div>`).join('');
+}
+
+function addIncludeItem() { cdIncludesData.push(''); renderIncludesList(); }
+
+function renderCurriculum() {
+  const list = document.getElementById('cd-curriculum-list');
+  if (!list) return;
+  list.innerHTML = cdCurriculumData.map((sec, si) => `
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px">
+      <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center">
+        <span style="font-weight:700;color:var(--text2);font-size:12px">সেকশন ${si+1}</span>
+        <input value="${sec.title || ''}" placeholder="সেকশন শিরোনাম" oninput="cdCurriculumData[${si}].title=this.value"
+          style="flex:1;padding:8px 10px;background:var(--bg);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"/>
+        <input value="${sec.duration || ''}" placeholder="সময়কাল" oninput="cdCurriculumData[${si}].duration=this.value"
+          style="width:100px;padding:8px 10px;background:var(--bg);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"/>
+        <button class="btn btn-primary btn-sm" onclick="addLesson(${si})">+ লেসন</button>
+        <button class="btn btn-danger btn-sm" onclick="cdCurriculumData.splice(${si},1);renderCurriculum()">🗑️</button>
+      </div>
+      <div id="lessons-${si}">
+        ${(sec.lessons || []).map((ls, li) => `
+          <div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr auto;gap:6px;margin-bottom:6px;align-items:center;padding:6px;background:var(--bg2);border-radius:6px;border:1px solid var(--border)">
+            <input value="${ls.title || ''}" placeholder="লেসনের নাম" oninput="cdCurriculumData[${si}].lessons[${li}].title=this.value"
+              style="padding:7px 9px;background:var(--bg);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;outline:none"/>
+            <input value="${ls.youtubeId || ''}" placeholder="YouTube Video ID" oninput="cdCurriculumData[${si}].lessons[${li}].youtubeId=this.value"
+              style="padding:7px 9px;background:var(--bg);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;outline:none"/>
+            <input value="${ls.duration || ''}" placeholder="সময়" oninput="cdCurriculumData[${si}].lessons[${li}].duration=this.value"
+              style="padding:7px 9px;background:var(--bg);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;outline:none"/>
+            <select oninput="cdCurriculumData[${si}].lessons[${li}].free=this.value==='free'"
+              style="padding:7px;background:var(--bg);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;outline:none">
+              <option value="lock" ${!ls.free?'selected':''}>🔒 লক</option>
+              <option value="free" ${ls.free?'selected':''}>🆓 ফ্রি</option>
+            </select>
+            <button class="btn btn-danger btn-sm" onclick="cdCurriculumData[${si}].lessons.splice(${li},1);renderCurriculum()">🗑️</button>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function addCurriculumSection() {
+  cdCurriculumData.push({title:'নতুন সেকশন',duration:'',lessons:[]});
+  renderCurriculum();
+}
+
+function addLesson(si) {
+  if (!cdCurriculumData[si].lessons) cdCurriculumData[si].lessons = [];
+  cdCurriculumData[si].lessons.push({title:'',youtubeId:'',duration:'',free:false});
+  renderCurriculum();
+}
+
+async function saveCourseDetail() {
+  const id = document.getElementById('cd-course-id').value;
+  if (!id) { toast('কোর্স বেছে নিন', 'error'); return; }
+  const body = {
+    youtubeId: document.getElementById('cd-youtube-id').value,
+    description: document.getElementById('cd-description').value,
+    price: parseInt(document.getElementById('cd-price').value) || 0,
+    oldPrice: parseInt(document.getElementById('cd-old-price').value) || 0,
+    includes: cdIncludesData.filter(Boolean),
+    curriculum: cdCurriculumData,
+  };
+  try {
+    await api('POST', '/api/admin/course-detail/' + id, body);
+    toast('✅ কোর্স ডিটেইল সংরক্ষিত হয়েছে');
+  } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
+}
+
+// ────────────────────────────────────────────
+// CTA SECTION
+// ────────────────────────────────────────────
+async function loadCtaSection() {
+  try {
+    const data = await api('GET', '/api/admin/cta-section');
+    if (data) {
+      document.getElementById('cta-title1').value = data.title1 || '';
+      document.getElementById('cta-title2').value = data.title2 || '';
+      document.getElementById('cta-subtext').value = data.subtext || '';
+      document.getElementById('cta-btn-text').value = data.btnText || 'এখনই শুরু করুন';
+      document.getElementById('cta-btn-link').value = data.btnLink || '#courses';
+      document.getElementById('cta-bg-hex').value = data.bgColor || '#066144';
+      document.getElementById('cta-bg-color').value = data.bgColor || '#066144';
+    }
+  } catch(e) {}
+}
+
+async function saveCtaSection() {
+  const body = {
+    title1: document.getElementById('cta-title1').value,
+    title2: document.getElementById('cta-title2').value,
+    subtext: document.getElementById('cta-subtext').value,
+    btnText: document.getElementById('cta-btn-text').value,
+    btnLink: document.getElementById('cta-btn-link').value,
+    bgColor: document.getElementById('cta-bg-hex').value,
+  };
+  try {
+    await api('POST', '/api/admin/cta-section', body);
+    toast('✅ CTA সেকশন সংরক্ষিত হয়েছে');
+  } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
+}
+
+// ────────────────────────────────────────────
+// WELCOME POPUP
+// ────────────────────────────────────────────
+async function loadWelcomePopup() {
+  try {
+    const data = await api('GET', '/api/admin/welcome-popup');
+    if (data) {
+      document.getElementById('popup-enabled').checked = data.enabled !== false;
+      document.getElementById('popup-title').value = data.title || '';
+      document.getElementById('popup-subtext').value = data.subtext || '';
+      document.getElementById('popup-btn1-text').value = data.btn1Text || '';
+      document.getElementById('popup-btn1-link').value = data.btn1Link || '';
+      document.getElementById('popup-btn2-text').value = data.btn2Text || '';
+      document.getElementById('popup-course-name').value = data.courseName || '';
+      document.getElementById('popup-course-img').value = data.courseImg || '';
+      document.getElementById('popup-price').value = data.price || '';
+      document.getElementById('popup-old-price').value = data.oldPrice || '';
+      document.getElementById('popup-discount').value = data.discount || '';
+      document.getElementById('popup-stat-students').value = data.statStudents || '';
+      document.getElementById('popup-stat-courses').value = data.statCourses || '';
+      document.getElementById('popup-stat-rating').value = data.statRating || '';
+    }
+  } catch(e) {}
+}
+
+async function saveWelcomePopup() {
+  const body = {
+    enabled: document.getElementById('popup-enabled').checked,
+    title: document.getElementById('popup-title').value,
+    subtext: document.getElementById('popup-subtext').value,
+    btn1Text: document.getElementById('popup-btn1-text').value,
+    btn1Link: document.getElementById('popup-btn1-link').value,
+    btn2Text: document.getElementById('popup-btn2-text').value,
+    courseName: document.getElementById('popup-course-name').value,
+    courseImg: document.getElementById('popup-course-img').value,
+    price: parseInt(document.getElementById('popup-price').value) || 0,
+    oldPrice: parseInt(document.getElementById('popup-old-price').value) || 0,
+    discount: parseInt(document.getElementById('popup-discount').value) || 0,
+    statStudents: document.getElementById('popup-stat-students').value,
+    statCourses: document.getElementById('popup-stat-courses').value,
+    statRating: document.getElementById('popup-stat-rating').value,
+  };
+  try {
+    await api('POST', '/api/admin/welcome-popup', body);
+    toast('✅ ওয়েলকাম পপআপ সংরক্ষিত হয়েছে');
+  } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
+}
+
+// ────────────────────────────────────────────
+// FOOTER MANAGER
+// ────────────────────────────────────────────
+let footerLinksData = [{name:'হোম',link:'#home'},{name:'কোর্স',link:'#courses'},{name:'আমাদের সম্পর্কে',link:'#about'}];
+let footerCategoriesData = [{name:'কুরআন',link:'#quran'},{name:'আরবি',link:'#arabic'},{name:'ফিকহ',link:'#fiqh'}];
+
+async function loadFooter() {
+  try {
+    const data = await api('GET', '/api/admin/footer');
+    if (data) {
+      document.getElementById('footer-tagline').value = data.tagline || '';
+      document.getElementById('footer-desc').value = data.desc || '';
+      document.getElementById('footer-copyright').value = data.copyright || '';
+      document.getElementById('footer-facebook').value = data.facebook || '';
+      document.getElementById('footer-youtube').value = data.youtube || '';
+      document.getElementById('footer-instagram').value = data.instagram || '';
+      document.getElementById('footer-twitter').value = data.twitter || '';
+      document.getElementById('footer-address').value = data.address || '';
+      document.getElementById('footer-email').value = data.email || '';
+      document.getElementById('footer-phone').value = data.phone || '';
+      document.getElementById('footer-payment-img').value = data.paymentImg || '';
+      if (data.paymentImg) { const p = document.getElementById('footer-payment-preview'); p.src = data.paymentImg; p.style.display='block'; }
+      footerLinksData = data.links || footerLinksData;
+      footerCategoriesData = data.categories || footerCategoriesData;
+    }
+  } catch(e) {}
+  renderFooterLinks();
+  renderFooterCategories();
+}
+
+function renderFooterLinks() {
+  const list = document.getElementById('footer-links-list');
+  if (!list) return;
+  list.innerHTML = footerLinksData.map((lk, i) => `
+    <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:8px;align-items:center">
+      <input value="${lk.name}" oninput="footerLinksData[${i}].name=this.value"
+        style="padding:8px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"/>
+      <input value="${lk.link}" oninput="footerLinksData[${i}].link=this.value"
+        style="padding:8px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"/>
+      <button class="btn btn-danger btn-sm" onclick="footerLinksData.splice(${i},1);renderFooterLinks()">🗑️</button>
+    </div>`).join('');
+}
+
+function renderFooterCategories() {
+  const list = document.getElementById('footer-categories-list');
+  if (!list) return;
+  list.innerHTML = footerCategoriesData.map((c, i) => `
+    <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:8px;align-items:center">
+      <input value="${c.name}" oninput="footerCategoriesData[${i}].name=this.value"
+        style="padding:8px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"/>
+      <input value="${c.link}" oninput="footerCategoriesData[${i}].link=this.value"
+        style="padding:8px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"/>
+      <button class="btn btn-danger btn-sm" onclick="footerCategoriesData.splice(${i},1);renderFooterCategories()">🗑️</button>
+    </div>`).join('');
+}
+
+function addFooterLink() { footerLinksData.push({name:'',link:'#'}); renderFooterLinks(); }
+function addFooterCategory() { footerCategoriesData.push({name:'',link:'#'}); renderFooterCategories(); }
+
+async function saveFooter() {
+  const body = {
+    tagline: document.getElementById('footer-tagline').value,
+    desc: document.getElementById('footer-desc').value,
+    copyright: document.getElementById('footer-copyright').value,
+    facebook: document.getElementById('footer-facebook').value,
+    youtube: document.getElementById('footer-youtube').value,
+    instagram: document.getElementById('footer-instagram').value,
+    twitter: document.getElementById('footer-twitter').value,
+    address: document.getElementById('footer-address').value,
+    email: document.getElementById('footer-email').value,
+    phone: document.getElementById('footer-phone').value,
+    paymentImg: document.getElementById('footer-payment-img').value,
+    links: footerLinksData,
+    categories: footerCategoriesData,
+  };
+  try {
+    await api('POST', '/api/admin/footer', body);
+    toast('✅ ফুটার সংরক্ষিত হয়েছে');
+  } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
+}
+
+// ────────────────────────────────────────────
+// THEME SETTINGS
+// ────────────────────────────────────────────
+const cssVarsConfig = [
+  {key:'--primary', label:'Primary Color', default:'#F5C518'},
+  {key:'--Green', label:'Green (Secondary)', default:'#066144'},
+  {key:'--primary-dark', label:'Primary Dark', default:'#d4a90e'},
+  {key:'--text-dark', label:'Text Dark', default:'#1a1a1a'},
+  {key:'--bg', label:'Background', default:'#FFFFFF'},
+  {key:'--bg-soft', label:'Background Soft', default:'#F5F5F5'},
+  {key:'--border', label:'Border Color', default:'#E0E0E0'},
+  {key:'--radius', label:'Border Radius (px)', default:'4', type:'text'},
+  {key:'--header-h', label:'Header Height', default:'70px', type:'text'},
+];
+
+let themeData = {};
+
+function initThemePanel() {
+  const grid = document.getElementById('theme-vars-grid');
+  if (!grid) return;
+  grid.innerHTML = cssVarsConfig.map(v => {
+    const isColor = !v.type || v.type === 'color';
+    return `<div class="field">
+      <label>${v.label}<br><small style="color:var(--text2);font-family:monospace">${v.key}</small></label>
+      ${isColor ? `<div style="display:flex;gap:8px;align-items:center">
+        <input type="color" id="tv-pick-${v.key.replace(/[-]/g,'_')}" value="${v.default}"
+          style="width:44px;height:38px;padding:2px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);cursor:pointer"
+          oninput="syncThemeVar('${v.key}', this.value, false)"/>
+        <input type="text" id="tv-${v.key.replace(/[-]/g,'_')}" value="${v.default}"
+          style="flex:1;padding:9px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"
+          oninput="syncThemeVar('${v.key}', this.value, true)"/>
+      </div>` : `<input type="text" id="tv-${v.key.replace(/[-]/g,'_')}" value="${v.default}"
+          style="width:100%;padding:9px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"
+          oninput="themeData['${v.key}']=this.value;updateThemePreview()"/>`}
+    </div>`;
+  }).join('');
+}
+
+function syncThemeVar(key, val, fromText) {
+  const safeKey = key.replace(/[-]/g,'_');
+  themeData[key] = val;
+  if (fromText) {
+    const picker = document.getElementById('tv-pick-' + safeKey);
+    if (picker && /^#[0-9a-fA-F]{6}$/.test(val)) picker.value = val;
+  } else {
+    const text = document.getElementById('tv-' + safeKey);
+    if (text) text.value = val;
+  }
+  updateThemePreview();
+}
+
+function updateThemePreview() {
+  const primary = themeData['--primary'] || '#F5C518';
+  const green = themeData['--Green'] || '#066144';
+  const bg = themeData['--bg'] || '#FFFFFF';
+  const textDark = themeData['--text-dark'] || '#1a1a1a';
+  const bgSoft = themeData['--bg-soft'] || '#F5F5F5';
+  // Update preview panel
+  const tpHeader = document.getElementById('tp-header');
+  const tpHero = document.getElementById('tp-hero');
+  const tpBtn = document.getElementById('tp-btn');
+  const tpHeroCta = document.getElementById('tp-hero-cta');
+  const tpCard1 = document.getElementById('tp-card1');
+  const tpCard2 = document.getElementById('tp-card2');
+  const tpFooter = document.getElementById('tp-footer');
+  const tpLogo = document.getElementById('tp-logo');
+  if (tpHeader) tpHeader.style.background = bg;
+  if (tpHeader) tpHeader.style.borderBottom = `2px solid ${primary}`;
+  if (tpLogo) { tpLogo.style.color = textDark; }
+  if (tpBtn) { tpBtn.style.background = primary; tpBtn.style.color = textDark; }
+  if (tpHero) { tpHero.style.background = green; }
+  if (document.getElementById('tp-hero-title')) document.getElementById('tp-hero-title').style.color = '#fff';
+  if (tpHeroCta) { tpHeroCta.style.background = primary; tpHeroCta.style.color = textDark; }
+  if (tpCard1) { tpCard1.style.background = bgSoft; tpCard1.style.color = textDark; tpCard1.style.border = `1px solid ${primary}40`; }
+  if (tpCard2) { tpCard2.style.background = bgSoft; tpCard2.style.color = textDark; tpCard2.style.border = `1px solid ${primary}40`; }
+  if (tpFooter) { tpFooter.style.background = textDark === '#1a1a1a' ? '#1a1a1a' : textDark; tpFooter.style.color = '#ccc'; }
+}
+
+async function loadThemeSettings() {
+  try {
+    const data = await api('GET', '/api/admin/theme-settings');
+    if (data && data.vars) {
+      themeData = data.vars;
+      cssVarsConfig.forEach(v => {
+        const safeKey = v.key.replace(/[-]/g,'_');
+        const val = data.vars[v.key];
+        if (val) {
+          const txt = document.getElementById('tv-' + safeKey);
+          if (txt) txt.value = val;
+          const pick = document.getElementById('tv-pick-' + safeKey);
+          if (pick && /^#[0-9a-fA-F]{6}$/.test(val)) pick.value = val;
+        }
+      });
+      updateThemePreview();
+    }
+  } catch(e) {}
+  updateThemePreview();
+}
+
+function applyThemeToPage() {
+  cssVarsConfig.forEach(v => {
+    const safeKey = v.key.replace(/[-]/g,'_');
+    const txt = document.getElementById('tv-' + safeKey);
+    if (txt && txt.value) document.documentElement.style.setProperty(v.key, txt.value);
+  });
+  toast('✅ থিম প্রয়োগ হয়েছে (পেজ রিলোড হবে না — সংরক্ষণ করুন)');
+}
+
+function resetTheme() {
+  themeData = {};
+  cssVarsConfig.forEach(v => {
+    const safeKey = v.key.replace(/[-]/g,'_');
+    const txt = document.getElementById('tv-' + safeKey);
+    if (txt) txt.value = v.default;
+    const pick = document.getElementById('tv-pick-' + safeKey);
+    if (pick && /^#[0-9a-fA-F]{6}$/.test(v.default)) pick.value = v.default;
+  });
+  updateThemePreview();
+  toast('↩️ থিম রিসেট হয়েছে');
+}
+
+async function saveThemeSettings() {
+  cssVarsConfig.forEach(v => {
+    const txt = document.getElementById('tv-' + v.key.replace(/[-]/g,'_'));
+    if (txt) themeData[v.key] = txt.value;
+  });
+  try {
+    await api('POST', '/api/admin/theme-settings', { vars: themeData });
+    toast('✅ থিম সংরক্ষিত হয়েছে');
+  } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
+}
+
+
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
   overlay.addEventListener('click', e => {
     if (e.target === overlay) overlay.classList.remove('open');
