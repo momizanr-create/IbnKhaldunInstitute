@@ -1,20 +1,19 @@
 // ============================================================
 // Ibn Khaldun Institute — Backend Server
 // Node.js + Express + MongoDB + Cloudinary
-// Deploy on: Render.com
+// Deploy on: Render.com  →  https://ibnkhalduninstitute.onrender.com
 // ============================================================
 
 require('dotenv').config();
 
-const express  = require('express');
-const mongoose = require('mongoose');
-const cors     = require('cors');
-const multer   = require('multer');
+const express    = require('express');
+const mongoose   = require('mongoose');
+const cors       = require('cors');
+const multer     = require('multer');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const path   = require('path');
-const jwt    = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+const jwt        = require('jsonwebtoken');
+const bcrypt     = require('bcryptjs');
 
 const app        = express();
 const PORT       = process.env.PORT || 5000;
@@ -32,37 +31,37 @@ cloudinary.config({
 // ============================================================
 app.use(cors({
   origin: (origin, callback) => {
-    // origin না থাকলে allow (Postman, Render internal call)
+    // Origin না থাকলে allow (Postman / server-to-server)
     if (!origin) return callback(null, true);
 
-    const allowedOrigins = [
-      'http://localhost:3000',
-      'http://localhost:4000',
-      'https://ibnkhalduninstitute.onrender.com', 
-      'http://localhost:5500',
-      'http://127.0.0.1:5500',
-      'http://127.0.0.1:3000',
-      process.env.FRONTEND_URL,   // Vercel frontend URL
-      process.env.ADMIN_URL,      // Vercel admin panel URL
+    // যেকোনো vercel.app subdomain allow
+    if (origin.endsWith('.vercel.app')) return callback(null, true);
+
+    // localhost / 127.0.0.1 যেকোনো port allow
+    if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+      return callback(null, true);
+    }
+
+    // নির্দিষ্ট allowed origins
+    const allowed = [
+      'https://ibn-khaldun-institute.vercel.app',
+      'https://ibn-khaldun-institute-ucpf.vercel.app',
+      process.env.FRONTEND_URL,
+      process.env.ADMIN_URL,
     ].filter(Boolean);
 
-    // যেকোনো vercel.app subdomain allow করা (সহজ সমাধান)
-    if (origin.endsWith('.vercel.app') || allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
+    if (allowed.includes(origin)) return callback(null, true);
 
-    // Development এ file:// protocol থেকে আসা request allow
-    if (origin.startsWith('file://')) {
-      return callback(null, true);
-    }
-
-    console.warn('CORS blocked:', origin);
-    callback(new Error('CORS: origin not allowed — ' + origin));
+    console.warn('⚠️ CORS blocked:', origin);
+    callback(new Error('CORS: not allowed — ' + origin));
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
+// Preflight OPTIONS সব route এ handle
+app.options('*', cors());
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -80,7 +79,6 @@ const upload = multer({ storage: imageStorage });
 // ============================================================
 // SCHEMAS
 // ============================================================
-
 const adminSchema = new mongoose.Schema({
   username:  { type: String, unique: true },
   password:  String,
@@ -89,29 +87,20 @@ const adminSchema = new mongoose.Schema({
 const Admin = mongoose.model('Admin', adminSchema);
 
 const courseSchema = new mongoose.Schema({
-  title:         String,
-  slug:          { type: String, unique: true },
-  category:      String,
-  instructor:    String,
-  price:         Number,
-  originalPrice: Number,
-  discount:      Number,
-  description:   String,
-  shortDesc:     String,
-  thumbnail:     String,
-  previewVideo:  String,
-  duration:      String,
-  lessons:       Number,
-  students:      { type: Number, default: 0 },
-  rating:        { type: Number, default: 4.5 },
-  level:         { type: String, default: 'সকলের জন্য' },
-  language:      { type: String, default: 'বাংলা' },
-  tags:          [String],
+  title: String, slug: { type: String, unique: true },
+  category: String, instructor: String,
+  price: Number, originalPrice: Number, discount: Number,
+  description: String, shortDesc: String,
+  thumbnail: String, previewVideo: String,
+  duration: String, lessons: Number,
+  students:  { type: Number, default: 0 },
+  rating:    { type: Number, default: 4.5 },
+  level:     { type: String, default: 'সকলের জন্য' },
+  language:  { type: String, default: 'বাংলা' },
+  tags: [String],
   curriculum: [{
     sectionTitle: String,
-    lessons: [{
-      title: String, duration: String, videoId: String, isFree: Boolean,
-    }],
+    lessons: [{ title: String, duration: String, videoId: String, isFree: Boolean }],
   }],
   featured:  { type: Boolean, default: false },
   published: { type: Boolean, default: true },
@@ -159,10 +148,8 @@ const Settings = mongoose.model('Settings', settingsSchema);
 const enrollmentSchema = new mongoose.Schema({
   studentName: String, studentEmail: String, studentPhone: String,
   courseId:      { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
-  courseTitle:   String,
-  amount:        Number,
-  paymentMethod: String,
-  transactionId: String,
+  courseTitle:   String, amount: Number,
+  paymentMethod: String, transactionId: String,
   status:    { type: String, default: 'pending' },
   createdAt: { type: Date, default: Date.now },
 });
@@ -172,19 +159,18 @@ const Enrollment = mongoose.model('Enrollment', enrollmentSchema);
 // AUTH MIDDLEWARE
 // ============================================================
 function authMiddleware(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const token = req.headers['authorization']?.split(' ')[1];
   if (!token) return res.status(401).json({ error: 'No token provided' });
   try {
     req.admin = jwt.verify(token, JWT_SECRET);
     next();
-  } catch (err) {
+  } catch {
     res.status(401).json({ error: 'Invalid or expired token' });
   }
 }
 
 // ============================================================
-// ROUTES — HEALTH
+// HEALTH
 // ============================================================
 app.get('/', (req, res) =>
   res.json({ status: 'ok', message: 'Ibn Khaldun Institute API ✅', time: new Date().toISOString() })
@@ -194,30 +180,23 @@ app.get('/api/health', (req, res) =>
 );
 
 // ============================================================
-// ROUTES — AUTH
+// AUTH ROUTES
 // ============================================================
-
-// লগইন
 app.post('/api/admin/login', async (req, res) => {
   try {
     const { username, password } = req.body;
     if (!username || !password)
       return res.status(400).json({ error: 'username এবং password দিন' });
-
     const admin = await Admin.findOne({ username: username.trim() });
     if (!admin) return res.status(401).json({ error: 'Invalid credentials' });
-
     const ok = await bcrypt.compare(password, admin.password);
     if (!ok) return res.status(401).json({ error: 'Invalid credentials' });
-
     const token = jwt.sign({ id: admin._id, username }, JWT_SECRET, { expiresIn: '7d' });
     res.json({ token, username });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// প্রথমবার admin তৈরি (যদি কোনো admin না থাকে)
+// প্রথমবার setup (admin না থাকলে)
 app.post('/api/admin/setup', async (req, res) => {
   try {
     const count = await Admin.countDocuments();
@@ -225,64 +204,47 @@ app.post('/api/admin/setup', async (req, res) => {
     const hashed = await bcrypt.hash(req.body.password || 'admin123', 10);
     await Admin.create({ username: req.body.username || 'admin', password: hashed });
     res.json({ message: 'Admin created successfully' });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// ⚠️ Admin Force Reset — জরুরি প্রয়োজনে ব্যবহার করুন
-// ব্যবহারের পর RESET_SECRET পরিবর্তন করুন অথবা এই route সরিয়ে ফেলুন
+// Force reset — secret দিয়ে protect করা
 app.post('/api/admin/force-reset', async (req, res) => {
   try {
     const { secret, username, password } = req.body;
-
-    // Secret key দিয়ে protect করা — Render এ RESET_SECRET env variable দিন
     const RESET_SECRET = process.env.RESET_SECRET || 'ibn_reset_2024';
-    if (secret !== RESET_SECRET) {
+    if (secret !== RESET_SECRET)
       return res.status(403).json({ error: 'Invalid secret key' });
-    }
-
-    const newUsername = username || 'admin';
-    const newPassword = password || 'admin123';
-    const hashed = await bcrypt.hash(newPassword, 10);
-
+    const hashed = await bcrypt.hash(password || 'admin123', 10);
     await Admin.deleteMany({});
-    await Admin.create({ username: newUsername, password: hashed });
-
-    console.log(`✅ Admin force reset — username: "${newUsername}"`);
-    res.json({ message: `Admin reset সফল। username: "${newUsername}"` });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
+    await Admin.create({ username: username || 'admin', password: hashed });
+    console.log('✅ Admin force reset done');
+    res.json({ message: 'Admin reset সফল হয়েছে' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// Password পরিবর্তন
+// Password change
 app.post('/api/admin/change-password', authMiddleware, async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
     const admin = await Admin.findById(req.admin.id);
     if (!admin) return res.status(404).json({ error: 'Admin not found' });
-
     const ok = await bcrypt.compare(currentPassword, admin.password);
     if (!ok) return res.status(401).json({ error: 'Current password incorrect' });
-
     admin.password = await bcrypt.hash(newPassword, 10);
     await admin.save();
     res.json({ message: 'Password changed successfully' });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ============================================================
-// ROUTES — COURSES
+// COURSES
 // ============================================================
 app.get('/api/courses', async (req, res) => {
   try {
     const { category, featured, limit } = req.query;
     let query = { published: true };
     if (category) query.category = category;
-    if (featured)  query.featured = true;
+    if (featured) query.featured = true;
     let q = Course.find(query).sort({ createdAt: -1 });
     if (limit) q = q.limit(parseInt(limit));
     res.json(await q);
@@ -337,7 +299,7 @@ app.delete('/api/admin/courses/:id', authMiddleware, async (req, res) => {
 });
 
 // ============================================================
-// ROUTES — INSTRUCTORS
+// INSTRUCTORS
 // ============================================================
 app.get('/api/instructors', async (req, res) => {
   try { res.json(await Instructor.find({ published: true }).sort({ createdAt: -1 })); }
@@ -379,7 +341,7 @@ app.delete('/api/admin/instructors/:id', authMiddleware, async (req, res) => {
 });
 
 // ============================================================
-// ROUTES — TESTIMONIALS
+// TESTIMONIALS
 // ============================================================
 app.get('/api/testimonials', async (req, res) => {
   try { res.json(await Testimonial.find({ published: true }).sort({ createdAt: -1 })); }
@@ -416,7 +378,7 @@ app.delete('/api/admin/testimonials/:id', authMiddleware, async (req, res) => {
 });
 
 // ============================================================
-// ROUTES — NOTICES
+// NOTICES
 // ============================================================
 app.get('/api/notices', async (req, res) => {
   try { res.json(await Notice.find({ active: true })); }
@@ -453,7 +415,7 @@ app.delete('/api/admin/notices/:id', authMiddleware, async (req, res) => {
 });
 
 // ============================================================
-// ROUTES — SETTINGS
+// SETTINGS
 // ============================================================
 app.get('/api/settings', async (req, res) => {
   try {
@@ -481,7 +443,7 @@ app.post('/api/admin/settings/upload', authMiddleware, upload.single('file'), as
 });
 
 // ============================================================
-// ROUTES — ENROLLMENTS
+// ENROLLMENTS
 // ============================================================
 app.post('/api/enrollments', async (req, res) => {
   try {
@@ -494,8 +456,7 @@ app.post('/api/enrollments', async (req, res) => {
 app.get('/api/admin/enrollments', authMiddleware, async (req, res) => {
   try {
     const { status } = req.query;
-    let query = {};
-    if (status) query.status = status;
+    const query = status ? { status } : {};
     res.json(await Enrollment.find(query).sort({ createdAt: -1 }));
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -513,7 +474,7 @@ app.delete('/api/admin/enrollments/:id', authMiddleware, async (req, res) => {
 });
 
 // ============================================================
-// ROUTES — STATS
+// STATS
 // ============================================================
 app.get('/api/admin/stats', authMiddleware, async (req, res) => {
   try {
@@ -526,14 +487,11 @@ app.get('/api/admin/stats', authMiddleware, async (req, res) => {
       { $match: { status: 'approved' } },
       { $group: { _id: null, total: { $sum: '$amount' } } },
     ]);
-    res.json({
-      courses, instructors, testimonials, enrollments,
-      pendingEnrollments, revenue: totalRevenue[0]?.total || 0,
-    });
+    res.json({ courses, instructors, testimonials, enrollments,
+      pendingEnrollments, revenue: totalRevenue[0]?.total || 0 });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// ── Upload image ──
 app.post('/api/admin/upload', authMiddleware, upload.single('file'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
@@ -542,7 +500,7 @@ app.post('/api/admin/upload', authMiddleware, upload.single('file'), async (req,
 });
 
 // ============================================================
-// AUTO-CREATE ADMIN (first run)
+// AUTO-CREATE ADMIN
 // ============================================================
 async function ensureAdminExists() {
   try {
@@ -554,7 +512,7 @@ async function ensureAdminExists() {
       await Admin.create({ username, password: hashed });
       console.log(`✅ Admin তৈরি হয়েছে — username: "${username}"`);
     } else {
-      console.log('ℹ️  Admin ইতিমধ্যে বিদ্যমান, count:', count);
+      console.log(`ℹ️  Admin আছে (count: ${count})`);
     }
   } catch (err) {
     console.error('❌ Admin তৈরিতে সমস্যা:', err.message);
@@ -562,12 +520,12 @@ async function ensureAdminExists() {
 }
 
 // ============================================================
-// START SERVER
+// START
 // ============================================================
 mongoose.connect(process.env.MONGODB_URI)
   .then(async () => {
     console.log('✅ MongoDB connected');
     await ensureAdminExists();
-    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+    app.listen(PORT, () => console.log(`🚀 Server: http://localhost:${PORT}`));
   })
   .catch(err => console.error('❌ MongoDB error:', err));

@@ -1,2041 +1,1145 @@
-<!-- index.html/admin_panel -->
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Admin Panel — ইবনে খালদুন ইনস্টিটিউট</title>
-<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-<style>
-:root{
-  --primary:#6C4BEF;
-  --primary-light:#f0ecff;
-  --primary-dark:#5438d4;
-  --accent:#F5C518;
-  --green:#22c55e;
-  --green-light:#dcfce7;
-  --red:#ef4444;
-  --red-light:#fee2e2;
-  --orange:#f97316;
-  --orange-light:#ffedd5;
-  --sidebar-w:230px;
-  --header-h:64px;
-  --bg:#f0f2f8;
-  --card:#ffffff;
-  --border:#e2e8f0;
-  --text:#1e293b;
-  --text-mid:#64748b;
-  --text-light:#94a3b8;
-  --shadow:0 2px 12px rgba(108,75,239,0.08);
-  --radius:12px;
-  --radius-sm:8px;
-  --font:'Hind Siliguri','Poppins',sans-serif;
-  --transition:0.22s cubic-bezier(0.4,0,0.2,1);
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px}
-a{text-decoration:none;color:inherit}
-button{cursor:pointer;font-family:inherit}
-img{display:block;max-width:100%}
-input,textarea,select{font-family:inherit}
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel — ইবনে খালদুন ইনস্টিটিউট</title>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --primary: #F5C518;
+      --primary-dark: #d4a90e;
+      --bg: #0f0f0f;
+      --bg2: #1a1a1a;
+      --bg3: #242424;
+      --border: #2e2e2e;
+      --text: #f0f0f0;
+      --text2: #aaa;
+      --green: #22c55e;
+      --red: #ef4444;
+      --blue: #3b82f6;
+      --orange: #f97316;
+      --radius: 8px;
+      --sidebar: 240px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Hind Siliguri', 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; font-family: inherit; }
+    input, textarea, select { font-family: inherit; }
 
-/* ── AUTH SCREEN ── */
-#auth-screen{
-  position:fixed;inset:0;background:linear-gradient(135deg,#1e1040 0%,#2d1b69 50%,#1a0e3d 100%);
-  display:flex;align-items:center;justify-content:center;z-index:9999;
-}
-.auth-card{background:#fff;border-radius:20px;padding:48px 44px;width:100%;max-width:420px;box-shadow:0 24px 80px rgba(0,0,0,0.4)}
-.auth-logo{text-align:center;margin-bottom:32px}
-.auth-logo-icon{width:64px;height:64px;background:var(--primary);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px}
-.auth-logo h2{font-size:20px;font-weight:800;color:var(--text)}
-.auth-logo p{font-size:12px;color:var(--text-mid);margin-top:4px}
-.auth-form .field{margin-bottom:18px}
-.auth-form label{display:block;font-size:12px;font-weight:700;color:var(--text-mid);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:7px}
-.auth-form input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;outline:none;transition:border-color var(--transition);background:#f8fafc}
-.auth-form input:focus{border-color:var(--primary);background:#fff}
-.auth-btn{width:100%;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:700;letter-spacing:0.5px;transition:background var(--transition)}
-.auth-btn:hover{background:var(--primary-dark)}
-.auth-error{background:#fee2e2;color:#991b1b;border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
+    /* ── LOGIN ── */
+    #login-screen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at 60% 40%, #1a1200 0%, #0f0f0f 70%);
+    }
+    .login-box {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 16px; padding: 48px 40px; width: 100%; max-width: 400px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+    }
+    .login-logo {
+      text-align: center; margin-bottom: 32px;
+    }
+    .login-logo .badge {
+      display: inline-block; background: var(--primary); color: #1a1a1a;
+      font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 20px; margin-bottom: 12px;
+    }
+    .login-logo h1 { font-size: 22px; font-weight: 700; color: var(--text); }
+    .login-logo p  { font-size: 13px; color: var(--text2); margin-top: 4px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+    .form-group input {
+      width: 100%; padding: 12px 14px; background: var(--bg3);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      color: var(--text); font-size: 15px; outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus { border-color: var(--primary); }
+    .btn-login {
+      width: 100%; padding: 14px; background: var(--primary); color: #1a1a1a;
+      border: none; border-radius: var(--radius); font-size: 15px; font-weight: 700;
+      letter-spacing: 1px; transition: background 0.2s, transform 0.1s;
+      margin-top: 4px;
+    }
+    .btn-login:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .btn-login:active { transform: translateY(0); }
+    .btn-login:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    #login-error {
+      display: none; background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3);
+      color: #fca5a5; border-radius: 6px; padding: 10px 14px;
+      font-size: 13px; margin-bottom: 16px; text-align: center;
+    }
 
-/* ── LAYOUT ── */
-#app{display:none;height:100vh;overflow:hidden}
-.app-layout{display:flex;height:100%}
+    /* ── LAYOUT ── */
+    #app { display: none; min-height: 100vh; }
+    .layout { display: flex; min-height: 100vh; }
 
-/* ── SIDEBAR ── */
-.sidebar{
-  width:var(--sidebar-w);flex-shrink:0;
-  background:linear-gradient(180deg,#1e1040 0%,#2d1b69 60%,#1a0e3d 100%);
-  display:flex;flex-direction:column;
-  height:100%;overflow-y:auto;overflow-x:hidden;
-  position:relative;z-index:10;
-}
-.sidebar::-webkit-scrollbar{width:3px}
-.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:3px}
-.sidebar-logo{
-  padding:22px 20px 18px;
-  display:flex;align-items:center;gap:12px;
-  border-bottom:1px solid rgba(255,255,255,0.1);
-  flex-shrink:0;
-}
-.sidebar-logo-icon{
-  width:38px;height:38px;background:var(--accent);border-radius:10px;
-  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;
-}
-.sidebar-logo-text{color:#fff;font-size:14px;font-weight:800;line-height:1.2}
-.sidebar-logo-text span{display:block;font-size:9px;font-weight:500;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar); background: var(--bg2); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh;
+      z-index: 50; transition: transform 0.3s;
+    }
+    .sidebar-header {
+      padding: 20px 16px; border-bottom: 1px solid var(--border);
+    }
+    .sidebar-brand { font-size: 13px; font-weight: 700; color: var(--primary); letter-spacing: 1px; text-transform: uppercase; }
+    .sidebar-sub   { font-size: 11px; color: var(--text2); margin-top: 2px; }
+    .sidebar-nav   { flex: 1; padding: 12px 0; overflow-y: auto; }
+    .nav-section   { padding: 8px 16px 4px; font-size: 10px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 1.5px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 16px; font-size: 14px; color: var(--text2);
+      cursor: pointer; border-radius: 0; transition: all 0.15s;
+      border-left: 3px solid transparent;
+    }
+    .nav-item:hover  { color: var(--text); background: rgba(255,255,255,0.04); }
+    .nav-item.active { color: var(--primary); background: rgba(245,197,24,0.08); border-left-color: var(--primary); }
+    .nav-item .icon  { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+    .sidebar-footer  { padding: 16px; border-top: 1px solid var(--border); }
+    .admin-badge {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px; background: var(--bg3); border-radius: var(--radius);
+    }
+    .admin-avatar { width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #1a1a1a; flex-shrink: 0; }
+    .admin-name  { font-size: 13px; font-weight: 600; }
+    .admin-role  { font-size: 11px; color: var(--text2); }
+    .btn-logout  { width: 100%; margin-top: 8px; padding: 8px; background: transparent; border: 1px solid var(--border); border-radius: var(--radius); color: var(--text2); font-size: 13px; transition: all 0.2s; }
+    .btn-logout:hover { border-color: var(--red); color: var(--red); }
 
-.sidebar-menu{padding:14px 12px;flex:1}
-.menu-section-label{
-  font-size:9px;font-weight:700;color:rgba(255,255,255,0.3);
-  text-transform:uppercase;letter-spacing:1.5px;
-  padding:10px 8px 6px;margin-top:8px;
-}
-.nav-item{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 12px;border-radius:10px;
-  color:rgba(255,255,255,0.65);font-size:13px;font-weight:500;
-  cursor:pointer;transition:all var(--transition);margin-bottom:2px;
-  border:none;background:none;width:100%;text-align:left;
-}
-.nav-item:hover{background:rgba(255,255,255,0.1);color:#fff}
-.nav-item.active{background:rgba(255,255,255,0.15);color:#fff;font-weight:700}
-.nav-item.active .nav-icon{color:var(--accent)}
-.nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0}
-.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px}
+    /* ── MAIN ── */
+    .main { margin-left: var(--sidebar); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+    .topbar {
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      padding: 0 24px; height: 56px; display: flex; align-items: center;
+      justify-content: space-between; position: sticky; top: 0; z-index: 40;
+    }
+    .topbar-title { font-size: 16px; font-weight: 600; }
+    .topbar-actions { display: flex; align-items: center; gap: 12px; }
+    .content { padding: 24px; flex: 1; }
 
-.sidebar-footer{padding:14px 12px;border-top:1px solid rgba(255,255,255,0.1);flex-shrink:0}
-.logout-btn{
-  display:flex;align-items:center;gap:10px;
-  width:100%;padding:10px 12px;border-radius:10px;
-  background:rgba(239,68,68,0.15);color:#fca5a5;
-  border:none;font-size:13px;font-weight:600;cursor:pointer;
-  transition:background var(--transition);
-}
-.logout-btn:hover{background:rgba(239,68,68,0.25)}
+    /* ── PAGES ── */
+    .page { display: none; }
+    .page.active { display: block; }
 
-/* ── MAIN AREA ── */
-.main-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
+    /* ── CARDS ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 16px; margin-bottom: 28px; }
+    .stat-card {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px; display: flex; align-items: center; gap: 16px;
+    }
+    .stat-icon { width: 48px; height: 48px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+    .stat-info h3 { font-size: 24px; font-weight: 700; }
+    .stat-info p  { font-size: 12px; color: var(--text2); margin-top: 2px; }
 
-/* ── TOPBAR ── */
-.topbar{
-  height:var(--header-h);background:#fff;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;padding:0 28px;gap:16px;flex-shrink:0;
-  box-shadow:0 1px 4px rgba(0,0,0,0.04);
-}
-.topbar-title{font-size:18px;font-weight:800;color:var(--text);flex:1}
-.topbar-search{
-  display:flex;align-items:center;gap:8px;
-  background:var(--bg);border:1.5px solid var(--border);border-radius:20px;
-  padding:7px 14px;flex:0 0 240px;
-}
-.topbar-search input{border:none;background:none;outline:none;font-size:13px;color:var(--text);width:100%}
-.topbar-search input::placeholder{color:var(--text-light)}
-.topbar-actions{display:flex;align-items:center;gap:10px}
-.icon-btn{
-  width:36px;height:36px;border-radius:50%;border:none;
-  background:var(--bg);display:flex;align-items:center;justify-content:center;
-  font-size:17px;cursor:pointer;position:relative;transition:background var(--transition);
-}
-.icon-btn:hover{background:var(--primary-light)}
-.notif-dot{
-  position:absolute;top:6px;right:6px;
-  width:8px;height:8px;border-radius:50%;background:var(--red);
-  border:2px solid #fff;
-}
-.admin-chip{
-  display:flex;align-items:center;gap:9px;
-  background:var(--primary-light);border-radius:20px;
-  padding:5px 14px 5px 5px;cursor:pointer;
-}
-.admin-avatar{
-  width:28px;height:28px;border-radius:50%;background:var(--primary);
-  display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;
-}
-.admin-chip span{font-size:12px;font-weight:700;color:var(--primary)}
+    /* ── TABLE ── */
+    .card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 24px; }
+    .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .card-header h3 { font-size: 15px; font-weight: 600; }
+    .card-body { padding: 0; }
+    table { width: 100%; border-collapse: collapse; }
+    th { padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; background: var(--bg3); border-bottom: 1px solid var(--border); white-space: nowrap; }
+    td { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
 
-/* ── CONTENT ── */
-.content-area{flex:1;overflow-y:auto;padding:28px}
-.content-area::-webkit-scrollbar{width:5px}
-.content-area::-webkit-scrollbar-thumb{background:var(--border);border-radius:5px}
+    /* ── BUTTONS ── */
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius); border: none; font-size: 13px; font-weight: 600; transition: all 0.15s; cursor: pointer; }
+    .btn-primary { background: var(--primary); color: #1a1a1a; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-danger  { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+    .btn-danger:hover  { background: rgba(239,68,68,0.25); }
+    .btn-success { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+    .btn-edit    { background: rgba(59,130,246,0.15); color: var(--blue); border: 1px solid rgba(59,130,246,0.3); }
+    .btn-edit:hover { background: rgba(59,130,246,0.25); }
+    .btn-sm { padding: 5px 10px; font-size: 12px; }
+    .btn-icon { padding: 6px 8px; }
 
-/* ── PAGES ── */
-.page{display:none}
-.page.active{display:block}
+    /* ── BADGE ── */
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .badge-green  { background: rgba(34,197,94,0.15);  color: var(--green); }
+    .badge-red    { background: rgba(239,68,68,0.15);   color: var(--red); }
+    .badge-yellow { background: rgba(245,197,24,0.15);  color: var(--primary); }
+    .badge-blue   { background: rgba(59,130,246,0.15);  color: var(--blue); }
 
-/* ── STAT CARDS ── */
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:24px}
-.stat-card{
-  background:var(--card);border-radius:var(--radius);padding:22px 20px;
-  display:flex;align-items:center;gap:16px;
-  box-shadow:var(--shadow);border:1px solid var(--border);
-  border-left:4px solid transparent;transition:transform var(--transition);
-}
-.stat-card:hover{transform:translateY(-2px)}
-.stat-card.c1{border-left-color:var(--primary)}
-.stat-card.c2{border-left-color:var(--green)}
-.stat-card.c3{border-left-color:var(--accent)}
-.stat-card.c4{border-left-color:var(--orange)}
-.stat-icon{
-  width:52px;height:52px;border-radius:14px;
-  display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;
-}
-.c1 .stat-icon{background:var(--primary-light);color:var(--primary)}
-.c2 .stat-icon{background:var(--green-light);color:var(--green)}
-.c3 .stat-icon{background:rgba(245,197,24,0.12);color:#b8860b}
-.c4 .stat-icon{background:var(--orange-light);color:var(--orange)}
-.stat-info p{font-size:12px;font-weight:600;color:var(--text-mid);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
-.stat-info h3{font-size:28px;font-weight:800;color:var(--text);line-height:1}
-.stat-info small{font-size:11px;color:var(--text-light)}
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+      z-index: 1000; align-items: center; justify-content: center; padding: 16px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 12px; width: 100%; max-width: 560px;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .modal-header h3 { font-size: 16px; font-weight: 600; }
+    .modal-body   { padding: 20px 24px; }
+    .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+    .btn-close { background: none; border: none; color: var(--text2); font-size: 20px; cursor: pointer; padding: 0 4px; line-height: 1; }
+    .btn-close:hover { color: var(--text); }
 
-/* ── SECTION CARDS ── */
-.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden}
-.card-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:18px 22px;border-bottom:1px solid var(--border);
-}
-.card-header h3{font-size:15px;font-weight:700;color:var(--text)}
-.card-body{padding:22px}
+    /* ── FORM ── */
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+    .field input, .field textarea, .field select {
+      width: 100%; padding: 10px 12px;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius); color: var(--text); font-size: 14px; outline: none;
+      transition: border-color 0.2s;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--primary); }
+    .field textarea { min-height: 90px; resize: vertical; }
+    .field select option { background: var(--bg3); }
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-/* ── BUTTONS ── */
-.btn{
-  display:inline-flex;align-items:center;gap:7px;
-  padding:9px 18px;border-radius:var(--radius-sm);
-  border:none;font-size:12px;font-weight:700;
-  letter-spacing:0.3px;cursor:pointer;transition:all var(--transition);
-}
-.btn-primary{background:var(--primary);color:#fff}
-.btn-primary:hover{background:var(--primary-dark)}
-.btn-success{background:var(--green);color:#fff}
-.btn-success:hover{background:#16a34a}
-.btn-danger{background:var(--red);color:#fff}
-.btn-danger:hover{background:#dc2626}
-.btn-warning{background:var(--accent);color:#1a1a1a}
-.btn-warning:hover{background:#e0b010}
-.btn-ghost{background:transparent;color:var(--text-mid);border:1.5px solid var(--border)}
-.btn-ghost:hover{border-color:var(--primary);color:var(--primary)}
-.btn-sm{padding:6px 12px;font-size:11px}
-.btn-icon{padding:7px;border-radius:var(--radius-sm)}
+    /* ── TOAST ── */
+    #toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+      padding: 12px 20px; border-radius: var(--radius); font-size: 14px; font-weight: 500;
+      pointer-events: none; opacity: 0; transform: translateY(8px);
+      transition: all 0.3s; max-width: 320px;
+    }
+    #toast.show { opacity: 1; transform: translateY(0); }
+    #toast.success { background: var(--green); color: #fff; }
+    #toast.error   { background: var(--red);   color: #fff; }
 
-/* ── TABLE ── */
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse}
-thead tr{background:#f8fafc}
-th{padding:12px 16px;text-align:left;font-size:11px;font-weight:700;color:var(--text-mid);text-transform:uppercase;letter-spacing:0.8px;border-bottom:1.5px solid var(--border)}
-td{padding:13px 16px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text);vertical-align:middle}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:#fafafe}
-.td-img{width:52px;height:36px;border-radius:6px;object-fit:cover;background:var(--bg)}
-.badge{
-  display:inline-block;padding:3px 10px;border-radius:20px;
-  font-size:11px;font-weight:700;letter-spacing:0.3px;
-}
-.badge-green{background:var(--green-light);color:#166534}
-.badge-red{background:var(--red-light);color:#991b1b}
-.badge-orange{background:var(--orange-light);color:#7c2d12}
-.badge-blue{background:var(--primary-light);color:var(--primary)}
-.badge-yellow{background:rgba(245,197,24,0.15);color:#78610a}
-.td-actions{display:flex;gap:6px;align-items:center}
+    /* ── LOADING ── */
+    .loading { text-align: center; padding: 48px; color: var(--text2); font-size: 14px; }
+    .spinner { display: inline-block; width: 24px; height: 24px; border: 2px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.7s linear infinite; margin-bottom: 8px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── FORM ── */
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.form-grid.cols-3{grid-template-columns:1fr 1fr 1fr}
-.form-grid.cols-1{grid-template-columns:1fr}
-.field{display:flex;flex-direction:column;gap:6px}
-.field.span-2{grid-column:span 2}
-.field.span-3{grid-column:span 3}
-label{font-size:11px;font-weight:700;color:var(--text-mid);text-transform:uppercase;letter-spacing:0.8px}
-input[type="text"],input[type="number"],input[type="email"],input[type="url"],
-textarea,select{
-  padding:10px 13px;border:1.5px solid var(--border);border-radius:var(--radius-sm);
-  font-size:13px;color:var(--text);outline:none;background:#fff;
-  transition:border-color var(--transition);width:100%;
-}
-input:focus,textarea:focus,select:focus{border-color:var(--primary)}
-textarea{resize:vertical;min-height:90px}
-.field-hint{font-size:11px;color:var(--text-light)}
-.toggle-wrap{display:flex;align-items:center;gap:10px}
-.toggle{width:44px;height:24px;border-radius:12px;background:var(--border);position:relative;cursor:pointer;transition:background var(--transition);flex-shrink:0;border:none}
-.toggle::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform var(--transition);box-shadow:0 1px 4px rgba(0,0,0,0.2)}
-.toggle.on{background:var(--green)}
-.toggle.on::after{transform:translateX(20px)}
-.toggle-label{font-size:13px;color:var(--text-mid)}
-
-/* ── MODAL ── */
-.modal-overlay{
-  position:fixed;inset:0;background:rgba(15,10,40,0.6);z-index:1000;
-  display:none;align-items:center;justify-content:center;padding:20px;
-  backdrop-filter:blur(4px);
-}
-.modal-overlay.open{display:flex}
-.modal{
-  background:#fff;border-radius:16px;width:100%;max-width:700px;
-  max-height:90vh;display:flex;flex-direction:column;
-  box-shadow:0 24px 80px rgba(0,0,0,0.35);
-}
-.modal-lg{max-width:860px}
-.modal-head{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:20px 24px;border-bottom:1px solid var(--border);flex-shrink:0;
-}
-.modal-head h3{font-size:16px;font-weight:800;color:var(--text)}
-.modal-close-btn{width:32px;height:32px;border-radius:50%;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;color:var(--text-mid)}
-.modal-close-btn:hover{background:var(--red-light);color:var(--red)}
-.modal-body{padding:24px;overflow-y:auto;flex:1}
-.modal-body::-webkit-scrollbar{width:4px}
-.modal-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
-.modal-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;flex-shrink:0}
-
-/* ── IMAGE UPLOAD AREA ── */
-.upload-area{
-  border:2px dashed var(--border);border-radius:var(--radius-sm);
-  padding:24px;text-align:center;cursor:pointer;
-  transition:border-color var(--transition),background var(--transition);
-  position:relative;background:#fafafa;
-}
-.upload-area:hover{border-color:var(--primary);background:var(--primary-light)}
-.upload-area input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.upload-icon{font-size:32px;margin-bottom:8px}
-.upload-area p{font-size:12px;color:var(--text-mid)}
-.upload-preview{width:100%;max-height:160px;object-fit:contain;border-radius:var(--radius-sm);margin-top:10px;display:none}
-
-/* ── TOAST ── */
-#toast{
-  position:fixed;bottom:24px;right:24px;z-index:9999;
-  background:#1e1040;color:#fff;padding:13px 20px;border-radius:12px;
-  font-size:13px;font-weight:600;box-shadow:0 8px 28px rgba(0,0,0,0.25);
-  transform:translateY(80px);opacity:0;transition:all 0.3s ease;max-width:320px;
-  display:flex;align-items:center;gap:10px;border-left:4px solid var(--green);
-}
-#toast.show{transform:translateY(0);opacity:1}
-#toast.error{border-left-color:var(--red)}
-
-/* ── EMPTY STATE ── */
-.empty-state{
-  text-align:center;padding:60px 20px;
-}
-.empty-state .empty-icon{font-size:52px;margin-bottom:14px}
-.empty-state p{font-size:15px;font-weight:600;color:var(--text-mid)}
-.empty-state small{font-size:13px;color:var(--text-light)}
-
-/* ── CURRICULUM BUILDER ── */
-.curriculum-section-item{background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:12px;overflow:hidden}
-.curriculum-section-head{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#f0f2f8;border-bottom:1px solid var(--border)}
-.curriculum-section-head input{flex:1;border:none;background:transparent;font-size:13px;font-weight:700;outline:none;color:var(--text)}
-.lesson-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border)}
-.lesson-row:last-child{border-bottom:none}
-.lesson-row input{border:none;background:transparent;font-size:12px;outline:none;color:var(--text)}
-.lesson-row input.lesson-title{flex:2}
-.lesson-row input.lesson-dur{flex:1;max-width:80px}
-.lesson-row input.lesson-vid{flex:2}
-
-/* ── DASHBOARD GRID ── */
-.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
-.dash-grid.three{grid-template-columns:1.5fr 1fr 1fr}
-.recent-list{display:flex;flex-direction:column;gap:0}
-.recent-item{
-  display:flex;align-items:center;gap:14px;
-  padding:14px 0;border-bottom:1px solid var(--border);
-}
-.recent-item:last-child{border-bottom:none}
-.recent-item-icon{
-  width:40px;height:40px;border-radius:10px;
-  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;
-}
-.recent-item-info{flex:1}
-.recent-item-info p{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
-.recent-item-info small{font-size:11px;color:var(--text-light)}
-.recent-item-right{text-align:right;flex-shrink:0}
-.recent-item-right p{font-size:13px;font-weight:700;color:var(--text)}
-.recent-item-right small{font-size:11px;color:var(--text-light)}
-
-/* ── SETTINGS PAGE ── */
-.settings-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:24px}
-.settings-tab{
-  padding:10px 20px;font-size:12px;font-weight:700;
-  border:none;background:none;cursor:pointer;color:var(--text-mid);
-  border-bottom:3px solid transparent;margin-bottom:-2px;
-  transition:color var(--transition);letter-spacing:0.3px;text-transform:uppercase;
-}
-.settings-tab.active{color:var(--primary);border-bottom-color:var(--primary)}
-.settings-section{display:none}
-.settings-section.active{display:block}
-
-/* ── RESPONSIVE ── */
-@media(max-width:1200px){
-  .stats-row{grid-template-columns:repeat(2,1fr)}
-  .form-grid{grid-template-columns:1fr}
-  .form-grid .span-2{grid-column:span 1}
-}
-@media(max-width:900px){
-  .sidebar{width:60px}
-  .sidebar-logo-text,.nav-item span,.menu-section-label,.sidebar-footer .logout-btn span{display:none}
-  .nav-item{padding:10px;justify-content:center}
-  .nav-icon{width:auto}
-  .sidebar-logo{padding:16px;justify-content:center}
-  .sidebar-logo-icon{margin:0}
-  .content-area{padding:16px}
-  .dash-grid{grid-template-columns:1fr}
-}
-@media(max-width:600px){
-  .stats-row{grid-template-columns:1fr}
-  .topbar-search{display:none}
-}
-</style>
+    /* ── MOBILE ── */
+    .hamburger { display: none; background: none; border: none; color: var(--text); font-size: 22px; cursor: pointer; }
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0; }
+      .hamburger { display: block; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .row2 { grid-template-columns: 1fr; }
+      .hide-mobile { display: none !important; }
+    }
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .content { padding: 16px; }
+    }
+  </style>
 </head>
 <body>
 
-<!-- ══ AUTH SCREEN ══ -->
-<div id="auth-screen">
-  <div class="auth-card">
-    <div class="auth-logo">
-      <div class="auth-logo-icon">📚</div>
-      <h2>ইবনে খালদুন ইনস্টিটিউট</h2>
-      <p>অ্যাডমিন প্যানেলে স্বাগতম</p>
+<!-- ═══════════════════════════════════════════════
+     LOGIN SCREEN
+═══════════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="badge">Admin Panel</div>
+      <h1>ইবনে খালদুন ইনস্টিটিউট</h1>
+      <p>অ্যাডমিন ড্যাশবোর্ডে প্রবেশ করুন</p>
     </div>
-    <div id="auth-error" class="auth-error">ব্যবহারকারীর নাম বা পাসওয়ার্ড ভুল।</div>
-    <div class="auth-form">
-      <div class="field">
-        <label>ব্যবহারকারীর নাম</label>
-        <input id="auth-username" type="text" placeholder="admin" autocomplete="username"/>
-      </div>
-      <div class="field">
-        <label>পাসওয়ার্ড</label>
-        <input id="auth-password" type="password" placeholder="••••••••" autocomplete="current-password"/>
-      </div>
-      <button class="auth-btn" onclick="doLogin()">লগইন করুন →</button>
+    <div id="login-error"></div>
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="login-username" placeholder="admin" autocomplete="username"/>
     </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <button class="btn-login" id="login-btn" onclick="doLogin()">লগইন করুন</button>
   </div>
 </div>
 
-<!-- ══ APP ══ -->
+<!-- ═══════════════════════════════════════════════
+     APP SHELL
+═══════════════════════════════════════════════ -->
 <div id="app">
-  <div class="app-layout">
+  <div class="layout">
 
     <!-- SIDEBAR -->
-    <nav class="sidebar">
-      <div class="sidebar-logo">
-        <div class="sidebar-logo-icon">📚</div>
-        <div class="sidebar-logo-text">
-          Ibn Khaldun
-          <span>Admin Panel</span>
-        </div>
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-brand">ইবনে খালদুন</div>
+        <div class="sidebar-sub">Admin Dashboard</div>
       </div>
-      <div class="sidebar-menu">
-        <div class="menu-section-label">প্রধান</div>
-        <button class="nav-item active" onclick="navigate('dashboard')">
-          <span class="nav-icon">🏠</span><span>ড্যাশবোর্ড</span>
-        </button>
-        <button class="nav-item" onclick="navigate('courses')">
-          <span class="nav-icon">📖</span><span>কোর্স ম্যানেজার</span>
-        </button>
-        <button class="nav-item" onclick="navigate('instructors')">
-          <span class="nav-icon">👨‍🏫</span><span>শিক্ষক</span>
-        </button>
-        <button class="nav-item" onclick="navigate('enrollments')">
-          <span class="nav-icon">📋</span><span>এনরোলমেন্ট</span>
-          <span class="nav-badge" id="pending-badge">0</span>
-        </button>
-        <div class="menu-section-label">কন্টেন্ট</div>
-        <button class="nav-item" onclick="navigate('testimonials')">
-          <span class="nav-icon">💬</span><span>রিভিউ / মতামত</span>
-        </button>
-        <button class="nav-item" onclick="navigate('notices')">
-          <span class="nav-icon">📢</span><span>নোটিশ / পপআপ</span>
-        </button>
-        <div class="menu-section-label">সেটিংস</div>
-        <button class="nav-item" onclick="navigate('settings')">
-          <span class="nav-icon">⚙️</span><span>সাইট সেটিংস</span>
-        </button>
-        <button class="nav-item" onclick="navigate('media')">
-          <span class="nav-icon">🖼️</span><span>মিডিয়া আপলোড</span>
-        </button>
-      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Main</div>
+        <div class="nav-item active" onclick="navTo('dashboard')"><span class="icon">📊</span> ড্যাশবোর্ড</div>
+        <div class="nav-section">Content</div>
+        <div class="nav-item" onclick="navTo('courses')"><span class="icon">📚</span> কোর্স</div>
+        <div class="nav-item" onclick="navTo('instructors')"><span class="icon">👨‍🏫</span> ইন্সট্রাক্টর</div>
+        <div class="nav-item" onclick="navTo('testimonials')"><span class="icon">💬</span> রিভিউ</div>
+        <div class="nav-item" onclick="navTo('notices')"><span class="icon">📢</span> নোটিশ</div>
+        <div class="nav-section">Business</div>
+        <div class="nav-item" onclick="navTo('enrollments')"><span class="icon">📋</span> এনরোলমেন্ট</div>
+        <div class="nav-section">Settings</div>
+        <div class="nav-item" onclick="navTo('settings')"><span class="icon">⚙️</span> সেটিংস</div>
+      </nav>
       <div class="sidebar-footer">
-        <button class="logout-btn" onclick="doLogout()">
-          <span>🚪</span><span>লগআউট</span>
-        </button>
+        <div class="admin-badge">
+          <div class="admin-avatar" id="admin-avatar-letter">A</div>
+          <div>
+            <div class="admin-name" id="admin-name-display">Admin</div>
+            <div class="admin-role">Administrator</div>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="doLogout()">🚪 লগআউট</button>
       </div>
-    </nav>
+    </aside>
 
     <!-- MAIN -->
-    <div class="main-area">
-      <!-- TOPBAR -->
+    <div class="main">
       <div class="topbar">
-        <div class="topbar-title" id="page-title">ড্যাশবোর্ড</div>
-        <div class="topbar-search">
-          <span>🔍</span>
-          <input type="text" placeholder="খুঁজুন..."/>
+        <div style="display:flex;align-items:center;gap:12px">
+          <button class="hamburger" onclick="toggleSidebar()">☰</button>
+          <div class="topbar-title" id="page-title">ড্যাশবোর্ড</div>
         </div>
         <div class="topbar-actions">
-          <button class="icon-btn" title="ফ্রন্টএন্ড দেখুন" onclick="window.open('../frontend/index.html','_blank')">🌐</button>
-          <div class="admin-chip">
-            <div class="admin-avatar" id="admin-avatar-chip">A</div>
-            <span id="admin-name-chip">Admin</span>
-          </div>
+          <a href="https://ibn-khaldun-institute-ucpf.vercel.app/" target="_blank" class="btn btn-sm" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2)">🌐 ওয়েবসাইট</a>
         </div>
       </div>
 
-      <!-- CONTENT -->
-      <div class="content-area">
+      <div class="content">
 
-        <!-- ══ DASHBOARD PAGE ══ -->
+        <!-- ── DASHBOARD ── -->
         <div class="page active" id="page-dashboard">
-          <div class="stats-row">
-            <div class="stat-card c1">
-              <div class="stat-icon">📖</div>
-              <div class="stat-info">
-                <p>মোট কোর্স</p>
-                <h3 id="stat-courses">—</h3>
-                <small>প্রকাশিত + অপ্রকাশিত</small>
-              </div>
-            </div>
-            <div class="stat-card c2">
-              <div class="stat-icon">👥</div>
-              <div class="stat-info">
-                <p>এনরোলমেন্ট</p>
-                <h3 id="stat-enrollments">—</h3>
-                <small id="stat-pending-text">পেন্ডিং: 0</small>
-              </div>
-            </div>
-            <div class="stat-card c3">
-              <div class="stat-icon">👨‍🏫</div>
-              <div class="stat-info">
-                <p>শিক্ষক</p>
-                <h3 id="stat-instructors">—</h3>
-                <small>নিবন্ধিত</small>
-              </div>
-            </div>
-            <div class="stat-card c4">
-              <div class="stat-icon">💰</div>
-              <div class="stat-info">
-                <p>মোট আয়</p>
-                <h3 id="stat-revenue">—</h3>
-                <small>অনুমোদিত এনরোলমেন্ট</small>
-              </div>
-            </div>
+          <div class="stats-grid" id="stats-grid">
+            <div class="loading"><div class="spinner"></div><div>লোড হচ্ছে...</div></div>
           </div>
-
-          <div class="dash-grid">
-            <div class="card">
-              <div class="card-header">
-                <h3>সাম্প্রতিক এনরোলমেন্ট</h3>
-                <button class="btn btn-ghost btn-sm" onclick="navigate('enrollments')">সব দেখুন</button>
-              </div>
-              <div class="card-body">
-                <div class="recent-list" id="dash-recent-enrollments">
-                  <div class="empty-state"><div class="empty-icon">📭</div><p>কোনো তথ্য নেই</p></div>
-                </div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header">
-                <h3>দ্রুত কার্যক্রম</h3>
-              </div>
-              <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
-                <button class="btn btn-primary" style="width:100%;justify-content:flex-start" onclick="openCourseModal()">➕ নতুন কোর্স যোগ করুন</button>
-                <button class="btn btn-success" style="width:100%;justify-content:flex-start" onclick="navigate('enrollments')">📋 এনরোলমেন্ট পরিচালনা</button>
-                <button class="btn btn-warning" style="width:100%;justify-content:flex-start" onclick="navigate('notices')">📢 নতুন নোটিশ</button>
-                <button class="btn btn-ghost" style="width:100%;justify-content:flex-start" onclick="navigate('settings')">⚙️ সাইট সেটিংস</button>
-                <button class="btn btn-ghost" style="width:100%;justify-content:flex-start" onclick="window.open('../frontend/index.html','_blank')">🌐 ফ্রন্টএন্ড দেখুন</button>
-              </div>
+          <div class="card">
+            <div class="card-header"><h3>সাম্প্রতিক এনরোলমেন্ট</h3></div>
+            <div class="card-body">
+              <table><thead><tr>
+                <th>নাম</th><th>কোর্স</th><th>পরিমাণ</th><th>স্ট্যাটাস</th>
+              </tr></thead>
+              <tbody id="recent-enrollments"><tr><td colspan="4" class="loading">লোড হচ্ছে...</td></tr></tbody>
+              </table>
             </div>
           </div>
         </div>
 
-        <!-- ══ COURSES PAGE ══ -->
+        <!-- ── COURSES ── -->
         <div class="page" id="page-courses">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-            <div>
-              <h2 style="font-size:18px;font-weight:800">কোর্স ম্যানেজার</h2>
-              <p style="font-size:13px;color:var(--text-mid);margin-top:3px">সকল কোর্স পরিচালনা করুন</p>
-            </div>
-            <button class="btn btn-primary" onclick="openCourseModal()">➕ নতুন কোর্স</button>
-          </div>
           <div class="card">
             <div class="card-header">
-              <h3>কোর্স তালিকা</h3>
-              <div style="display:flex;gap:8px">
-                <select id="course-filter-cat" onchange="loadCourses()" style="padding:6px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;background:#fff">
-                  <option value="">সব ক্যাটাগরি</option>
-                  <option>কুরআন</option><option>হাদীস</option><option>ফিকহ</option>
-                  <option>আরবি</option><option>ইসলামিক স্টাডিজ</option><option>অন্যান্য</option>
-                </select>
-                <select id="course-filter-pub" onchange="loadCourses()" style="padding:6px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;background:#fff">
-                  <option value="">সব স্ট্যাটাস</option>
-                  <option value="true">প্রকাশিত</option>
-                  <option value="false">অপ্রকাশিত</option>
-                </select>
-              </div>
+              <h3>কোর্স সমূহ</h3>
+              <button class="btn btn-primary" onclick="openCourseModal()">+ নতুন কোর্স</button>
             </div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>ছবি</th><th>কোর্স নাম</th><th>ক্যাটাগরি</th>
-                    <th>শিক্ষক</th><th>মূল্য</th><th>স্ট্যাটাস</th><th>কার্যক্রম</th>
-                  </tr>
-                </thead>
-                <tbody id="courses-tbody">
-                  <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-light)">লোড হচ্ছে...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- ══ INSTRUCTORS PAGE ══ -->
-        <div class="page" id="page-instructors">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-            <div>
-              <h2 style="font-size:18px;font-weight:800">শিক্ষক ম্যানেজার</h2>
-              <p style="font-size:13px;color:var(--text-mid);margin-top:3px">শিক্ষকদের তথ্য পরিচালনা</p>
-            </div>
-            <button class="btn btn-primary" onclick="openInstructorModal()">➕ নতুন শিক্ষক</button>
-          </div>
-          <div class="card">
-            <div class="card-header"><h3>শিক্ষক তালিকা</h3></div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr><th>ছবি</th><th>নাম</th><th>পদবী</th><th>কোর্স</th><th>শিক্ষার্থী</th><th>স্ট্যাটাস</th><th>কার্যক্রম</th></tr>
-                </thead>
-                <tbody id="instructors-tbody">
-                  <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-light)">লোড হচ্ছে...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- ══ ENROLLMENTS PAGE ══ -->
-        <div class="page" id="page-enrollments">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-            <div>
-              <h2 style="font-size:18px;font-weight:800">এনরোলমেন্ট</h2>
-              <p style="font-size:13px;color:var(--text-mid);margin-top:3px">শিক্ষার্থীদের ভর্তি পরিচালনা</p>
-            </div>
-            <div style="display:flex;gap:8px">
-              <select id="enroll-filter" onchange="loadEnrollments()" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;background:#fff">
-                <option value="">সব স্ট্যাটাস</option>
-                <option value="pending">পেন্ডিং</option>
-                <option value="approved">অনুমোদিত</option>
-                <option value="rejected">বাতিল</option>
-              </select>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-header"><h3>এনরোলমেন্ট তালিকা</h3></div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr><th>শিক্ষার্থী</th><th>কোর্স</th><th>পরিমাণ</th><th>পেমেন্ট</th><th>তারিখ</th><th>স্ট্যাটাস</th><th>কার্যক্রম</th></tr>
-                </thead>
-                <tbody id="enrollments-tbody">
-                  <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-light)">লোড হচ্ছে...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- ══ TESTIMONIALS PAGE ══ -->
-        <div class="page" id="page-testimonials">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-            <div>
-              <h2 style="font-size:18px;font-weight:800">রিভিউ / মতামত</h2>
-              <p style="font-size:13px;color:var(--text-mid);margin-top:3px">শিক্ষার্থীদের রিভিউ পরিচালনা</p>
-            </div>
-            <button class="btn btn-primary" onclick="openTestimonialModal()">➕ নতুন রিভিউ</button>
-          </div>
-          <div class="card">
-            <div class="card-header"><h3>রিভিউ তালিকা</h3></div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr><th>নাম</th><th>পদবী</th><th>মতামত</th><th>রেটিং</th><th>স্ট্যাটাস</th><th>কার্যক্রম</th></tr>
-                </thead>
-                <tbody id="testimonials-tbody">
-                  <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-light)">লোড হচ্ছে...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- ══ NOTICES PAGE ══ -->
-        <div class="page" id="page-notices">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-            <div>
-              <h2 style="font-size:18px;font-weight:800">নোটিশ / পপআপ</h2>
-              <p style="font-size:13px;color:var(--text-mid);margin-top:3px">ওয়েবসাইটের নোটিশ ও পপআপ পরিচালনা</p>
-            </div>
-            <button class="btn btn-primary" onclick="openNoticeModal()">➕ নতুন নোটিশ</button>
-          </div>
-          <div class="card">
-            <div class="card-header"><h3>নোটিশ তালিকা</h3></div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr><th>শিরোনাম</th><th>বিবরণ</th><th>CTA বাটন</th><th>স্ট্যাটাস</th><th>কার্যক্রম</th></tr>
-                </thead>
-                <tbody id="notices-tbody">
-                  <tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-light)">লোড হচ্ছে...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- ══ SETTINGS PAGE ══ -->
-        <div class="page" id="page-settings">
-          <h2 style="font-size:18px;font-weight:800;margin-bottom:6px">সাইট সেটিংস</h2>
-          <p style="font-size:13px;color:var(--text-mid);margin-bottom:24px">ফ্রন্টএন্ডের সকল কন্টেন্ট এখান থেকে পরিবর্তন করুন</p>
-
-          <div class="settings-tabs">
-            <button class="settings-tab active" onclick="switchSettings('general',this)">সাধারণ</button>
-            <button class="settings-tab" onclick="switchSettings('hero',this)">হিরো সেকশন</button>
-            <button class="settings-tab" onclick="switchSettings('contact',this)">যোগাযোগ</button>
-            <button class="settings-tab" onclick="switchSettings('social',this)">সোশ্যাল মিডিয়া</button>
-            <button class="settings-tab" onclick="switchSettings('popup',this)">পপআপ অফার</button>
-            <button class="settings-tab" onclick="switchSettings('footer',this)">ফুটার</button>
-          </div>
-
-          <!-- GENERAL -->
-          <div class="settings-section active" id="settings-general">
-            <div class="card">
-              <div class="card-header"><h3>সাধারণ তথ্য</h3></div>
-              <div class="card-body">
-                <div class="form-grid">
-                  <div class="field">
-                    <label>সাইটের নাম</label>
-                    <input type="text" id="s-site-name" placeholder="ইবনে খালদুন ইনস্টিটিউট"/>
-                  </div>
-                  <div class="field">
-                    <label>ট্যাগলাইন</label>
-                    <input type="text" id="s-tagline" placeholder="অনলাইনে নতুন দক্ষতা অর্জন করুন"/>
-                  </div>
-                  <div class="field">
-                    <label>লোগো ছবি (Cloudinary URL)</label>
-                    <input type="text" id="s-logo-url" placeholder="https://..."/>
-                  </div>
-                  <div class="field">
-                    <label>লোগো আপলোড</label>
-                    <div class="upload-area" style="padding:14px">
-                      <input type="file" accept="image/*" onchange="uploadAndSet(this,'s-logo-url')"/>
-                      <p>📁 লোগো আপলোড করুন</p>
-                    </div>
-                  </div>
-                  <div class="field">
-                    <label>ফ্যাভিকন URL</label>
-                    <input type="text" id="s-favicon" placeholder="https://..."/>
-                  </div>
-                  <div class="field">
-                    <label>মোট শিক্ষার্থী (হিরো কাউন্টার)</label>
-                    <input type="text" id="s-students-count" placeholder="৫০,০০০+"/>
-                  </div>
-                  <div class="field">
-                    <label>মোট কোর্স (কাউন্টার)</label>
-                    <input type="text" id="s-courses-count" placeholder="১২০+"/>
-                  </div>
-                  <div class="field">
-                    <label>রেটিং (কাউন্টার)</label>
-                    <input type="text" id="s-rating" placeholder="৪.৯★"/>
-                  </div>
-                </div>
-                <div style="margin-top:20px;text-align:right">
-                  <button class="btn btn-primary" onclick="saveSettings('general')">💾 সংরক্ষণ করুন</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- HERO -->
-          <div class="settings-section" id="settings-hero">
-            <div class="card">
-              <div class="card-header"><h3>হিরো সেকশন</h3></div>
-              <div class="card-body">
-                <div class="form-grid cols-1">
-                  <div class="field">
-                    <label>হিরো প্রধান শিরোনাম (H1)</label>
-                    <input type="text" id="s-hero-h1" placeholder="জ্ঞান অর্জন করুন, জীবন গড়ুন"/>
-                  </div>
-                  <div class="field">
-                    <label>হিরো সাব-টেক্সট</label>
-                    <textarea id="s-hero-sub" placeholder="ইসলামিক শিক্ষার সেরা অনলাইন প্ল্যাটফর্ম..."></textarea>
-                  </div>
-                  <div class="field">
-                    <label>হিরো ব্যাকগ্রাউন্ড ছবির URL</label>
-                    <input type="text" id="s-hero-bg" placeholder="https://..."/>
-                  </div>
-                  <div class="field">
-                    <label>হিরো ব্যাকগ্রাউন্ড আপলোড</label>
-                    <div class="upload-area">
-                      <input type="file" accept="image/*" onchange="uploadAndSet(this,'s-hero-bg')"/>
-                      <div class="upload-icon">🖼️</div>
-                      <p>হিরো ব্যাকগ্রাউন্ড ছবি আপলোড করুন</p>
-                      <p style="font-size:11px;margin-top:4px">সর্বোত্তম মাপ: ১৯২০×১০৮০px</p>
-                    </div>
-                  </div>
-                  <div class="field">
-                    <label>প্রাথমিক CTA বাটন টেক্সট</label>
-                    <input type="text" id="s-hero-btn1" placeholder="কোর্স দেখুন"/>
-                  </div>
-                  <div class="field">
-                    <label>সেকেন্ডারি CTA বাটন টেক্সট</label>
-                    <input type="text" id="s-hero-btn2" placeholder="আরও জানুন"/>
-                  </div>
-                </div>
-                <div style="margin-top:20px;text-align:right">
-                  <button class="btn btn-primary" onclick="saveSettings('hero')">💾 সংরক্ষণ করুন</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- CONTACT -->
-          <div class="settings-section" id="settings-contact">
-            <div class="card">
-              <div class="card-header"><h3>যোগাযোগের তথ্য</h3></div>
-              <div class="card-body">
-                <div class="form-grid">
-                  <div class="field">
-                    <label>ফোন নম্বর ১</label>
-                    <input type="text" id="s-phone1" placeholder="+880 1234-567890"/>
-                  </div>
-                  <div class="field">
-                    <label>ফোন নম্বর ২</label>
-                    <input type="text" id="s-phone2" placeholder="+880 1234-567891"/>
-                  </div>
-                  <div class="field">
-                    <label>ইমেইল ঠিকানা</label>
-                    <input type="email" id="s-email" placeholder="info@ibnkhaldun.com"/>
-                  </div>
-                  <div class="field">
-                    <label>WhatsApp নম্বর</label>
-                    <input type="text" id="s-whatsapp" placeholder="+8801234567890"/>
-                  </div>
-                  <div class="field span-2">
-                    <label>ঠিকানা</label>
-                    <textarea id="s-address" placeholder="ঢাকা, বাংলাদেশ"></textarea>
-                  </div>
-                  <div class="field">
-                    <label>অফিস সময় (সকাল)</label>
-                    <input type="text" id="s-hours-morning" placeholder="শনি–বৃহস্পতি: সকাল ৯টা – বিকাল ৫টা"/>
-                  </div>
-                  <div class="field">
-                    <label>অফিস সময় (বিকাল)</label>
-                    <input type="text" id="s-hours-evening" placeholder="শুক্রবার: বন্ধ"/>
-                  </div>
-                </div>
-                <div style="margin-top:20px;text-align:right">
-                  <button class="btn btn-primary" onclick="saveSettings('contact')">💾 সংরক্ষণ করুন</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- SOCIAL -->
-          <div class="settings-section" id="settings-social">
-            <div class="card">
-              <div class="card-header"><h3>সোশ্যাল মিডিয়া লিঙ্ক</h3></div>
-              <div class="card-body">
-                <div class="form-grid">
-                  <div class="field">
-                    <label>📘 Facebook URL</label>
-                    <input type="url" id="s-facebook" placeholder="https://facebook.com/..."/>
-                  </div>
-                  <div class="field">
-                    <label>▶️ YouTube URL</label>
-                    <input type="url" id="s-youtube" placeholder="https://youtube.com/..."/>
-                  </div>
-                  <div class="field">
-                    <label>📷 Instagram URL</label>
-                    <input type="url" id="s-instagram" placeholder="https://instagram.com/..."/>
-                  </div>
-                  <div class="field">
-                    <label>🐦 Twitter/X URL</label>
-                    <input type="url" id="s-twitter" placeholder="https://twitter.com/..."/>
-                  </div>
-                  <div class="field">
-                    <label>💬 Telegram URL</label>
-                    <input type="url" id="s-telegram" placeholder="https://t.me/..."/>
-                  </div>
-                  <div class="field">
-                    <label>💼 LinkedIn URL</label>
-                    <input type="url" id="s-linkedin" placeholder="https://linkedin.com/..."/>
-                  </div>
-                </div>
-                <div style="margin-top:20px;text-align:right">
-                  <button class="btn btn-primary" onclick="saveSettings('social')">💾 সংরক্ষণ করুন</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- POPUP OFFER -->
-          <div class="settings-section" id="settings-popup">
-            <div class="card">
-              <div class="card-header"><h3>পপআপ অফার সেটিংস</h3></div>
-              <div class="card-body">
-                <div class="form-grid cols-1">
-                  <div class="field">
-                    <label>পপআপ শিরোনাম</label>
-                    <input type="text" id="s-popup-title" placeholder="🎉 বিশেষ স্বাগত অফার"/>
-                  </div>
-                  <div class="field">
-                    <label>পপআপ মূল টেক্সট (H2)</label>
-                    <input type="text" id="s-popup-h2" placeholder="প্রথম কোর্সে ৩০% ছাড় পান!"/>
-                  </div>
-                  <div class="field">
-                    <label>পপআপ বিবরণ</label>
-                    <textarea id="s-popup-desc" placeholder="ইবনে খালদুন ইনস্টিটিউটে আপনাকে স্বাগতম..."></textarea>
-                  </div>
-                  <div class="field">
-                    <label>পপআপ কোর্স নাম</label>
-                    <input type="text" id="s-popup-course" placeholder="Quran Tajweed: সহিহ তেলাওয়াতের সম্পূর্ণ গাইড"/>
-                  </div>
-                  <div class="field">
-                    <label>পপআপ কোর্স ছবি URL</label>
-                    <input type="text" id="s-popup-img" placeholder="https://..."/>
-                  </div>
-                  <div class="field">
-                    <label>পপআপ কোর্স মূল্য (ছাড়ের পরে)</label>
-                    <input type="text" id="s-popup-price" placeholder="৳৮৪০"/>
-                  </div>
-                  <div class="field">
-                    <label>পপআপ কোর্স আসল মূল্য</label>
-                    <input type="text" id="s-popup-orig-price" placeholder="৳১,২০০"/>
-                  </div>
-                  <div class="field">
-                    <label>পপআপ CTA বাটন টেক্সট</label>
-                    <input type="text" id="s-popup-cta" placeholder="এখনই কোর্সটি দেখুন →"/>
-                  </div>
-                  <div class="field">
-                    <label>পপআপ সক্রিয়</label>
-                    <div class="toggle-wrap">
-                      <button class="toggle on" id="s-popup-active-toggle" onclick="this.classList.toggle('on')"></button>
-                      <span class="toggle-label">পপআপ চালু আছে</span>
-                    </div>
-                  </div>
-                </div>
-                <div style="margin-top:20px;text-align:right">
-                  <button class="btn btn-primary" onclick="saveSettings('popup')">💾 সংরক্ষণ করুন</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- FOOTER -->
-          <div class="settings-section" id="settings-footer">
-            <div class="card">
-              <div class="card-header"><h3>ফুটার সেটিংস</h3></div>
-              <div class="card-body">
-                <div class="form-grid cols-1">
-                  <div class="field">
-                    <label>ফুটার বিবরণ</label>
-                    <textarea id="s-footer-desc" placeholder="ইবনে খালদুন ইনস্টিটিউট একটি অনলাইন শিক্ষা প্রতিষ্ঠান..."></textarea>
-                  </div>
-                  <div class="field">
-                    <label>কপিরাইট টেক্সট</label>
-                    <input type="text" id="s-copyright" placeholder="© 2024 ইবনে খালদুন ইনস্টিটিউট। সর্বস্বত্ব সংরক্ষিত।"/>
-                  </div>
-                  <div class="field">
-                    <label>পেমেন্ট পদ্ধতি (কমা দিয়ে আলাদা করুন)</label>
-                    <input type="text" id="s-payment-methods" placeholder="bKash, Nagad, Rocket, Card"/>
-                  </div>
-                </div>
-                <div style="margin-top:20px;text-align:right">
-                  <button class="btn btn-primary" onclick="saveSettings('footer')">💾 সংরক্ষণ করুন</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ══ MEDIA PAGE ══ -->
-        <div class="page" id="page-media">
-          <h2 style="font-size:18px;font-weight:800;margin-bottom:6px">মিডিয়া আপলোড</h2>
-          <p style="font-size:13px;color:var(--text-mid);margin-bottom:24px">Cloudinary-তে ছবি আপলোড করুন এবং URL কপি করুন</p>
-          <div class="card">
-            <div class="card-header"><h3>ছবি আপলোড করুন</h3></div>
             <div class="card-body">
-              <div class="upload-area" id="media-upload-area" style="max-width:500px">
-                <input type="file" accept="image/*" id="media-file-input" onchange="uploadMediaFile(this)"/>
-                <div class="upload-icon">☁️</div>
-                <p style="font-size:14px;font-weight:600">Cloudinary-তে আপলোড করতে ক্লিক করুন</p>
-                <p style="font-size:12px;margin-top:6px">JPG, PNG, WEBP, GIF, SVG সমর্থিত</p>
-              </div>
-              <div id="media-result" style="margin-top:20px;display:none">
-                <div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;padding:16px">
-                  <p style="font-size:12px;font-weight:700;color:#166534;margin-bottom:8px">✅ আপলোড সফল!</p>
-                  <div style="display:flex;gap:10px;align-items:center">
-                    <img id="media-preview-img" src="" alt="" style="width:80px;height:60px;object-fit:cover;border-radius:6px;border:1px solid #ddd"/>
-                    <div style="flex:1">
-                      <input type="text" id="media-url-output" readonly style="background:#fff;font-size:12px;width:100%"/>
-                      <button class="btn btn-sm btn-success" style="margin-top:8px" onclick="copyMediaUrl()">📋 URL কপি করুন</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div id="media-history" style="margin-top:24px">
-                <h4 style="font-size:13px;font-weight:700;margin-bottom:14px;color:var(--text-mid)">সাম্প্রতিক আপলোড</h4>
-                <div id="media-history-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px"></div>
-              </div>
+              <table><thead><tr>
+                <th>শিরোনাম</th><th>ক্যাটাগরি</th><th>মূল্য</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th>
+              </tr></thead>
+              <tbody id="courses-tbody"><tr><td colspan="5" class="loading">লোড হচ্ছে...</td></tr></tbody>
+              </table>
             </div>
           </div>
         </div>
 
-      </div><!-- end content-area -->
-    </div><!-- end main-area -->
-  </div>
-</div>
+        <!-- ── INSTRUCTORS ── -->
+        <div class="page" id="page-instructors">
+          <div class="card">
+            <div class="card-header">
+              <h3>ইন্সট্রাক্টর সমূহ</h3>
+              <button class="btn btn-primary" onclick="openInstructorModal()">+ নতুন ইন্সট্রাক্টর</button>
+            </div>
+            <div class="card-body">
+              <table><thead><tr>
+                <th>নাম</th><th>পদবী</th><th>শিক্ষার্থী</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th>
+              </tr></thead>
+              <tbody id="instructors-tbody"><tr><td colspan="5" class="loading">লোড হচ্ছে...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
 
-<!-- ══ TOAST ══ -->
-<div id="toast">✅ সংরক্ষিত হয়েছে</div>
+        <!-- ── TESTIMONIALS ── -->
+        <div class="page" id="page-testimonials">
+          <div class="card">
+            <div class="card-header">
+              <h3>রিভিউ / টেস্টিমোনিয়াল</h3>
+              <button class="btn btn-primary" onclick="openTestimonialModal()">+ নতুন রিভিউ</button>
+            </div>
+            <div class="card-body">
+              <table><thead><tr>
+                <th>নাম</th><th>পদবী</th><th>রেটিং</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th>
+              </tr></thead>
+              <tbody id="testimonials-tbody"><tr><td colspan="5" class="loading">লোড হচ্ছে...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
 
-<!-- ══ MODAL: COURSE ══ -->
+        <!-- ── NOTICES ── -->
+        <div class="page" id="page-notices">
+          <div class="card">
+            <div class="card-header">
+              <h3>নোটিশ সমূহ</h3>
+              <button class="btn btn-primary" onclick="openNoticeModal()">+ নতুন নোটিশ</button>
+            </div>
+            <div class="card-body">
+              <table><thead><tr>
+                <th>শিরোনাম</th><th>স্ট্যাটাস</th><th>তারিখ</th><th>অ্যাকশন</th>
+              </tr></thead>
+              <tbody id="notices-tbody"><tr><td colspan="4" class="loading">লোড হচ্ছে...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── ENROLLMENTS ── -->
+        <div class="page" id="page-enrollments">
+          <div class="card">
+            <div class="card-header">
+              <h3>এনরোলমেন্ট সমূহ</h3>
+              <div style="display:flex;gap:8px">
+                <select onchange="filterEnrollments(this.value)" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:13px">
+                  <option value="">সব</option>
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+              </div>
+            </div>
+            <div class="card-body">
+              <table><thead><tr>
+                <th>নাম</th><th>কোর্স</th><th>ফোন</th><th>পরিমাণ</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th>
+              </tr></thead>
+              <tbody id="enrollments-tbody"><tr><td colspan="6" class="loading">লোড হচ্ছে...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SETTINGS ── -->
+        <div class="page" id="page-settings">
+          <div class="card" style="max-width:600px">
+            <div class="card-header"><h3>পাসওয়ার্ড পরিবর্তন</h3></div>
+            <div class="card-body" style="padding:20px">
+              <div class="field">
+                <label>বর্তমান পাসওয়ার্ড</label>
+                <input type="password" id="cur-pass" placeholder="বর্তমান পাসওয়ার্ড"/>
+              </div>
+              <div class="field">
+                <label>নতুন পাসওয়ার্ড</label>
+                <input type="password" id="new-pass" placeholder="নতুন পাসওয়ার্ড"/>
+              </div>
+              <div class="field">
+                <label>পাসওয়ার্ড নিশ্চিত করুন</label>
+                <input type="password" id="confirm-pass" placeholder="পুনরায় লিখুন"/>
+              </div>
+              <button class="btn btn-primary" onclick="changePassword()">পাসওয়ার্ড পরিবর্তন করুন</button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /content -->
+    </div><!-- /main -->
+  </div><!-- /layout -->
+</div><!-- /app -->
+
+<!-- ═══════════════════════════════════════════════
+     MODALS
+═══════════════════════════════════════════════ -->
+
+<!-- Course Modal -->
 <div class="modal-overlay" id="course-modal">
-  <div class="modal modal-lg">
-    <div class="modal-head">
-      <h3 id="course-modal-title">নতুন কোর্স যোগ করুন</h3>
-      <button class="modal-close-btn" onclick="closeModal('course-modal')">✕</button>
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="course-modal-title">নতুন কোর্স</h3>
+      <button class="btn-close" onclick="closeModal('course-modal')">×</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="course-id"/>
-      <div class="form-grid">
-        <div class="field span-2">
-          <label>কোর্সের নাম *</label>
-          <input type="text" id="c-title" placeholder="কোর্সের সম্পূর্ণ নাম লিখুন"/>
-        </div>
-        <div class="field">
-          <label>Slug (URL)</label>
-          <input type="text" id="c-slug" placeholder="auto-generated"/>
-        </div>
-        <div class="field">
-          <label>ক্যাটাগরি *</label>
+      <div class="field"><label>শিরোনাম *</label><input id="c-title" placeholder="কোর্সের নাম"/></div>
+      <div class="row2">
+        <div class="field"><label>ক্যাটাগরি</label>
           <select id="c-category">
-            <option value="">ক্যাটাগরি বেছে নিন</option>
-            <option>কুরআন</option><option>হাদীস</option><option>ফিকহ</option>
-            <option>আরবি</option><option>ইসলামিক স্টাডিজ</option><option>অন্যান্য</option>
+            <option>Quran</option><option>Arabic</option><option>Islamic Studies</option>
+            <option>Fiqh</option><option>Hadith</option><option>Other</option>
           </select>
         </div>
-        <div class="field">
-          <label>শিক্ষক *</label>
-          <input type="text" id="c-instructor" placeholder="শিক্ষকের নাম"/>
-        </div>
-        <div class="field">
-          <label>মূল্য (৳) *</label>
-          <input type="number" id="c-price" placeholder="1200"/>
-        </div>
-        <div class="field">
-          <label>আসল মূল্য (৳)</label>
-          <input type="number" id="c-original-price" placeholder="1500"/>
-        </div>
-        <div class="field">
-          <label>ছাড় (%)</label>
-          <input type="number" id="c-discount" placeholder="20"/>
-        </div>
-        <div class="field">
-          <label>কোর্সের স্তর</label>
+        <div class="field"><label>লেভেল</label>
           <select id="c-level">
-            <option>সকলের জন্য</option>
-            <option>শুরুর পর্যায়</option>
-            <option>মধ্যবর্তী</option>
-            <option>উচ্চতর</option>
+            <option>সকলের জন্য</option><option>শুরু</option><option>মধ্যবর্তী</option><option>উন্নত</option>
           </select>
-        </div>
-        <div class="field">
-          <label>মোট সময়কাল</label>
-          <input type="text" id="c-duration" placeholder="১২ ঘন্টা ৩০ মিনিট"/>
-        </div>
-        <div class="field">
-          <label>মোট পাঠ সংখ্যা</label>
-          <input type="number" id="c-lessons" placeholder="45"/>
-        </div>
-        <div class="field">
-          <label>প্রিভিউ ভিডিও (YouTube ID)</label>
-          <input type="text" id="c-video" placeholder="dQw4w9WgXcQ"/>
-        </div>
-        <div class="field">
-          <label>ট্যাগ (কমা দিয়ে আলাদা করুন)</label>
-          <input type="text" id="c-tags" placeholder="কুরআন, তেলাওয়াত, তাজবিদ"/>
-        </div>
-        <div class="field span-2">
-          <label>সংক্ষিপ্ত বিবরণ</label>
-          <textarea id="c-short-desc" placeholder="কোর্সের সংক্ষিপ্ত বিবরণ (১-২ লাইন)" style="min-height:65px"></textarea>
-        </div>
-        <div class="field span-2">
-          <label>বিস্তারিত বিবরণ</label>
-          <textarea id="c-description" placeholder="কোর্সের বিস্তারিত বিবরণ লিখুন..."></textarea>
-        </div>
-        <div class="field">
-          <label>থাম্বনেইল ছবি</label>
-          <div class="upload-area">
-            <input type="file" accept="image/*" onchange="uploadAndSet(this,'c-thumbnail-url','course-thumb-preview')"/>
-            <div class="upload-icon">🖼️</div>
-            <p>ছবি আপলোড করুন</p>
-            <img id="course-thumb-preview" class="upload-preview"/>
-          </div>
-        </div>
-        <div class="field">
-          <label>থাম্বনেইল URL</label>
-          <input type="text" id="c-thumbnail-url" placeholder="https://res.cloudinary.com/..."/>
-          <div class="field-hint">আপলোড করলে স্বয়ংক্রিয়ভাবে পূরণ হবে</div>
-        </div>
-        <div class="field">
-          <label>প্রকাশিত</label>
-          <div class="toggle-wrap">
-            <button class="toggle on" id="c-published-toggle" onclick="this.classList.toggle('on')"></button>
-            <span class="toggle-label">কোর্সটি ফ্রন্টএন্ডে দেখাবে</span>
-          </div>
-        </div>
-        <div class="field">
-          <label>ফিচার্ড</label>
-          <div class="toggle-wrap">
-            <button class="toggle" id="c-featured-toggle" onclick="this.classList.toggle('on')"></button>
-            <span class="toggle-label">হোমপেজে প্রদর্শন</span>
-          </div>
         </div>
       </div>
-
-      <!-- CURRICULUM BUILDER -->
-      <div style="margin-top:24px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-          <h4 style="font-size:14px;font-weight:700">📚 কারিকুলাম তৈরি করুন</h4>
-          <button class="btn btn-ghost btn-sm" onclick="addCurriculumSection()">+ সেকশন যোগ</button>
-        </div>
-        <div id="curriculum-builder"></div>
+      <div class="field"><label>ইন্সট্রাক্টর</label><input id="c-instructor" placeholder="শিক্ষকের নাম"/></div>
+      <div class="row2">
+        <div class="field"><label>মূল্য (৳)</label><input type="number" id="c-price" placeholder="0"/></div>
+        <div class="field"><label>আসল মূল্য (৳)</label><input type="number" id="c-original-price" placeholder="0"/></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>সময়কাল</label><input id="c-duration" placeholder="যেমন: ৩০ ঘণ্টা"/></div>
+        <div class="field"><label>মোট পাঠ</label><input type="number" id="c-lessons" placeholder="0"/></div>
+      </div>
+      <div class="field"><label>সংক্ষিপ্ত বিবরণ</label><textarea id="c-short-desc" placeholder="সংক্ষেপে বর্ণনা..."></textarea></div>
+      <div class="field"><label>বিস্তারিত বিবরণ</label><textarea id="c-desc" placeholder="বিস্তারিত বর্ণনা..."></textarea></div>
+      <div class="field"><label>থাম্বনেইল URL</label><input id="c-thumbnail" placeholder="https://..."/></div>
+      <div class="field"><label>ট্যাগ (কমা দিয়ে)</label><input id="c-tags" placeholder="quran, tajweed, beginner"/></div>
+      <div class="row2">
+        <div class="field"><label>
+          <input type="checkbox" id="c-featured" style="width:auto;margin-right:6px"/>ফিচার্ড
+        </label></div>
+        <div class="field"><label>
+          <input type="checkbox" id="c-published" checked style="width:auto;margin-right:6px"/>প্রকাশিত
+        </label></div>
       </div>
     </div>
-    <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="closeModal('course-modal')">বাতিল</button>
-      <button class="btn btn-primary" onclick="saveCourse()">💾 কোর্স সংরক্ষণ করুন</button>
+    <div class="modal-footer">
+      <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="closeModal('course-modal')">বাতিল</button>
+      <button class="btn btn-primary" onclick="saveCourse()">সংরক্ষণ করুন</button>
     </div>
   </div>
 </div>
 
-<!-- ══ MODAL: INSTRUCTOR ══ -->
+<!-- Instructor Modal -->
 <div class="modal-overlay" id="instructor-modal">
   <div class="modal">
-    <div class="modal-head">
-      <h3 id="instructor-modal-title">নতুন শিক্ষক যোগ করুন</h3>
-      <button class="modal-close-btn" onclick="closeModal('instructor-modal')">✕</button>
+    <div class="modal-header">
+      <h3 id="instructor-modal-title">নতুন ইন্সট্রাক্টর</h3>
+      <button class="btn-close" onclick="closeModal('instructor-modal')">×</button>
     </div>
     <div class="modal-body">
-      <input type="hidden" id="i-id"/>
-      <div class="form-grid">
-        <div class="field">
-          <label>নাম *</label>
-          <input type="text" id="i-name" placeholder="শিক্ষকের পূর্ণ নাম"/>
-        </div>
-        <div class="field">
-          <label>পদবী *</label>
-          <input type="text" id="i-title" placeholder="প্রধান শিক্ষক, কুরআন বিভাগ"/>
-        </div>
-        <div class="field span-2">
-          <label>পরিচিতি</label>
-          <textarea id="i-bio" placeholder="শিক্ষকের সম্পর্কে বিস্তারিত..."></textarea>
-        </div>
-        <div class="field">
-          <label>বিশেষজ্ঞতা (কমা দিয়ে আলাদা করুন)</label>
-          <input type="text" id="i-specializations" placeholder="কুরআন, তাজবিদ, হিফজ"/>
-        </div>
-        <div class="field">
-          <label>মোট শিক্ষার্থী</label>
-          <input type="number" id="i-students" placeholder="5000"/>
-        </div>
-        <div class="field">
-          <label>Facebook URL</label>
-          <input type="url" id="i-facebook" placeholder="https://facebook.com/..."/>
-        </div>
-        <div class="field">
-          <label>YouTube URL</label>
-          <input type="url" id="i-youtube" placeholder="https://youtube.com/..."/>
-        </div>
-        <div class="field">
-          <label>ছবি আপলোড</label>
-          <div class="upload-area">
-            <input type="file" accept="image/*" onchange="uploadAndSet(this,'i-photo-url','instructor-photo-preview')"/>
-            <div class="upload-icon">👤</div>
-            <p>শিক্ষকের ছবি আপলোড করুন</p>
-            <img id="instructor-photo-preview" class="upload-preview"/>
-          </div>
-        </div>
-        <div class="field">
-          <label>ছবির URL</label>
-          <input type="text" id="i-photo-url" placeholder="https://..."/>
-          <div class="field" style="margin-top:12px">
-            <label>প্রকাশিত</label>
-            <div class="toggle-wrap">
-              <button class="toggle on" id="i-published-toggle" onclick="this.classList.toggle('on')"></button>
-              <span class="toggle-label">ফ্রন্টএন্ডে দেখাবে</span>
-            </div>
-          </div>
-        </div>
+      <input type="hidden" id="instructor-id"/>
+      <div class="field"><label>নাম *</label><input id="i-name" placeholder="শিক্ষকের নাম"/></div>
+      <div class="field"><label>পদবী</label><input id="i-title" placeholder="যেমন: হাফেজ, মুফতি"/></div>
+      <div class="field"><label>বায়ো</label><textarea id="i-bio" placeholder="সংক্ষিপ্ত পরিচিতি..."></textarea></div>
+      <div class="field"><label>ফটো URL</label><input id="i-photo" placeholder="https://..."/></div>
+      <div class="field"><label>বিশেষজ্ঞতা (কমা দিয়ে)</label><input id="i-spec" placeholder="Quran, Hadith, Fiqh"/></div>
+      <div class="row2">
+        <div class="field"><label>শিক্ষার্থী</label><input type="number" id="i-students" placeholder="0"/></div>
+        <div class="field"><label>কোর্স সংখ্যা</label><input type="number" id="i-courses" placeholder="0"/></div>
       </div>
+      <div class="field"><label>
+        <input type="checkbox" id="i-published" checked style="width:auto;margin-right:6px"/>প্রকাশিত
+      </label></div>
     </div>
-    <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="closeModal('instructor-modal')">বাতিল</button>
-      <button class="btn btn-primary" onclick="saveInstructor()">💾 সংরক্ষণ করুন</button>
+    <div class="modal-footer">
+      <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="closeModal('instructor-modal')">বাতিল</button>
+      <button class="btn btn-primary" onclick="saveInstructor()">সংরক্ষণ করুন</button>
     </div>
   </div>
 </div>
 
-<!-- ══ MODAL: TESTIMONIAL ══ -->
+<!-- Testimonial Modal -->
 <div class="modal-overlay" id="testimonial-modal">
   <div class="modal">
-    <div class="modal-head">
-      <h3 id="testi-modal-title">নতুন রিভিউ যোগ করুন</h3>
-      <button class="modal-close-btn" onclick="closeModal('testimonial-modal')">✕</button>
+    <div class="modal-header">
+      <h3 id="testimonial-modal-title">নতুন রিভিউ</h3>
+      <button class="btn-close" onclick="closeModal('testimonial-modal')">×</button>
     </div>
     <div class="modal-body">
-      <input type="hidden" id="t-id"/>
-      <div class="form-grid">
-        <div class="field">
-          <label>নাম *</label>
-          <input type="text" id="t-name" placeholder="শিক্ষার্থীর নাম"/>
-        </div>
-        <div class="field">
-          <label>পরিচয় / পদবী</label>
-          <input type="text" id="t-role" placeholder="কোর্স শিক্ষার্থী, ঢাকা"/>
-        </div>
-        <div class="field span-2">
-          <label>মতামত *</label>
-          <textarea id="t-text" placeholder="শিক্ষার্থীর মতামত লিখুন..."></textarea>
-        </div>
-        <div class="field">
-          <label>রেটিং (১-৫)</label>
-          <input type="number" id="t-rating" min="1" max="5" placeholder="5"/>
-        </div>
-        <div class="field">
-          <label>অবতার ইমোজি</label>
-          <input type="text" id="t-avatar" placeholder="👨‍💼"/>
-        </div>
-        <div class="field">
-          <label>প্রকাশিত</label>
-          <div class="toggle-wrap">
-            <button class="toggle on" id="t-published-toggle" onclick="this.classList.toggle('on')"></button>
-            <span class="toggle-label">ফ্রন্টএন্ডে দেখাবে</span>
-          </div>
-        </div>
+      <input type="hidden" id="testimonial-id"/>
+      <div class="field"><label>নাম *</label><input id="t-name" placeholder="শিক্ষার্থীর নাম"/></div>
+      <div class="field"><label>পদবী / কোর্স</label><input id="t-role" placeholder="যেমন: Quran Tajweed শিক্ষার্থী"/></div>
+      <div class="field"><label>রিভিউ *</label><textarea id="t-text" placeholder="রিভিউ লিখুন..."></textarea></div>
+      <div class="row2">
+        <div class="field"><label>রেটিং (১-৫)</label><input type="number" id="t-rating" min="1" max="5" value="5"/></div>
+        <div class="field"><label>আভাটার URL</label><input id="t-avatar" placeholder="https://..."/></div>
       </div>
+      <div class="field"><label>
+        <input type="checkbox" id="t-published" checked style="width:auto;margin-right:6px"/>প্রকাশিত
+      </label></div>
     </div>
-    <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="closeModal('testimonial-modal')">বাতিল</button>
-      <button class="btn btn-primary" onclick="saveTestimonial()">💾 সংরক্ষণ করুন</button>
+    <div class="modal-footer">
+      <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="closeModal('testimonial-modal')">বাতিল</button>
+      <button class="btn btn-primary" onclick="saveTestimonial()">সংরক্ষণ করুন</button>
     </div>
   </div>
 </div>
 
-<!-- ══ MODAL: NOTICE ══ -->
+<!-- Notice Modal -->
 <div class="modal-overlay" id="notice-modal">
   <div class="modal">
-    <div class="modal-head">
-      <h3 id="notice-modal-title">নতুন নোটিশ যোগ করুন</h3>
-      <button class="modal-close-btn" onclick="closeModal('notice-modal')">✕</button>
+    <div class="modal-header">
+      <h3 id="notice-modal-title">নতুন নোটিশ</h3>
+      <button class="btn-close" onclick="closeModal('notice-modal')">×</button>
     </div>
     <div class="modal-body">
-      <input type="hidden" id="n-id"/>
-      <div class="form-grid cols-1">
-        <div class="field">
-          <label>শিরোনাম *</label>
-          <input type="text" id="n-title" placeholder="নোটিশের শিরোনাম"/>
-        </div>
-        <div class="field">
-          <label>বিবরণ</label>
-          <textarea id="n-body" placeholder="নোটিশের বিবরণ..."></textarea>
-        </div>
-        <div class="field">
-          <label>ছবির URL</label>
-          <input type="text" id="n-image" placeholder="https://..."/>
-        </div>
-        <div class="field">
-          <label>ছবি আপলোড</label>
-          <div class="upload-area">
-            <input type="file" accept="image/*" onchange="uploadAndSet(this,'n-image')"/>
-            <p>📁 নোটিশের ছবি আপলোড করুন</p>
-          </div>
-        </div>
-        <div class="field">
-          <label>CTA বাটন টেক্সট</label>
-          <input type="text" id="n-cta-text" placeholder="এখনই দেখুন"/>
-        </div>
-        <div class="field">
-          <label>CTA বাটন লিঙ্ক</label>
-          <input type="text" id="n-cta-link" placeholder="#courses"/>
-        </div>
-        <div class="field">
-          <label>সক্রিয়</label>
-          <div class="toggle-wrap">
-            <button class="toggle on" id="n-active-toggle" onclick="this.classList.toggle('on')"></button>
-            <span class="toggle-label">নোটিশটি ফ্রন্টএন্ডে দেখাবে</span>
-          </div>
-        </div>
+      <input type="hidden" id="notice-id"/>
+      <div class="field"><label>শিরোনাম *</label><input id="n-title" placeholder="নোটিশের শিরোনাম"/></div>
+      <div class="field"><label>বিবরণ</label><textarea id="n-body" placeholder="নোটিশের বিস্তারিত..."></textarea></div>
+      <div class="row2">
+        <div class="field"><label>CTA বাটন লেখা</label><input id="n-cta-text" placeholder="যেমন: আরও জানুন"/></div>
+        <div class="field"><label>CTA লিংক</label><input id="n-cta-link" placeholder="https://..."/></div>
       </div>
+      <div class="field"><label>
+        <input type="checkbox" id="n-active" checked style="width:auto;margin-right:6px"/>সক্রিয়
+      </label></div>
     </div>
-    <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="closeModal('notice-modal')">বাতিল</button>
-      <button class="btn btn-primary" onclick="saveNotice()">💾 সংরক্ষণ করুন</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══ CONFIRM DIALOG ══ -->
-<div class="modal-overlay" id="confirm-modal">
-  <div class="modal" style="max-width:420px">
-    <div class="modal-head">
-      <h3>নিশ্চিত করুন</h3>
-      <button class="modal-close-btn" onclick="closeModal('confirm-modal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <p id="confirm-message" style="font-size:14px;color:var(--text-mid)">আপনি কি নিশ্চিত?</p>
-    </div>
-    <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="closeModal('confirm-modal')">না</button>
-      <button class="btn btn-danger" id="confirm-yes-btn">হ্যাঁ, মুছে ফেলুন</button>
+    <div class="modal-footer">
+      <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="closeModal('notice-modal')">বাতিল</button>
+      <button class="btn btn-primary" onclick="saveNotice()">সংরক্ষণ করুন</button>
     </div>
   </div>
 </div>
 
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- ═══════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════ -->
 <script>
-// ============================================================
-// CONFIG
-// ============================================================
-// ─────────────────────────────────────────────────────────────
-// ⚠️  RENDER_URL — আপনার Render.com deploy URL টি নিচে দিন
-// ─────────────────────────────────────────────────────────────
-const RENDER_URL = 'https://ibn-khaldun-backend.onrender.com'; // ← এখানে Render URL দিন
+// ────────────────────────────────────────────
+// ✅ সঠিক Backend URL — এটাই আসল সমস্যা ছিল
+// ────────────────────────────────────────────
+const API = 'https://ibnkhalduninstitute.onrender.com';
 
-const API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-  ? 'https://ibnkhalduninstitute.onrender.com/api' 
-  : RENDER_URL + '/api';
-let token = localStorage.getItem('admin_token') || '';
-let adminUser = localStorage.getItem('admin_user') || 'Admin';
-let mediaHistory = JSON.parse(localStorage.getItem('media_history') || '[]');
-let curriculumSections = [];
-let editingCourseId = null;
-let editingInstructorId = null;
-let editingTestimonialId = null;
-let editingNoticeId = null;
-let confirmCallback = null;
+// ── Storage helpers ──
+const getToken    = () => localStorage.getItem('admin_token');
+const getUsername = () => localStorage.getItem('admin_username');
+const setAuth     = (t, u) => { localStorage.setItem('admin_token', t); localStorage.setItem('admin_username', u); };
+const clearAuth   = () => { localStorage.removeItem('admin_token'); localStorage.removeItem('admin_username'); };
 
-// ============================================================
-// INIT
-// ============================================================
-window.onload = function() {
-  if (token) {
-    showApp();
-    loadDashboard();
-  }
-  renderMediaHistory();
-};
-
-function headers(multipart) {
-  const h = { 'Authorization': 'Bearer ' + token };
-  if (!multipart) h['Content-Type'] = 'application/json';
-  return h;
+// ── API helper ──
+async function api(method, path, body = null) {
+  const headers = { 'Content-Type': 'application/json' };
+  const token = getToken();
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  const res = await fetch(API + path, {
+    method,
+    headers,
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
 }
 
-// ============================================================
-// AUTH
-// ============================================================
+// ── Toast ──
+function toast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + type;
+  setTimeout(() => { t.className = ''; }, 3000);
+}
+
+// ── Modal ──
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ────────────────────────────────────────────
+// LOGIN
+// ────────────────────────────────────────────
 async function doLogin() {
-  const username = document.getElementById('auth-username').value.trim();
-  const password = document.getElementById('auth-password').value;
-  if (!username || !password) { showError('ব্যবহারকারীর নাম এবং পাসওয়ার্ড দিন'); return; }
+  const username = document.getElementById('login-username').value.trim();
+  const password = document.getElementById('login-password').value;
+  const btn = document.getElementById('login-btn');
+  const err = document.getElementById('login-error');
+
+  if (!username || !password) {
+    err.textContent = 'Username এবং Password দিন';
+    err.style.display = 'block'; return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'লগইন হচ্ছে...';
+  err.style.display = 'none';
 
   try {
-    const r = await fetch(API + '/admin/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
-    });
-    const d = await r.json();
-    if (!r.ok) throw new Error(d.error);
-    token = d.token;
-    adminUser = d.username;
-    localStorage.setItem('admin_token', token);
-    localStorage.setItem('admin_user', adminUser);
-    showApp();
-    loadDashboard();
+    const data = await api('POST', '/api/admin/login', { username, password });
+    setAuth(data.token, data.username);
+    showApp(data.username);
   } catch (e) {
-    document.getElementById('auth-error').style.display = 'block';
-    document.getElementById('auth-error').textContent = e.message || 'লগইন ব্যর্থ হয়েছে।';
+    err.textContent = e.message === 'Invalid credentials'
+      ? '❌ Username বা Password ভুল'
+      : '❌ সমস্যা হয়েছে: ' + e.message;
+    err.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'লগইন করুন';
   }
 }
 
-function showApp() {
-  document.getElementById('auth-screen').style.display = 'none';
+// Enter key login
+document.getElementById('login-password').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+document.getElementById('login-username').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+// ────────────────────────────────────────────
+// APP INIT
+// ────────────────────────────────────────────
+function showApp(username) {
+  document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
-  document.getElementById('admin-name-chip').textContent = adminUser;
-  document.getElementById('admin-avatar-chip').textContent = adminUser[0].toUpperCase();
+  document.getElementById('admin-name-display').textContent = username || 'Admin';
+  document.getElementById('admin-avatar-letter').textContent = (username || 'A')[0].toUpperCase();
+  loadDashboard();
 }
 
 function doLogout() {
-  localStorage.removeItem('admin_token');
-  localStorage.removeItem('admin_user');
-  token = '';
-  document.getElementById('auth-screen').style.display = 'flex';
-  document.getElementById('app').style.display = 'none';
+  clearAuth();
+  location.reload();
 }
 
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && document.getElementById('auth-screen').style.display !== 'none') doLogin();
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ── On load: check token ──
+window.addEventListener('load', () => {
+  const token = getToken();
+  if (token) {
+    showApp(getUsername());
+  }
 });
 
-// ============================================================
+// ────────────────────────────────────────────
 // NAVIGATION
-// ============================================================
-function navigate(page) {
+// ────────────────────────────────────────────
+const pageTitles = {
+  dashboard: 'ড্যাশবোর্ড', courses: 'কোর্স সমূহ',
+  instructors: 'ইন্সট্রাক্টর', testimonials: 'রিভিউ',
+  notices: 'নোটিশ', enrollments: 'এনরোলমেন্ট', settings: 'সেটিংস',
+};
+
+function navTo(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
+  document.querySelector(`.nav-item[onclick="navTo('${page}')"]`).classList.add('active');
+  document.getElementById('page-title').textContent = pageTitles[page] || page;
+  document.getElementById('sidebar').classList.remove('open');
 
-  const titles = {
-    dashboard: 'ড্যাশবোর্ড', courses: 'কোর্স ম্যানেজার',
-    instructors: 'শিক্ষক', enrollments: 'এনরোলমেন্ট',
-    testimonials: 'রিভিউ / মতামত', notices: 'নোটিশ / পপআপ',
-    settings: 'সাইট সেটিংস', media: 'মিডিয়া আপলোড'
-  };
-  document.getElementById('page-title').textContent = titles[page] || page;
-
-  const loaders = {
-    dashboard: loadDashboard,
-    courses: loadCourses,
-    instructors: loadInstructors,
-    enrollments: loadEnrollments,
-    testimonials: loadTestimonials,
-    notices: loadNotices,
-    settings: loadSettings,
-    media: () => {}
-  };
+  const loaders = { courses: loadCourses, instructors: loadInstructors, testimonials: loadTestimonials, notices: loadNotices, enrollments: loadEnrollments };
   if (loaders[page]) loaders[page]();
 }
 
-// ============================================================
+// ────────────────────────────────────────────
 // DASHBOARD
-// ============================================================
+// ────────────────────────────────────────────
 async function loadDashboard() {
   try {
-    const r = await fetch(API + '/admin/stats', { headers: headers() });
-    const d = await r.json();
-    document.getElementById('stat-courses').textContent = d.courses || 0;
-    document.getElementById('stat-enrollments').textContent = d.enrollments || 0;
-    document.getElementById('stat-instructors').textContent = d.instructors || 0;
-    document.getElementById('stat-revenue').textContent = '৳' + (d.revenue || 0).toLocaleString();
-    document.getElementById('stat-pending-text').textContent = 'পেন্ডিং: ' + (d.pendingEnrollments || 0);
-    const badge = document.getElementById('pending-badge');
-    badge.textContent = d.pendingEnrollments || 0;
-    badge.style.display = d.pendingEnrollments > 0 ? '' : 'none';
-  } catch {}
-
-  try {
-    const r = await fetch(API + '/admin/enrollments?limit=5', { headers: headers() });
-    const data = await r.json();
-    const el = document.getElementById('dash-recent-enrollments');
-    if (!data.length) { el.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><p>কোনো এনরোলমেন্ট নেই</p></div>'; return; }
-    el.innerHTML = data.slice(0,5).map(e => `
-      <div class="recent-item">
-        <div class="recent-item-icon" style="background:var(--primary-light);color:var(--primary)">📋</div>
-        <div class="recent-item-info">
-          <p>${e.studentName}</p>
-          <small>${e.courseTitle || 'কোর্স'}</small>
-        </div>
-        <div class="recent-item-right">
-          <p>৳${e.amount}</p>
-          <small><span class="badge ${statusBadge(e.status)}">${statusLabel(e.status)}</span></small>
-        </div>
+    const stats = await api('GET', '/api/admin/stats');
+    document.getElementById('stats-grid').innerHTML = `
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(245,197,24,0.15)">📚</div>
+        <div class="stat-info"><h3>${stats.courses}</h3><p>মোট কোর্স</p></div>
       </div>
-    `).join('');
-  } catch {}
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(59,130,246,0.15)">👨‍🏫</div>
+        <div class="stat-info"><h3>${stats.instructors}</h3><p>ইন্সট্রাক্টর</p></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(34,197,94,0.15)">📋</div>
+        <div class="stat-info"><h3>${stats.enrollments}</h3><p>মোট এনরোলমেন্ট</p></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(249,115,22,0.15)">⏳</div>
+        <div class="stat-info"><h3>${stats.pendingEnrollments}</h3><p>পেন্ডিং</p></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(245,197,24,0.15)">💰</div>
+        <div class="stat-info"><h3>৳${(stats.revenue||0).toLocaleString()}</h3><p>মোট আয়</p></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(139,92,246,0.15)">💬</div>
+        <div class="stat-info"><h3>${stats.testimonials}</h3><p>রিভিউ</p></div>
+      </div>
+    `;
+
+    const enrollments = await api('GET', '/api/admin/enrollments');
+    const recent = enrollments.slice(0, 8);
+    document.getElementById('recent-enrollments').innerHTML = recent.length
+      ? recent.map(e => `<tr>
+          <td>${e.studentName || '—'}</td>
+          <td>${e.courseTitle || '—'}</td>
+          <td>৳${e.amount || 0}</td>
+          <td><span class="badge badge-${e.status === 'approved' ? 'green' : e.status === 'rejected' ? 'red' : 'yellow'}">${e.status}</span></td>
+        </tr>`).join('')
+      : '<tr><td colspan="4" style="text-align:center;color:var(--text2);padding:24px">কোনো এনরোলমেন্ট নেই</td></tr>';
+  } catch (e) {
+    toast('Dashboard লোড হয়নি: ' + e.message, 'error');
+  }
 }
 
-function statusBadge(s) { return {pending:'badge-orange',approved:'badge-green',rejected:'badge-red'}[s] || 'badge-blue'; }
-function statusLabel(s) { return {pending:'পেন্ডিং',approved:'অনুমোদিত',rejected:'বাতিল'}[s] || s; }
-
-// ============================================================
+// ────────────────────────────────────────────
 // COURSES
-// ============================================================
+// ────────────────────────────────────────────
 async function loadCourses() {
   try {
-    const cat = document.getElementById('course-filter-cat')?.value || '';
-    const pub = document.getElementById('course-filter-pub')?.value || '';
-    const r = await fetch(API + '/admin/courses', { headers: headers() });
-    let data = await r.json();
-    if (cat) data = data.filter(c => c.category === cat);
-    if (pub !== '') data = data.filter(c => String(c.published) === pub);
-
-    const tbody = document.getElementById('courses-tbody');
-    if (!data.length) {
-      tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📭</div><p>কোনো কোর্স নেই</p><small>নতুন কোর্স যোগ করুন</small></div></td></tr>`;
-      return;
-    }
-    tbody.innerHTML = data.map(c => `
-      <tr>
-        <td><img class="td-img" src="${c.thumbnail || 'https://via.placeholder.com/52x36/f0ecff/6c4bef?text=📖'}" alt=""/></td>
-        <td>
-          <div style="font-weight:700;font-size:13px">${c.title}</div>
-          <div style="font-size:11px;color:var(--text-light)">${c.slug}</div>
-        </td>
-        <td><span class="badge badge-blue">${c.category || '—'}</span></td>
-        <td>${c.instructor || '—'}</td>
-        <td>
-          <div style="font-weight:700;color:var(--primary)">৳${c.price}</div>
-          ${c.originalPrice ? `<div style="font-size:11px;color:var(--text-light);text-decoration:line-through">৳${c.originalPrice}</div>` : ''}
-        </td>
-        <td><span class="badge ${c.published ? 'badge-green' : 'badge-red'}">${c.published ? 'প্রকাশিত' : 'অপ্রকাশিত'}</span>
-          ${c.featured ? ' <span class="badge badge-yellow">ফিচার্ড</span>' : ''}</td>
-        <td>
-          <div class="td-actions">
-            <button class="btn btn-sm btn-ghost btn-icon" title="সম্পাদনা" onclick="editCourse('${c._id}')">✏️</button>
-            <button class="btn btn-sm btn-danger btn-icon" title="মুছুন" onclick="confirmDelete('কোর্স','${c._id}','course')">🗑️</button>
-          </div>
-        </td>
-      </tr>
-    `).join('');
-  } catch(e) { showToast('কোর্স লোড ব্যর্থ: ' + e.message, true); }
+    const courses = await api('GET', '/api/admin/courses');
+    document.getElementById('courses-tbody').innerHTML = courses.length
+      ? courses.map(c => `<tr>
+          <td><strong>${c.title}</strong></td>
+          <td><span class="badge badge-blue">${c.category || '—'}</span></td>
+          <td>৳${c.price || 0}</td>
+          <td><span class="badge badge-${c.published ? 'green' : 'red'}">${c.published ? 'প্রকাশিত' : 'অপ্রকাশিত'}</span></td>
+          <td style="display:flex;gap:6px">
+            <button class="btn btn-edit btn-sm" onclick="editCourse('${c._id}')">✏️ এডিট</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteCourse('${c._id}')">🗑️</button>
+          </td>
+        </tr>`).join('')
+      : '<tr><td colspan="5" style="text-align:center;color:var(--text2);padding:24px">কোনো কোর্স নেই</td></tr>';
+  } catch (e) { toast('কোর্স লোড হয়নি', 'error'); }
 }
 
-function openCourseModal(data) {
-  editingCourseId = data?._id || null;
-  document.getElementById('course-modal-title').textContent = data ? 'কোর্স সম্পাদনা করুন' : 'নতুন কোর্স যোগ করুন';
-  document.getElementById('course-id').value = data?._id || '';
-  document.getElementById('c-title').value = data?.title || '';
-  document.getElementById('c-slug').value = data?.slug || '';
-  document.getElementById('c-category').value = data?.category || '';
-  document.getElementById('c-instructor').value = data?.instructor || '';
-  document.getElementById('c-price').value = data?.price || '';
-  document.getElementById('c-original-price').value = data?.originalPrice || '';
-  document.getElementById('c-discount').value = data?.discount || '';
-  document.getElementById('c-level').value = data?.level || 'সকলের জন্য';
-  document.getElementById('c-duration').value = data?.duration || '';
-  document.getElementById('c-lessons').value = data?.lessons || '';
-  document.getElementById('c-video').value = data?.previewVideo || '';
-  document.getElementById('c-tags').value = (data?.tags || []).join(', ');
-  document.getElementById('c-short-desc').value = data?.shortDesc || '';
-  document.getElementById('c-description').value = data?.description || '';
-  document.getElementById('c-thumbnail-url').value = data?.thumbnail || '';
-  if (data?.thumbnail) { const p = document.getElementById('course-thumb-preview'); p.src = data.thumbnail; p.style.display = 'block'; }
-  else document.getElementById('course-thumb-preview').style.display = 'none';
-  const pubToggle = document.getElementById('c-published-toggle');
-  const featToggle = document.getElementById('c-featured-toggle');
-  pubToggle.className = 'toggle' + (data?.published !== false ? ' on' : '');
-  featToggle.className = 'toggle' + (data?.featured ? ' on' : '');
-  curriculumSections = data?.curriculum ? JSON.parse(JSON.stringify(data.curriculum)) : [];
-  renderCurriculum();
+function openCourseModal(course = null) {
+  document.getElementById('course-modal-title').textContent = course ? 'কোর্স এডিট' : 'নতুন কোর্স';
+  document.getElementById('course-id').value    = course?._id || '';
+  document.getElementById('c-title').value      = course?.title || '';
+  document.getElementById('c-category').value   = course?.category || 'Quran';
+  document.getElementById('c-level').value      = course?.level || 'সকলের জন্য';
+  document.getElementById('c-instructor').value = course?.instructor || '';
+  document.getElementById('c-price').value      = course?.price || '';
+  document.getElementById('c-original-price').value = course?.originalPrice || '';
+  document.getElementById('c-duration').value   = course?.duration || '';
+  document.getElementById('c-lessons').value    = course?.lessons || '';
+  document.getElementById('c-short-desc').value = course?.shortDesc || '';
+  document.getElementById('c-desc').value       = course?.description || '';
+  document.getElementById('c-thumbnail').value  = course?.thumbnail || '';
+  document.getElementById('c-tags').value       = (course?.tags || []).join(', ');
+  document.getElementById('c-featured').checked = course?.featured || false;
+  document.getElementById('c-published').checked = course?.published !== false;
   openModal('course-modal');
 }
 
 async function editCourse(id) {
   try {
-    const r = await fetch(API + '/admin/courses', { headers: headers() });
-    const data = await r.json();
-    const course = data.find(c => c._id === id);
-    if (course) openCourseModal(course);
-  } catch {}
+    const courses = await api('GET', '/api/admin/courses');
+    const c = courses.find(x => x._id === id);
+    if (c) openCourseModal(c);
+  } catch (e) { toast('লোড হয়নি', 'error'); }
 }
 
 async function saveCourse() {
-  const title = document.getElementById('c-title').value.trim();
-  if (!title) { showToast('কোর্সের নাম দিন', true); return; }
-  const formData = new FormData();
-  formData.append('title', title);
-  formData.append('slug', document.getElementById('c-slug').value || title.toLowerCase().replace(/\s+/g,'-').replace(/[^\w-]/g,''));
-  formData.append('category', document.getElementById('c-category').value);
-  formData.append('instructor', document.getElementById('c-instructor').value);
-  formData.append('price', document.getElementById('c-price').value || 0);
-  formData.append('originalPrice', document.getElementById('c-original-price').value || 0);
-  formData.append('discount', document.getElementById('c-discount').value || 0);
-  formData.append('level', document.getElementById('c-level').value);
-  formData.append('duration', document.getElementById('c-duration').value);
-  formData.append('lessons', document.getElementById('c-lessons').value || 0);
-  formData.append('previewVideo', document.getElementById('c-video').value);
-  formData.append('tags', document.getElementById('c-tags').value);
-  formData.append('shortDesc', document.getElementById('c-short-desc').value);
-  formData.append('description', document.getElementById('c-description').value);
-  formData.append('thumbnail', document.getElementById('c-thumbnail-url').value);
-  formData.append('published', document.getElementById('c-published-toggle').classList.contains('on'));
-  formData.append('featured', document.getElementById('c-featured-toggle').classList.contains('on'));
-  formData.append('curriculum', JSON.stringify(curriculumSections));
-
   const id = document.getElementById('course-id').value;
-  const method = id ? 'PUT' : 'POST';
-  const url = id ? `${API}/admin/courses/${id}` : `${API}/admin/courses`;
+  const title = document.getElementById('c-title').value.trim();
+  if (!title) { toast('শিরোনাম দিন', 'error'); return; }
+
+  const body = {
+    title, category: document.getElementById('c-category').value,
+    level: document.getElementById('c-level').value,
+    instructor: document.getElementById('c-instructor').value,
+    price: +document.getElementById('c-price').value || 0,
+    originalPrice: +document.getElementById('c-original-price').value || 0,
+    duration: document.getElementById('c-duration').value,
+    lessons: +document.getElementById('c-lessons').value || 0,
+    shortDesc: document.getElementById('c-short-desc').value,
+    description: document.getElementById('c-desc').value,
+    thumbnail: document.getElementById('c-thumbnail').value,
+    tags: document.getElementById('c-tags').value.split(',').map(t => t.trim()).filter(Boolean),
+    featured: document.getElementById('c-featured').checked,
+    published: document.getElementById('c-published').checked,
+  };
+
   try {
-    const r = await fetch(url, { method, headers: { 'Authorization': 'Bearer ' + token }, body: formData });
-    if (!r.ok) throw new Error((await r.json()).error);
-    showToast(id ? '✅ কোর্স আপডেট হয়েছে' : '✅ নতুন কোর্স যোগ হয়েছে');
+    if (id) await api('PUT', '/api/admin/courses/' + id, body);
+    else     await api('POST', '/api/admin/courses', body);
+    toast(id ? '✅ কোর্স আপডেট হয়েছে' : '✅ কোর্স তৈরি হয়েছে');
     closeModal('course-modal');
     loadCourses();
-  } catch(e) { showToast('❌ ' + e.message, true); }
+  } catch (e) { toast('সমস্যা: ' + e.message, 'error'); }
 }
 
-// CURRICULUM
-function addCurriculumSection() {
-  curriculumSections.push({ sectionTitle: 'নতুন সেকশন', lessons: [] });
-  renderCurriculum();
+async function deleteCourse(id) {
+  if (!confirm('কোর্সটি মুছে ফেলবেন?')) return;
+  try {
+    await api('DELETE', '/api/admin/courses/' + id);
+    toast('✅ কোর্স মুছে গেছে');
+    loadCourses();
+  } catch (e) { toast('মুছতে পারেনি', 'error'); }
 }
 
-function renderCurriculum() {
-  const el = document.getElementById('curriculum-builder');
-  if (!curriculumSections.length) {
-    el.innerHTML = `<div style="text-align:center;padding:20px;color:var(--text-light);font-size:13px;background:#f8fafc;border-radius:8px;border:1.5px dashed var(--border)">
-      + সেকশন যোগ করুন বাটনে ক্লিক করুন
-    </div>`;
-    return;
-  }
-  el.innerHTML = curriculumSections.map((sec, si) => `
-    <div class="curriculum-section-item">
-      <div class="curriculum-section-head">
-        <span>📁</span>
-        <input value="${sec.sectionTitle}" onchange="curriculumSections[${si}].sectionTitle=this.value" placeholder="সেকশনের নাম"/>
-        <button class="btn btn-sm btn-ghost" onclick="addLesson(${si})">+ পাঠ</button>
-        <button class="btn btn-sm btn-danger btn-icon" onclick="removeSection(${si})">🗑️</button>
-      </div>
-      ${sec.lessons.map((l,li) => `
-        <div class="lesson-row">
-          <span style="color:var(--text-light);font-size:12px">${li+1}.</span>
-          <input class="lesson-title" value="${l.title||''}" placeholder="পাঠের নাম" onchange="curriculumSections[${si}].lessons[${li}].title=this.value"/>
-          <input class="lesson-dur" value="${l.duration||''}" placeholder="১২:৩০" onchange="curriculumSections[${si}].lessons[${li}].duration=this.value"/>
-          <input class="lesson-vid" value="${l.videoId||''}" placeholder="YouTube ID" onchange="curriculumSections[${si}].lessons[${li}].videoId=this.value"/>
-          <select onchange="curriculumSections[${si}].lessons[${li}].isFree=this.value==='true'" style="font-size:12px;border:1px solid var(--border);border-radius:4px;padding:4px;background:#fff">
-            <option value="false" ${!l.isFree?'selected':''}>🔒 পেইড</option>
-            <option value="true" ${l.isFree?'selected':''}>🆓 ফ্রি</option>
-          </select>
-          <button class="btn btn-sm btn-danger btn-icon" onclick="removeLesson(${si},${li})">✕</button>
-        </div>
-      `).join('')}
-    </div>
-  `).join('');
-}
-
-function addLesson(si) { curriculumSections[si].lessons.push({title:'',duration:'',videoId:'',isFree:false}); renderCurriculum(); }
-function removeSection(si) { curriculumSections.splice(si,1); renderCurriculum(); }
-function removeLesson(si,li) { curriculumSections[si].lessons.splice(li,1); renderCurriculum(); }
-
-// ============================================================
+// ────────────────────────────────────────────
 // INSTRUCTORS
-// ============================================================
+// ────────────────────────────────────────────
 async function loadInstructors() {
   try {
-    const r = await fetch(API + '/admin/instructors', { headers: headers() });
-    const data = await r.json();
-    const tbody = document.getElementById('instructors-tbody');
-    if (!data.length) {
-      tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">👨‍🏫</div><p>কোনো শিক্ষক নেই</p></div></td></tr>`;
-      return;
-    }
-    tbody.innerHTML = data.map(i => `
-      <tr>
-        <td>${i.photo ? `<img class="td-img" src="${i.photo}" style="border-radius:50%;width:40px;height:40px;object-fit:cover"/>` : '<div style="width:40px;height:40px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:18px">👤</div>'}</td>
-        <td><div style="font-weight:700">${i.name}</div></td>
-        <td style="font-size:12px;color:var(--text-mid)">${i.title || '—'}</td>
-        <td>${i.courses || 0}</td>
-        <td>${i.students?.toLocaleString() || 0}</td>
-        <td><span class="badge ${i.published ? 'badge-green' : 'badge-red'}">${i.published ? 'প্রকাশিত' : 'অপ্রকাশিত'}</span></td>
-        <td>
-          <div class="td-actions">
-            <button class="btn btn-sm btn-ghost btn-icon" onclick="editInstructor('${i._id}')">✏️</button>
-            <button class="btn btn-sm btn-danger btn-icon" onclick="confirmDelete('শিক্ষক','${i._id}','instructor')">🗑️</button>
-          </div>
-        </td>
-      </tr>
-    `).join('');
-  } catch(e) { showToast('লোড ব্যর্থ', true); }
+    const list = await api('GET', '/api/admin/instructors');
+    document.getElementById('instructors-tbody').innerHTML = list.length
+      ? list.map(i => `<tr>
+          <td><strong>${i.name}</strong></td>
+          <td>${i.title || '—'}</td>
+          <td>${i.students || 0}</td>
+          <td><span class="badge badge-${i.published ? 'green' : 'red'}">${i.published ? 'সক্রিয়' : 'নিষ্ক্রিয়'}</span></td>
+          <td style="display:flex;gap:6px">
+            <button class="btn btn-edit btn-sm" onclick="editInstructor('${i._id}')">✏️</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteInstructor('${i._id}')">🗑️</button>
+          </td>
+        </tr>`).join('')
+      : '<tr><td colspan="5" style="text-align:center;color:var(--text2);padding:24px">কোনো ইন্সট্রাক্টর নেই</td></tr>';
+  } catch (e) { toast('লোড হয়নি', 'error'); }
 }
 
-function openInstructorModal(data) {
-  editingInstructorId = data?._id || null;
-  document.getElementById('instructor-modal-title').textContent = data ? 'শিক্ষক সম্পাদনা' : 'নতুন শিক্ষক যোগ করুন';
-  document.getElementById('i-id').value = data?._id || '';
-  document.getElementById('i-name').value = data?.name || '';
-  document.getElementById('i-title').value = data?.title || '';
-  document.getElementById('i-bio').value = data?.bio || '';
-  document.getElementById('i-specializations').value = (data?.specializations || []).join(', ');
-  document.getElementById('i-students').value = data?.students || '';
-  document.getElementById('i-facebook').value = data?.social?.facebook || '';
-  document.getElementById('i-youtube').value = data?.social?.youtube || '';
-  document.getElementById('i-photo-url').value = data?.photo || '';
-  if (data?.photo) { const p = document.getElementById('instructor-photo-preview'); p.src = data.photo; p.style.display = 'block'; }
-  else document.getElementById('instructor-photo-preview').style.display = 'none';
-  document.getElementById('i-published-toggle').className = 'toggle' + (data?.published !== false ? ' on' : '');
+function openInstructorModal(inst = null) {
+  document.getElementById('instructor-modal-title').textContent = inst ? 'ইন্সট্রাক্টর এডিট' : 'নতুন ইন্সট্রাক্টর';
+  document.getElementById('instructor-id').value = inst?._id || '';
+  document.getElementById('i-name').value         = inst?.name || '';
+  document.getElementById('i-title').value        = inst?.title || '';
+  document.getElementById('i-bio').value          = inst?.bio || '';
+  document.getElementById('i-photo').value        = inst?.photo || '';
+  document.getElementById('i-spec').value         = (inst?.specializations || []).join(', ');
+  document.getElementById('i-students').value     = inst?.students || '';
+  document.getElementById('i-courses').value      = inst?.courses || '';
+  document.getElementById('i-published').checked  = inst?.published !== false;
   openModal('instructor-modal');
 }
 
 async function editInstructor(id) {
-  const r = await fetch(API + '/admin/instructors', { headers: headers() });
-  const data = await r.json();
-  const inst = data.find(i => i._id === id);
-  if (inst) openInstructorModal(inst);
+  try {
+    const list = await api('GET', '/api/admin/instructors');
+    const i = list.find(x => x._id === id);
+    if (i) openInstructorModal(i);
+  } catch (e) { toast('লোড হয়নি', 'error'); }
 }
 
 async function saveInstructor() {
+  const id   = document.getElementById('instructor-id').value;
   const name = document.getElementById('i-name').value.trim();
-  if (!name) { showToast('নাম দিন', true); return; }
-  const fd = new FormData();
-  fd.append('name', name);
-  fd.append('title', document.getElementById('i-title').value);
-  fd.append('bio', document.getElementById('i-bio').value);
-  fd.append('specializations', document.getElementById('i-specializations').value);
-  fd.append('students', document.getElementById('i-students').value || 0);
-  fd.append('photo', document.getElementById('i-photo-url').value);
-  fd.append('social[facebook]', document.getElementById('i-facebook').value);
-  fd.append('social[youtube]', document.getElementById('i-youtube').value);
-  fd.append('published', document.getElementById('i-published-toggle').classList.contains('on'));
-  const id = document.getElementById('i-id').value;
-  const method = id ? 'PUT' : 'POST';
-  const url = id ? `${API}/admin/instructors/${id}` : `${API}/admin/instructors`;
-  const r = await fetch(url, { method, headers: { 'Authorization': 'Bearer ' + token }, body: fd });
-  if (!r.ok) { showToast('❌ সংরক্ষণ ব্যর্থ', true); return; }
-  showToast('✅ শিক্ষক সংরক্ষিত হয়েছে');
-  closeModal('instructor-modal');
-  loadInstructors();
-}
+  if (!name) { toast('নাম দিন', 'error'); return; }
 
-// ============================================================
-// ENROLLMENTS
-// ============================================================
-async function loadEnrollments() {
+  const body = {
+    name, title: document.getElementById('i-title').value,
+    bio: document.getElementById('i-bio').value,
+    photo: document.getElementById('i-photo').value,
+    specializations: document.getElementById('i-spec').value.split(',').map(s => s.trim()).filter(Boolean),
+    students: +document.getElementById('i-students').value || 0,
+    courses: +document.getElementById('i-courses').value || 0,
+    published: document.getElementById('i-published').checked,
+  };
+
   try {
-    const status = document.getElementById('enroll-filter')?.value || '';
-    const url = status ? `${API}/admin/enrollments?status=${status}` : `${API}/admin/enrollments`;
-    const r = await fetch(url, { headers: headers() });
-    const data = await r.json();
-    const tbody = document.getElementById('enrollments-tbody');
-    if (!data.length) {
-      tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📭</div><p>কোনো এনরোলমেন্ট নেই</p></div></td></tr>`;
-      return;
-    }
-    tbody.innerHTML = data.map(e => `
-      <tr>
-        <td>
-          <div style="font-weight:700">${e.studentName}</div>
-          <div style="font-size:11px;color:var(--text-light)">${e.studentEmail}</div>
-          <div style="font-size:11px;color:var(--text-light)">${e.studentPhone}</div>
-        </td>
-        <td style="font-size:12px;max-width:160px">${e.courseTitle || '—'}</td>
-        <td style="font-weight:700;color:var(--primary)">৳${e.amount}</td>
-        <td>
-          <div style="font-size:12px">${e.paymentMethod || '—'}</div>
-          <div style="font-size:11px;color:var(--text-light)">${e.transactionId || ''}</div>
-        </td>
-        <td style="font-size:12px">${new Date(e.createdAt).toLocaleDateString('bn-BD')}</td>
-        <td><span class="badge ${statusBadge(e.status)}">${statusLabel(e.status)}</span></td>
-        <td>
-          <div class="td-actions">
-            ${e.status === 'pending' ? `
-              <button class="btn btn-sm btn-success" onclick="updateEnrollment('${e._id}','approved')">✅</button>
-              <button class="btn btn-sm btn-danger" onclick="updateEnrollment('${e._id}','rejected')">❌</button>
-            ` : `<button class="btn btn-sm btn-ghost" onclick="updateEnrollment('${e._id}','pending')">↩️</button>`}
-            <button class="btn btn-sm btn-danger btn-icon" onclick="confirmDelete('এনরোলমেন্ট','${e._id}','enrollment')">🗑️</button>
-          </div>
-        </td>
-      </tr>
-    `).join('');
-  } catch {}
+    if (id) await api('PUT', '/api/admin/instructors/' + id, body);
+    else     await api('POST', '/api/admin/instructors', body);
+    toast(id ? '✅ আপডেট হয়েছে' : '✅ তৈরি হয়েছে');
+    closeModal('instructor-modal');
+    loadInstructors();
+  } catch (e) { toast('সমস্যা: ' + e.message, 'error'); }
 }
 
-async function updateEnrollment(id, status) {
-  await fetch(`${API}/admin/enrollments/${id}`, {
-    method: 'PUT', headers: headers(),
-    body: JSON.stringify({ status })
-  });
-  showToast('✅ স্ট্যাটাস আপডেট হয়েছে');
-  loadEnrollments();
-  loadDashboard();
+async function deleteInstructor(id) {
+  if (!confirm('মুছে ফেলবেন?')) return;
+  try {
+    await api('DELETE', '/api/admin/instructors/' + id);
+    toast('✅ মুছে গেছে');
+    loadInstructors();
+  } catch (e) { toast('মুছতে পারেনি', 'error'); }
 }
 
-// ============================================================
+// ────────────────────────────────────────────
 // TESTIMONIALS
-// ============================================================
+// ────────────────────────────────────────────
 async function loadTestimonials() {
-  const r = await fetch(API + '/admin/testimonials', { headers: headers() });
-  const data = await r.json();
-  const tbody = document.getElementById('testimonials-tbody');
-  if (!data.length) {
-    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">💬</div><p>কোনো রিভিউ নেই</p></div></td></tr>`;
-    return;
-  }
-  tbody.innerHTML = data.map(t => `
-    <tr>
-      <td style="font-weight:700">${t.avatar || '👤'} ${t.name}</td>
-      <td style="font-size:12px;color:var(--text-mid)">${t.role || '—'}</td>
-      <td style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.text}</td>
-      <td>${'⭐'.repeat(t.rating || 5)}</td>
-      <td><span class="badge ${t.published ? 'badge-green' : 'badge-red'}">${t.published ? 'প্রকাশিত' : 'অপ্রকাশিত'}</span></td>
-      <td>
-        <div class="td-actions">
-          <button class="btn btn-sm btn-ghost btn-icon" onclick="editTestimonial('${t._id}')">✏️</button>
-          <button class="btn btn-sm btn-danger btn-icon" onclick="confirmDelete('রিভিউ','${t._id}','testimonial')">🗑️</button>
-        </div>
-      </td>
-    </tr>
-  `).join('');
+  try {
+    const list = await api('GET', '/api/admin/testimonials');
+    document.getElementById('testimonials-tbody').innerHTML = list.length
+      ? list.map(t => `<tr>
+          <td><strong>${t.name}</strong></td>
+          <td>${t.role || '—'}</td>
+          <td>${'⭐'.repeat(t.rating || 5)}</td>
+          <td><span class="badge badge-${t.published ? 'green' : 'red'}">${t.published ? 'প্রকাশিত' : 'লুকানো'}</span></td>
+          <td style="display:flex;gap:6px">
+            <button class="btn btn-edit btn-sm" onclick="editTestimonial('${t._id}')">✏️</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteTestimonial('${t._id}')">🗑️</button>
+          </td>
+        </tr>`).join('')
+      : '<tr><td colspan="5" style="text-align:center;color:var(--text2);padding:24px">কোনো রিভিউ নেই</td></tr>';
+  } catch (e) { toast('লোড হয়নি', 'error'); }
 }
 
-function openTestimonialModal(data) {
-  document.getElementById('testi-modal-title').textContent = data ? 'রিভিউ সম্পাদনা' : 'নতুন রিভিউ যোগ';
-  document.getElementById('t-id').value = data?._id || '';
-  document.getElementById('t-name').value = data?.name || '';
-  document.getElementById('t-role').value = data?.role || '';
-  document.getElementById('t-text').value = data?.text || '';
-  document.getElementById('t-rating').value = data?.rating || 5;
-  document.getElementById('t-avatar').value = data?.avatar || '';
-  document.getElementById('t-published-toggle').className = 'toggle' + (data?.published !== false ? ' on' : '');
+function openTestimonialModal(item = null) {
+  document.getElementById('testimonial-modal-title').textContent = item ? 'রিভিউ এডিট' : 'নতুন রিভিউ';
+  document.getElementById('testimonial-id').value  = item?._id || '';
+  document.getElementById('t-name').value          = item?.name || '';
+  document.getElementById('t-role').value          = item?.role || '';
+  document.getElementById('t-text').value          = item?.text || '';
+  document.getElementById('t-rating').value        = item?.rating || 5;
+  document.getElementById('t-avatar').value        = item?.avatar || '';
+  document.getElementById('t-published').checked   = item?.published !== false;
   openModal('testimonial-modal');
 }
 
 async function editTestimonial(id) {
-  const r = await fetch(API + '/admin/testimonials', { headers: headers() });
-  const data = await r.json();
-  const t = data.find(x => x._id === id);
-  if (t) openTestimonialModal(t);
+  try {
+    const list = await api('GET', '/api/admin/testimonials');
+    const t = list.find(x => x._id === id);
+    if (t) openTestimonialModal(t);
+  } catch (e) { toast('লোড হয়নি', 'error'); }
 }
 
 async function saveTestimonial() {
+  const id   = document.getElementById('testimonial-id').value;
   const name = document.getElementById('t-name').value.trim();
-  if (!name) { showToast('নাম দিন', true); return; }
-  const fd = new FormData();
-  fd.append('name', name);
-  fd.append('role', document.getElementById('t-role').value);
-  fd.append('text', document.getElementById('t-text').value);
-  fd.append('rating', document.getElementById('t-rating').value || 5);
-  fd.append('avatar', document.getElementById('t-avatar').value);
-  fd.append('published', document.getElementById('t-published-toggle').classList.contains('on'));
-  const id = document.getElementById('t-id').value;
-  const url = id ? `${API}/admin/testimonials/${id}` : `${API}/admin/testimonials`;
-  const r = await fetch(url, { method: id ? 'PUT' : 'POST', headers: { 'Authorization': 'Bearer ' + token }, body: fd });
-  if (!r.ok) { showToast('❌ সংরক্ষণ ব্যর্থ', true); return; }
-  showToast('✅ রিভিউ সংরক্ষিত');
-  closeModal('testimonial-modal');
-  loadTestimonials();
+  if (!name) { toast('নাম দিন', 'error'); return; }
+
+  const body = {
+    name, role: document.getElementById('t-role').value,
+    text: document.getElementById('t-text').value,
+    rating: +document.getElementById('t-rating').value || 5,
+    avatar: document.getElementById('t-avatar').value,
+    published: document.getElementById('t-published').checked,
+  };
+
+  try {
+    if (id) await api('PUT', '/api/admin/testimonials/' + id, body);
+    else     await api('POST', '/api/admin/testimonials', body);
+    toast(id ? '✅ আপডেট হয়েছে' : '✅ তৈরি হয়েছে');
+    closeModal('testimonial-modal');
+    loadTestimonials();
+  } catch (e) { toast('সমস্যা: ' + e.message, 'error'); }
 }
 
-// ============================================================
+async function deleteTestimonial(id) {
+  if (!confirm('মুছে ফেলবেন?')) return;
+  try {
+    await api('DELETE', '/api/admin/testimonials/' + id);
+    toast('✅ মুছে গেছে');
+    loadTestimonials();
+  } catch (e) { toast('মুছতে পারেনি', 'error'); }
+}
+
+// ────────────────────────────────────────────
 // NOTICES
-// ============================================================
+// ────────────────────────────────────────────
 async function loadNotices() {
-  const r = await fetch(API + '/admin/notices', { headers: headers() });
-  const data = await r.json();
-  const tbody = document.getElementById('notices-tbody');
-  if (!data.length) {
-    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">📢</div><p>কোনো নোটিশ নেই</p></div></td></tr>`;
-    return;
-  }
-  tbody.innerHTML = data.map(n => `
-    <tr>
-      <td style="font-weight:700">${n.title}</td>
-      <td style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-mid)">${n.body || '—'}</td>
-      <td style="font-size:12px">${n.ctaText || '—'}</td>
-      <td><span class="badge ${n.active ? 'badge-green' : 'badge-red'}">${n.active ? 'সক্রিয়' : 'নিষ্ক্রিয়'}</span></td>
-      <td>
-        <div class="td-actions">
-          <button class="btn btn-sm btn-ghost btn-icon" onclick="editNotice('${n._id}')">✏️</button>
-          <button class="btn btn-sm btn-danger btn-icon" onclick="confirmDelete('নোটিশ','${n._id}','notice')">🗑️</button>
-        </div>
-      </td>
-    </tr>
-  `).join('');
+  try {
+    const list = await api('GET', '/api/admin/notices');
+    document.getElementById('notices-tbody').innerHTML = list.length
+      ? list.map(n => `<tr>
+          <td><strong>${n.title}</strong></td>
+          <td><span class="badge badge-${n.active ? 'green' : 'red'}">${n.active ? 'সক্রিয়' : 'নিষ্ক্রিয়'}</span></td>
+          <td>${new Date(n.createdAt).toLocaleDateString('bn-BD')}</td>
+          <td style="display:flex;gap:6px">
+            <button class="btn btn-edit btn-sm" onclick="editNotice('${n._id}')">✏️</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteNotice('${n._id}')">🗑️</button>
+          </td>
+        </tr>`).join('')
+      : '<tr><td colspan="4" style="text-align:center;color:var(--text2);padding:24px">কোনো নোটিশ নেই</td></tr>';
+  } catch (e) { toast('লোড হয়নি', 'error'); }
 }
 
-function openNoticeModal(data) {
-  document.getElementById('notice-modal-title').textContent = data ? 'নোটিশ সম্পাদনা' : 'নতুন নোটিশ';
-  document.getElementById('n-id').value = data?._id || '';
-  document.getElementById('n-title').value = data?.title || '';
-  document.getElementById('n-body').value = data?.body || '';
-  document.getElementById('n-image').value = data?.imageUrl || '';
-  document.getElementById('n-cta-text').value = data?.ctaText || '';
-  document.getElementById('n-cta-link').value = data?.ctaLink || '';
-  document.getElementById('n-active-toggle').className = 'toggle' + (data?.active !== false ? ' on' : '');
+function openNoticeModal(item = null) {
+  document.getElementById('notice-modal-title').textContent = item ? 'নোটিশ এডিট' : 'নতুন নোটিশ';
+  document.getElementById('notice-id').value   = item?._id || '';
+  document.getElementById('n-title').value     = item?.title || '';
+  document.getElementById('n-body').value      = item?.body || '';
+  document.getElementById('n-cta-text').value  = item?.ctaText || '';
+  document.getElementById('n-cta-link').value  = item?.ctaLink || '';
+  document.getElementById('n-active').checked  = item?.active !== false;
   openModal('notice-modal');
 }
 
 async function editNotice(id) {
-  const r = await fetch(API + '/admin/notices', { headers: headers() });
-  const data = await r.json();
-  const n = data.find(x => x._id === id);
-  if (n) openNoticeModal(n);
+  try {
+    const list = await api('GET', '/api/admin/notices');
+    const n = list.find(x => x._id === id);
+    if (n) openNoticeModal(n);
+  } catch (e) { toast('লোড হয়নি', 'error'); }
 }
 
 async function saveNotice() {
+  const id    = document.getElementById('notice-id').value;
   const title = document.getElementById('n-title').value.trim();
-  if (!title) { showToast('শিরোনাম দিন', true); return; }
-  const fd = new FormData();
-  fd.append('title', title);
-  fd.append('body', document.getElementById('n-body').value);
-  fd.append('imageUrl', document.getElementById('n-image').value);
-  fd.append('ctaText', document.getElementById('n-cta-text').value);
-  fd.append('ctaLink', document.getElementById('n-cta-link').value);
-  fd.append('active', document.getElementById('n-active-toggle').classList.contains('on'));
-  const id = document.getElementById('n-id').value;
-  const url = id ? `${API}/admin/notices/${id}` : `${API}/admin/notices`;
-  await fetch(url, { method: id ? 'PUT' : 'POST', headers: { 'Authorization': 'Bearer ' + token }, body: fd });
-  showToast('✅ নোটিশ সংরক্ষিত');
-  closeModal('notice-modal');
-  loadNotices();
-}
+  if (!title) { toast('শিরোনাম দিন', 'error'); return; }
 
-// ============================================================
-// SETTINGS
-// ============================================================
-const settingsMap = {
-  general: ['s-site-name','s-tagline','s-logo-url','s-favicon','s-students-count','s-courses-count','s-rating'],
-  hero: ['s-hero-h1','s-hero-sub','s-hero-bg','s-hero-btn1','s-hero-btn2'],
-  contact: ['s-phone1','s-phone2','s-email','s-whatsapp','s-address','s-hours-morning','s-hours-evening'],
-  social: ['s-facebook','s-youtube','s-instagram','s-twitter','s-telegram','s-linkedin'],
-  popup: ['s-popup-title','s-popup-h2','s-popup-desc','s-popup-course','s-popup-img','s-popup-price','s-popup-orig-price','s-popup-cta'],
-  footer: ['s-footer-desc','s-copyright','s-payment-methods'],
-};
-
-async function loadSettings() {
-  try {
-    const r = await fetch(API + '/settings');
-    const data = await r.json();
-    for (const [key, val] of Object.entries(data)) {
-      const el = document.getElementById('s-' + key.replace(/_/g,'-'));
-      if (el) el.value = val;
-    }
-    if (data.popup_active !== undefined) {
-      const t = document.getElementById('s-popup-active-toggle');
-      if (t) t.className = 'toggle' + (data.popup_active ? ' on' : '');
-    }
-  } catch {}
-}
-
-async function saveSettings(section) {
-  const ids = settingsMap[section] || [];
-  const payload = {};
-  ids.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) { const key = id.replace(/^s-/,'').replace(/-/g,'_'); payload[key] = el.value; }
-  });
-  if (section === 'popup') {
-    payload['popup_active'] = document.getElementById('s-popup-active-toggle')?.classList.contains('on');
-  }
-  try {
-    const r = await fetch(API + '/admin/settings', {
-      method: 'POST', headers: headers(), body: JSON.stringify(payload)
-    });
-    if (!r.ok) throw new Error();
-    showToast('✅ সেটিংস সংরক্ষিত হয়েছে');
-  } catch { showToast('❌ সংরক্ষণ ব্যর্থ', true); }
-}
-
-function switchSettings(section, btn) {
-  document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.settings-tab').forEach(b => b.classList.remove('active'));
-  document.getElementById('settings-' + section).classList.add('active');
-  btn.classList.add('active');
-}
-
-// ============================================================
-// DELETE
-// ============================================================
-function confirmDelete(type, id, resource) {
-  document.getElementById('confirm-message').textContent = `আপনি কি সত্যিই এই ${type}টি মুছে ফেলতে চান?`;
-  document.getElementById('confirm-yes-btn').onclick = async () => {
-    const endpoints = { course: 'courses', instructor: 'instructors', testimonial: 'testimonials', notice: 'notices', enrollment: 'enrollments' };
-    await fetch(`${API}/admin/${endpoints[resource]}/${id}`, { method: 'DELETE', headers: headers() });
-    showToast('✅ মুছে ফেলা হয়েছে');
-    closeModal('confirm-modal');
-    const loaders = { course: loadCourses, instructor: loadInstructors, testimonial: loadTestimonials, notice: loadNotices, enrollment: loadEnrollments };
-    if (loaders[resource]) loaders[resource]();
-    loadDashboard();
+  const body = {
+    title, body: document.getElementById('n-body').value,
+    ctaText: document.getElementById('n-cta-text').value,
+    ctaLink: document.getElementById('n-cta-link').value,
+    active: document.getElementById('n-active').checked,
   };
-  openModal('confirm-modal');
-}
 
-// ============================================================
-// MEDIA UPLOAD
-// ============================================================
-async function uploadMediaFile(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const fd = new FormData();
-  fd.append('file', file);
-  showToast('⏳ আপলোড হচ্ছে...');
   try {
-    const r = await fetch(API + '/admin/upload', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token }, body: fd });
-    const d = await r.json();
-    if (!r.ok) throw new Error(d.error);
-    document.getElementById('media-url-output').value = d.url;
-    document.getElementById('media-preview-img').src = d.url;
-    document.getElementById('media-result').style.display = 'block';
-    mediaHistory.unshift({ url: d.url, date: new Date().toISOString() });
-    if (mediaHistory.length > 20) mediaHistory.pop();
-    localStorage.setItem('media_history', JSON.stringify(mediaHistory));
-    renderMediaHistory();
-    showToast('✅ আপলোড সফল!');
-  } catch(e) { showToast('❌ আপলোড ব্যর্থ: ' + e.message, true); }
-  input.value = '';
+    if (id) await api('PUT', '/api/admin/notices/' + id, body);
+    else     await api('POST', '/api/admin/notices', body);
+    toast(id ? '✅ আপডেট হয়েছে' : '✅ তৈরি হয়েছে');
+    closeModal('notice-modal');
+    loadNotices();
+  } catch (e) { toast('সমস্যা: ' + e.message, 'error'); }
 }
 
-function copyMediaUrl() {
-  const url = document.getElementById('media-url-output').value;
-  navigator.clipboard.writeText(url).then(() => showToast('📋 URL কপি হয়েছে!'));
-}
-
-function renderMediaHistory() {
-  const el = document.getElementById('media-history-grid');
-  if (!el) return;
-  el.innerHTML = mediaHistory.map(m => `
-    <div style="position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--border);cursor:pointer" onclick="navigator.clipboard.writeText('${m.url}').then(()=>showToast('📋 কপি হয়েছে!'))">
-      <img src="${m.url}" style="width:100%;height:80px;object-fit:cover;display:block"/>
-      <div style="position:absolute;inset:0;background:rgba(0,0,0,0.5);opacity:0;transition:0.2s;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0">📋 কপি</div>
-    </div>
-  `).join('');
-}
-
-// Upload helper used in forms
-async function uploadAndSet(input, urlFieldId, previewId) {
-  const file = input.files[0];
-  if (!file) return;
-  const fd = new FormData();
-  fd.append('file', file);
-  showToast('⏳ আপলোড হচ্ছে...');
+async function deleteNotice(id) {
+  if (!confirm('মুছে ফেলবেন?')) return;
   try {
-    const r = await fetch(API + '/admin/upload', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token }, body: fd });
-    const d = await r.json();
-    document.getElementById(urlFieldId).value = d.url;
-    if (previewId) {
-      const p = document.getElementById(previewId);
-      p.src = d.url;
-      p.style.display = 'block';
-    }
-    showToast('✅ ছবি আপলোড হয়েছে!');
-  } catch { showToast('❌ আপলোড ব্যর্থ', true); }
-  input.value = '';
+    await api('DELETE', '/api/admin/notices/' + id);
+    toast('✅ মুছে গেছে');
+    loadNotices();
+  } catch (e) { toast('মুছতে পারেনি', 'error'); }
 }
 
-// ============================================================
-// MODAL HELPERS
-// ============================================================
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+// ────────────────────────────────────────────
+// ENROLLMENTS
+// ────────────────────────────────────────────
+let enrollFilter = '';
+function filterEnrollments(val) { enrollFilter = val; loadEnrollments(); }
 
+async function loadEnrollments() {
+  try {
+    const url = '/api/admin/enrollments' + (enrollFilter ? '?status=' + enrollFilter : '');
+    const list = await api('GET', url);
+    document.getElementById('enrollments-tbody').innerHTML = list.length
+      ? list.map(e => `<tr>
+          <td><strong>${e.studentName || '—'}</strong><br><small style="color:var(--text2)">${e.studentEmail || ''}</small></td>
+          <td>${e.courseTitle || '—'}</td>
+          <td>${e.studentPhone || '—'}</td>
+          <td>৳${e.amount || 0}</td>
+          <td>
+            <select onchange="updateEnrollment('${e._id}', this.value)"
+              style="padding:4px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:12px">
+              <option value="pending"   ${e.status==='pending'  ?'selected':''}>Pending</option>
+              <option value="approved"  ${e.status==='approved' ?'selected':''}>Approved</option>
+              <option value="rejected"  ${e.status==='rejected' ?'selected':''}>Rejected</option>
+            </select>
+          </td>
+          <td><button class="btn btn-danger btn-sm" onclick="deleteEnrollment('${e._id}')">🗑️</button></td>
+        </tr>`).join('')
+      : '<tr><td colspan="6" style="text-align:center;color:var(--text2);padding:24px">কোনো এনরোলমেন্ট নেই</td></tr>';
+  } catch (e) { toast('লোড হয়নি', 'error'); }
+}
+
+async function updateEnrollment(id, status) {
+  try {
+    await api('PUT', '/api/admin/enrollments/' + id, { status });
+    toast('✅ স্ট্যাটাস আপডেট হয়েছে');
+    loadDashboard();
+  } catch (e) { toast('আপডেট হয়নি', 'error'); }
+}
+
+async function deleteEnrollment(id) {
+  if (!confirm('মুছে ফেলবেন?')) return;
+  try {
+    await api('DELETE', '/api/admin/enrollments/' + id);
+    toast('✅ মুছে গেছে');
+    loadEnrollments();
+  } catch (e) { toast('মুছতে পারেনি', 'error'); }
+}
+
+// ────────────────────────────────────────────
+// CHANGE PASSWORD
+// ────────────────────────────────────────────
+async function changePassword() {
+  const cur  = document.getElementById('cur-pass').value;
+  const nw   = document.getElementById('new-pass').value;
+  const conf = document.getElementById('confirm-pass').value;
+  if (!cur || !nw) { toast('সব ঘর পূরণ করুন', 'error'); return; }
+  if (nw !== conf) { toast('নতুন পাসওয়ার্ড মিলছে না', 'error'); return; }
+  if (nw.length < 6) { toast('পাসওয়ার্ড কমপক্ষে ৬ অক্ষর', 'error'); return; }
+  try {
+    await api('POST', '/api/admin/change-password', { currentPassword: cur, newPassword: nw });
+    toast('✅ পাসওয়ার্ড পরিবর্তন হয়েছে');
+    document.getElementById('cur-pass').value = '';
+    document.getElementById('new-pass').value = '';
+    document.getElementById('confirm-pass').value = '';
+  } catch (e) { toast('সমস্যা: ' + e.message, 'error'); }
+}
+
+// Close modal on overlay click
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
   overlay.addEventListener('click', e => {
     if (e.target === overlay) overlay.classList.remove('open');
   });
 });
-
-// ============================================================
-// TOAST
-// ============================================================
-let toastTimer;
-function showToast(msg, isError) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = 'show' + (isError ? ' error' : '');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { el.className = ''; }, 3500);
-}
-
-function showError(msg) {
-  const el = document.getElementById('auth-error');
-  el.textContent = msg;
-  el.style.display = 'block';
-}
 </script>
 </body>
 </html>
