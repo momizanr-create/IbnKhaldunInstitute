@@ -128,6 +128,13 @@
     position: relative;
   }
   .modal-overlay.active .modal-box { transform: scale(1); }
+  /* Product modal override */
+  #productModal .modal-box {
+    padding: 0;
+    border-radius: 4px;
+    overflow: hidden;
+    max-height: 90vh;
+  }
 
   .search-overlay {
     position: fixed; inset: 0;
@@ -404,14 +411,43 @@
   .hero-arrow-right { right: 16px; }
 
   /* Category Marquee */
-  .cat-marquee-wrap { background: #fff; border-bottom: 1px solid #e5e7eb; overflow: hidden; padding: 0; cursor: default; user-select: none; }
-  .cat-marquee-inner { display: flex; gap: 0; animation: marqueeScroll 30s linear infinite; }
+  .cat-marquee-outer { background: #fff; border-bottom: 1px solid #e5e7eb; overflow: hidden; padding: 16px 0; }
+  .cat-marquee-center { max-width: 1200px; margin: 0 auto; overflow: hidden; position: relative; }
+  .cat-marquee-wrap { overflow: hidden; cursor: default; user-select: none; }
+  .cat-marquee-inner { display: flex; gap: 0; animation: marqueeScroll 32s linear infinite; }
   .cat-marquee-wrap:hover .cat-marquee-inner { animation-play-state: paused; }
   @keyframes marqueeScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-  .cat-marquee-item { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 20px; cursor: pointer; border-right: 1px solid #f3f4f6; min-width: 100px; transition: background 0.2s; white-space: nowrap; flex-shrink: 0; }
-  .cat-marquee-item:hover { background: #f0f4ff; }
-  .cat-marquee-icon { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-  .cat-marquee-label { font-size: 12px; font-weight: 600; color: #374151; text-align: center; }
+  .cat-marquee-item {
+    position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+    width: 110px; height: 90px; cursor: pointer; border-radius: 12px; overflow: hidden; margin: 0 6px; flex-shrink: 0;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .cat-marquee-item:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.18); }
+  .cat-marquee-item-bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
+  .cat-marquee-item-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.1) 50%, transparent 100%); }
+  .cat-marquee-label { position: relative; z-index: 2; font-size: 11px; font-weight: 700; color: #fff; text-align: center; padding: 0 4px 8px; text-shadow: 0 1px 3px rgba(0,0,0,0.5); line-height: 1.2; }
+
+  /* Best Sellers Scroll */
+  .best-sellers-section { background: #fff; padding: 48px 0; border-bottom: 1px solid #e5e7eb; overflow: hidden; }
+  .best-sellers-inner-wrap { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+  .best-sellers-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .best-sellers-header h2 { font-size: 24px; font-weight: 800; color: #1a2a4a; }
+  .bs-nav-btn { width: 38px; height: 38px; border-radius: 0%; border: 1px solid #e5e7eb; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; color: #1a2a4a; transition: all 0.2s; }
+  .bs-nav-btn:hover { background: #1a2a4a; color: #fff; border-color: #1a2a4a; }
+  .bs-scroll-wrapper { overflow: hidden; }
+  .bs-scroll-inner { display: flex; gap: 20px; transition: transform 0.5s cubic-bezier(.4,0,.2,1); }
+  .bs-card {
+    flex: 0 0 calc(25% - 15px); background: #fff; border: 1px solid #f0f0f0;
+    border-radius: 8px; overflow: hidden; cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .bs-card:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+  .bs-card-img { width: 100%; height: 200px; object-fit: contain; background: #fafafa; padding: 12px; display: block; }
+  .bs-card-body { padding: 12px 14px 14px; }
+  .bs-card-name { font-size: 13px; font-weight: 600; color: #1a2a4a; margin-bottom: 6px; line-height: 1.4; }
+  .bs-card-prices { display: flex; align-items: center; gap: 8px; }
+  .bs-price-new { font-size: 16px; font-weight: 800; color: #2563eb; }
+  .bs-price-old { font-size: 13px; color: #9ca3af; text-decoration: line-through; }
     .hero-grid { flex-direction: column; }
     .about-grid { grid-template-columns: 1fr !important; }
     .contact-grid { grid-template-columns: 1fr !important; }
@@ -554,8 +590,8 @@
 
 <!-- PRODUCT DETAIL MODAL -->
 <div class="modal-overlay" id="productModal">
-  <div class="modal-box" style="max-width:680px;">
-    <button onclick="closeProductModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:26px;cursor:pointer;color:#6b7280;z-index:1;"><i class="fas fa-times"></i></button>
+  <div class="modal-box" style="max-width:860px;padding:0;border-radius:0;overflow:hidden;">
+    <button onclick="closeProductModal()" style="position:absolute;top:14px;right:14px;background:rgba(0,0,0,0.06);border:none;font-size:18px;cursor:pointer;color:#333;z-index:10;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i class="fas fa-times"></i></button>
     <div id="productModalContent"></div>
   </div>
 </div>
@@ -603,8 +639,7 @@
           <a onclick="showCategoryPage('Drop Shoulder T-Shirt')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;color:#374151;border-radius:6px;cursor:pointer;font-size:14px;" onmouseover="this.style.background='#fdf8ec'" onmouseout="this.style.background='transparent'"><i class="fas fa-layer-group" style="color:#c9a84c;width:16px;"></i> Drop Shoulder</a>
         </div>
       </div>
-      <a class="ik-nav-link" onclick="showPage('shop')" style="cursor:pointer;">ইনস্ট্রাক্টর</a>
-      <a class="ik-nav-link" onclick="showPage('about')" style="cursor:pointer;">রুম</a>
+      <a class="ik-nav-link" onclick="showPage('shop')" style="cursor:pointer;">সকল পন্য</a>
       <a class="ik-nav-link" onclick="showPage('about')" style="cursor:pointer;">আমাদের সম্পর্কে</a>
       <a class="ik-nav-link" onclick="showPage('contact')" style="cursor:pointer;">যোগাযোগ</a>
     </div>
@@ -718,9 +753,29 @@
   </div><!-- end hero-slider -->
 
   <!-- Category Marquee -->
-  <div class="cat-marquee-wrap" id="catMarqueeWrap">
-    <div class="cat-marquee-inner" id="catMarqueeInner">
-      <!-- Items rendered by JS, duplicated for infinite effect -->
+  <div class="cat-marquee-outer">
+    <div class="cat-marquee-center">
+      <div class="cat-marquee-wrap" id="catMarqueeWrap">
+        <div class="cat-marquee-inner" id="catMarqueeInner">
+          <!-- Items rendered by JS, duplicated for infinite effect -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BEST SELLERS SLIDER -->
+  <div class="best-sellers-section">
+    <div class="best-sellers-inner-wrap">
+      <div class="best-sellers-header">
+        <h2><i class="fas fa-fire" style="color:#ef4444;margin-right:10px;"></i>OUR BEST SELLERS</h2>
+        <div style="display:flex;gap:8px;">
+          <button class="bs-nav-btn" onclick="bsSlide(-1)"><i class="fas fa-chevron-left"></i></button>
+          <button class="bs-nav-btn" onclick="bsSlide(1)"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+      <div class="bs-scroll-wrapper">
+        <div class="bs-scroll-inner" id="bsScrollInner"></div>
+      </div>
     </div>
   </div>
 
@@ -732,47 +787,11 @@
     </div>
   </section>
 
-  <!-- PROMO BANNER -->
-  <section class="promo-bg" style="padding:60px 20px;">
-    <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:32px;">
-      <div style="flex:1;max-width:480px;">
-        <h2 style="font-size:clamp(28px,4vw,42px);font-weight:800;color:#fff;margin-bottom:12px;">Upgrade Your Tech Life</h2>
-        <p style="color:#93c5fd;font-size:15px;margin-bottom:24px;">Discover the latest gadgets and elevate your everyday routine.</p>
-        <button onclick="showPage('shop')" class="btn-primary">Shop Now <i class="fas fa-arrow-right" style="margin-left:6px;"></i></button>
-      </div>
-      <div style="flex:1;display:flex;justify-content:flex-end;max-width:420px;">
-        <img src="https://images.unsplash.com/photo-1468436139062-f60a71c5c892?w=420&q=80" alt="Tech gadgets" style="width:100%;border-radius:16px;box-shadow:0 16px 48px rgba(0,0,0,0.3);">
-      </div>
-    </div>
-  </section>
-
   <!-- SHOP BY CATEGORY -->
   <section style="padding:60px 20px;background:#f3f4f6;">
     <div style="max-width:1200px;margin:0 auto;">
       <h2 class="section-title">Shop by Category</h2>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:24px;" id="homeCategoryGrid"></div>
-    </div>
-  </section>
-
-  <!-- STATS SECTION -->
-  <section style="padding:48px 20px;background:#1a2a4a;">
-    <div style="max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:24px;text-align:center;">
-      <div>
-        <div style="font-size:36px;font-weight:800;color:#60a5fa;">5,000+</div>
-        <div style="color:#94a3b8;margin-top:4px;font-size:14px;"><i class="fas fa-smile" style="margin-right:6px;"></i>Happy Customers</div>
-      </div>
-      <div>
-        <div style="font-size:36px;font-weight:800;color:#60a5fa;">200+</div>
-        <div style="color:#94a3b8;margin-top:4px;font-size:14px;"><i class="fas fa-box-open" style="margin-right:6px;"></i>Products</div>
-      </div>
-      <div>
-        <div style="font-size:36px;font-weight:800;color:#60a5fa;">50+</div>
-        <div style="color:#94a3b8;margin-top:4px;font-size:14px;"><i class="fas fa-tags" style="margin-right:6px;"></i>Brands</div>
-      </div>
-      <div>
-        <div style="font-size:36px;font-weight:800;color:#60a5fa;">4.9 <i class="fas fa-star" style="font-size:28px;color:#f59e0b;"></i></div>
-        <div style="color:#94a3b8;margin-top:4px;font-size:14px;"><i class="fas fa-chart-line" style="margin-right:6px;"></i>Average Rating</div>
-      </div>
     </div>
   </section>
 
@@ -1006,11 +1025,11 @@
       <div>
         <h4 style="color:#fff;font-weight:700;font-size:16px;margin-bottom:16px;"><i class="fas fa-link" style="margin-right:6px;color:#60a5fa;"></i>Quick Links</h4>
         <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
-          <li><a onclick="showPage('home')" style="cursor:pointer;font-size:14px;display:flex;align-items:center;gap:8px;"><i class="fas fa-home" style="width:14px;color:#60a5fa;"></i>Home</a></li>
-          <li><a onclick="showPage('shop')" style="cursor:pointer;font-size:14px;display:flex;align-items:center;gap:8px;"><i class="fas fa-store" style="width:14px;color:#60a5fa;"></i>Shop</a></li>
-          <li><a onclick="showPage('categories')" style="cursor:pointer;font-size:14px;display:flex;align-items:center;gap:8px;"><i class="fas fa-th-large" style="width:14px;color:#60a5fa;"></i>Categories</a></li>
-          <li><a onclick="showPage('about')" style="cursor:pointer;font-size:14px;display:flex;align-items:center;gap:8px;"><i class="fas fa-info-circle" style="width:14px;color:#60a5fa;"></i>About Us</a></li>
-          <li><a onclick="showPage('contact')" style="cursor:pointer;font-size:14px;display:flex;align-items:center;gap:8px;"><i class="fas fa-envelope" style="width:14px;color:#60a5fa;"></i>Contact</a></li>
+          <li><a onclick="showPage('home')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:8px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'"><i class="fas fa-home" style="width:14px;color:#60a5fa;"></i>Home</a></li>
+          <li><a onclick="showPage('shop')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:8px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'"><i class="fas fa-store" style="width:14px;color:#60a5fa;"></i>Shop</a></li>
+          <li><a onclick="showPage('categories')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:8px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'"><i class="fas fa-th-large" style="width:14px;color:#60a5fa;"></i>Categories</a></li>
+          <li><a onclick="showPage('about')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:8px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'"><i class="fas fa-info-circle" style="width:14px;color:#60a5fa;"></i>About Us</a></li>
+          <li><a onclick="showPage('contact')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:8px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'"><i class="fas fa-envelope" style="width:14px;color:#60a5fa;"></i>Contact</a></li>
         </ul>
       </div>
 
@@ -1018,12 +1037,12 @@
       <div>
         <h4 style="color:#fff;font-weight:700;font-size:16px;margin-bottom:16px;"><i class="fas fa-tags" style="margin-right:6px;color:#60a5fa;"></i>Categories</h4>
         <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
-          <li><a onclick="showCategoryPage('Watches')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;color:#374151;border-radius:6px;cursor:pointer;font-size:14px;" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='transparent'"><i class="fas fa-clock" style="color:#2563eb;width:16px;"></i> Watches</a>
-          <a onclick="showCategoryPage('Shirts')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;color:#374151;border-radius:6px;cursor:pointer;font-size:14px;" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='transparent'"><i class="fas fa-shirt" style="color:#2563eb;width:16px;"></i> Shirts</a>
-          <a onclick="showCategoryPage('T-Shirts')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;color:#374151;border-radius:6px;cursor:pointer;font-size:14px;" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='transparent'"><i class="fas fa-tshirt" style="color:#2563eb;width:16px;"></i> T-Shirts</a>
-          <a onclick="showCategoryPage('Pants')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;color:#374151;border-radius:6px;cursor:pointer;font-size:14px;" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='transparent'"><i class="fas fa-person" style="color:#2563eb;width:16px;"></i> Pants</a>
-          <a onclick="showCategoryPage('Punjabi')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;color:#374151;border-radius:6px;cursor:pointer;font-size:14px;" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='transparent'"><i class="fas fa-vest" style="color:#2563eb;width:16px;"></i> Punjabi</a>
-          <a onclick="showCategoryPage('Drop Shoulder T-Shirt')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;color:#374151;border-radius:6px;cursor:pointer;font-size:14px;" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='transparent'"><i class="fas fa-layer-group" style="color:#2563eb;width:16px;"></i> Drop Shoulder T-Shirt</a>
+          <li><a onclick="showCategoryPage('Watches')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:8px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'"><i class="fas fa-clock" style="width:14px;color:#60a5fa;"></i>Watches</a></li>
+          <li><a onclick="showCategoryPage('Shirts')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:8px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'"><i class="fas fa-shirt" style="width:14px;color:#60a5fa;"></i>Shirts</a></li>
+          <li><a onclick="showCategoryPage('T-Shirts')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:8px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'"><i class="fas fa-tshirt" style="width:14px;color:#60a5fa;"></i>T-Shirts</a></li>
+          <li><a onclick="showCategoryPage('Pants')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:8px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'"><i class="fas fa-person" style="width:14px;color:#60a5fa;"></i>Pants</a></li>
+          <li><a onclick="showCategoryPage('Punjabi')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:8px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'"><i class="fas fa-vest" style="width:14px;color:#60a5fa;"></i>Punjabi</a></li>
+          <li><a onclick="showCategoryPage('Drop Shoulder T-Shirt')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:8px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'"><i class="fas fa-layer-group" style="width:14px;color:#60a5fa;"></i>Drop Shoulder</a></li>
         </ul>
       </div>
 
@@ -1373,12 +1392,15 @@ function renderHome() {
   document.getElementById('featuredGrid').innerHTML = featured.map(p => createProductCard(p)).join('');
 
   document.getElementById('homeCategoryGrid').innerHTML = categories.map(c => `
-    <div class="category-card" onclick="showCategoryPage('${c.name}')">
-      <img src="${c.img}" alt="${c.name}" class="cat-img" loading="lazy">
-      <div style="padding:14px;text-align:center;">
-        <div class="cat-icon-circle" style="background:${c.color};"><i class="${c.faIcon}" style="color:${c.iconColor};font-size:22px;"></i></div>
-        <div style="font-weight:700;color:#1a2a4a;font-size:15px;">${c.name}</div>
-        <div style="color:#6b7280;font-size:12px;margin-top:4px;">${products.filter(p => p.category === c.name).length} Products</div>
+    <div class="category-card" onclick="showCategoryPage('${c.name}')" style="position:relative;overflow:hidden;height:200px;">
+      <img src="${c.img}" alt="${c.name}" style="width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s;" onmouseover="this.style.transform='scale(1.07)'" onmouseout="this.style.transform='scale(1)'">
+      <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.15) 55%,transparent 100%);"></div>
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:14px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+          <div style="width:28px;height:28px;border-radius:50%;background:${c.color};display:flex;align-items:center;justify-content:center;"><i class="${c.faIcon}" style="color:${c.iconColor};font-size:13px;"></i></div>
+          <div style="font-weight:700;color:#fff;font-size:14px;">${c.name}</div>
+        </div>
+        <div style="color:rgba(255,255,255,0.75);font-size:12px;margin-left:36px;">${products.filter(p => p.category === c.name).length} Products</div>
       </div>
     </div>
   `).join('');
@@ -1423,14 +1445,16 @@ function filterShop() {
 // ===================== CATEGORIES =====================
 function renderAllCategories() {
   document.getElementById('allCategoriesGrid').innerHTML = categories.map(c => `
-    <div class="category-card" onclick="showCategoryPage('${c.name}')">
-      <img src="${c.img}" alt="${c.name}" class="cat-img" loading="lazy">
-      <div style="padding:20px;text-align:center;">
-        <div class="cat-icon-circle" style="background:${c.color};width:64px;height:64px;"><i class="${c.faIcon}" style="color:${c.iconColor};font-size:26px;"></i></div>
-        <div style="font-weight:800;color:#1a2a4a;font-size:18px;margin-bottom:6px;">${c.name}</div>
-        ${c.subcategories ? `<div style="margin-bottom:10px;">${c.subcategories.map(sub => `<span style="display:inline-block;background:${c.color};color:${c.iconColor};font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;margin:2px;">${sub}</span>`).join('')}</div>` : ''}
-        <div style="color:#6b7280;font-size:13px;margin-bottom:12px;">${products.filter(p => p.category === c.name).length} Products</div>
-        <button class="btn-dark" style="padding:8px 20px;"><i class="fas fa-arrow-right" style="margin-right:6px;"></i>Explore</button>
+    <div class="category-card" onclick="showCategoryPage('${c.name}')" style="position:relative;overflow:hidden;height:220px;">
+      <img src="${c.img}" alt="${c.name}" style="width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s;" onmouseover="this.style.transform='scale(1.07)'" onmouseout="this.style.transform='scale(1)'">
+      <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.72) 0%,rgba(0,0,0,0.15) 60%,transparent 100%);"></div>
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:16px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+          <div style="width:30px;height:30px;border-radius:50%;background:${c.color};display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="${c.faIcon}" style="color:${c.iconColor};font-size:14px;"></i></div>
+          <div style="font-weight:800;color:#fff;font-size:15px;">${c.name}</div>
+        </div>
+        ${c.subcategories ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;margin-left:38px;">${c.subcategories.slice(0,2).map(sub => `<span style="background:rgba(255,255,255,0.2);color:#fff;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;">${sub}</span>`).join('')}</div>` : ''}
+        <div style="color:rgba(255,255,255,0.75);font-size:12px;margin-left:38px;">${products.filter(p => p.category === c.name).length} Products</div>
       </div>
     </div>
   `).join('');
@@ -1441,67 +1465,88 @@ function openProductDetail(productId) {
   const p = products.find(pr => pr.id === productId);
   if (!p) return;
 
-  const related = products.filter(pr => pr.category === p.category && pr.id !== p.id).slice(0, 3);
+  const related = products.filter(pr => pr.category === p.category && pr.id !== p.id).slice(0, 4);
   const discount = p.oldPrice ? Math.round((1 - p.price/p.oldPrice)*100) : 0;
 
+  // Simulate multiple images using the same img + a couple of unsplash variations
+  const thumbs = [p.image, p.image.replace('w=400','w=400').replace('q=80','q=60'), p.image.replace('w=400','w=300')];
+
   document.getElementById('productModalContent').innerHTML = `
-    <div class="product-detail-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;">
-      <div style="position:relative;">
-        <img src="${p.image}" alt="${p.name}" style="width:100%;border-radius:12px;object-fit:contain;background:#f8f9fa;padding:20px;height:260px;">
-        ${p.badge ? `<span style="position:absolute;top:12px;left:12px;background:#ef4444;color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:6px;">${p.badge}</span>` : ''}
+    <div style="display:grid;grid-template-columns:1fr 1fr;min-height:480px;">
+      <!-- LEFT: image gallery -->
+      <div style="background:#f5f5f3;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;position:relative;">
+        <!-- Prev/Next arrows -->
+        <button id="pdPrev" onclick="pdThumbNav(-1)" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);background:#fff;border:1px solid #e5e7eb;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:#555;"><i class="fas fa-chevron-left"></i></button>
+        <button id="pdNext" onclick="pdThumbNav(1)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:#fff;border:1px solid #e5e7eb;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:#555;"><i class="fas fa-chevron-right"></i></button>
+        <img id="pdMainImg" src="${p.image}" alt="${p.name}" style="width:100%;max-height:280px;object-fit:contain;border-radius:8px;margin-bottom:12px;">
+        <div style="display:flex;gap:10px;">
+          ${thumbs.map((t,i) => `<div class="pd-thumb ${i===0?'pd-thumb-active':''}" onclick="selectPdThumb(${i},'${t}')" style="width:52px;height:52px;border-radius:6px;overflow:hidden;border:2px solid ${i===0?'#1a2a4a':'#e5e7eb'};cursor:pointer;transition:border-color 0.2s;background:#fff;display:flex;align-items:center;justify-content:center;"><img src="${t}" style="width:100%;height:100%;object-fit:contain;padding:4px;"></div>`).join('')}
+        </div>
+        ${p.badge ? `<span style="position:absolute;top:14px;left:14px;background:#ef4444;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:4px;">${p.badge}</span>` : ''}
       </div>
-      <div>
-        <div style="font-size:12px;color:#6b7280;font-weight:600;text-transform:uppercase;margin-bottom:6px;"><i class="${p.faIcon || 'fas fa-tag'}" style="margin-right:4px;color:#2563eb;"></i>${p.category}</div>
-        <h2 style="font-size:22px;font-weight:800;color:#1a2a4a;margin-bottom:10px;line-height:1.3;">${p.name}</h2>
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;">
-          <span class="stars" style="font-size:15px;">${starsHtml(p.rating)}</span>
-          <span style="color:#1a2a4a;font-weight:600;">${p.rating}</span>
-          <span style="color:#6b7280;font-size:13px;">(${p.reviews} reviews)</span>
+
+      <!-- RIGHT: product info -->
+      <div style="padding:28px 28px 20px;display:flex;flex-direction:column;overflow-y:auto;max-height:82vh;">
+        <div style="font-size:11px;color:#999;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Item Code ${String(p.id).padStart(7,'0')}</div>
+        <h2 style="font-size:20px;font-weight:700;color:#1a1a1a;margin-bottom:10px;line-height:1.35;">${p.name}</h2>
+
+        <!-- Rating -->
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:14px;">
+          <span class="stars" style="font-size:13px;">${starsHtml(p.rating)}</span>
+          <span style="color:#555;font-size:13px;">${p.rating} (${p.reviews} reviews)</span>
         </div>
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
-          <span style="font-size:28px;font-weight:800;color:#1a2a4a;">$${p.price}</span>
-          ${p.oldPrice ? `<span style="font-size:16px;color:#9ca3af;text-decoration:line-through;">$${p.oldPrice}</span><span style="background:#dcfce7;color:#16a34a;font-size:12px;font-weight:700;padding:3px 8px;border-radius:4px;">${discount}% OFF</span>` : ''}
+
+        <p style="color:#555;font-size:13.5px;line-height:1.7;margin-bottom:18px;">${p.description}</p>
+
+        <!-- Specs strip -->
+        <div style="display:flex;gap:0;border-top:1px solid #ececec;border-bottom:1px solid #ececec;margin-bottom:20px;">
+          ${p.features.slice(0,3).map((f,i) => `<div style="flex:1;padding:10px 12px;${i>0?'border-left:1px solid #ececec':''}"><div style="font-size:10px;color:#999;font-weight:600;text-transform:uppercase;margin-bottom:2px;">${i===0?'Key Feature':i===1?'Included':'Extra'}</div><div style="font-size:12px;color:#333;font-weight:600;">${f}</div></div>`).join('')}
         </div>
-        <p style="color:#4b5563;font-size:14px;line-height:1.7;margin-bottom:16px;">${p.description}</p>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
-          <span style="font-size:12px;font-weight:600;color:#6b7280;"><i class="fas fa-sort-numeric-up" style="margin-right:4px;"></i>QTY:</span>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <button class="qty-btn" onclick="changeProdQty(-1)"><i class="fas fa-minus" style="font-size:10px;"></i></button>
-            <span id="prodQty" style="font-weight:700;min-width:32px;text-align:center;font-size:18px;">1</span>
-            <button class="qty-btn" onclick="changeProdQty(1)"><i class="fas fa-plus" style="font-size:10px;"></i></button>
+
+        <!-- Color label -->
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+          <span style="font-size:13px;font-weight:600;color:#555;">Category:</span>
+          <select style="border:1px solid #d1d5db;border-radius:6px;padding:6px 12px;font-size:13px;color:#333;background:#fff;cursor:pointer;"><option>${p.category}</option></select>
+          <span style="font-size:22px;font-weight:800;color:#1a1a1a;margin-left:auto;">৳${p.price.toLocaleString()}</span>
+        </div>
+        ${p.oldPrice ? `<div style="text-align:right;margin-top:-10px;margin-bottom:14px;"><span style="font-size:13px;color:#aaa;text-decoration:line-through;">৳${p.oldPrice.toLocaleString()}</span> <span style="background:#dcfce7;color:#16a34a;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;margin-left:6px;">${discount}% OFF</span></div>` : ''}
+
+        <!-- Qty + Add to cart -->
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;border:1px solid #d1d5db;border-radius:6px;overflow:hidden;">
+            <button class="qty-btn" onclick="changeProdQty(-1)" style="border-radius:0;border:none;border-right:1px solid #d1d5db;"><i class="fas fa-minus" style="font-size:10px;"></i></button>
+            <span id="prodQty" style="font-weight:700;min-width:40px;text-align:center;font-size:16px;padding:0 8px;">${prodQty}</span>
+            <button class="qty-btn" onclick="changeProdQty(1)" style="border-radius:0;border:none;border-left:1px solid #d1d5db;"><i class="fas fa-plus" style="font-size:10px;"></i></button>
           </div>
-          <span style="color:#16a34a;font-size:12px;font-weight:600;margin-left:8px;"><i class="fas fa-check-circle" style="margin-right:3px;"></i>In Stock (${p.stock})</span>
+          <button onclick="addToCart(${p.id}, parseInt(document.getElementById('prodQty').textContent));closeProductModal();" style="flex:1;background:#1a2a4a;color:#fff;border:none;border-radius:6px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;transition:background 0.2s;" onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#1a2a4a'"><i class="fas fa-shopping-cart" style="margin-right:6px;"></i>ADD TO CART</button>
+          <button onclick="addToCart(${p.id}, parseInt(document.getElementById('prodQty').textContent));closeProductModal();showOrderForm();" style="padding:11px 16px;background:#fff;border:2px solid #1a2a4a;color:#1a2a4a;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all 0.2s;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#fff'">FIND A STORE</button>
         </div>
-        <div style="display:flex;gap:10px;margin-bottom:16px;">
-          <button onclick="addToCart(${p.id}, parseInt(document.getElementById('prodQty').textContent));closeProductModal();" class="btn-dark" style="flex:1;padding:12px;font-size:15px;border-radius:10px;background:#2563eb;"><i class="fas fa-shopping-cart" style="margin-right:6px;"></i>Add to Cart</button>
-          <button onclick="addToCart(${p.id}, parseInt(document.getElementById('prodQty').textContent));closeProductModal();showOrderForm();" class="btn-dark" style="flex:1;padding:12px;font-size:15px;border-radius:10px;"><i class="fas fa-bolt" style="margin-right:6px;"></i>Buy Now</button>
-        </div>
-        <div style="display:flex;gap:16px;font-size:13px;color:#6b7280;">
-          <span><i class="fas fa-truck" style="margin-right:4px;color:#2563eb;"></i>Free shipping over $50</span>
+
+        <!-- Trust badges -->
+        <div style="display:flex;gap:16px;font-size:12px;color:#777;padding:12px 0;border-top:1px solid #f0f0f0;">
+          <span><i class="fas fa-truck" style="margin-right:4px;color:#2563eb;"></i>Free delivery over ৳999</span>
           <span><i class="fas fa-undo" style="margin-right:4px;color:#2563eb;"></i>30-day returns</span>
+          <span><i class="fas fa-shield-alt" style="margin-right:4px;color:#2563eb;"></i>1-Year Warranty</span>
         </div>
-      </div>
-    </div>
-    <!-- Features -->
-    <div style="margin-bottom:20px;">
-      <h4 style="font-weight:700;color:#1a2a4a;margin-bottom:12px;font-size:16px;"><i class="fas fa-list-check" style="margin-right:6px;color:#2563eb;"></i>Key Features</h4>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-        ${p.features.map(f => `<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f0f4ff;border-radius:8px;font-size:13px;color:#374151;"><i class="fas fa-check feature-check"></i>${f}</div>`).join('')}
-      </div>
-    </div>
-    ${related.length > 0 ? `
-    <div>
-      <h4 style="font-weight:700;color:#1a2a4a;margin-bottom:12px;font-size:16px;"><i class="fas fa-th" style="margin-right:6px;color:#2563eb;"></i>Related Products</h4>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-        ${related.map(r => `
-          <div style="border:1px solid #e5e7eb;border-radius:10px;padding:10px;cursor:pointer;transition:border-color 0.2s;" onclick="closeProductModal();setTimeout(()=>openProductDetail(${r.id}),200)" onmouseover="this.style.borderColor='#2563eb'" onmouseout="this.style.borderColor='#e5e7eb'">
-            <img src="${r.image}" alt="${r.name}" style="width:100%;height:80px;object-fit:contain;border-radius:6px;background:#f8f9fa;padding:4px;">
-            <div style="font-weight:600;font-size:12px;color:#1a2a4a;margin-top:6px;">${r.name}</div>
-            <div style="font-weight:700;color:#2563eb;font-size:13px;margin-top:2px;">$${r.price}</div>
+
+        <!-- People Also Viewed -->
+        ${related.length > 0 ? `
+        <div style="margin-top:16px;border-top:1px solid #f0f0f0;padding-top:14px;">
+          <h4 style="font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:12px;">People Also Viewed</h4>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+            ${related.map(r => `
+              <div style="cursor:pointer;text-align:center;" onclick="closeProductModal();setTimeout(()=>openProductDetail(${r.id}),200)">
+                <div style="background:#f5f5f3;border-radius:6px;overflow:hidden;margin-bottom:6px;height:72px;display:flex;align-items:center;justify-content:center;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                  <img src="${r.image}" style="width:100%;height:100%;object-fit:contain;padding:6px;">
+                </div>
+                <div style="font-size:11px;color:#333;font-weight:500;line-height:1.3;margin-bottom:3px;">${r.name}</div>
+                <div style="font-size:12px;font-weight:700;color:#1a2a4a;">৳${r.price.toLocaleString()}</div>
+              </div>
+            `).join('')}
           </div>
-        `).join('')}
+        </div>` : ''}
       </div>
-    </div>` : ''}
+    </div>
   `;
 
   document.getElementById('productModal').classList.add('active');
@@ -1517,6 +1562,24 @@ function changeProdQty(delta) {
 function closeProductModal() {
   document.getElementById('productModal').classList.remove('active');
   prodQty = 1;
+}
+
+let pdCurrentThumb = 0;
+let pdThumbs = [];
+function selectPdThumb(idx, src) {
+  pdCurrentThumb = idx;
+  const img = document.getElementById('pdMainImg');
+  if (img) img.src = src;
+  document.querySelectorAll('.pd-thumb').forEach((t,i) => {
+    t.style.borderColor = i === idx ? '#1a2a4a' : '#e5e7eb';
+  });
+}
+function pdThumbNav(dir) {
+  const thumbEls = document.querySelectorAll('.pd-thumb');
+  if (!thumbEls.length) return;
+  const total = thumbEls.length;
+  const next = (pdCurrentThumb + dir + total) % total;
+  thumbEls[next].click();
 }
 
 // ===================== ORDER =====================
@@ -1722,15 +1785,46 @@ function initCategoryMarquee() {
 
   const items = categories.map(c => `
     <div class="cat-marquee-item" onclick="showCategoryPage('${c.name}')">
-      <div class="cat-marquee-icon" style="background:${c.color};">
-        <i class="${c.faIcon}" style="color:${c.iconColor};font-size:22px;"></i>
-      </div>
+      <div class="cat-marquee-item-bg" style="background-image:url('${c.img}');"></div>
+      <div class="cat-marquee-item-overlay"></div>
       <span class="cat-marquee-label">${c.name}</span>
     </div>
   `).join('');
 
   // Duplicate for seamless infinite loop
   inner.innerHTML = items + items;
+}
+
+// ===================== BEST SELLERS SLIDER =====================
+let bsCurrentIndex = 0;
+function initBestSellers() {
+  const inner = document.getElementById('bsScrollInner');
+  if (!inner) return;
+  // Use all products as "best sellers"
+  inner.innerHTML = products.map(p => `
+    <div class="bs-card" onclick="openProductDetail(${p.id})">
+      <img src="${p.image}" alt="${p.name}" class="bs-card-img">
+      <div class="bs-card-body">
+        ${p.badge ? `<span style="font-size:10px;font-weight:700;color:#ef4444;text-transform:uppercase;letter-spacing:.5px;">${p.badge}</span>` : ''}
+        <div class="bs-card-name">${p.name}</div>
+        <div class="bs-card-prices">
+          <span class="bs-price-new">৳${p.price.toLocaleString()}</span>
+          ${p.oldPrice ? `<span class="bs-price-old">৳${p.oldPrice.toLocaleString()}</span>` : ''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function bsSlide(dir) {
+  const wrapper = document.querySelector('.bs-scroll-wrapper');
+  const inner = document.getElementById('bsScrollInner');
+  if (!inner || !wrapper) return;
+  const cardWidth = 220 + 20; // card min-width + gap
+  const visible = Math.floor(wrapper.offsetWidth / cardWidth);
+  const maxIndex = Math.max(0, products.length - visible);
+  bsCurrentIndex = Math.max(0, Math.min(bsCurrentIndex + dir, maxIndex));
+  inner.style.transform = `translateX(-${bsCurrentIndex * cardWidth}px)`;
 }
 
 // ===================== PRODUCT CARD WITH LINK =====================
@@ -1743,6 +1837,7 @@ window.addEventListener('DOMContentLoaded', () => {
   updateCartBadge();
   renderHome();
   initCategoryMarquee();
+  initBestSellers();
 
   // Start hero slider auto-play
   heroAutoPlay = setInterval(() => heroGoTo(heroCurrentSlide + 1), 5000);

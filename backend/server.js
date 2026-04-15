@@ -14,6 +14,7 @@ const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const jwt        = require('jsonwebtoken');
 const bcrypt     = require('bcryptjs');
+const path       = require('path');
 
 const app        = express();
 const PORT       = process.env.PORT || 5000;
@@ -34,8 +35,9 @@ app.use(cors({
     // Origin না থাকলে allow (Postman / server-to-server)
     if (!origin) return callback(null, true);
 
-    // যেকোনো vercel.app subdomain allow
+    // যেকোনো vercel.app বা onrender.com subdomain allow
     if (origin.endsWith('.vercel.app')) return callback(null, true);
+    if (origin.endsWith('.onrender.com')) return callback(null, true);
 
     // localhost / 127.0.0.1 যেকোনো port allow
     if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
@@ -46,8 +48,10 @@ app.use(cors({
     const allowed = [
       'https://ibn-khaldun-institute-ucpf.vercel.app',
       'https://ibn-khaldun-institute-tt9e.vercel.app',
+      'https://ibnkhalduninstitute.onrender.com',
       process.env.FRONTEND_URL,
       process.env.ADMIN_URL,
+      process.env.RENDER_URL,
     ].filter(Boolean);
 
     if (allowed.includes(origin)) return callback(null, true);
@@ -170,14 +174,39 @@ function authMiddleware(req, res, next) {
 }
 
 // ============================================================
+// STATIC FILES — index.html ও admin.html serve করার জন্য
+// ============================================================
+app.use(express.static(path.join(__dirname, 'public')));
+
+// ============================================================
 // HEALTH
 // ============================================================
-app.get('/', (req, res) =>
-  res.json({ status: 'ok', message: 'Ibn Khaldun Institute API ✅', time: new Date().toISOString() })
-);
 app.get('/api/health', (req, res) =>
   res.json({ status: 'ok', time: new Date().toISOString() })
 );
+
+// ── HTML Routes ──
+app.get('/', (req, res) => {
+  const htmlFile = path.join(__dirname, 'public', 'index.html');
+  const fs = require('fs');
+  if (fs.existsSync(htmlFile)) {
+    res.sendFile(htmlFile);
+  } else {
+    res.json({ status: 'ok', message: 'Ibn Khaldun Institute API ✅', time: new Date().toISOString() });
+  }
+});
+app.get('/admin', (req, res) => {
+  const htmlFile = path.join(__dirname, 'public', 'admin.html');
+  const fs = require('fs');
+  if (fs.existsSync(htmlFile)) {
+    res.sendFile(htmlFile);
+  } else {
+    res.status(404).json({ error: 'admin.html not found in public/' });
+  }
+});
+app.get('/admin.html', (req, res) => {
+  res.redirect('/admin');
+});
 
 // ============================================================
 // AUTH ROUTES
