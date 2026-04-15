@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TechEmporium - Latest Tech Gadgets & Accessories</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<!-- Hind Siliguri + Poppins Font -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { font-family: 'Hind Siliguri', 'Poppins', sans-serif; box-sizing: border-box; }
+  :root { --primary: #1a2a4a; --accent: #2563eb; }
+  body { background: #f3f4f6; }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #f1f1f1; }
+  ::-webkit-scrollbar-thumb { background: #1a2a4a; border-radius: 3px; }
+
+  .hero-bg {
+    background: linear-gradient(135deg, #1a2a4a 0%, #22396b 50%, #2a4a7f 100%);
+  }
+  .promo-bg {
+    background: linear-gradient(135deg, #1a2a4a 0%, #22396b 50%, #2a4a7f 100%);
+  }
+
+  @keyframes fadeIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes slideIn { from { opacity:0; transform:translateX(-30px); } to { opacity:1; transform:translateX(0); } }
+  @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
+  .fade-in { animation: fadeIn 0.5s ease forwards; }
+  .slide-in { animation: slideIn 0.5s ease forwards; }
+
+  .product-card {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+  }
+  .product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 32px rgba(26,42,74,0.18);
+  }
+  .category-card {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+  }
+  .category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 28px rgba(26,42,74,0.16);
+  }
+
+  .nav-link {
+    position: relative;
+    color: #fff;
+    font-weight: 500;
+    transition: color 0.2s;
+    cursor: pointer;
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0; right: 0;
+    height: 2px;
+    background: #60a5fa;
+    transform: scaleX(0);
+    transition: transform 0.2s;
+  }
+  .nav-link:hover::after { transform: scaleX(1); }
+  .nav-link:hover { color: #93c5fd; }
+
+  .btn-primary {
+    background: #fff;
+    color: #1a2a4a;
+    font-weight: 700;
+    border-radius: 6px;
+    padding: 10px 24px;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+    display: inline-block;
+    cursor: pointer;
+    border: none;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .btn-primary:hover { background: #e0e7ff; transform: translateY(-2px); }
+
+  .btn-dark {
+    background: #1a2a4a;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 8px 20px;
+    transition: background 0.2s, transform 0.2s;
+    display: inline-block;
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .btn-dark:hover { background: #2563eb; transform: translateY(-2px); }
+
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .modal-overlay.active { opacity: 1; pointer-events: all; }
+  .modal-box {
+    background: #fff;
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 520px;
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: scale(0.9);
+    transition: transform 0.3s;
+    position: relative;
+  }
+  .modal-overlay.active .modal-box { transform: scale(1); }
+
+  .search-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 999;
+    display: flex; align-items: flex-start; justify-content: center;
+    padding-top: 100px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .search-overlay.active { opacity: 1; pointer-events: all; }
+
+  .cart-sidebar {
+    position: fixed; top: 0; right: -420px;
+    width: 400px; height: 100vh;
+    background: #fff;
+    z-index: 1100;
+    box-shadow: -4px 0 32px rgba(0,0,0,0.15);
+    transition: right 0.3s ease;
+    display: flex; flex-direction: column;
+  }
+  .cart-sidebar.open { right: 0; }
+  .cart-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 1099;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .cart-overlay.active { opacity: 1; pointer-events: all; }
+
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: #1a2a4a; color: #fff;
+    padding: 14px 24px; border-radius: 10px;
+    font-weight: 600; font-size: 14px;
+    transform: translateY(100px); opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 2000;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  .stars { color: #f59e0b; }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .prod-img {
+    width: 100%; height: 180px;
+    object-fit: contain;
+    background: #f8f9fa;
+    padding: 16px;
+  }
+  .cat-img {
+    width: 100%; height: 140px;
+    object-fit: contain;
+    background: #f8f9fa;
+    padding: 12px;
+  }
+
+  footer {
+    background: #1a2a4a;
+    color: #cbd5e1;
+  }
+  footer a { color: #94a3b8; transition: color 0.2s; }
+  footer a:hover { color: #fff; }
+
+  .badge {
+    position: absolute; top: -8px; right: -8px;
+    background: #ef4444; color: #fff;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .qty-btn {
+    width: 32px; height: 32px;
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 16px; font-weight: 700;
+    transition: background 0.2s;
+  }
+  .qty-btn:hover { background: #1a2a4a; color: #fff; }
+
+  .form-input {
+    width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .form-input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+  }
+
+  .dropdown { position: relative; }
+  .dropdown-menu {
+    position: absolute; top: 100%; left: 0;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    min-width: 200px;
+    opacity: 0; pointer-events: none;
+    transform: translateY(-10px);
+    transition: all 0.2s;
+    z-index: 100;
+  }
+  .dropdown:hover .dropdown-menu {
+    opacity: 1; pointer-events: all;
+    transform: translateY(0);
+  }
+
+  .mobile-menu {
+    display: none;
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: #1a2a4a;
+    padding: 16px;
+    z-index: 50;
+  }
+  .mobile-menu.open { display: block; }
+
+  .section-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a2a4a;
+    margin-bottom: 32px;
+    position: relative;
+  }
+  .section-title::after {
+    content: '';
+    display: block;
+    width: 60px; height: 3px;
+    background: #2563eb;
+    margin: 10px auto 0;
+    border-radius: 2px;
+  }
+
+  .price { color: #1a2a4a; font-weight: 700; font-size: 18px; }
+  .price-old { color: #9ca3af; text-decoration: line-through; font-size: 14px; }
+
+  html { scroll-behavior: smooth; }
+
+  .spinner {
+    width: 40px; height: 40px;
+    border: 4px solid #f3f4f6;
+    border-top: 4px solid #1a2a4a;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-12px);} }
+  .float-anim { animation: float 3s ease-in-out infinite; }
+
+  .breadcrumb span { color: #6b7280; font-size: 14px; }
+  .breadcrumb span.current { color: #1a2a4a; font-weight: 600; }
+  .breadcrumb span a { color: #2563eb; cursor: pointer; }
+  .breadcrumb span a:hover { text-decoration: underline; }
+
+  /* Payment badges */
+  .payment-badge {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #e2e8f0;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: background 0.2s, border-color 0.2s;
+    cursor: default;
+  }
+  .payment-badge:hover {
+    background: rgba(255,255,255,0.15);
+    border-color: rgba(255,255,255,0.3);
+  }
+
+  /* Social icons */
+  .social-icon {
+    width: 38px; height: 38px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.2s;
+    font-size: 16px;
+  }
+  .social-icon:hover { background: #2563eb; transform: translateY(-2px); color: #fff; }
+
+  /* Nav icon buttons */
+  .nav-icon-btn {
+    background: none; border: none;
+    color: #fff; font-size: 17px;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    transition: background 0.2s, color 0.2s;
+    position: relative;
+  }
+  .nav-icon-btn:hover { background: rgba(255,255,255,0.12); color: #93c5fd; }
+
+  /* Category icon circle */
+  .cat-icon-circle {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin: 0 auto 10px;
+  }
+
+  /* About feature icon */
+  .about-icon {
+    width: 64px; height: 64px;
+    border-radius: 16px;
+    background: #e0e7ff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    color: #2563eb;
+    margin: 0 auto 14px;
+  }
+
+  /* Contact info icon */
+  .contact-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    background: #e0e7ff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    color: #2563eb;
+    flex-shrink: 0;
+  }
+
+  /* Feature checkmark */
+  .feature-check {
+    color: #2563eb;
+    font-size: 13px;
+  }
+
+  @media (max-width: 768px) {
+    .hero-grid { flex-direction: column; }
+    .about-grid { grid-template-columns: 1fr !important; }
+    .contact-grid { grid-template-columns: 1fr !important; }
+    .product-detail-grid { grid-template-columns: 1fr !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CART OVERLAY -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+
+<!-- CART SIDEBAR -->
+<div class="cart-sidebar" id="cartSidebar">
+  <div style="background:#1a2a4a; color:#fff; padding:20px 24px; display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="font-size:20px; font-weight:700;"><i class="fas fa-shopping-cart" style="margin-right:8px;"></i>Your Cart</h3>
+    <button onclick="closeCart()" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;line-height:1;"><i class="fas fa-times"></i></button>
+  </div>
+  <div id="cartItems" style="flex:1; overflow-y:auto; padding:16px;"></div>
+  <div style="padding:20px; border-top:1px solid #e5e7eb;">
+    <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+      <span style="font-weight:600;">Subtotal:</span>
+      <span id="cartTotal" style="font-weight:700;font-size:20px;color:#1a2a4a;">$0.00</span>
+    </div>
+    <button onclick="showOrderForm()" class="btn-dark" style="width:100%;padding:14px;font-size:16px;border-radius:10px;margin-top:8px;background:#2563eb;"><i class="fas fa-bolt" style="margin-right:6px;"></i>Proceed to Order</button>
+    <button onclick="clearCart()" style="width:100%;padding:10px;margin-top:8px;background:#fee2e2;color:#ef4444;border:none;border-radius:10px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;"><i class="fas fa-trash" style="margin-right:6px;"></i>Clear Cart</button>
+  </div>
+</div>
+
+<!-- SEARCH OVERLAY -->
+<div class="search-overlay" id="searchOverlay" onclick="if(event.target===this)closeSearch()">
+  <div style="width:100%;max-width:600px;padding:0 16px;">
+    <div style="background:#fff;border-radius:14px;padding:8px 16px;display:flex;align-items:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+      <i class="fas fa-search" style="font-size:18px;margin-right:12px;color:#6b7280;"></i>
+      <input type="text" id="searchInput" placeholder="Search for products..." class="form-input" style="border:none;font-size:18px;flex:1;padding:12px 0;" oninput="liveSearch(this.value)" onkeydown="if(event.key==='Escape')closeSearch()">
+      <button onclick="closeSearch()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#6b7280;"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="searchResults" style="background:#fff;border-radius:14px;margin-top:8px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.2);max-height:400px;overflow-y:auto;"></div>
+  </div>
+</div>
+
+<!-- ORDER MODAL -->
+<div class="modal-overlay" id="orderModal">
+  <div class="modal-box">
+    <button onclick="closeOrderModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#6b7280;"><i class="fas fa-times"></i></button>
+    <h2 style="font-size:22px;font-weight:700;color:#1a2a4a;margin-bottom:20px;"><i class="fas fa-box" style="margin-right:8px;color:#2563eb;"></i>Place Your Order</h2>
+    <div id="orderSummaryItems" style="background:#f8fafc;border-radius:10px;padding:14px;margin-bottom:20px;"></div>
+    <form id="orderForm" onsubmit="submitOrder(event)">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div>
+          <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:4px;">First Name *</label>
+          <input type="text" required placeholder="John" class="form-input">
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:4px;">Last Name *</label>
+          <input type="text" required placeholder="Doe" class="form-input">
+        </div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:4px;">Email Address *</label>
+        <input type="email" required placeholder="john@example.com" class="form-input">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:4px;">Phone Number *</label>
+        <input type="tel" required placeholder="+1 234 567 8900" class="form-input">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:4px;">Shipping Address *</label>
+        <textarea required placeholder="Enter full shipping address..." class="form-input" rows="2" style="resize:none;"></textarea>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div>
+          <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:4px;">City *</label>
+          <input type="text" required placeholder="New York" class="form-input">
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:4px;">ZIP Code *</label>
+          <input type="text" required placeholder="10001" class="form-input">
+        </div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:4px;">Payment Method *</label>
+        <select class="form-input">
+          <option>Credit / Debit Card</option>
+          <option>bKash</option>
+          <option>Nagad</option>
+          <option>Rocket</option>
+          <option>PayPal</option>
+          <option>Cash on Delivery</option>
+        </select>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:#1a2a4a;border-radius:10px;margin-bottom:16px;">
+        <span style="color:#fff;font-weight:600;">Total Amount:</span>
+        <span id="orderTotal" style="color:#60a5fa;font-size:22px;font-weight:800;">$0.00</span>
+      </div>
+      <button type="submit" class="btn-dark" style="width:100%;padding:14px;font-size:16px;border-radius:10px;background:#2563eb;"><i class="fas fa-check-circle" style="margin-right:6px;"></i>Confirm Order</button>
+    </form>
+  </div>
+</div>
+
+<!-- PRODUCT DETAIL MODAL -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal-box" style="max-width:680px;">
+    <button onclick="closeProductModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:26px;cursor:pointer;color:#6b7280;z-index:1;"><i class="fas fa-times"></i></button>
+    <div id="productModalContent"></div>
+  </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="modal-overlay" id="successModal">
+  <div class="modal-box" style="text-align:center;max-width:420px;">
+    <div style="font-size:64px;margin-bottom:16px;color:#16a34a;"><i class="fas fa-party-horn"></i></div>
+    <div style="width:80px;height:80px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;"><i class="fas fa-check" style="font-size:36px;color:#16a34a;"></i></div>
+    <h2 style="font-size:26px;font-weight:800;color:#1a2a4a;margin-bottom:8px;">Order Placed!</h2>
+    <p style="color:#6b7280;margin-bottom:16px;">Thank you for your order! We'll send a confirmation email shortly.</p>
+    <div id="successOrderId" style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:12px;margin-bottom:20px;color:#16a34a;font-weight:700;"></div>
+    <button onclick="closeSuccessModal()" class="btn-dark" style="padding:12px 32px;background:#1a2a4a;"><i class="fas fa-store" style="margin-right:6px;"></i>Continue Shopping</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- NAVIGATION -->
+<nav style="background:#1a2a4a;position:sticky;top:0;z-index:500;box-shadow:0 2px 20px rgba(0,0,0,0.3);">
+  <div style="max-width:1200px;margin:0 auto;padding:0 20px;display:flex;align-items:center;height:68px;position:relative;">
+    <!-- Logo -->
+    <div onclick="showPage('home')" style="display:flex;align-items:center;gap:10px;cursor:pointer;margin-right:32px;">
+      <div style="background:#2563eb;width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+        <i class="fas fa-microchip" style="color:#fff;font-size:18px;"></i>
+      </div>
+      <span style="color:#fff;font-size:20px;font-weight:800;letter-spacing:-0.5px;">TechEmporium</span>
+    </div>
+
+    <!-- Desktop Nav Links -->
+    <div style="display:flex;align-items:center;gap:28px;flex:1;" id="desktopNav">
+      <a class="nav-link" onclick="showPage('shop')">Shop</a>
+      <div class="dropdown">
+        <a class="nav-link" style="cursor:pointer;">Categories <i class="fas fa-chevron-down" style="font-size:10px;margin-left:3px;"></i></a>
+        <div class="dropdown-menu" style="padding:8px;">
+          <a onclick="showCategoryPage('Watches')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;color:#374151;border-radius:6px;cursor:pointer;font-size:14px;" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='transparent'"><i class="fas fa-clock" style="color:#2563eb;width:16px;"></i> Watches</a>
+          <a onclick="showCategoryPage('Shirts')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;color:#374151;border-radius:6px;cursor:pointer;font-size:14px;" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='transparent'"><i class="fas fa-shirt" style="color:#2563eb;width:16px;"></i> Shirts</a>
+          <a onclick="showCategoryPage('T-Shirts')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;color:#374151;border-radius:6px;cursor:pointer;font-size:14px;" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='transparent'"><i class="fas fa-tshirt" style="color:#2563eb;width:16px;"></i> T-Shirts</a>
+          <a onclick="showCategoryPage('Pants')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;color:#374151;border-radius:6px;cursor:pointer;font-size:14px;" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='transparent'"><i class="fas fa-person" style="color:#2563eb;width:16px;"></i> Pants</a>
+          <a onclick="showCategoryPage('Punjabi')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;color:#374151;border-radius:6px;cursor:pointer;font-size:14px;" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='transparent'"><i class="fas fa-vest" style="color:#2563eb;width:16px;"></i> Punjabi</a>
+          <a onclick="showCategoryPage('Drop Shoulder T-Shirt')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;color:#374151;border-radius:6px;cursor:pointer;font-size:14px;" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='transparent'"><i class="fas fa-plug" style="color:#2563eb;width:16px;"></i> Chargers</a>
+        </div>
+      </div>
+      <a class="nav-link" onclick="showPage('about')" style="cursor:pointer;">About Us</a>
+      <a class="nav-link" onclick="showPage('contact')" style="cursor:pointer;">Contact</a>
+    </div>
+
+    <!-- Icons -->
+    <div style="display:flex;align-items:center;gap:6px;margin-left:auto;">
+
+      <button onclick="openSearch()" class="nav-icon-btn" title="Search"><i class="fas fa-search"></i></button>
+      <button onclick="toggleCart()" class="nav-icon-btn" title="Cart" style="position:relative;">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="badge" id="cartBadge" style="display:none;">0</span>
+      </button>
+      <!-- Mobile hamburger -->
+      <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="nav-icon-btn" style="display:none;font-size:20px;"><i class="fas fa-bars"></i></button>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <a class="nav-link" onclick="showPage('home');closeMobileMenu()" style="display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.1);"><i class="fas fa-home" style="width:18px;"></i>Home</a>
+      <a class="nav-link" onclick="showPage('shop');closeMobileMenu()" style="display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.1);"><i class="fas fa-store" style="width:18px;"></i>Shop</a>
+      <a class="nav-link" onclick="showPage('categories');closeMobileMenu()" style="display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.1);"><i class="fas fa-th-large" style="width:18px;"></i>Categories</a>
+      <a class="nav-link" onclick="showPage('about');closeMobileMenu()" style="display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.1);"><i class="fas fa-info-circle" style="width:18px;"></i>About Us</a>
+      <a class="nav-link" onclick="showPage('contact');closeMobileMenu()" style="display:flex;align-items:center;gap:10px;padding:12px 0;"><i class="fas fa-envelope" style="width:18px;"></i>Contact</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ==================== HOME PAGE ==================== -->
+<div id="page-home" class="page active">
+
+  <!-- HERO SECTION -->
+  <section class="hero-bg" style="padding:60px 20px;min-height:420px;position:relative;overflow:hidden;">
+    <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:32px;">
+      <div style="flex:1;max-width:500px;" class="slide-in">
+        <h1 style="font-size:clamp(36px,5vw,58px);font-weight:800;color:#fff;line-height:1.15;margin-bottom:16px;">
+          Latest Tech<br>Gadgets &<br>Accessories
+        </h1>
+        <p style="color:#93c5fd;font-size:16px;margin-bottom:28px;max-width:380px;font-weight:400;">
+          Top-rated electronics and high-tech accessories for your lifestyle.
+        </p>
+        <button onclick="showPage('shop')" class="btn-primary" style="font-size:16px;padding:14px 32px;">
+          Shop Now <i class="fas fa-arrow-right" style="margin-left:6px;"></i>
+        </button>
+      </div>
+      <div style="flex:1;display:flex;justify-content:center;max-width:480px;" class="float-anim">
+        <div style="position:relative;width:100%;max-width:420px;">
+          <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80" alt="Headphones" style="width:100%;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.4);">
+          <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=200&q=80" alt="Watch" style="position:absolute;bottom:-20px;left:-20px;width:140px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.4);">
+        </div>
+      </div>
+    </div>
+    <div style="position:absolute;top:-100px;right:-100px;width:400px;height:400px;border-radius:50%;background:rgba(255,255,255,0.03);pointer-events:none;"></div>
+    <div style="position:absolute;bottom:-80px;left:-80px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,0.03);pointer-events:none;"></div>
+  </section>
+
+  <!-- FEATURED PRODUCTS -->
+  <section style="padding:60px 20px;background:#f3f4f6;">
+    <div style="max-width:1200px;margin:0 auto;">
+      <h2 class="section-title">Featured Products</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:24px;" id="featuredGrid"></div>
+    </div>
+  </section>
+
+  <!-- PROMO BANNER -->
+  <section class="promo-bg" style="padding:60px 20px;">
+    <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:32px;">
+      <div style="flex:1;max-width:480px;">
+        <h2 style="font-size:clamp(28px,4vw,42px);font-weight:800;color:#fff;margin-bottom:12px;">Upgrade Your Tech Life</h2>
+        <p style="color:#93c5fd;font-size:15px;margin-bottom:24px;">Discover the latest gadgets and elevate your everyday routine.</p>
+        <button onclick="showPage('shop')" class="btn-primary">Shop Now <i class="fas fa-arrow-right" style="margin-left:6px;"></i></button>
+      </div>
+      <div style="flex:1;display:flex;justify-content:flex-end;max-width:420px;">
+        <img src="https://images.unsplash.com/photo-1468436139062-f60a71c5c892?w=420&q=80" alt="Tech gadgets" style="width:100%;border-radius:16px;box-shadow:0 16px 48px rgba(0,0,0,0.3);">
+      </div>
+    </div>
+  </section>
+
+  <!-- SHOP BY CATEGORY -->
+  <section style="padding:60px 20px;background:#f3f4f6;">
+    <div style="max-width:1200px;margin:0 auto;">
+      <h2 class="section-title">Shop by Category</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:24px;" id="homeCategoryGrid"></div>
+    </div>
+  </section>
+
+  <!-- STATS SECTION -->
+  <section style="padding:48px 20px;background:#1a2a4a;">
+    <div style="max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:24px;text-align:center;">
+      <div>
+        <div style="font-size:36px;font-weight:800;color:#60a5fa;">5,000+</div>
+        <div style="color:#94a3b8;margin-top:4px;font-size:14px;"><i class="fas fa-smile" style="margin-right:6px;"></i>Happy Customers</div>
+      </div>
+      <div>
+        <div style="font-size:36px;font-weight:800;color:#60a5fa;">200+</div>
+        <div style="color:#94a3b8;margin-top:4px;font-size:14px;"><i class="fas fa-box-open" style="margin-right:6px;"></i>Products</div>
+      </div>
+      <div>
+        <div style="font-size:36px;font-weight:800;color:#60a5fa;">50+</div>
+        <div style="color:#94a3b8;margin-top:4px;font-size:14px;"><i class="fas fa-tags" style="margin-right:6px;"></i>Brands</div>
+      </div>
+      <div>
+        <div style="font-size:36px;font-weight:800;color:#60a5fa;">4.9 <i class="fas fa-star" style="font-size:28px;color:#f59e0b;"></i></div>
+        <div style="color:#94a3b8;margin-top:4px;font-size:14px;"><i class="fas fa-chart-line" style="margin-right:6px;"></i>Average Rating</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section style="padding:60px 20px;background:#fff;">
+    <div style="max-width:1100px;margin:0 auto;">
+      <h2 class="section-title">What Customers Say</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;">
+        <div style="background:#f8fafc;border-radius:14px;padding:24px;border-left:4px solid #2563eb;">
+          <div class="stars" style="margin-bottom:10px;font-size:18px;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+          <p style="color:#374151;font-size:15px;margin-bottom:14px;">"Amazing quality! The Bluetooth speaker exceeded all my expectations. Fast delivery too!"</p>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:36px;height:36px;background:#2563eb;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;">S</div>
+            <div style="font-weight:700;color:#1a2a4a;">Sarah M.</div>
+          </div>
+        </div>
+        <div style="background:#f8fafc;border-radius:14px;padding:24px;border-left:4px solid #2563eb;">
+          <div class="stars" style="margin-bottom:10px;font-size:18px;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+          <p style="color:#374151;font-size:15px;margin-bottom:14px;">"Great smartwatch at a reasonable price. The TechEmporium team was very helpful!"</p>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:36px;height:36px;background:#2563eb;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;">J</div>
+            <div style="font-weight:700;color:#1a2a4a;">James K.</div>
+          </div>
+        </div>
+        <div style="background:#f8fafc;border-radius:14px;padding:24px;border-left:4px solid #2563eb;">
+          <div class="stars" style="margin-bottom:10px;font-size:18px;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
+          <p style="color:#374151;font-size:15px;margin-bottom:14px;">"The earbuds are fantastic! Sound quality is top-notch. Will definitely buy again."</p>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:36px;height:36px;background:#2563eb;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;">P</div>
+            <div style="font-weight:700;color:#1a2a4a;">Priya R.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ==================== SHOP PAGE ==================== -->
+<div id="page-shop" class="page">
+  <div style="max-width:1200px;margin:0 auto;padding:40px 20px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px;">
+      <h1 style="font-size:32px;font-weight:800;color:#1a2a4a;"><i class="fas fa-store" style="margin-right:10px;color:#2563eb;"></i>All Products</h1>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+        <div style="position:relative;">
+          <i class="fas fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#6b7280;font-size:14px;"></i>
+          <input type="text" id="shopSearch" placeholder="Search products..." class="form-input" style="width:220px;padding-left:36px;" oninput="filterShop()">
+        </div>
+        <select id="shopCategory" class="form-input" style="width:160px;" onchange="filterShop()">
+          <option value="">All Categories</option>
+          <option>Watches</option>
+          <option>Shirts</option>
+          <option>T-Shirts</option>
+          <option>Pants</option>
+          <option>Punjabi</option>
+          <option>Drop Shoulder T-Shirt</option>
+        </select>
+        <select id="shopSort" class="form-input" style="width:160px;" onchange="filterShop()">
+          <option value="default">Sort By</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+          <option value="name">Name A-Z</option>
+          <option value="rating">Top Rated</option>
+        </select>
+      </div>
+    </div>
+    <div id="shopGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:24px;"></div>
+    <div id="shopEmpty" style="display:none;text-align:center;padding:80px 20px;color:#6b7280;">
+      <i class="fas fa-search" style="font-size:64px;color:#d1d5db;margin-bottom:16px;display:block;"></i>
+      <h3 style="font-size:22px;font-weight:700;color:#374151;margin-bottom:8px;">No products found</h3>
+      <p>Try adjusting your search or filters.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CATEGORIES PAGE ==================== -->
+<div id="page-categories" class="page">
+  <div style="max-width:1200px;margin:0 auto;padding:40px 20px;">
+    <h1 style="font-size:32px;font-weight:800;color:#1a2a4a;margin-bottom:32px;text-align:center;"><i class="fas fa-th-large" style="margin-right:10px;color:#2563eb;"></i>Browse Categories</h1>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:28px;" id="allCategoriesGrid"></div>
+  </div>
+</div>
+
+<!-- ==================== CATEGORY PRODUCTS PAGE ==================== -->
+<div id="page-category-products" class="page">
+  <div style="max-width:1200px;margin:0 auto;padding:40px 20px;">
+    <div class="breadcrumb" style="margin-bottom:20px;">
+      <span><a onclick="showPage('categories')"><i class="fas fa-th-large" style="margin-right:4px;"></i>Categories</a></span>
+      <span style="margin:0 8px;color:#d1d5db;"><i class="fas fa-chevron-right" style="font-size:11px;"></i></span>
+      <span class="current" id="categoryPageTitle">Category</span>
+    </div>
+    <h1 id="categoryProductsTitle" style="font-size:32px;font-weight:800;color:#1a2a4a;margin-bottom:12px;"></h1>
+    <div id="categorySubcategories" style="margin-bottom:24px;display:none;"></div>
+    <div id="categoryProductsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:24px;"></div>
+  </div>
+</div>
+
+<!-- ==================== ABOUT PAGE ==================== -->
+<div id="page-about" class="page">
+  <div style="background:#1a2a4a;padding:60px 20px;text-align:center;">
+    <h1 style="font-size:42px;font-weight:800;color:#fff;margin-bottom:12px;"><i class="fas fa-microchip" style="margin-right:12px;color:#60a5fa;"></i>About TechEmporium</h1>
+    <p style="color:#93c5fd;font-size:18px;max-width:600px;margin:0 auto;">Your trusted destination for premium tech gadgets and accessories.</p>
+  </div>
+  <div style="max-width:1000px;margin:0 auto;padding:60px 20px;">
+    <div class="about-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;margin-bottom:60px;">
+      <div>
+        <h2 style="font-size:28px;font-weight:700;color:#1a2a4a;margin-bottom:16px;"><i class="fas fa-book-open" style="margin-right:10px;color:#2563eb;"></i>Our Story</h2>
+        <p style="color:#4b5563;line-height:1.8;margin-bottom:16px;">Founded in 2019, TechEmporium started with a simple mission: to make high-quality tech products accessible to everyone. What began as a small online store has grown into a thriving marketplace trusted by thousands of tech enthusiasts worldwide.</p>
+        <p style="color:#4b5563;line-height:1.8;">We carefully curate every product in our catalog, working directly with manufacturers to ensure you get the best quality at the most competitive prices.</p>
+      </div>
+      <div>
+        <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&q=80" alt="Team" style="width:100%;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,0.12);">
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;margin-bottom:60px;">
+      <div style="text-align:center;padding:32px;background:#f8fafc;border-radius:16px;">
+        <div class="about-icon"><i class="fas fa-rocket"></i></div>
+        <h3 style="font-weight:700;color:#1a2a4a;margin-bottom:8px;">Fast Delivery</h3>
+        <p style="color:#6b7280;font-size:14px;">Express shipping available to 150+ countries worldwide.</p>
+      </div>
+      <div style="text-align:center;padding:32px;background:#f8fafc;border-radius:16px;">
+        <div class="about-icon"><i class="fas fa-shield-alt"></i></div>
+        <h3 style="font-weight:700;color:#1a2a4a;margin-bottom:8px;">Quality Guarantee</h3>
+        <p style="color:#6b7280;font-size:14px;">Every product comes with a 1-year warranty and 30-day returns.</p>
+      </div>
+      <div style="text-align:center;padding:32px;background:#f8fafc;border-radius:16px;">
+        <div class="about-icon"><i class="fas fa-headset"></i></div>
+        <h3 style="font-weight:700;color:#1a2a4a;margin-bottom:8px;">24/7 Support</h3>
+        <p style="color:#6b7280;font-size:14px;">Our team is always ready to help you with any questions.</p>
+      </div>
+      <div style="text-align:center;padding:32px;background:#f8fafc;border-radius:16px;">
+        <div class="about-icon"><i class="fas fa-tags"></i></div>
+        <h3 style="font-weight:700;color:#1a2a4a;margin-bottom:8px;">Best Prices</h3>
+        <p style="color:#6b7280;font-size:14px;">We price-match to ensure you always get the best deal.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CONTACT PAGE ==================== -->
+<div id="page-contact" class="page">
+  <div style="background:#1a2a4a;padding:60px 20px;text-align:center;">
+    <h1 style="font-size:42px;font-weight:800;color:#fff;margin-bottom:12px;"><i class="fas fa-envelope" style="margin-right:12px;color:#60a5fa;"></i>Contact Us</h1>
+    <p style="color:#93c5fd;font-size:18px;">We'd love to hear from you. Reach out anytime!</p>
+  </div>
+  <div style="max-width:1000px;margin:0 auto;padding:60px 20px;">
+    <div class="contact-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:48px;">
+      <div>
+        <h2 style="font-size:24px;font-weight:700;color:#1a2a4a;margin-bottom:24px;"><i class="fas fa-paper-plane" style="margin-right:8px;color:#2563eb;"></i>Get In Touch</h2>
+        <form onsubmit="submitContact(event)">
+          <div style="margin-bottom:16px;">
+            <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:4px;"><i class="fas fa-user" style="margin-right:6px;color:#6b7280;"></i>Full Name *</label>
+            <input type="text" required placeholder="Your name" class="form-input">
+          </div>
+          <div style="margin-bottom:16px;">
+            <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:4px;"><i class="fas fa-envelope" style="margin-right:6px;color:#6b7280;"></i>Email *</label>
+            <input type="email" required placeholder="your@email.com" class="form-input">
+          </div>
+          <div style="margin-bottom:16px;">
+            <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:4px;"><i class="fas fa-tag" style="margin-right:6px;color:#6b7280;"></i>Subject *</label>
+            <input type="text" required placeholder="How can we help?" class="form-input">
+          </div>
+          <div style="margin-bottom:20px;">
+            <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:4px;"><i class="fas fa-comment" style="margin-right:6px;color:#6b7280;"></i>Message *</label>
+            <textarea required placeholder="Your message..." class="form-input" rows="5" style="resize:vertical;"></textarea>
+          </div>
+          <button type="submit" class="btn-dark" style="padding:14px 32px;font-size:15px;border-radius:10px;background:#2563eb;"><i class="fas fa-paper-plane" style="margin-right:6px;"></i>Send Message</button>
+        </form>
+      </div>
+      <div>
+        <h2 style="font-size:24px;font-weight:700;color:#1a2a4a;margin-bottom:24px;"><i class="fas fa-address-book" style="margin-right:8px;color:#2563eb;"></i>Contact Information</h2>
+        <div>
+          <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:20px;padding:20px;background:#f8fafc;border-radius:12px;">
+            <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+            <div>
+              <div style="font-weight:600;color:#1a2a4a;margin-bottom:4px;">Address</div>
+              <div style="color:#6b7280;">123 Tech Street, Silicon Valley,<br>CA 94025, USA</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:20px;padding:20px;background:#f8fafc;border-radius:12px;">
+            <div class="contact-icon"><i class="fas fa-phone-alt"></i></div>
+            <div>
+              <div style="font-weight:600;color:#1a2a4a;margin-bottom:4px;">Phone</div>
+              <div style="color:#6b7280;">+1 (555) 123-4567</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:20px;padding:20px;background:#f8fafc;border-radius:12px;">
+            <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+            <div>
+              <div style="font-weight:600;color:#1a2a4a;margin-bottom:4px;">Email</div>
+              <div style="color:#6b7280;">support@techemporium.com</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:16px;align-items:flex-start;padding:20px;background:#f8fafc;border-radius:12px;">
+            <div class="contact-icon"><i class="fas fa-clock"></i></div>
+            <div>
+              <div style="font-weight:600;color:#1a2a4a;margin-bottom:4px;">Business Hours</div>
+              <div style="color:#6b7280;">Mon - Fri: 9am - 6pm PST<br>Sat: 10am - 4pm PST</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<footer style="padding:60px 20px 0;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:40px;padding-bottom:40px;border-bottom:1px solid rgba(255,255,255,0.1);">
+
+      <!-- Brand -->
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <div style="background:#2563eb;width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+            <i class="fas fa-microchip" style="color:#fff;font-size:16px;"></i>
+          </div>
+          <span style="color:#fff;font-size:18px;font-weight:800;">TechEmporium</span>
+        </div>
+        <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin-bottom:20px;">Your one-stop destination for the latest tech gadgets and accessories. Quality products, unbeatable prices.</p>
+        <div style="display:flex;gap:10px;">
+          <a href="#" class="social-icon" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-icon" title="Twitter / X"><i class="fab fa-x-twitter"></i></a>
+          <a href="#" class="social-icon" title="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-icon" title="YouTube"><i class="fab fa-youtube"></i></a>
+          <a href="#" class="social-icon" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div>
+        <h4 style="color:#fff;font-weight:700;font-size:16px;margin-bottom:16px;"><i class="fas fa-link" style="margin-right:6px;color:#60a5fa;"></i>Quick Links</h4>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
+          <li><a onclick="showPage('home')" style="cursor:pointer;font-size:14px;display:flex;align-items:center;gap:8px;"><i class="fas fa-home" style="width:14px;color:#60a5fa;"></i>Home</a></li>
+          <li><a onclick="showPage('shop')" style="cursor:pointer;font-size:14px;display:flex;align-items:center;gap:8px;"><i class="fas fa-store" style="width:14px;color:#60a5fa;"></i>Shop</a></li>
+          <li><a onclick="showPage('categories')" style="cursor:pointer;font-size:14px;display:flex;align-items:center;gap:8px;"><i class="fas fa-th-large" style="width:14px;color:#60a5fa;"></i>Categories</a></li>
+          <li><a onclick="showPage('about')" style="cursor:pointer;font-size:14px;display:flex;align-items:center;gap:8px;"><i class="fas fa-info-circle" style="width:14px;color:#60a5fa;"></i>About Us</a></li>
+          <li><a onclick="showPage('contact')" style="cursor:pointer;font-size:14px;display:flex;align-items:center;gap:8px;"><i class="fas fa-envelope" style="width:14px;color:#60a5fa;"></i>Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- Categories -->
+      <div>
+        <h4 style="color:#fff;font-weight:700;font-size:16px;margin-bottom:16px;"><i class="fas fa-tags" style="margin-right:6px;color:#60a5fa;"></i>Categories</h4>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
+          <li><a onclick="showCategoryPage('Watches')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;color:#374151;border-radius:6px;cursor:pointer;font-size:14px;" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='transparent'"><i class="fas fa-clock" style="color:#2563eb;width:16px;"></i> Watches</a>
+          <a onclick="showCategoryPage('Shirts')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;color:#374151;border-radius:6px;cursor:pointer;font-size:14px;" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='transparent'"><i class="fas fa-shirt" style="color:#2563eb;width:16px;"></i> Shirts</a>
+          <a onclick="showCategoryPage('T-Shirts')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;color:#374151;border-radius:6px;cursor:pointer;font-size:14px;" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='transparent'"><i class="fas fa-tshirt" style="color:#2563eb;width:16px;"></i> T-Shirts</a>
+          <a onclick="showCategoryPage('Pants')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;color:#374151;border-radius:6px;cursor:pointer;font-size:14px;" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='transparent'"><i class="fas fa-person" style="color:#2563eb;width:16px;"></i> Pants</a>
+          <a onclick="showCategoryPage('Punjabi')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;color:#374151;border-radius:6px;cursor:pointer;font-size:14px;" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='transparent'"><i class="fas fa-vest" style="color:#2563eb;width:16px;"></i> Punjabi</a>
+          <a onclick="showCategoryPage('Drop Shoulder T-Shirt')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;color:#374151;border-radius:6px;cursor:pointer;font-size:14px;" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='transparent'"><i class="fas fa-layer-group" style="color:#2563eb;width:16px;"></i> Drop Shoulder T-Shirt</a>
+        </ul>
+      </div>
+
+      <!-- Newsletter & Payment -->
+      <div>
+        <h4 style="color:#fff;font-weight:700;font-size:16px;margin-bottom:16px;"><i class="fas fa-bell" style="margin-right:6px;color:#60a5fa;"></i>Newsletter</h4>
+        <p style="color:#94a3b8;font-size:14px;margin-bottom:16px;">Subscribe to get the latest deals and tech news.</p>
+        <div style="display:flex;gap:8px;margin-bottom:28px;">
+          <input type="email" placeholder="your@email.com" class="form-input" style="flex:1;background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15);color:#fff;" id="newsletterEmail">
+          <button onclick="subscribeNewsletter()" class="btn-dark" style="background:#2563eb;padding:10px 14px;white-space:nowrap;"><i class="fas fa-paper-plane"></i></button>
+        </div>
+
+        <!-- Payment Methods -->
+        <h5 style="color:#fff;font-weight:600;font-size:14px;margin-bottom:12px;"><i class="fas fa-credit-card" style="margin-right:6px;color:#60a5fa;"></i>We Accept</h5>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <span class="payment-badge"><i class="fas fa-mobile-alt" style="margin-right:4px;color:#e91e8c;"></i>bKash</span>
+          <span class="payment-badge"><i class="fas fa-mobile-alt" style="margin-right:4px;color:#f97316;"></i>Nagad</span>
+          <span class="payment-badge"><i class="fas fa-mobile-alt" style="margin-right:4px;color:#8b5cf6;"></i>Rocket</span>
+          <span class="payment-badge"><i class="fab fa-cc-visa" style="margin-right:4px;color:#1a56db;font-size:14px;"></i>VISA</span>
+          <span class="payment-badge"><i class="fab fa-cc-mastercard" style="margin-right:4px;color:#eb001b;font-size:14px;"></i>MasterCard</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div style="padding:24px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+      <div style="color:#64748b;font-size:13px;"><i class="fas fa-copyright" style="margin-right:4px;"></i>2025 TechEmporium. All rights reserved.</div>
+      <div style="display:flex;gap:20px;">
+        <a href="#" style="color:#64748b;font-size:13px;" onmouseover="this.style.color='#94a3b8'" onmouseout="this.style.color='#64748b'"><i class="fas fa-shield-alt" style="margin-right:4px;"></i>Privacy Policy</a>
+        <a href="#" style="color:#64748b;font-size:13px;" onmouseover="this.style.color='#94a3b8'" onmouseout="this.style.color='#64748b'"><i class="fas fa-file-contract" style="margin-right:4px;"></i>Terms of Service</a>
+        <a href="#" style="color:#64748b;font-size:13px;" onmouseover="this.style.color='#94a3b8'" onmouseout="this.style.color='#64748b'"><i class="fas fa-undo" style="margin-right:4px;"></i>Refund Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ===================== DATA =====================
+const products = [
+  {
+    id: 1, name: "Analog Classic Watch", category: "Watches",
+    price: 1299, oldPrice: 1799, rating: 4.5, reviews: 128,
+    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80",
+    badge: "Best Seller",
+    description: "Premium analog watch with a timeless design, stainless steel case, and genuine leather strap. Perfect for everyday wear.",
+    features: ["Stainless Steel Case", "Genuine Leather Strap", "Water Resistant 50m", "Sapphire Crystal Glass", "2-Year Warranty", "Scratch Resistant"],
+    stock: 45,
+    faIcon: "fas fa-clock"
+  },
+  {
+    id: 2, name: "Chronograph Sport Watch", category: "Watches",
+    price: 2499, oldPrice: 3499, rating: 4.7, reviews: 256,
+    image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=400&q=80",
+    badge: "Popular",
+    description: "High-performance chronograph watch with tachymeter bezel, multiple sub-dials, and excellent water resistance for sport enthusiasts.",
+    features: ["Chronograph Function", "Tachymeter Bezel", "100m Water Resistant", "Luminous Hands", "Stainless Steel Bracelet", "Anti-reflective Glass"],
+    stock: 89,
+    faIcon: "fas fa-clock"
+  },
+  {
+    id: 3, name: "Premium Formal Shirt", category: "Shirts",
+    price: 799, oldPrice: 1099, rating: 4.6, reviews: 94,
+    image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&q=80",
+    badge: "New",
+    description: "Elegant formal shirt crafted from 100% Egyptian cotton with a slim fit design, perfect for office and formal occasions.",
+    features: ["100% Egyptian Cotton", "Slim Fit", "Anti-wrinkle Fabric", "Button-down Collar", "Machine Washable", "Available in 8 Colors"],
+    stock: 120,
+    faIcon: "fas fa-shirt"
+  },
+  {
+    id: 4, name: "Denim Casual Shirt", category: "Shirts",
+    price: 649, oldPrice: 899, rating: 4.8, reviews: 312,
+    image: "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=400&q=80",
+    badge: "Sale",
+    description: "Stylish denim shirt with a relaxed fit and classic washed finish. A versatile wardrobe essential for casual outings.",
+    features: ["100% Denim Fabric", "Relaxed Fit", "Classic Wash", "Chest Pocket", "Durable Stitching", "Available in 3 Shades"],
+    stock: 67,
+    faIcon: "fas fa-shirt"
+  },
+  {
+    id: 5, name: "Round Neck Graphic T-Shirt", category: "T-Shirts",
+    price: 399, oldPrice: 599, rating: 4.9, reviews: 445,
+    image: "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=400&q=80",
+    badge: "Top Rated",
+    description: "Soft and comfortable round neck T-shirt with a premium graphic print. Made from breathable cotton for all-day comfort.",
+    features: ["100% Cotton", "Graphic Print", "Round Neck", "Breathable Fabric", "Pre-shrunk", "Available in 10 Colors"],
+    stock: 200,
+    faIcon: "fas fa-tshirt"
+  },
+  {
+    id: 6, name: "Classic Polo T-Shirt", category: "T-Shirts",
+    price: 549, oldPrice: 749, rating: 4.4, reviews: 178,
+    image: "https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=400&q=80",
+    badge: null,
+    description: "Timeless polo T-shirt with a two-button placket and ribbed collar, ideal for smart casual looks.",
+    features: ["Pique Cotton", "Two-Button Placket", "Ribbed Collar & Cuffs", "Regular Fit", "Easy Care", "Available in 6 Colors"],
+    stock: 150,
+    faIcon: "fas fa-tshirt"
+  },
+  {
+    id: 7, name: "Slim Fit Jeans", category: "Pants",
+    price: 1199, oldPrice: 1599, rating: 4.3, reviews: 89,
+    image: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=400&q=80",
+    badge: null,
+    description: "Modern slim-fit jeans with a slightly tapered leg, perfect for a contemporary look. Made from premium stretch denim.",
+    features: ["Stretch Denim", "Slim Fit", "5-Pocket Design", "Zip Fly", "Machine Washable", "Available in 4 Washes"],
+    stock: 80,
+    faIcon: "fas fa-person"
+  },
+  {
+    id: 8, name: "Formal Dress Pants", category: "Pants",
+    price: 1499, oldPrice: 1999, rating: 4.6, reviews: 203,
+    image: "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=400&q=80",
+    badge: "Premium",
+    description: "Sophisticated formal trousers with a straight cut and fine finish, ideal for business meetings and formal events.",
+    features: ["Premium Polyester Blend", "Straight Fit", "Flat Front", "Side Pockets", "Belt Loops", "Dry Clean Recommended"],
+    stock: 55,
+    faIcon: "fas fa-person"
+  },
+  {
+    id: 9, name: "Cotton Punjabi Kurta", category: "Punjabi",
+    price: 899, oldPrice: 1299, rating: 4.5, reviews: 167,
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
+    badge: null,
+    description: "Lightweight and breathable cotton Punjabi kurta with intricate embroidery at the collar. Perfect for Eid and festive occasions.",
+    features: ["100% Cotton", "Hand-embroidered Collar", "Regular Fit", "Side Slits", "Machine Washable", "Available in 6 Colors"],
+    stock: 90,
+    faIcon: "fas fa-vest"
+  },
+  {
+    id: 10, name: "Silk Embroidered Punjabi", category: "Punjabi",
+    price: 1799, oldPrice: 2499, rating: 4.7, reviews: 132,
+    image: "https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=400&q=80",
+    badge: "Festive",
+    description: "Luxurious silk Punjabi with premium embroidery work throughout. A statement piece for weddings and grand occasions.",
+    features: ["Pure Silk", "Full Embroidery", "Slim Fit", "Mandarin Collar", "Handcrafted", "Dry Clean Only"],
+    stock: 35,
+    faIcon: "fas fa-vest"
+  },
+  {
+    id: 11, name: "Basic Drop Shoulder T-Shirt", category: "Drop Shoulder T-Shirt",
+    price: 599, oldPrice: 799, rating: 4.8, reviews: 78,
+    image: "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=400&q=80",
+    badge: "Trending",
+    description: "On-trend drop shoulder T-shirt with an oversized silhouette and relaxed fit. A streetwear staple for a bold, effortless look.",
+    features: ["100% Cotton", "Drop Shoulder Cut", "Oversized Fit", "Ribbed Hem", "Unisex Style", "Available in 8 Colors"],
+    stock: 130,
+    faIcon: "fas fa-layer-group"
+  },
+  {
+    id: 12, name: "Acid Wash Drop Shoulder Tee", category: "Drop Shoulder T-Shirt",
+    price: 699, oldPrice: 999, rating: 4.5, reviews: 95,
+    image: "https://images.unsplash.com/photo-1516762689617-e1cffcef479d?w=400&q=80",
+    badge: "New",
+    description: "Eye-catching acid wash drop shoulder tee with a unique washed finish that gives every piece a one-of-a-kind look.",
+    features: ["Acid Wash Treatment", "Drop Shoulder Design", "Boxy Fit", "Thick Cotton Fabric", "Pre-washed", "Limited Edition Colors"],
+    stock: 60,
+    faIcon: "fas fa-layer-group"
+  }
+];
+
+const categories = [
+  { name: "Watches", faIcon: "fas fa-clock", color: "#dbeafe", iconColor: "#2563eb", img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&q=80", subcategories: ["Battery-run Watch", "Mechanical / Automatic Watch", "Chronograph Watch", "Digital Watch", "Smart Watch"] },
+  { name: "Shirts", faIcon: "fas fa-shirt", color: "#fce7f3", iconColor: "#db2777", img: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=300&q=80", subcategories: ["Formal Shirt", "Casual Shirt", "Denim Shirt"] },
+  { name: "T-Shirts", faIcon: "fas fa-tshirt", color: "#d1fae5", iconColor: "#059669", img: "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=300&q=80", subcategories: ["Round Neck T-Shirt", "Polo T-Shirt", "V-Neck T-Shirt"] },
+  { name: "Pants", faIcon: "fas fa-person", color: "#fef3c7", iconColor: "#d97706", img: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=300&q=80", subcategories: ["Jeans", "Formal Pants", "Baggy Jeans"] },
+  { name: "Punjabi", faIcon: "fas fa-vest", color: "#ede9fe", iconColor: "#7c3aed", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=80", subcategories: ["Cotton Punjabi", "Silk Punjabi", "Embroidered Punjabi"] },
+  { name: "Drop Shoulder T-Shirt", faIcon: "fas fa-layer-group", color: "#fee2e2", iconColor: "#dc2626", img: "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=300&q=80", subcategories: ["Basic Drop Shoulder T-Shirt", "Acid Wash Drop Shoulder T-Shirt", "Boxy Fit Drop Shoulder T-Shirt"] }
+];
+
+// ===================== CART =====================
+let cart = JSON.parse(localStorage.getItem('techCart') || '[]');
+
+function saveCart() {
+  localStorage.setItem('techCart', JSON.stringify(cart));
+  updateCartBadge();
+  renderCart();
+}
+
+function updateCartBadge() {
+  const total = cart.reduce((s, i) => s + i.qty, 0);
+  const badge = document.getElementById('cartBadge');
+  badge.textContent = total;
+  badge.style.display = total > 0 ? 'flex' : 'none';
+}
+
+function addToCart(productId, qty = 1) {
+  const product = products.find(p => p.id === productId);
+  if (!product) return;
+  const existing = cart.find(i => i.id === productId);
+  if (existing) {
+    existing.qty += qty;
+  } else {
+    cart.push({ ...product, qty });
+  }
+  saveCart();
+  showToast(product.name + ' added to cart!');
+}
+
+function removeFromCart(productId) {
+  cart = cart.filter(i => i.id !== productId);
+  saveCart();
+}
+
+function updateQty(productId, delta) {
+  const item = cart.find(i => i.id === productId);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) removeFromCart(productId);
+  else saveCart();
+}
+
+function clearCart() {
+  cart = [];
+  saveCart();
+  showToast('Cart cleared.');
+}
+
+function getCartTotal() {
+  return cart.reduce((s, i) => s + i.price * i.qty, 0);
+}
+
+function renderCart() {
+  const el = document.getElementById('cartItems');
+  if (cart.length === 0) {
+    el.innerHTML = '<div style="text-align:center;padding:60px 20px;color:#9ca3af;"><i class="fas fa-shopping-cart" style="font-size:56px;color:#d1d5db;margin-bottom:12px;display:block;"></i><p style="font-weight:600;font-size:16px;">Your cart is empty</p><p style="font-size:14px;margin-top:4px;">Add some products!</p></div>';
+  } else {
+    el.innerHTML = cart.map(item => `
+      <div style="display:flex;gap:14px;align-items:center;padding:14px;border:1px solid #f3f4f6;border-radius:12px;margin-bottom:12px;background:#fafafa;">
+        <img src="${item.image}" alt="${item.name}" style="width:64px;height:64px;object-fit:contain;border-radius:8px;background:#fff;padding:4px;">
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:14px;color:#1a2a4a;margin-bottom:4px;">${item.name}</div>
+          <div style="color:#2563eb;font-weight:700;font-size:16px;">$${item.price}</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+            <button class="qty-btn" onclick="updateQty(${item.id},-1)"><i class="fas fa-minus" style="font-size:10px;"></i></button>
+            <span style="font-weight:700;min-width:24px;text-align:center;">${item.qty}</span>
+            <button class="qty-btn" onclick="updateQty(${item.id},1)"><i class="fas fa-plus" style="font-size:10px;"></i></button>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-weight:800;color:#1a2a4a;font-size:16px;">$${(item.price * item.qty).toFixed(2)}</div>
+          <button onclick="removeFromCart(${item.id})" style="background:#fee2e2;border:none;border-radius:6px;padding:5px 10px;color:#ef4444;cursor:pointer;font-size:12px;margin-top:6px;font-family:'Plus Jakarta Sans',sans-serif;"><i class="fas fa-trash" style="margin-right:3px;font-size:10px;"></i>Remove</button>
+        </div>
+      </div>
+    `).join('');
+  }
+  document.getElementById('cartTotal').textContent = `$${getCartTotal().toFixed(2)}`;
+}
+
+function toggleCart() {
+  const sidebar = document.getElementById('cartSidebar');
+  const overlay = document.getElementById('cartOverlay');
+  if (sidebar.classList.contains('open')) {
+    closeCart();
+  } else {
+    sidebar.classList.add('open');
+    overlay.classList.add('active');
+    renderCart();
+  }
+}
+
+function closeCart() {
+  document.getElementById('cartSidebar').classList.remove('open');
+  document.getElementById('cartOverlay').classList.remove('active');
+}
+
+// ===================== PAGES =====================
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById('page-' + page);
+  if (target) {
+    target.classList.add('active');
+    window.scrollTo(0, 0);
+    closeMobileMenu();
+    if (page === 'shop') renderShopGrid();
+    if (page === 'categories') renderAllCategories();
+    if (page === 'home') renderHome();
+  }
+}
+
+function showCategoryPage(catName) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-category-products').classList.add('active');
+  document.getElementById('categoryPageTitle').textContent = catName;
+  const cat = categories.find(c => c.name === catName);
+  const iconHtml = cat ? `<i class="${cat.faIcon}" style="margin-right:10px;color:#2563eb;"></i>` : '';
+  document.getElementById('categoryProductsTitle').innerHTML = iconHtml + catName;
+  // Show subcategory tags if available
+  const subEl = document.getElementById('categorySubcategories');
+  if (subEl) {
+    if (cat && cat.subcategories) {
+      subEl.innerHTML = cat.subcategories.map(sub => `<span style="display:inline-block;background:${cat.color};color:${cat.iconColor};font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;margin:4px;cursor:default;">${sub}</span>`).join('');
+      subEl.style.display = 'block';
+    } else {
+      subEl.style.display = 'none';
+    }
+  }
+  const filtered = products.filter(p => p.category === catName);
+  const grid = document.getElementById('categoryProductsGrid');
+  grid.innerHTML = filtered.map(p => createProductCard(p)).join('');
+  window.scrollTo(0, 0);
+  closeMobileMenu();
+}
+
+// ===================== PRODUCT CARDS =====================
+function starsHtml(rating) {
+  let html = '';
+  for (let i = 1; i <= 5; i++) {
+    if (i <= Math.floor(rating)) html += '<i class="fas fa-star"></i>';
+    else if (i - rating < 1 && i - rating > 0) html += '<i class="fas fa-star-half-alt"></i>';
+    else html += '<i class="far fa-star"></i>';
+  }
+  return html;
+}
+
+function createProductCard(p) {
+  return `
+    <div class="product-card" onclick="openProductDetail(${p.id})">
+      <div style="position:relative;">
+        <img src="${p.image}" alt="${p.name}" class="prod-img" loading="lazy">
+        ${p.badge ? `<span style="position:absolute;top:10px;left:10px;background:#ef4444;color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;">${p.badge}</span>` : ''}
+        <button onclick="event.stopPropagation();addToCart(${p.id})" style="position:absolute;top:10px;right:10px;background:#1a2a4a;color:#fff;border:none;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:background 0.2s;" onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#1a2a4a'" title="Add to cart"><i class="fas fa-plus"></i></button>
+      </div>
+      <div style="padding:14px;">
+        <div style="font-size:11px;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;"><i class="${p.faIcon || 'fas fa-microchip'}" style="margin-right:4px;"></i>${p.category}</div>
+        <h3 style="font-weight:700;color:#1a2a4a;font-size:15px;margin-bottom:8px;line-height:1.3;">${p.name}</h3>
+        <div style="display:flex;align-items:center;gap:4px;margin-bottom:8px;">
+          <span class="stars" style="font-size:12px;">${starsHtml(p.rating)}</span>
+          <span style="color:#6b7280;font-size:12px;">(${p.reviews})</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+          <span class="price">$${p.price}</span>
+          ${p.oldPrice ? `<span class="price-old">$${p.oldPrice}</span>` : ''}
+        </div>
+        <button onclick="event.stopPropagation();addToCart(${p.id})" class="btn-dark" style="width:100%;text-align:center;"><i class="fas fa-cart-plus" style="margin-right:6px;"></i>Quick View</button>
+      </div>
+    </div>
+  `;
+}
+
+// ===================== HOME =====================
+function renderHome() {
+  const featured = products.slice(0, 4);
+  document.getElementById('featuredGrid').innerHTML = featured.map(p => createProductCard(p)).join('');
+
+  document.getElementById('homeCategoryGrid').innerHTML = categories.map(c => `
+    <div class="category-card" onclick="showCategoryPage('${c.name}')">
+      <img src="${c.img}" alt="${c.name}" class="cat-img" loading="lazy">
+      <div style="padding:14px;text-align:center;">
+        <div class="cat-icon-circle" style="background:${c.color};"><i class="${c.faIcon}" style="color:${c.iconColor};font-size:22px;"></i></div>
+        <div style="font-weight:700;color:#1a2a4a;font-size:15px;">${c.name}</div>
+        <div style="color:#6b7280;font-size:12px;margin-top:4px;">${products.filter(p => p.category === c.name).length} Products</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===================== SHOP =====================
+let shopFiltered = [...products];
+
+function renderShopGrid(list = null) {
+  const grid = document.getElementById('shopGrid');
+  const empty = document.getElementById('shopEmpty');
+  const data = list || shopFiltered;
+  if (data.length === 0) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+  } else {
+    empty.style.display = 'none';
+    grid.innerHTML = data.map(p => createProductCard(p)).join('');
+  }
+}
+
+function filterShop() {
+  const search = (document.getElementById('shopSearch')?.value || '').toLowerCase();
+  const category = document.getElementById('shopCategory')?.value || '';
+  const sort = document.getElementById('shopSort')?.value || 'default';
+
+  let filtered = products.filter(p => {
+    const matchSearch = p.name.toLowerCase().includes(search) || p.category.toLowerCase().includes(search) || p.description.toLowerCase().includes(search);
+    const matchCat = !category || p.category === category;
+    return matchSearch && matchCat;
+  });
+
+  if (sort === 'price-low') filtered.sort((a, b) => a.price - b.price);
+  else if (sort === 'price-high') filtered.sort((a, b) => b.price - a.price);
+  else if (sort === 'name') filtered.sort((a, b) => a.name.localeCompare(b.name));
+  else if (sort === 'rating') filtered.sort((a, b) => b.rating - a.rating);
+
+  shopFiltered = filtered;
+  renderShopGrid();
+}
+
+// ===================== CATEGORIES =====================
+function renderAllCategories() {
+  document.getElementById('allCategoriesGrid').innerHTML = categories.map(c => `
+    <div class="category-card" onclick="showCategoryPage('${c.name}')">
+      <img src="${c.img}" alt="${c.name}" class="cat-img" loading="lazy">
+      <div style="padding:20px;text-align:center;">
+        <div class="cat-icon-circle" style="background:${c.color};width:64px;height:64px;"><i class="${c.faIcon}" style="color:${c.iconColor};font-size:26px;"></i></div>
+        <div style="font-weight:800;color:#1a2a4a;font-size:18px;margin-bottom:6px;">${c.name}</div>
+        ${c.subcategories ? `<div style="margin-bottom:10px;">${c.subcategories.map(sub => `<span style="display:inline-block;background:${c.color};color:${c.iconColor};font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;margin:2px;">${sub}</span>`).join('')}</div>` : ''}
+        <div style="color:#6b7280;font-size:13px;margin-bottom:12px;">${products.filter(p => p.category === c.name).length} Products</div>
+        <button class="btn-dark" style="padding:8px 20px;"><i class="fas fa-arrow-right" style="margin-right:6px;"></i>Explore</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===================== PRODUCT DETAIL =====================
+function openProductDetail(productId) {
+  const p = products.find(pr => pr.id === productId);
+  if (!p) return;
+
+  const related = products.filter(pr => pr.category === p.category && pr.id !== p.id).slice(0, 3);
+  const discount = p.oldPrice ? Math.round((1 - p.price/p.oldPrice)*100) : 0;
+
+  document.getElementById('productModalContent').innerHTML = `
+    <div class="product-detail-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;">
+      <div style="position:relative;">
+        <img src="${p.image}" alt="${p.name}" style="width:100%;border-radius:12px;object-fit:contain;background:#f8f9fa;padding:20px;height:260px;">
+        ${p.badge ? `<span style="position:absolute;top:12px;left:12px;background:#ef4444;color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:6px;">${p.badge}</span>` : ''}
+      </div>
+      <div>
+        <div style="font-size:12px;color:#6b7280;font-weight:600;text-transform:uppercase;margin-bottom:6px;"><i class="${p.faIcon || 'fas fa-tag'}" style="margin-right:4px;color:#2563eb;"></i>${p.category}</div>
+        <h2 style="font-size:22px;font-weight:800;color:#1a2a4a;margin-bottom:10px;line-height:1.3;">${p.name}</h2>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;">
+          <span class="stars" style="font-size:15px;">${starsHtml(p.rating)}</span>
+          <span style="color:#1a2a4a;font-weight:600;">${p.rating}</span>
+          <span style="color:#6b7280;font-size:13px;">(${p.reviews} reviews)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+          <span style="font-size:28px;font-weight:800;color:#1a2a4a;">$${p.price}</span>
+          ${p.oldPrice ? `<span style="font-size:16px;color:#9ca3af;text-decoration:line-through;">$${p.oldPrice}</span><span style="background:#dcfce7;color:#16a34a;font-size:12px;font-weight:700;padding:3px 8px;border-radius:4px;">${discount}% OFF</span>` : ''}
+        </div>
+        <p style="color:#4b5563;font-size:14px;line-height:1.7;margin-bottom:16px;">${p.description}</p>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+          <span style="font-size:12px;font-weight:600;color:#6b7280;"><i class="fas fa-sort-numeric-up" style="margin-right:4px;"></i>QTY:</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button class="qty-btn" onclick="changeProdQty(-1)"><i class="fas fa-minus" style="font-size:10px;"></i></button>
+            <span id="prodQty" style="font-weight:700;min-width:32px;text-align:center;font-size:18px;">1</span>
+            <button class="qty-btn" onclick="changeProdQty(1)"><i class="fas fa-plus" style="font-size:10px;"></i></button>
+          </div>
+          <span style="color:#16a34a;font-size:12px;font-weight:600;margin-left:8px;"><i class="fas fa-check-circle" style="margin-right:3px;"></i>In Stock (${p.stock})</span>
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:16px;">
+          <button onclick="addToCart(${p.id}, parseInt(document.getElementById('prodQty').textContent));closeProductModal();" class="btn-dark" style="flex:1;padding:12px;font-size:15px;border-radius:10px;background:#2563eb;"><i class="fas fa-shopping-cart" style="margin-right:6px;"></i>Add to Cart</button>
+          <button onclick="addToCart(${p.id}, parseInt(document.getElementById('prodQty').textContent));closeProductModal();showOrderForm();" class="btn-dark" style="flex:1;padding:12px;font-size:15px;border-radius:10px;"><i class="fas fa-bolt" style="margin-right:6px;"></i>Buy Now</button>
+        </div>
+        <div style="display:flex;gap:16px;font-size:13px;color:#6b7280;">
+          <span><i class="fas fa-truck" style="margin-right:4px;color:#2563eb;"></i>Free shipping over $50</span>
+          <span><i class="fas fa-undo" style="margin-right:4px;color:#2563eb;"></i>30-day returns</span>
+        </div>
+      </div>
+    </div>
+    <!-- Features -->
+    <div style="margin-bottom:20px;">
+      <h4 style="font-weight:700;color:#1a2a4a;margin-bottom:12px;font-size:16px;"><i class="fas fa-list-check" style="margin-right:6px;color:#2563eb;"></i>Key Features</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        ${p.features.map(f => `<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f0f4ff;border-radius:8px;font-size:13px;color:#374151;"><i class="fas fa-check feature-check"></i>${f}</div>`).join('')}
+      </div>
+    </div>
+    ${related.length > 0 ? `
+    <div>
+      <h4 style="font-weight:700;color:#1a2a4a;margin-bottom:12px;font-size:16px;"><i class="fas fa-th" style="margin-right:6px;color:#2563eb;"></i>Related Products</h4>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+        ${related.map(r => `
+          <div style="border:1px solid #e5e7eb;border-radius:10px;padding:10px;cursor:pointer;transition:border-color 0.2s;" onclick="closeProductModal();setTimeout(()=>openProductDetail(${r.id}),200)" onmouseover="this.style.borderColor='#2563eb'" onmouseout="this.style.borderColor='#e5e7eb'">
+            <img src="${r.image}" alt="${r.name}" style="width:100%;height:80px;object-fit:contain;border-radius:6px;background:#f8f9fa;padding:4px;">
+            <div style="font-weight:600;font-size:12px;color:#1a2a4a;margin-top:6px;">${r.name}</div>
+            <div style="font-weight:700;color:#2563eb;font-size:13px;margin-top:2px;">$${r.price}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>` : ''}
+  `;
+
+  document.getElementById('productModal').classList.add('active');
+}
+
+let prodQty = 1;
+function changeProdQty(delta) {
+  prodQty = Math.max(1, prodQty + delta);
+  const el = document.getElementById('prodQty');
+  if (el) el.textContent = prodQty;
+}
+
+function closeProductModal() {
+  document.getElementById('productModal').classList.remove('active');
+  prodQty = 1;
+}
+
+// ===================== ORDER =====================
+function showOrderForm() {
+  if (cart.length === 0) {
+    showToast('Your cart is empty!');
+    return;
+  }
+  closeCart();
+  const summary = document.getElementById('orderSummaryItems');
+  summary.innerHTML = `
+    <div style="font-weight:700;color:#1a2a4a;margin-bottom:10px;font-size:15px;"><i class="fas fa-receipt" style="margin-right:6px;color:#2563eb;"></i>Order Summary:</div>
+    ${cart.map(i => `
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #e5e7eb;font-size:14px;">
+        <span style="color:#374151;">${i.name} × ${i.qty}</span>
+        <span style="font-weight:600;color:#1a2a4a;">$${(i.price * i.qty).toFixed(2)}</span>
+      </div>
+    `).join('')}
+    <div style="display:flex;justify-content:space-between;padding-top:8px;font-weight:700;">
+      <span>Total:</span>
+      <span style="color:#2563eb;">$${getCartTotal().toFixed(2)}</span>
+    </div>
+  `;
+  document.getElementById('orderTotal').textContent = `$${getCartTotal().toFixed(2)}`;
+  document.getElementById('orderModal').classList.add('active');
+}
+
+function closeOrderModal() {
+  document.getElementById('orderModal').classList.remove('active');
+}
+
+function submitOrder(e) {
+  e.preventDefault();
+  const orderId = 'TE-' + Date.now().toString().slice(-8).toUpperCase();
+  closeOrderModal();
+  clearCart();
+  document.getElementById('successOrderId').textContent = 'Order ID: ' + orderId;
+  document.getElementById('successModal').classList.add('active');
+}
+
+function closeSuccessModal() {
+  document.getElementById('successModal').classList.remove('active');
+}
+
+// ===================== SEARCH =====================
+function openSearch() {
+  document.getElementById('searchOverlay').classList.add('active');
+  setTimeout(() => document.getElementById('searchInput').focus(), 100);
+}
+
+function closeSearch() {
+  document.getElementById('searchOverlay').classList.remove('active');
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchResults').innerHTML = '';
+}
+
+function liveSearch(query) {
+  const el = document.getElementById('searchResults');
+  if (!query.trim()) { el.innerHTML = ''; return; }
+  const results = products.filter(p =>
+    p.name.toLowerCase().includes(query.toLowerCase()) ||
+    p.category.toLowerCase().includes(query.toLowerCase()) ||
+    p.description.toLowerCase().includes(query.toLowerCase())
+  );
+  if (results.length === 0) {
+    el.innerHTML = '<div style="padding:20px;text-align:center;color:#6b7280;"><i class="fas fa-search" style="font-size:32px;color:#d1d5db;margin-bottom:8px;display:block;"></i>No products found</div>';
+    return;
+  }
+  el.innerHTML = results.map(p => `
+    <div onclick="closeSearch();openProductDetail(${p.id})" style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid #f3f4f6;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='transparent'">
+      <img src="${p.image}" alt="${p.name}" style="width:50px;height:50px;object-fit:contain;border-radius:8px;background:#f8f9fa;padding:4px;">
+      <div style="flex:1;">
+        <div style="font-weight:700;color:#1a2a4a;font-size:14px;">${p.name}</div>
+        <div style="color:#6b7280;font-size:12px;"><i class="${p.faIcon || 'fas fa-tag'}" style="margin-right:3px;"></i>${p.category}</div>
+      </div>
+      <div style="font-weight:800;color:#2563eb;font-size:16px;">$${p.price}</div>
+    </div>
+  `).join('');
+}
+
+// ===================== CONTACT =====================
+function submitContact(e) {
+  e.preventDefault();
+  showToast('Message sent! We\'ll reply within 24 hours.');
+  e.target.reset();
+}
+
+// ===================== NEWSLETTER =====================
+function subscribeNewsletter() {
+  const email = document.getElementById('newsletterEmail').value;
+  if (!email || !email.includes('@')) {
+    showToast('Please enter a valid email.');
+    return;
+  }
+  showToast('Subscribed! Check your inbox for offers.');
+  document.getElementById('newsletterEmail').value = '';
+}
+
+// ===================== TOAST =====================
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.innerHTML = '<i class="fas fa-check-circle" style="margin-right:8px;color:#60a5fa;"></i>' + msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ===================== MOBILE MENU =====================
+function toggleMobileMenu() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+function closeMobileMenu() {
+  document.getElementById('mobileMenu').classList.remove('open');
+}
+
+// ===================== RESPONSIVE =====================
+function handleResize() {
+  const btn = document.getElementById('mobileMenuBtn');
+  const nav = document.getElementById('desktopNav');
+  if (window.innerWidth < 768) {
+    btn.style.display = 'block';
+    if (nav) nav.style.display = 'none';
+  } else {
+    btn.style.display = 'none';
+    if (nav) nav.style.display = 'flex';
+    closeMobileMenu();
+  }
+}
+window.addEventListener('resize', handleResize);
+
+// Close modals on overlay click
+document.getElementById('productModal').addEventListener('click', function(e) {
+  if (e.target === this) closeProductModal();
+});
+document.getElementById('orderModal').addEventListener('click', function(e) {
+  if (e.target === this) closeOrderModal();
+});
+document.getElementById('successModal').addEventListener('click', function(e) {
+  if (e.target === this) closeSuccessModal();
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeSearch();
+    closeProductModal();
+    closeOrderModal();
+    closeSuccessModal();
+    closeCart();
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+    e.preventDefault();
+    openSearch();
+  }
+});
+
+// ===================== INIT =====================
+window.addEventListener('DOMContentLoaded', () => {
+  handleResize();
+  updateCartBadge();
+  renderHome();
+});
+</script>
+</body>
+</html>

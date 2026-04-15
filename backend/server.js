@@ -474,6 +474,260 @@ app.delete('/api/admin/enrollments/:id', authMiddleware, async (req, res) => {
 });
 
 // ============================================================
+// COURSE DETAIL (curriculum per course stored in Settings)
+// ============================================================
+app.get('/api/admin/course-detail/:id', authMiddleware, async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'course_detail_' + req.params.id });
+    res.json(s ? s.value : {});
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.post('/api/admin/course-detail/:id', authMiddleware, async (req, res) => {
+  try {
+    const key = 'course_detail_' + req.params.id;
+    await Settings.findOneAndUpdate(
+      { key },
+      { key, value: req.body, updatedAt: new Date() },
+      { upsert: true }
+    );
+    // Also update curriculum + price in the Course document
+    await Course.findByIdAndUpdate(req.params.id, {
+      description: req.body.description,
+      price: req.body.price,
+      originalPrice: req.body.oldPrice,
+      previewVideo: req.body.youtubeId,
+      curriculum: (req.body.curriculum || []).map(sec => ({
+        sectionTitle: sec.title,
+        lessons: (sec.lessons || []).map(ls => ({
+          title: ls.title,
+          duration: ls.duration,
+          videoId: ls.youtubeId,
+          isFree: ls.free || false,
+        })),
+      })),
+      updatedAt: new Date(),
+    });
+    res.json({ message: 'Saved' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// Public course detail (for index.html)
+app.get('/api/course-detail/:id', async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'course_detail_' + req.params.id });
+    res.json(s ? s.value : {});
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ============================================================
+// SITE SETTINGS
+// ============================================================
+app.get('/api/site-settings', async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'site_settings' });
+    res.json(s ? s.value : {});
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.get('/api/admin/site-settings', authMiddleware, async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'site_settings' });
+    res.json(s ? s.value : {});
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.post('/api/admin/site-settings', authMiddleware, async (req, res) => {
+  try {
+    await Settings.findOneAndUpdate(
+      { key: 'site_settings' },
+      { key: 'site_settings', value: req.body, updatedAt: new Date() },
+      { upsert: true }
+    );
+    res.json({ message: 'Saved' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ============================================================
+// HERO SECTION
+// ============================================================
+app.get('/api/hero-section', async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'hero_section' });
+    res.json(s ? s.value : {});
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.get('/api/admin/hero-section', authMiddleware, async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'hero_section' });
+    res.json(s ? s.value : {});
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.post('/api/admin/hero-section', authMiddleware, async (req, res) => {
+  try {
+    await Settings.findOneAndUpdate(
+      { key: 'hero_section' },
+      { key: 'hero_section', value: req.body, updatedAt: new Date() },
+      { upsert: true }
+    );
+    res.json({ message: 'Saved' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+app.get('/api/navigation', async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'navigation' });
+    res.json(s ? s.value : {});
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.get('/api/admin/navigation', authMiddleware, async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'navigation' });
+    res.json(s ? s.value : {});
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.post('/api/admin/navigation', authMiddleware, async (req, res) => {
+  try {
+    await Settings.findOneAndUpdate(
+      { key: 'navigation' },
+      { key: 'navigation', value: req.body, updatedAt: new Date() },
+      { upsert: true }
+    );
+    res.json({ message: 'Saved' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ============================================================
+// FOOTER
+// ============================================================
+app.get('/api/footer', async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'footer' });
+    res.json(s ? s.value : {});
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.get('/api/admin/footer', authMiddleware, async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'footer' });
+    res.json(s ? s.value : {});
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.post('/api/admin/footer', authMiddleware, async (req, res) => {
+  try {
+    await Settings.findOneAndUpdate(
+      { key: 'footer' },
+      { key: 'footer', value: req.body, updatedAt: new Date() },
+      { upsert: true }
+    );
+    res.json({ message: 'Saved' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ============================================================
+// THEME SETTINGS
+// ============================================================
+app.get('/api/theme-settings', async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'theme_settings' });
+    res.json(s ? s.value : {});
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.get('/api/admin/theme-settings', authMiddleware, async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'theme_settings' });
+    res.json(s ? s.value : {});
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.post('/api/admin/theme-settings', authMiddleware, async (req, res) => {
+  try {
+    await Settings.findOneAndUpdate(
+      { key: 'theme_settings' },
+      { key: 'theme_settings', value: req.body, updatedAt: new Date() },
+      { upsert: true }
+    );
+    res.json({ message: 'Saved' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ============================================================
+// WELCOME POPUP
+// ============================================================
+app.get('/api/welcome-popup', async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'welcome_popup' });
+    res.json(s ? s.value : {});
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.get('/api/admin/welcome-popup', authMiddleware, async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'welcome_popup' });
+    res.json(s ? s.value : {});
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.post('/api/admin/welcome-popup', authMiddleware, async (req, res) => {
+  try {
+    await Settings.findOneAndUpdate(
+      { key: 'welcome_popup' },
+      { key: 'welcome_popup', value: req.body, updatedAt: new Date() },
+      { upsert: true }
+    );
+    res.json({ message: 'Saved' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ============================================================
+// CTA SECTION
+// ============================================================
+app.get('/api/cta-section', async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'cta_section' });
+    res.json(s ? s.value : {});
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.get('/api/admin/cta-section', authMiddleware, async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'cta_section' });
+    res.json(s ? s.value : {});
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.post('/api/admin/cta-section', authMiddleware, async (req, res) => {
+  try {
+    await Settings.findOneAndUpdate(
+      { key: 'cta_section' },
+      { key: 'cta_section', value: req.body, updatedAt: new Date() },
+      { upsert: true }
+    );
+    res.json({ message: 'Saved' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ============================================================
+// FEATURED COURSES CONFIG
+// ============================================================
+app.get('/api/featured-courses-config', async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'featured_courses_config' });
+    res.json(s ? s.value : {});
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.get('/api/admin/featured-courses-config', authMiddleware, async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'featured_courses_config' });
+    res.json(s ? s.value : {});
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.post('/api/admin/featured-courses-config', authMiddleware, async (req, res) => {
+  try {
+    await Settings.findOneAndUpdate(
+      { key: 'featured_courses_config' },
+      { key: 'featured_courses_config', value: req.body, updatedAt: new Date() },
+      { upsert: true }
+    );
+    res.json({ message: 'Saved' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ============================================================
 // STATS
 // ============================================================
 app.get('/api/admin/stats', authMiddleware, async (req, res) => {

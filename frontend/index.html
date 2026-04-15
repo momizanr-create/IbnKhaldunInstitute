@@ -1634,7 +1634,7 @@
       <div class="container">
         <h2 class="instructors-title fade-in">শীর্ষ ইন্সট্রাক্টরগণ</h2>
         <div class="instructors-underline fade-in"></div>
-        <div class="instructors-grid fade-in">
+        <div class="instructors-grid fade-in" id="instructors-grid">
 
           <div class="instructor-card" onclick="openInstructorProfile('aaron-dolberg')" style="cursor:pointer">
             <div class="instructor-photo-wrap">
@@ -1933,13 +1933,13 @@
     </section>
 
     <!-- CTA -->
-    <section class="section" style="background:#111;padding:80px 0">
+    <section class="section" id="section-cta" style="background:#111;padding:80px 0">
       <div class="container">
         <div class="fade-in" style="text-align:center;max-width:640px;margin:0 auto">
           <div class="section-label">সীমিত সময়ের অফার</div>
-          <h2 style="font-family:var(--font-heading);font-size:clamp(28px,4vw,48px);font-weight:800;color:#fff;margin-bottom:16px;line-height:1.1">আপনার<br><span style="color:var(--primary)">শেখার যাত্রা শুরু করতে প্রস্তুত?</span></h2>
-          <p style="font-size:16px;color:rgba(255,255,255,0.55);margin-bottom:36px;max-width:460px;margin-left:auto;margin-right:auto">৫০,০০০+ শিক্ষার্থীর সাথে যোগ দিন যারা ইতিমধ্যে গুরুত্বপূর্ণ দক্ষতা তৈরি করছেন। প্রথম কোর্সে ৩০% ছাড়!</p>
-          <button class="browse-more-btn" onclick="navigate('courses')">কোর্স দেখুন — আজই শুরু করুন</button>
+          <h2 id="cta-title" style="font-family:var(--font-heading);font-size:clamp(28px,4vw,48px);font-weight:800;color:#fff;margin-bottom:16px;line-height:1.1">আপনার<br><span style="color:var(--primary)">শেখার যাত্রা শুরু করতে প্রস্তুত?</span></h2>
+          <p id="cta-sub" style="font-size:16px;color:rgba(255,255,255,0.55);margin-bottom:36px;max-width:460px;margin-left:auto;margin-right:auto">৫০,০০০+ শিক্ষার্থীর সাথে যোগ দিন যারা ইতিমধ্যে গুরুত্বপূর্ণ দক্ষতা তৈরি করছেন। প্রথম কোর্সে ৩০% ছাড়!</p>
+          <button id="cta-btn" class="browse-more-btn" onclick="navigate('courses')">কোর্স দেখুন — আজই শুরু করুন</button>
         </div>
       </div>
     </section>
@@ -2771,13 +2771,13 @@
                 <input type="file" id="footer-logo-upload" accept="image/png,image/jpeg,image/svg+xml,image/webp"
                   style="display:none" onchange="handleFooterLogoUpload(event)" />
               </div>
-              <p class="footer-desc">বিশ্বব্যাপী শিক্ষার্থীদের বিশেষজ্ঞ-নেতৃত্বাধীন কোর্স, ব্যবহারিক দক্ষতা এবং একটি সহায়ক কমিউনিটির মাধ্যমে ক্ষমতায়িত করা।</p>
+              <p class="footer-desc" id="footer-desc">বিশ্বব্যাপী শিক্ষার্থীদের বিশেষজ্ঞ-নেতৃত্বাধীন কোর্স, ব্যবহারিক দক্ষতা এবং একটি সহায়ক কমিউনিটির মাধ্যমে ক্ষমতায়িত করা।</p>
             </div>
 
             <!-- Office Location Col -->
             <div class="footer-location-col">
               <h4>অফিস লোকেশন</h4>
-              <div class="footer-location-address">
+              <div class="footer-location-address" id="footer-address">
                 মিরপুর-১, ঢাকা-১২১৬<br>বাংলাদেশ
               </div>
               <div class="footer-location-hours">
@@ -2791,7 +2791,7 @@
             <!-- Information Col -->
             <div class="footer-col">
               <h4>তথ্য</h4>
-              <ul>
+              <ul id="footer-links-list">
                 <li><a href="#" onclick="navigate('about'); return false;">আমাদের সম্পর্কে</a></li>
                 <li><a href="#" onclick="navigate('blog'); return false;">ব্লগ</a></li>
                 <li><a href="#" onclick="navigate('courses'); return false;">কোর্সসমূহ</a></li>
@@ -2815,7 +2815,7 @@
             <!-- Categories Col -->
             <div class="footer-col">
               <h4>ক্যাটাগরি</h4>
-              <ul>
+              <ul id="footer-categories-list">
                 <li><a href="#" onclick="navigate('courses'); return false;">কুরআন ও তাজউইদ</a></li>
                 <li><a href="#" onclick="navigate('courses'); return false;">ইসলামিক ইতিহাস</a></li>
                 <li><a href="#" onclick="navigate('courses'); return false;">ফিকহ ও শরীয়াহ</a></li>
@@ -2830,7 +2830,7 @@
       <!-- Footer Bottom Copyright -->
       <div class="container">
         <div class="footer-bottom">
-          <p>© ২০২৫ <a href="#" style="color:var(--primary);font-weight:700">ইবনে খালদুন ইনস্টিটিউট</a>। সর্বস্বত্ব সংরক্ষিত।</p>
+          <p id="footer-copyright">© ২০২৫ <a href="#" style="color:var(--primary);font-weight:700">ইবনে খালদুন ইনস্টিটিউট</a>। সর্বস্বত্ব সংরক্ষিত।</p>
         </div>
       </div>
     </footer>
@@ -4326,6 +4326,481 @@
         startAuto();
       }, {passive: true});
     })();
+
+    // ===========================
+    // API BASE URL
+    // ===========================
+    var API_BASE = 'https://ibnkhalduninstitute.onrender.com';
+
+    // ===========================
+    // LOAD SITE DATA FROM API
+    // ===========================
+    async function loadSiteDataFromAPI() {
+      try {
+        // Run all API calls in parallel
+        var results = await Promise.allSettled([
+          fetch(API_BASE + '/api/site-settings').then(r => r.json()),
+          fetch(API_BASE + '/api/theme-settings').then(r => r.json()),
+          fetch(API_BASE + '/api/hero-section').then(r => r.json()),
+          fetch(API_BASE + '/api/navigation').then(r => r.json()),
+          fetch(API_BASE + '/api/footer').then(r => r.json()),
+          fetch(API_BASE + '/api/welcome-popup').then(r => r.json()),
+          fetch(API_BASE + '/api/cta-section').then(r => r.json()),
+          fetch(API_BASE + '/api/featured-courses-config').then(r => r.json()),
+          fetch(API_BASE + '/api/courses?limit=12').then(r => r.json()),
+          fetch(API_BASE + '/api/testimonials').then(r => r.json()),
+          fetch(API_BASE + '/api/instructors').then(r => r.json()),
+          fetch(API_BASE + '/api/notices').then(r => r.json()),
+        ]);
+
+        var siteSettings    = results[0].status === 'fulfilled' ? results[0].value : null;
+        var themeSettings   = results[1].status === 'fulfilled' ? results[1].value : null;
+        var heroData        = results[2].status === 'fulfilled' ? results[2].value : null;
+        var navData         = results[3].status === 'fulfilled' ? results[3].value : null;
+        var footerData      = results[4].status === 'fulfilled' ? results[4].value : null;
+        var popupData       = results[5].status === 'fulfilled' ? results[5].value : null;
+        var ctaData         = results[6].status === 'fulfilled' ? results[6].value : null;
+        var fcConfig        = results[7].status === 'fulfilled' ? results[7].value : null;
+        var apiCourses      = results[8].status === 'fulfilled' ? results[8].value : null;
+        var apiTestimonials = results[9].status === 'fulfilled' ? results[9].value : null;
+        var apiInstructors  = results[10].status === 'fulfilled' ? results[10].value : null;
+        var apiNotices      = results[11].status === 'fulfilled' ? results[11].value : null;
+
+        // ── THEME / CSS Variables ──
+        if (themeSettings && themeSettings.vars) {
+          Object.entries(themeSettings.vars).forEach(function(kv) {
+            document.documentElement.style.setProperty(kv[0], kv[1]);
+          });
+        }
+        // site-settings colors override theme if set separately
+        if (siteSettings) {
+          if (siteSettings.primaryColor)     document.documentElement.style.setProperty('--primary', siteSettings.primaryColor);
+          if (siteSettings.greenColor)       document.documentElement.style.setProperty('--Green', siteSettings.greenColor);
+          if (siteSettings.primaryDarkColor) document.documentElement.style.setProperty('--primary-dark', siteSettings.primaryDarkColor);
+          if (siteSettings.headerHeight)     document.documentElement.style.setProperty('--header-h', parseInt(siteSettings.headerHeight) + 'px');
+        }
+
+        // ── SITE TITLE / LOGO ──
+        if (siteSettings) {
+          if (siteSettings.title) document.title = siteSettings.title;
+          if (siteSettings.favicon) {
+            var fav = document.querySelector('link[rel="icon"]') || document.createElement('link');
+            fav.rel = 'icon'; fav.href = siteSettings.favicon;
+            document.head.appendChild(fav);
+          }
+          if (siteSettings.logoHeader) {
+            applyLogo(siteSettings.logoHeader);
+          }
+          if (siteSettings.logoFooter) {
+            applyFooterLogo(siteSettings.logoFooter);
+          }
+        }
+
+        // ── NAVIGATION ──
+        if (navData && navData.links && navData.links.length) {
+          var navUl = document.querySelector('.nav-links');
+          if (navUl) {
+            navUl.innerHTML = navData.links.map(function(lk) {
+              return '<li><a href="' + (lk.link || '#') + '" onclick="navigate(\'' + (lk.link || '').replace('#','') + '\');return false;">' + lk.name + '</a></li>';
+            }).join('');
+          }
+          // Mobile nav links
+          var mobileNav = document.querySelector('.mobile-nav');
+          if (mobileNav && navData.links.length) {
+            var existingLinks = mobileNav.querySelectorAll('a[data-nav]');
+            // only update text if elements exist
+          }
+        }
+
+        // ── HERO SECTION ──
+        if (heroData && Object.keys(heroData).length > 0) {
+          if (heroData.bgImage) {
+            var heroBg = document.querySelector('.hero-bg-img');
+            if (heroBg) heroBg.style.backgroundImage = "url('" + heroData.bgImage + "')";
+          }
+          if (heroData.eyebrow) {
+            var eyebrowEl = document.querySelector('.hero-eyebrow');
+            if (eyebrowEl) eyebrowEl.innerHTML = heroData.eyebrow;
+          }
+          // H1
+          var h1El = document.querySelector('.hero h1');
+          if (h1El && (heroData.h1Line1 || heroData.h1Line2 || heroData.h1Line3)) {
+            var l1 = heroData.h1Line1 || '';
+            var l2 = heroData.h1Line2 || '';
+            var l3 = heroData.h1Line3 || '';
+            h1El.innerHTML = l1 + (l2 ? '<br><em>' + l2 + '</em>' : '') + (l3 ? '<br>' + l3 : '');
+          }
+          if (heroData.subtitle) {
+            var subEl = document.querySelector('.hero-sub');
+            if (subEl) subEl.innerHTML = heroData.subtitle;
+          }
+          if (heroData.btnText) {
+            var btnEl = document.querySelector('.hero-learn-btn');
+            if (btnEl) btnEl.textContent = heroData.btnText;
+          }
+          if (heroData.btnLink) {
+            var btnEl2 = document.querySelector('.hero-learn-btn');
+            if (btnEl2) btnEl2.setAttribute('onclick', 'navigate(\'' + heroData.btnLink.replace('#','') + '\')');
+          }
+          // Hero stats
+          if (heroData.stats && heroData.stats.length) {
+            var statEls = document.querySelectorAll('.hero-stat');
+            heroData.stats.forEach(function(s, i) {
+              if (statEls[i]) {
+                var numEl = statEls[i].querySelector('.hero-stat-num');
+                var lblEl = statEls[i].querySelector('.hero-stat-label');
+                if (numEl && s.num) numEl.textContent = s.num;
+                if (lblEl && s.label) lblEl.textContent = s.label;
+              }
+            });
+          }
+        }
+
+        // ── CTA SECTION ──
+        if (ctaData && Object.keys(ctaData).length > 0) {
+          var ctaTitleEl = document.getElementById('cta-title');
+          var ctaSubEl   = document.getElementById('cta-sub');
+          var ctaBtnEl   = document.getElementById('cta-btn');
+          var ctaSection = document.getElementById('section-cta');
+          // title1 + title2 merged
+          if (ctaTitleEl) {
+            var t1 = ctaData.title1 || ctaData.title || '';
+            var t2 = ctaData.title2 || '';
+            if (t1 || t2) ctaTitleEl.innerHTML = t1 + (t2 ? '<br><span style="color:var(--primary)">' + t2 + '</span>' : '');
+          }
+          if (ctaSubEl   && ctaData.subtext)  ctaSubEl.textContent = ctaData.subtext;
+          if (ctaBtnEl   && ctaData.btnText)  ctaBtnEl.textContent = ctaData.btnText;
+          if (ctaBtnEl   && ctaData.btnLink)  ctaBtnEl.setAttribute('onclick', "navigate('" + ctaData.btnLink.replace('#','') + "')");
+          if (ctaSection && ctaData.bgColor)  ctaSection.style.background = ctaData.bgColor;
+        }
+
+        // ── FEATURED COURSES CONFIG (tabs/section title) ──
+        if (fcConfig && Object.keys(fcConfig).length > 0) {
+          var fcTitleEl = document.querySelector('.courses-section-title, #courses-section-title');
+          var fcSubEl   = document.querySelector('.courses-section-sub, #courses-section-sub');
+          if (fcTitleEl && fcConfig.sectionTitle) fcTitleEl.textContent = fcConfig.sectionTitle;
+          if (fcSubEl   && fcConfig.sectionSub)   fcSubEl.textContent   = fcConfig.sectionSub;
+          // Tab labels
+          var tabEls = document.querySelectorAll('.course-tab-btn, .course-tab');
+          var tabKeys = ['top','new','free','popular','bundle'];
+          tabEls.forEach(function(el, i) {
+            var key = tabKeys[i];
+            if (key && fcConfig['tab_' + key]) el.textContent = fcConfig['tab_' + key];
+          });
+        }
+
+        // ── COURSES (from MongoDB) ──
+        if (apiCourses && Array.isArray(apiCourses) && apiCourses.length > 0) {
+          renderAPICoursesOnHomepage(apiCourses);
+        }
+
+        // ── TESTIMONIALS (from MongoDB) ──
+        if (apiTestimonials && Array.isArray(apiTestimonials) && apiTestimonials.length > 0) {
+          renderAPITestimonials(apiTestimonials);
+        }
+
+        // ── INSTRUCTORS (from MongoDB) ──
+        if (apiInstructors && Array.isArray(apiInstructors) && apiInstructors.length > 0) {
+          renderAPIInstructors(apiInstructors);
+        }
+
+        // ── NOTICES ──
+        if (apiNotices && Array.isArray(apiNotices) && apiNotices.length > 0) {
+          renderAPINotices(apiNotices);
+        }
+
+        // ── FOOTER ──
+        if (footerData && Object.keys(footerData).length > 0) {
+          applyFooterData(footerData);
+        }
+
+        // ── WELCOME POPUP ──
+        if (popupData && Object.keys(popupData).length > 0 && popupData.enabled !== false) {
+          window._apiPopupData = popupData;
+        }
+
+      } catch(err) {
+        console.warn('API data load failed, using defaults:', err.message);
+      }
+    }
+
+    // ── Render API courses on homepage ──
+    function renderAPICoursesOnHomepage(courses) {
+      // Merge into COURSES object so detail page works
+      courses.forEach(function(c) {
+        var key = c.slug || c._id;
+        if (!COURSES[key]) {
+          COURSES[key] = {
+            id: key, _id: c._id,
+            title: c.title || '',
+            category: c.category || '',
+            instructor: c.instructor || '',
+            price: '৳' + (c.price || 0),
+            originalPrice: c.originalPrice ? '৳' + c.originalPrice : '',
+            discount: c.discount ? c.discount + '% ছাড়' : '',
+            description: c.description || c.shortDesc || '',
+            thumbnail: c.thumbnail || '',
+            duration: c.duration || '',
+            lessons: c.lessons || 0,
+            students: c.students || 0,
+            rating: c.rating || 4.5,
+            level: c.level || 'সকলের জন্য',
+            tags: c.tags || [],
+            emoji: '📚',
+          };
+        }
+      });
+
+      // Build course card HTML
+      function makeCourseCard(c) {
+        var key = c.slug || c._id;
+        var thumb = c.thumbnail || 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&q=80';
+        var discount = c.originalPrice && c.price ? Math.round((1 - c.price / c.originalPrice) * 100) : (c.discount || 0);
+        return '<div class="course-card fade-in" onclick="openCourseDetail(\'' + key + '\')" style="cursor:pointer">' +
+          '<div class="course-thumb"><img src="' + thumb + '" alt="' + (c.title||'') + '" loading="lazy"/>' +
+          '<div class="thumb-overlay"><span class="play-btn">▶</span></div>' +
+          (discount > 0 ? '<span style="position:absolute;top:10px;left:10px;background:var(--primary);color:#1a1a1a;font-size:10px;font-weight:800;padding:3px 9px;border-radius:3px;font-family:var(--font-nav);letter-spacing:1px">' + discount + '% ছাড়</span>' : '') +
+          (c.featured ? '<span style="position:absolute;top:10px;right:10px;background:#066144;color:#fff;font-size:10px;font-weight:800;padding:3px 9px;border-radius:3px;font-family:var(--font-nav)">Featured</span>' : '') +
+          '</div>' +
+          '<div class="card-body">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+          '<span style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--primary);font-family:var(--font-nav)">' + (c.category||'') + '</span>' +
+          '<span style="font-size:12px;color:var(--text-mid)">★ ' + (c.rating||4.5) + '</span>' +
+          '</div>' +
+          '<div class="card-title">' + (c.title||'') + '</div>' +
+          '<div style="display:flex;gap:12px;font-size:12px;color:var(--text-mid);margin-top:6px">' +
+          '<span>👨‍🏫 ' + (c.instructor||'') + '</span>' +
+          (c.duration ? '<span>⏱ ' + c.duration + '</span>' : '') +
+          '</div>' +
+          '<div class="card-footer" style="margin-top:10px;display:flex;align-items:center;gap:8px">' +
+          '<span class="card-price" style="font-size:17px;font-weight:800;color:var(--primary)">৳' + (c.price||0) + '</span>' +
+          (c.originalPrice ? '<span style="font-size:13px;color:var(--text-light);text-decoration:line-through">৳' + c.originalPrice + '</span>' : '') +
+          '</div></div></div>';
+      }
+
+      // Fill top-sellers grid
+      var topGrid = document.getElementById('top-sellers-grid');
+      if (topGrid && courses.length) {
+        topGrid.innerHTML = courses.slice(0, 8).map(makeCourseCard).join('');
+      }
+      // Fill new-courses grid
+      var newGrid = document.getElementById('new-courses-grid');
+      if (newGrid && courses.length) {
+        newGrid.innerHTML = courses.slice(0).reverse().slice(0, 8).map(makeCourseCard).join('');
+      }
+      // Fill free courses grid
+      var freeGrid = document.getElementById('free-courses-grid');
+      if (freeGrid) {
+        var freeCourses = courses.filter(function(c) { return c.price === 0 || c.price === '0'; });
+        if (freeCourses.length) freeGrid.innerHTML = freeCourses.map(makeCourseCard).join('');
+      }
+      // Fill popular grid
+      var popGrid = document.getElementById('popular-courses-grid');
+      if (popGrid && courses.length) {
+        var sorted = courses.slice().sort(function(a,b){ return (b.students||0)-(a.students||0); });
+        popGrid.innerHTML = sorted.slice(0, 8).map(makeCourseCard).join('');
+      }
+      // Courses page grid
+      var coursesContainer = document.getElementById('courses-container');
+      if (coursesContainer && courses.length) {
+        coursesContainer.innerHTML = courses.map(makeCourseCard).join('');
+      }
+    }
+
+    // ── Render API testimonials ──
+    function renderAPITestimonials(testimonials) {
+      var track = document.getElementById('testiTrack');
+      if (!track || !testimonials.length) return;
+      var perPage = 6; // 3 columns × 2 rows
+      var pages = [];
+      for (var i = 0; i < testimonials.length; i += perPage) {
+        pages.push(testimonials.slice(i, i + perPage));
+      }
+      var avClasses = ['av1','av2','av3','av4','av5','av6'];
+      track.innerHTML = pages.map(function(page) {
+        var items = page.map(function(t, idx) {
+          var stars = '★★★★★'.slice(0, t.rating || 5);
+          var avatarContent = t.avatar
+            ? '<img src="' + t.avatar + '" alt="' + (t.name||'') + '"/>'
+            : (t.name||'?')[0].toUpperCase();
+          return '<div class="testimonial-card">' +
+            '<div class="testi-stars">' + stars + '</div>' +
+            '<div class="testi-text">' + (t.text || '') + '</div>' +
+            '<div class="testi-author">' +
+            '<div class="testi-avatar ' + avClasses[idx % 6] + '">' + avatarContent + '</div>' +
+            '<div><div class="testi-name">' + (t.name||'') + '</div>' +
+            '<div class="testi-role">' + (t.role||'') + '</div></div>' +
+            '</div></div>';
+        });
+        // Split into 3 columns
+        var cols = [[],[],[]];
+        items.forEach(function(item, i) { cols[i % 3].push(item); });
+        return '<div class="testi-page">' +
+          cols.map(function(col) { return '<div class="testi-col">' + col.join('') + '</div>'; }).join('') +
+          '</div>';
+      }).join('');
+
+      // Rebuild nav dots
+      var nav = document.getElementById('testiNav');
+      if (nav) {
+        nav.innerHTML = pages.map(function(_, i) {
+          return '<button class="testi-dot' + (i===0?' active':'') + '" onclick="goTestiPage(' + i + ')"></button>';
+        }).join('');
+      }
+    }
+
+    // ── Render API instructors ──
+    function renderAPIInstructors(instructors) {
+      var grid = document.getElementById('instructors-grid');
+      if (!grid) return;
+      grid.innerHTML = instructors.slice(0, 8).map(function(inst) {
+        var key = inst.slug || inst._id;
+        var photo = inst.photo || 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=160&h=160&fit=crop&crop=face';
+        var specs = (inst.specializations || []).slice(0, 2).join(' · ') || inst.title || '';
+        return '<div class="instructor-card fade-in" onclick="openInstructorProfile(\'' + key + '\')" style="cursor:pointer">' +
+          '<div class="instructor-photo-wrap"><img src="' + photo + '" alt="' + (inst.name||'') + '" class="instructor-photo" loading="lazy"/></div>' +
+          '<div class="instructor-info">' +
+          '<div class="instructor-name">' + (inst.name||'') + '</div>' +
+          '<div class="instructor-title">' + (inst.title||specs) + '</div>' +
+          '<div class="instructor-stats">' +
+          '<span>👥 ' + (inst.students||0) + '</span>' +
+          '<span>★ ' + (inst.rating||4.8) + '</span>' +
+          '<span>📚 ' + (inst.courses||0) + '</span>' +
+          '</div></div></div>';
+      }).join('');
+
+      // Also update INSTRUCTORS object
+      instructors.forEach(function(inst) {
+        var key = inst.slug || inst._id;
+        INSTRUCTORS[key] = {
+          name: inst.name || '',
+          tagline: inst.title || '',
+          photo: inst.photo || '',
+          bio: inst.bio || '',
+          about: inst.bio || '',
+          rating: String(inst.rating || 4.8),
+          students: String(inst.students || 0),
+          reviews: '0',
+          courses: [],
+        };
+      });
+    }
+
+    // ── Render API notices ──
+    function renderAPINotices(notices) {
+      var container = document.getElementById('notices-container');
+      if (!container || !notices.length) return;
+      container.innerHTML = notices.map(function(n) {
+        return '<div class="notice-item">' +
+          (n.imageUrl ? '<img src="' + n.imageUrl + '" alt="' + (n.title||'') + '" style="width:100%;border-radius:8px;margin-bottom:12px;max-height:200px;object-fit:cover"/>' : '') +
+          '<h3 style="font-size:17px;font-weight:700;margin-bottom:8px">' + (n.title||'') + '</h3>' +
+          '<p style="font-size:14px;color:var(--text-mid);line-height:1.7;margin-bottom:12px">' + (n.body||'') + '</p>' +
+          (n.ctaText && n.ctaLink ? '<a href="' + n.ctaLink + '" class="btn btn-primary btn-sm">' + n.ctaText + '</a>' : '') +
+          '</div>';
+      }).join('');
+    }
+
+    // ── Apply footer data ──
+    function applyFooterData(d) {
+      var setTxt = function(id, val) { var el = document.getElementById(id); if (el && val) el.textContent = val; };
+      var setHtml = function(id, val) { var el = document.getElementById(id); if (el && val) el.innerHTML = val; };
+      var setHref = function(id, val) { var el = document.getElementById(id); if (el && val) el.href = val; };
+      if (d.tagline) setTxt('footer-tagline', d.tagline);
+      if (d.desc)    setTxt('footer-desc', d.desc);
+      if (d.copyright) setHtml('footer-copyright', d.copyright);
+      if (d.address) setTxt('footer-address', d.address);
+      // Social links (only if elements exist)
+      ['facebook','youtube','instagram','twitter'].forEach(function(net) {
+        if (d[net]) setHref('footer-' + net, d[net]);
+      });
+      // Contact
+      if (d.email) setTxt('footer-email-txt', d.email);
+      if (d.phone) setTxt('footer-phone-txt', d.phone);
+      // Footer quick links
+      if (d.links && d.links.length) {
+        var linksEl = document.getElementById('footer-links-list');
+        if (linksEl) {
+          linksEl.innerHTML = d.links.map(function(lk) {
+            return '<li><a href="' + (lk.link||'#') + '">' + (lk.name||'') + '</a></li>';
+          }).join('');
+        }
+      }
+      // Footer categories
+      if (d.categories && d.categories.length) {
+        var catsEl = document.getElementById('footer-categories-list');
+        if (catsEl) {
+          catsEl.innerHTML = d.categories.map(function(c) {
+            return '<li><a href="' + (c.link||'#') + '">' + (c.name||'') + '</a></li>';
+          }).join('');
+        }
+      }
+      // Payment image
+      if (d.paymentImg) {
+        var payEl = document.getElementById('footer-payment-img-el');
+        if (payEl) { payEl.src = d.paymentImg; payEl.style.display = 'block'; }
+      }
+    }
+
+    // ── Welcome popup override from API ──
+    function buildAPIPopup(d) {
+      if (!d || !d.enabled) return;
+      if (sessionStorage.getItem('popup_shown')) return;
+      sessionStorage.setItem('popup_shown', '1');
+      setTimeout(function() {
+        var popup = document.createElement('div');
+        popup.id = 'welcome-popup';
+        popup.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)';
+
+        var courseSection = '';
+        if (d.courseName) {
+          var courseImg = d.courseImg || 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=120&h=80&fit=crop';
+          courseSection = '<div style="padding:20px 28px;display:flex;gap:16px;align-items:center;border-bottom:1px solid #2a2a2a">' +
+            '<img src="' + courseImg + '" alt="কোর্স" style="width:100px;height:68px;object-fit:cover;border-radius:8px;flex-shrink:0"/>' +
+            '<div><div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--primary);margin-bottom:4px">🔥 সেরা বিক্রেতা কোর্স</div>' +
+            '<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;line-height:1.3">' + d.courseName + '</div>' +
+            '<div style="display:flex;align-items:center;gap:10px">' +
+            (d.price ? '<span style="font-size:18px;font-weight:800;color:var(--primary)">৳' + d.price + '</span>' : '') +
+            (d.oldPrice ? '<span style="font-size:13px;color:#666;text-decoration:line-through">৳' + d.oldPrice + '</span>' : '') +
+            (d.discount ? '<span style="font-size:10px;font-weight:700;background:var(--primary);color:#1a1a1a;padding:2px 8px;border-radius:20px">' + d.discount + '% ছাড়</span>' : '') +
+            '</div></div></div>';
+        }
+
+        var statsSection = '';
+        if (d.statStudents || d.statCourses || d.statRating) {
+          statsSection = '<div style="padding:14px 28px;display:flex;border-bottom:1px solid #2a2a2a">' +
+            (d.statStudents ? '<div style="flex:1;text-align:center;border-right:1px solid #2a2a2a"><div style="font-size:18px;font-weight:800;color:var(--primary)">' + d.statStudents + '</div><div style="font-size:10px;color:#666;text-transform:uppercase">শিক্ষার্থী</div></div>' : '') +
+            (d.statCourses ? '<div style="flex:1;text-align:center;border-right:1px solid #2a2a2a"><div style="font-size:18px;font-weight:800;color:var(--primary)">' + d.statCourses + '</div><div style="font-size:10px;color:#666;text-transform:uppercase">কোর্স</div></div>' : '') +
+            (d.statRating ? '<div style="flex:1;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--primary)">' + d.statRating + '</div><div style="font-size:10px;color:#666;text-transform:uppercase">রেটিং</div></div>' : '') +
+            '</div>';
+        }
+
+        var btn1Text = d.btnText || d.btn1Text || '';
+        var btn1Link = d.btnLink || d.btn1Link || '';
+        popup.innerHTML = '<div style="background:#1e1e1e;border-radius:16px;max-width:520px;width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.6);position:relative;border:1px solid #333">' +
+          '<div style="background:linear-gradient(135deg,#2a1a00,#1a1a1a);padding:28px 28px 20px;border-bottom:2px solid var(--primary);text-align:center">' +
+          '<div style="font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--primary);margin-bottom:8px">' + (d.label || '🎉 বিশেষ স্বাগত অফার') + '</div>' +
+          '<h2 style="font-family:var(--font-heading);font-size:clamp(20px,4vw,28px);font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px">' + (d.title || '') + '</h2>' +
+          '<p style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;max-width:400px;margin:0 auto">' + (d.subtitle || d.subtext || '') + '</p>' +
+          '</div>' + courseSection + statsSection +
+          '<div style="padding:20px 28px 24px">' +
+          (btn1Text ? '<button onclick="document.getElementById(\'welcome-popup\').remove()' + (btn1Link ? ';navigate(\'' + btn1Link.replace('#','') + '\')' : '') + '" style="width:100%;padding:14px;background:var(--primary);color:#1a1a1a;border:none;border-radius:8px;font-family:var(--font-nav);font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;margin-bottom:10px">' + btn1Text + ' →</button>' : '') +
+          (d.btn2Text ? '<button onclick="document.getElementById(\'welcome-popup\').remove()" style="width:100%;padding:12px;background:transparent;color:#aaa;border:1.5px solid #444;border-radius:8px;font-family:var(--font-nav);font-size:12px;font-weight:700;cursor:pointer">' + d.btn2Text + '</button>' : '<button onclick="document.getElementById(\'welcome-popup\').remove()" style="width:100%;padding:12px;background:transparent;color:#aaa;border:1.5px solid #444;border-radius:8px;font-family:var(--font-nav);font-size:12px;font-weight:700;cursor:pointer">সব কোর্স দেখুন</button>') +
+          (d.note ? '<p style="text-align:center;font-size:11px;color:#555;margin-top:12px">' + d.note + '</p>' : '') +
+          '</div>' +
+          '<button onclick="document.getElementById(\'welcome-popup\').remove()" style="position:absolute;top:12px;right:14px;background:rgba(255,255,255,0.08);border:none;color:#aaa;width:30px;height:30px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>' +
+          '</div>';
+        document.body.appendChild(popup);
+      }, d.delay || 1200);
+    }
+
+    // ── Init: load API data then check popup ──
+    loadSiteDataFromAPI().then(function() {
+      if (window._apiPopupData) {
+        // Override default popup with API one (prevent double popup)
+        sessionStorage.setItem('popup_shown', '1'); // block default
+        buildAPIPopup(window._apiPopupData);
+      }
+    });
 
     restoreSession();
     runFadeIn();

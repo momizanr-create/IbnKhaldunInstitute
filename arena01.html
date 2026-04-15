@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Digitaz - Electronics Store</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; color: #222; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; }
+    ::-webkit-scrollbar-thumb { background: #2563eb; border-radius: 3px; }
+
+    /* Top Bar */
+    .top-bar { background: #fff; border-bottom: 1px solid #eee; font-size: 12px; color: #555; }
+    .top-bar a { color: #555; text-decoration: none; }
+    .top-bar a:hover { color: #2563eb; }
+
+    /* Navbar */
+    .navbar { background: #fff; border-bottom: 2px solid #eee; }
+    .logo-text { font-size: 26px; font-weight: 800; color: #2563eb; letter-spacing: -1px; }
+    .logo-text span { color: #f97316; }
+    .nav-link { color: #222; font-size: 14px; font-weight: 500; text-decoration: none; padding: 0 8px; display:flex; align-items:center; gap:3px; }
+    .nav-link:hover { color: #2563eb; }
+    .nav-link .fa-chevron-down { font-size: 10px; }
+
+    /* Search Bar */
+    .search-bar-wrap { background: #2563eb; padding: 10px 0; }
+    .dept-btn { background: #1d4ed8; color: #fff; border: none; padding: 10px 16px; font-size: 13px; font-weight: 600; cursor: pointer; display:flex; align-items:center; gap:6px; white-space:nowrap; border-radius: 4px 0 0 4px; }
+    .search-input { flex: 1; border: none; outline: none; padding: 10px 14px; font-size: 14px; }
+    .category-select { border: none; border-left: 1px solid #ddd; border-right: 1px solid #ddd; padding: 10px 10px; font-size: 13px; background: #fff; outline: none; cursor: pointer; }
+    .search-btn { background: #1e3a8a; color: #fff; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; border-radius: 0 4px 4px 0; }
+    .search-btn:hover { background: #1d4ed8; }
+    .recently-viewed-btn { color: #fff; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; border: none; background: transparent; }
+    .order-status-btn { color: #fff; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; border: 1px solid rgba(255,255,255,0.4); padding: 6px 14px; border-radius: 4px; background: transparent; }
+
+    /* Hero Section */
+    .hero-banner { background: #fff; }
+    .hero-left-col { display: flex; flex-direction: column; gap: 12px; }
+    .hero-small-card { border-radius: 10px; padding: 16px; display: flex; align-items: center; justify-content: space-between; overflow: hidden; }
+    .hero-small-card.blue-card { background: linear-gradient(135deg, #e8eeff 0%, #c7d7ff 100%); }
+    .hero-small-card.cream-card { background: linear-gradient(135deg, #fff8e8 0%, #fde9b8 100%); }
+
+    /* Slider */
+    .slider-container { position: relative; overflow: hidden; border-radius: 12px; background: linear-gradient(135deg, #e8f0ff 0%, #d6e4ff 100%); }
+    .slide { display: none; }
+    .slide.active { display: flex; align-items: center; justify-content: space-between; }
+    .slider-dots { display: flex; gap: 6px; justify-content: center; margin-top: 10px; }
+    .slider-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; cursor: pointer; border: none; }
+    .slider-dot.active { background: #2563eb; }
+
+    /* Right product cards */
+    .hero-right-card { border-radius: 10px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; }
+    .hero-right-card.yellow-card { background: linear-gradient(135deg, #fffde7 0%, #fff9c4 100%); }
+    .hero-right-card.pink-card { background: linear-gradient(135deg, #fff0f3 0%, #ffd6df 100%); }
+
+    /* Brand logos */
+    .brand-strip { background: #fff; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
+    .brand-logo { font-size: 15px; font-weight: 700; padding: 16px 20px; color: #333; cursor: pointer; }
+    .brand-logo:hover { color: #2563eb; }
+
+    /* Categories */
+    .cat-card { background: #fff; border-radius: 10px; padding: 16px 10px; text-align: center; cursor: pointer; transition: all 0.2s; border: 1px solid #eee; }
+    .cat-card:hover { box-shadow: 0 4px 20px rgba(37,99,235,0.13); border-color: #2563eb; transform: translateY(-2px); }
+    .cat-icon { font-size: 32px; margin-bottom: 8px; }
+    .cat-img { width: 56px; height: 56px; object-fit: contain; margin: 0 auto 8px; display: block; }
+
+    /* Featured Deals */
+    .deals-section { background: #2563eb; border-radius: 12px; padding: 24px; margin: 20px 0; }
+    .countdown { display: flex; gap: 6px; align-items: center; }
+    .count-box { background: #1d4ed8; color: #fff; border-radius: 6px; padding: 4px 10px; font-size: 18px; font-weight: 700; min-width: 36px; text-align: center; }
+    .count-sep { color: #fff; font-size: 18px; font-weight: 700; }
+
+    /* Product Cards */
+    .product-card { background: #fff; border-radius: 10px; padding: 14px; border: 1px solid #eee; transition: all 0.2s; position: relative; }
+    .product-card:hover { box-shadow: 0 4px 20px rgba(37,99,235,0.1); border-color: #2563eb; }
+    .discount-badge { position: absolute; top: 10px; left: 10px; background: #ef4444; color: #fff; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 4px; }
+    .new-badge { position: absolute; top: 10px; left: 10px; background: #22c55e; color: #fff; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 4px; }
+    .product-img { width: 100%; height: 130px; object-fit: contain; margin-bottom: 10px; }
+    .product-img-sm { width: 100%; height: 100px; object-fit: contain; margin-bottom: 8px; }
+    .product-cat { color: #2563eb; font-size: 11px; font-weight: 600; margin-bottom: 3px; }
+    .product-title { font-size: 13px; font-weight: 600; color: #222; margin-bottom: 6px; line-height: 1.4; }
+    .product-price { color: #ef4444; font-size: 15px; font-weight: 700; }
+    .product-old-price { color: #aaa; font-size: 12px; text-decoration: line-through; margin-left: 5px; }
+    .product-stars { color: #f59e0b; font-size: 12px; }
+    .product-sold { color: #888; font-size: 11px; }
+    .add-to-cart-btn { background: #2563eb; color: #fff; border: none; padding: 7px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 8px; }
+    .add-to-cart-btn:hover { background: #1d4ed8; }
+
+    /* Wishlist / Cart icons */
+    .icon-btn { background: none; border: none; cursor: pointer; color: #555; font-size: 18px; position: relative; }
+    .icon-btn:hover { color: #2563eb; }
+    .badge { position: absolute; top: -6px; right: -8px; background: #ef4444; color: #fff; border-radius: 50%; font-size: 10px; width: 17px; height: 17px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+
+    /* Deal center card */
+    .deal-center-card { background: #fff; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+    .deal-center-img { width: 180px; height: 180px; object-fit: contain; }
+
+    /* Trending slider */
+    .trending-slider { overflow: hidden; }
+    .trending-track { display: flex; gap: 16px; transition: transform 0.4s ease; }
+    .trending-card { min-width: calc(100% / 6 - 14px); flex-shrink: 0; }
+
+    /* Featured products */
+    .featured-banner { border-radius: 12px; overflow: hidden; }
+
+    /* Progress bar */
+    .progress-bar-wrap { background: #e5e7eb; border-radius: 4px; height: 5px; margin-top: 6px; }
+    .progress-bar { height: 5px; border-radius: 4px; background: #ef4444; }
+
+    /* Footer */
+    footer { background: #1e293b; color: #cbd5e1; }
+    footer h4 { color: #fff; font-size: 15px; font-weight: 700; margin-bottom: 14px; }
+    footer a { color: #94a3b8; text-decoration: none; font-size: 13px; display: block; margin-bottom: 7px; }
+    footer a:hover { color: #2563eb; }
+    .footer-bottom { background: #0f172a; color: #64748b; font-size: 12px; }
+
+    /* Amazing deals marquee */
+    .amazing-deals-btn { background: #ef4444; color: #fff; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 4px; white-space: nowrap; }
+
+    /* Responsive tweaks */
+    @media (max-width: 768px) {
+      .trending-card { min-width: calc(100% / 2 - 8px); }
+      .top-bar-right { display: none; }
+    }
+    @media (max-width: 480px) {
+      .trending-card { min-width: calc(100% / 1 - 0px); }
+    }
+
+    /* Section arrow nav */
+    .nav-arrow { background: #fff; border: 1px solid #ddd; color: #555; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; }
+    .nav-arrow:hover { background: #2563eb; color: #fff; border-color: #2563eb; }
+
+    /* emoji icons for categories */
+    .cat-emoji { font-size: 36px; }
+
+    /* Slide styles */
+    .slide-content { padding: 30px 30px; }
+    .slide-content h4 { font-size: 13px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 1px; }
+    .slide-content h2 { font-size: 30px; font-weight: 800; color: #1e293b; line-height: 1.2; margin: 6px 0; }
+    .slide-content p { font-size: 13px; color: #666; margin-bottom: 14px; }
+    .slide-btn { background: #2563eb; color: #fff; border: none; padding: 10px 22px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .slide-btn:hover { background: #1d4ed8; }
+    .slide-img { width: 200px; height: 240px; object-fit: contain; }
+
+    /* Amenity deal left card */
+    .deal-side-card { background: #fff; border-radius: 10px; padding: 12px; border: 1px solid #eee; cursor: pointer; transition: all 0.2s; }
+    .deal-side-card:hover { box-shadow: 0 2px 12px rgba(37,99,235,0.1); }
+
+    /* Color swatches */
+    .color-swatch { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px #ccc; cursor: pointer; display: inline-block; }
+    .color-swatch.active { box-shadow: 0 0 0 2px #2563eb; }
+
+    /* VR Banner */
+    .vr-banner { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; color: #fff; padding: 30px; display: flex; align-items: center; justify-content: space-between; }
+    .vr-banner h2 { font-size: 28px; font-weight: 800; }
+    .vr-banner p { color: #94a3b8; font-size: 14px; }
+    .vr-btn { background: #2563eb; color: #fff; border: none; padding: 10px 22px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+
+    .section-title { font-size: 20px; font-weight: 700; color: #1e293b; }
+    .view-all-link { color: #2563eb; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; }
+    .view-all-link:hover { text-decoration: underline; }
+
+    /* Notification */
+    .cart-notification { position: fixed; top: 80px; right: 20px; background: #22c55e; color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; z-index: 9999; display: none; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+  </style>
+</head>
+<body>
+
+<!-- Cart Notification -->
+<div class="cart-notification" id="cartNotif">
+  <i class="fas fa-check-circle mr-2"></i> Added to cart!
+</div>
+
+<!-- TOP BAR -->
+<div class="top-bar py-1">
+  <div class="max-w-7xl mx-auto px-4 flex items-center justify-between">
+    <div class="flex items-center gap-5">
+      <a href="#"><i class="fas fa-store mr-1"></i> Find a Store</a>
+      <a href="#"><i class="fas fa-truck mr-1"></i> Order Tracking</a>
+      <a href="#"><i class="fas fa-shopping-bag mr-1"></i> Shop</a>
+    </div>
+    <div class="flex items-center gap-5 top-bar-right">
+      <span style="color:#22c55e;font-weight:600;font-size:12px;"><i class="fas fa-shipping-fast mr-1"></i> Free shipping worldwide. Orders over $200</span>
+      <a href="#" class="flex items-center gap-1">USD <i class="fas fa-chevron-down" style="font-size:9px;"></i></a>
+      <a href="#" class="flex items-center gap-1">English <i class="fas fa-chevron-down" style="font-size:9px;"></i></a>
+    </div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar py-2">
+  <div class="max-w-7xl mx-auto px-4 flex items-center justify-between gap-4">
+    <!-- Logo -->
+    <div class="logo-text flex items-center gap-1">
+      <i class="fas fa-bolt" style="color:#2563eb;font-size:22px;"></i>
+      <span style="color:#2563eb;">digi</span><span style="color:#f97316;">taz</span>
+    </div>
+    <!-- Nav links -->
+    <div class="hidden md:flex items-center gap-1">
+      <a href="#" class="nav-link">Home <i class="fas fa-chevron-down"></i></a>
+      <a href="#" class="nav-link">Shop <i class="fas fa-chevron-down"></i></a>
+      <a href="#" class="nav-link">Pages <i class="fas fa-chevron-down"></i></a>
+      <a href="#" class="nav-link">Blog <i class="fas fa-chevron-down"></i></a>
+      <a href="#" class="nav-link">Contact Us</a>
+      <div class="flex items-center gap-1 px-3">
+        <span class="amazing-deals-btn">Amazing Deals</span>
+      </div>
+      <a href="#" class="nav-link" style="color:#555;"><i class="fas fa-phone-alt mr-1" style="color:#2563eb;"></i> 1-800-888-9999</a>
+    </div>
+    <!-- Icons -->
+    <div class="flex items-center gap-4">
+      <button class="icon-btn"><i class="fas fa-heart"></i></button>
+      <button class="icon-btn" onclick="openCart()">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="badge" id="cartCount">0</span>
+      </button>
+      <div class="flex items-center gap-1" style="font-size:13px;font-weight:600;color:#222;">
+        <i class="fas fa-wallet" style="color:#2563eb;"></i>
+        <span id="cartTotal">$0.00</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- SEARCH BAR -->
+<div class="search-bar-wrap">
+  <div class="max-w-7xl mx-auto px-4 flex items-center gap-3">
+    <button class="dept-btn" onclick="toggleDeptMenu()">
+      <i class="fas fa-bars"></i> Shop by Department <i class="fas fa-chevron-down" style="font-size:10px;"></i>
+    </button>
+    <div class="flex flex-1 bg-white rounded-md overflow-hidden shadow">
+      <select class="category-select" style="font-size:13px;max-width:130px;">
+        <option>All Categories</option>
+        <option>Laptops</option>
+        <option>Phones</option>
+        <option>Headphones</option>
+        <option>Cameras</option>
+        <option>Smartwatches</option>
+        <option>TVs</option>
+        <option>Gaming</option>
+      </select>
+      <input type="text" class="search-input" placeholder="Search for Products..." id="searchInput" onkeydown="handleSearch(event)" />
+      <button class="search-btn" onclick="doSearch()"><i class="fas fa-search"></i></button>
+    </div>
+    <button class="recently-viewed-btn">Recently Viewed <i class="fas fa-chevron-down" style="font-size:10px;"></i></button>
+    <button class="order-status-btn">Order Status <i class="fas fa-chevron-down" style="font-size:10px;"></i></button>
+  </div>
+</div>
+
+<!-- HERO SECTION -->
+<section class="hero-banner py-4">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="grid grid-cols-12 gap-4">
+      <!-- Left column -->
+      <div class="col-span-3 hero-left-col">
+        <!-- LED Watch card -->
+        <div class="hero-small-card blue-card">
+          <div>
+            <p style="font-size:11px;color:#555;font-weight:600;">Best 2022</p>
+            <h3 style="font-size:16px;font-weight:800;color:#1e293b;line-height:1.2;">LED Watch<br/><span style="color:#555;font-weight:500;font-size:13px;">High Quality</span></h3>
+            <div style="margin-top:8px;">
+              <p style="font-size:11px;color:#ef4444;font-weight:600;">Discount</p>
+              <span style="text-decoration:line-through;font-size:11px;color:#aaa;">$79.99</span>
+              <p style="font-size:18px;font-weight:800;color:#ef4444;">$39.99</p>
+            </div>
+          </div>
+          <div style="font-size:52px;">⌚</div>
+        </div>
+        <!-- Toaster card -->
+        <div class="hero-small-card cream-card">
+          <div>
+            <p style="font-size:11px;color:#555;font-weight:500;">End Season</p>
+            <h3 style="font-size:15px;font-weight:800;color:#1e293b;line-height:1.2;">Toaster Retro<br/>Hottest</h3>
+            <div style="margin-top:8px;">
+              <p style="font-size:11px;color:#555;">Save up</p>
+              <p style="font-size:18px;font-weight:800;color:#ef4444;">30% Off</p>
+            </div>
+          </div>
+          <div style="font-size:52px;">🍞</div>
+        </div>
+      </div>
+
+      <!-- Center slider -->
+      <div class="col-span-6">
+        <div class="slider-container" style="height:300px;">
+          <!-- Slide 1 -->
+          <div class="slide active" style="height:100%;background:linear-gradient(135deg,#eef3ff 0%,#dce8ff 100%);">
+            <div class="slide-content" style="flex:1;">
+              <h4>WEEKEND PROMOTIONS</h4>
+              <h2>Find The Best<br/>iPhone For You</h2>
+              <p>Get $50 - $100 off when buying online.</p>
+              <button class="slide-btn" onclick="addToCart('iPhone 15 Pro', 999.99)"><i class="fas fa-shopping-cart mr-2"></i>Shop Now!</button>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:center;padding:20px;">
+              <span style="font-size:140px;line-height:1;">📱</span>
+            </div>
+          </div>
+          <!-- Slide 2 -->
+          <div class="slide" style="height:100%;background:linear-gradient(135deg,#f0fff4 0%,#dcfce7 100%);">
+            <div class="slide-content" style="flex:1;">
+              <h4>TOP LAPTOPS 2024</h4>
+              <h2>Powerful<br/>Laptops For You</h2>
+              <p>Best deals on high-performance laptops.</p>
+              <button class="slide-btn" onclick="addToCart('Creator Laptop', 789.99)"><i class="fas fa-shopping-cart mr-2"></i>Shop Now!</button>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:center;padding:20px;">
+              <span style="font-size:130px;line-height:1;">💻</span>
+            </div>
+          </div>
+          <!-- Slide 3 -->
+          <div class="slide" style="height:100%;background:linear-gradient(135deg,#fff7ed 0%,#fed7aa 100%);">
+            <div class="slide-content" style="flex:1;">
+              <h4>GAMING DEALS</h4>
+              <h2>Next-Gen<br/>Gaming Gear</h2>
+              <p>Level up with our latest gaming gear.</p>
+              <button class="slide-btn" onclick="addToCart('Gaming Controller', 69.99)"><i class="fas fa-shopping-cart mr-2"></i>Shop Now!</button>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:center;padding:20px;">
+              <span style="font-size:130px;line-height:1;">🎮</span>
+            </div>
+          </div>
+          <!-- Dots -->
+          <div style="position:absolute;bottom:12px;left:0;right:0;display:flex;justify-content:center;gap:6px;" id="sliderDots">
+            <button class="slider-dot active" onclick="goSlide(0)"></button>
+            <button class="slider-dot" onclick="goSlide(1)"></button>
+            <button class="slider-dot" onclick="goSlide(2)"></button>
+          </div>
+          <!-- Arrows -->
+          <button onclick="prevSlide()" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.8);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:14px;"><i class="fas fa-chevron-left"></i></button>
+          <button onclick="nextSlide()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.8);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:14px;"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+
+      <!-- Right column -->
+      <div class="col-span-3 flex flex-col gap-4">
+        <!-- Gaming Controller -->
+        <div class="hero-right-card yellow-card" style="cursor:pointer;" onclick="addToCart('Wireless Pro Controller', 99.99)">
+          <div>
+            <h4 style="font-size:15px;font-weight:800;color:#1e293b;line-height:1.2;">Wireless Pro<br/>Controller</h4>
+            <p style="font-size:12px;color:#555;margin-top:2px;">Gaming</p>
+            <p style="font-size:11px;color:#555;margin-top:8px;">Price just</p>
+            <p style="font-size:20px;font-weight:800;color:#ef4444;">$99.99</p>
+          </div>
+          <div style="font-size:58px;">🎮</div>
+        </div>
+        <!-- Bluetooth Headphones -->
+        <div class="hero-right-card pink-card" style="cursor:pointer;" onclick="addToCart('Bluetooth Headphones', 59.99)">
+          <div>
+            <h4 style="font-size:15px;font-weight:800;color:#1e293b;line-height:1.2;">Bluetooth<br/>Headphones</h4>
+            <p style="font-size:12px;color:#555;margin-top:2px;">Wireless</p>
+            <div style="margin-top:8px;">
+              <p style="font-size:11px;color:#ef4444;font-weight:600;">Discount</p>
+              <span style="text-decoration:line-through;font-size:11px;color:#aaa;">$129.99</span>
+              <p style="font-size:20px;font-weight:800;color:#ef4444;">$59.99</p>
+            </div>
+          </div>
+          <div style="font-size:58px;">🎧</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BRAND LOGOS -->
+<div class="brand-strip">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex items-center justify-between overflow-x-auto">
+      <div class="brand-logo" style="color:#2563eb;">TECHNOLO.</div>
+      <div class="brand-logo" style="color:#f97316;">⚡ SWIFT</div>
+      <div class="brand-logo" style="color:#22c55e;">DIGITAL</div>
+      <div class="brand-logo" style="color:#a855f7;">〰 WAVE</div>
+      <div class="brand-logo" style="color:#ef4444;">ELECTRONIC</div>
+      <div class="brand-logo" style="color:#0891b2; font-style:italic;">digitechno</div>
+      <div class="brand-logo" style="color:#64748b;">✦ ASANO</div>
+      <div class="brand-logo" style="color:#1e293b;font-style:italic;">The Galaxy</div>
+    </div>
+  </div>
+</div>
+
+<!-- BROWSE BY CATEGORIES -->
+<section class="py-8">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="section-title">Browse by Categories</h2>
+      <div class="flex gap-2">
+        <button class="nav-arrow" onclick="scrollCats(-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="nav-arrow" onclick="scrollCats(1)"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div>
+    <div class="grid grid-cols-8 gap-3" id="catsGrid">
+      <div class="cat-card" onclick="filterCategory('Desktops')">
+        <div class="cat-emoji">🖥️</div>
+        <p style="font-size:12px;font-weight:600;color:#333;margin-top:6px;">Desktops</p>
+      </div>
+      <div class="cat-card" onclick="filterCategory('Headphones')">
+        <div class="cat-emoji">🎧</div>
+        <p style="font-size:12px;font-weight:600;color:#333;margin-top:6px;">Headphones</p>
+      </div>
+      <div class="cat-card" onclick="filterCategory('Cameras')">
+        <div class="cat-emoji">📷</div>
+        <p style="font-size:12px;font-weight:600;color:#333;margin-top:6px;">Digital Cameras</p>
+      </div>
+      <div class="cat-card" onclick="filterCategory('Smartphones')">
+        <div class="cat-emoji">📱</div>
+        <p style="font-size:12px;font-weight:600;color:#333;margin-top:6px;">Smartphones</p>
+      </div>
+      <div class="cat-card" onclick="filterCategory('Smartwatches')">
+        <div class="cat-emoji">⌚</div>
+        <p style="font-size:12px;font-weight:600;color:#333;margin-top:6px;">Smartwatches</p>
+      </div>
+      <div class="cat-card" onclick="filterCategory('TVs')">
+        <div class="cat-emoji">📺</div>
+        <p style="font-size:12px;font-weight:600;color:#333;margin-top:6px;">Televisions</p>
+      </div>
+      <div class="cat-card" onclick="filterCategory('Gaming')">
+        <div class="cat-emoji">🎮</div>
+        <p style="font-size:12px;font-weight:600;color:#333;margin-top:6px;">Games & Videos</p>
+      </div>
+      <div class="cat-card" onclick="filterCategory('Appliances')">
+        <div class="cat-emoji">🍽️</div>
+        <p style="font-size:12px;font-weight:600;color:#333;margin-top:6px;">Home Appliances</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TODAY'S FEATURED DEALS -->
+<section class="py-4">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="deals-section">
+      <!-- Header -->
+      <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+        <h2 style="font-size:20px;font-weight:700;color:#fff;">Today's Featured Deals</h2>
+        <div class="flex items-center gap-3">
+          <span style="font-size:13px;color:#bfdbfe;">End in:</span>
+          <div class="countdown">
+            <div class="count-box" id="cdHours">08</div>
+            <span class="count-sep">:</span>
+            <div class="count-box" id="cdMins">13</div>
+            <span class="count-sep">:</span>
+            <div class="count-box" id="cdSecs">55</div>
+          </div>
+          <a href="#" class="view-all-link" style="color:#bfdbfe;">View All Products ›</a>
+        </div>
+      </div>
+      <!-- Deal Cards Grid -->
+      <div class="grid grid-cols-3 gap-4">
+        <!-- Left column - 2 small cards -->
+        <div class="flex flex-col gap-4">
+          <div class="deal-side-card" onclick="addToCart('iPhone 15', 789.99)" style="cursor:pointer;">
+            <div class="relative">
+              <span class="discount-badge">-15%</span>
+              <div style="text-align:center;padding:10px 0;font-size:64px;">📱</div>
+            </div>
+            <p class="product-cat">Computer & Laptop</p>
+            <p class="product-title">Laptop Creator 15 A11UE Intel Core i7 Intel Core i7</p>
+            <div class="flex items-center gap-1 mb-1">
+              <span class="product-price">$789.99</span>
+              <span class="product-old-price">$999.00</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <span class="product-stars">★★★★☆</span>
+              <span class="product-sold" style="font-size:10px;">(5)</span>
+            </div>
+            <div class="progress-bar-wrap mt-2">
+              <div class="progress-bar" style="width:60%;"></div>
+            </div>
+            <p class="product-sold mt-1">Already Sold: 5/25</p>
+          </div>
+          <div class="deal-side-card" onclick="addToCart('Smart Watch Pro', 789.99)" style="cursor:pointer;">
+            <div class="relative">
+              <span class="discount-badge">-20%</span>
+              <div style="text-align:center;padding:10px 0;font-size:64px;">⌚</div>
+            </div>
+            <p class="product-cat">Computer & Laptop</p>
+            <p class="product-title">Laptop Creator 15 A11UE Intel Core i7 Intel Core i7</p>
+            <div class="flex items-center gap-1 mb-1">
+              <span class="product-price">$789.99</span>
+              <span class="product-old-price">$999.00</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <span class="product-stars">★★★★☆</span>
+              <span class="product-sold" style="font-size:10px;">(7)</span>
+            </div>
+            <div class="progress-bar-wrap mt-2">
+              <div class="progress-bar" style="width:45%;"></div>
+            </div>
+            <p class="product-sold mt-1">Already Sold: 7/35</p>
+          </div>
+        </div>
+
+        <!-- Center - large deal -->
+        <div class="deal-center-card">
+          <p style="font-size:11px;color:#2563eb;font-weight:600;text-transform:uppercase;">Digital Items</p>
+          <h3 style="font-size:18px;font-weight:800;color:#1e293b;margin:6px 0;line-height:1.3;">Airpods Max Multi Color Unboxing and Impressions</h3>
+          <div class="flex items-center gap-2 mb-3">
+            <span style="font-size:22px;font-weight:800;color:#ef4444;">$129.99</span>
+            <span style="text-decoration:line-through;color:#aaa;font-size:14px;">$165.99</span>
+          </div>
+          <div class="flex items-center gap-1 mb-3">
+            <span class="product-stars" style="font-size:14px;">★★★★☆</span>
+            <span style="font-size:12px;color:#888;">(11)</span>
+          </div>
+          <div style="font-size:90px;margin:10px 0;">🎧</div>
+          <ul style="font-size:12px;color:#555;list-style:disc;padding-left:18px;margin-bottom:16px;">
+            <li>TCW Summer</li>
+            <li>AirPods Max: A bit by A bit</li>
+            <li>Fit Customizable</li>
+            <li>Up to 16 hours of listening time</li>
+          </ul>
+          <div class="flex gap-2 mb-4">
+            <span class="color-swatch active" style="background:#f97316;"></span>
+            <span class="color-swatch" style="background:#ec4899;"></span>
+            <span class="color-swatch" style="background:#6366f1;"></span>
+            <span class="color-swatch" style="background:#64748b;"></span>
+          </div>
+          <div class="progress-bar-wrap w-full mt-1">
+            <div class="progress-bar" style="width:65%;"></div>
+          </div>
+          <p class="product-sold mt-1 w-full">Already Sold: 20/30</p>
+          <button class="add-to-cart-btn mt-3" onclick="addToCart('Airpods Max', 129.99)"><i class="fas fa-cart-plus mr-1"></i> Add to Cart</button>
+        </div>
+
+        <!-- Right column - 2 small cards -->
+        <div class="flex flex-col gap-4">
+          <div class="deal-side-card" onclick="addToCart('Laptop Creator Pro', 789.99)" style="cursor:pointer;">
+            <div class="relative">
+              <span class="discount-badge">-10%</span>
+              <div style="text-align:center;padding:10px 0;font-size:64px;">💻</div>
+            </div>
+            <p class="product-cat">Computer & Laptop</p>
+            <p class="product-title">Laptop Creator 15 A11UE Intel Core i7 Intel Core i7</p>
+            <div class="flex items-center gap-1 mb-1">
+              <span class="product-price">$789.99</span>
+              <span class="product-old-price">$999.00</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <span class="product-stars">★★★★☆</span>
+              <span class="product-sold" style="font-size:10px;">(4)</span>
+            </div>
+            <div class="progress-bar-wrap mt-2">
+              <div class="progress-bar" style="width:38%;"></div>
+            </div>
+            <p class="product-sold mt-1">Already Sold: 9/20</p>
+          </div>
+          <div class="deal-side-card" onclick="addToCart('Tablet Ultra', 789.99)" style="cursor:pointer;">
+            <div class="relative">
+              <span class="discount-badge">-18%</span>
+              <div style="text-align:center;padding:10px 0;font-size:64px;">📟</div>
+            </div>
+            <p class="product-cat">Computer & Laptop</p>
+            <p class="product-title">Laptop Creator 15 A11UE Intel Core i7 Intel Core i7</p>
+            <div class="flex items-center gap-1 mb-1">
+              <span class="product-price">$789.99</span>
+              <span class="product-old-price">$999.00</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <span class="product-stars">★★★★☆</span>
+              <span class="product-sold" style="font-size:10px;">(9)</span>
+            </div>
+            <div class="progress-bar-wrap mt-2">
+              <div class="progress-bar" style="width:55%;"></div>
+            </div>
+            <p class="product-sold mt-1">Already Sold: 9/35</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRENDING THIS WEEK -->
+<section class="py-6" style="background:#fff;margin-top:8px;">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="section-title">Trending This Week</h2>
+      <a href="#" class="view-all-link">View All Products ›</a>
+    </div>
+    <div class="relative">
+      <button class="nav-arrow" onclick="slideTrending(-1)" style="position:absolute;left:-16px;top:50%;transform:translateY(-50%);z-index:10;"><i class="fas fa-chevron-left"></i></button>
+      <div class="trending-slider" id="trendingSlider">
+        <div class="trending-track" id="trendingTrack">
+          <!-- Cards -->
+          <div class="trending-card product-card" style="min-width:calc(100%/6 - 14px);">
+            <div class="relative">
+              <span class="discount-badge">-15%</span>
+              <div style="text-align:center;padding:10px 0;font-size:72px;">💻</div>
+            </div>
+            <p class="product-cat">Computer & Laptop</p>
+            <p class="product-title">Laptop Creator 15 A11UE Intel Core i7 16GB RAM, 512GB SSD</p>
+            <div style="font-size:11px;color:#888;">2 Reviews</div>
+            <div class="flex items-center gap-1 mt-1">
+              <span class="product-price">$789.99</span>
+            </div>
+            <span class="product-old-price">$999.00</span>
+            <div class="product-stars mt-1">★★★★☆</div>
+            <button class="add-to-cart-btn" onclick="addToCart('Creator Laptop 15', 789.99)">Add to Cart</button>
+          </div>
+          <div class="trending-card product-card" style="min-width:calc(100%/6 - 14px);">
+            <div class="relative">
+              <span class="discount-badge">-20%</span>
+              <div style="text-align:center;padding:10px 0;font-size:72px;">🎨</div>
+            </div>
+            <p class="product-cat">Computer & Laptop</p>
+            <p class="product-title">Laptop Creator 15 A11UE Intel Core i7 16GB RAM, 512GB SSD</p>
+            <div style="font-size:11px;color:#888;">2 Reviews</div>
+            <div class="flex items-center gap-1 mt-1">
+              <span class="product-price">$789.99</span>
+            </div>
+            <span class="product-old-price">$999.00</span>
+            <div class="product-stars mt-1">★★★★☆</div>
+            <button class="add-to-cart-btn" onclick="addToCart('Laptop Pro', 789.99)">Add to Cart</button>
+          </div>
+          <div class="trending-card product-card" style="min-width:calc(100%/6 - 14px);">
+            <div class="relative">
+              <span class="new-badge">New</span>
+              <div style="text-align:center;padding:10px 0;font-size:72px;">⌚</div>
+            </div>
+            <p class="product-cat">Computer & Laptop</p>
+            <p class="product-title">Laptop Creator 15 A11UE Intel Core i7 16GB RAM, 512GB SSD</p>
+            <div style="font-size:11px;color:#888;">2 Reviews</div>
+            <div class="flex items-center gap-1 mt-1">
+              <span class="product-price">$789.99</span>
+            </div>
+            <span class="product-old-price">$999.00</span>
+            <div class="product-stars mt-1">★★★★☆</div>
+            <button class="add-to-cart-btn" onclick="addToCart('Smart Watch Series', 789.99)">Add to Cart</button>
+          </div>
+          <div class="trending-card product-card" style="min-width:calc(100%/6 - 14px);">
+            <div class="relative">
+              <span class="new-badge">New</span>
+              <div style="text-align:center;padding:10px 0;font-size:72px;">📱</div>
+            </div>
+            <p class="product-cat">Computer & Laptop</p>
+            <p class="product-title">Laptop Creator 15 A11UE Intel Core i7 16GB RAM, 512GB SSD</p>
+            <div style="font-size:11px;color:#888;">2 Reviews</div>
+            <div class="flex items-center gap-1 mt-1">
+              <span class="product-price">$123.99</span>
+            </div>
+            <span class="product-old-price">$199.00</span>
+            <div class="product-stars mt-1">★★★★★</div>
+            <button class="add-to-cart-btn" onclick="addToCart('Smartphone X', 123.99)">Add to Cart</button>
+          </div>
+          <div class="trending-card product-card" style="min-width:calc(100%/6 - 14px);">
+            <div class="relative">
+              <span class="discount-badge">-10%</span>
+              <div style="text-align:center;padding:10px 0;font-size:72px;">📟</div>
+            </div>
+            <p class="product-cat">Computer & Laptop</p>
+            <p class="product-title">Laptop Creator 15 A11UE Intel Core i7 16GB RAM, 512GB SSD</p>
+            <div style="font-size:11px;color:#888;">2 Reviews</div>
+            <div class="flex items-center gap-1 mt-1">
+              <span class="product-price">$789.99</span>
+            </div>
+            <span class="product-old-price">$999.00</span>
+            <div class="product-stars mt-1">★★★★☆</div>
+            <button class="add-to-cart-btn" onclick="addToCart('Tablet Ultra Plus', 789.99)">Add to Cart</button>
+          </div>
+          <div class="trending-card product-card" style="min-width:calc(100%/6 - 14px);">
+            <div class="relative">
+              <span class="discount-badge">-10%</span>
+              <div style="text-align:center;padding:10px 0;font-size:72px;">⌚</div>
+            </div>
+            <p class="product-cat">Computer & Laptop</p>
+            <p class="product-title">Laptop Creator 15 A11UE Intel Core i7 16GB RAM, 512GB SSD</p>
+            <div style="font-size:11px;color:#888;">2 Reviews</div>
+            <div class="flex items-center gap-1 mt-1">
+              <span class="product-price">$789.99</span>
+            </div>
+            <span class="product-old-price">$999.00</span>
+            <div class="product-stars mt-1">★★★★☆</div>
+            <button class="add-to-cart-btn" onclick="addToCart('Smart Band Elite', 789.99)">Add to Cart</button>
+          </div>
+          <!-- Extra cards for sliding -->
+          <div class="trending-card product-card" style="min-width:calc(100%/6 - 14px);">
+            <div class="relative">
+              <span class="discount-badge">-25%</span>
+              <div style="text-align:center;padding:10px 0;font-size:72px;">🎧</div>
+            </div>
+            <p class="product-cat">Audio</p>
+            <p class="product-title">Wireless Headphones Pro Active Noise Cancelling</p>
+            <div style="font-size:11px;color:#888;">8 Reviews</div>
+            <div class="flex items-center gap-1 mt-1">
+              <span class="product-price">$149.99</span>
+            </div>
+            <span class="product-old-price">$199.00</span>
+            <div class="product-stars mt-1">★★★★★</div>
+            <button class="add-to-cart-btn" onclick="addToCart('Wireless Headphones Pro', 149.99)">Add to Cart</button>
+          </div>
+          <div class="trending-card product-card" style="min-width:calc(100%/6 - 14px);">
+            <div class="relative">
+              <span class="new-badge">New</span>
+              <div style="text-align:center;padding:10px 0;font-size:72px;">📷</div>
+            </div>
+            <p class="product-cat">Camera</p>
+            <p class="product-title">Digital Camera 4K Ultra HD with 32MP Sensor</p>
+            <div style="font-size:11px;color:#888;">3 Reviews</div>
+            <div class="flex items-center gap-1 mt-1">
+              <span class="product-price">$459.99</span>
+            </div>
+            <span class="product-old-price">$599.00</span>
+            <div class="product-stars mt-1">★★★★☆</div>
+            <button class="add-to-cart-btn" onclick="addToCart('Digital Camera 4K', 459.99)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <button class="nav-arrow" onclick="slideTrending(1)" style="position:absolute;right:-16px;top:50%;transform:translateY(-50%);z-index:10;"><i class="fas fa-chevron-right"></i></button>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED PRODUCTS + BANNER -->
+<section class="py-6" style="background:#f5f5f5;">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="grid grid-cols-12 gap-6">
+      <!-- Featured Products -->
+      <div class="col-span-9">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="section-title">Featured Products</h2>
+          <a href="#" class="view-all-link">View All Products ›</a>
+        </div>
+        <div class="grid grid-cols-3 gap-4">
+          <!-- Row 1 -->
+          <div class="product-card bg-white">
+            <div class="relative">
+              <span class="new-badge">New</span>
+              <div style="text-align:center;padding:10px 0;font-size:64px;">💻</div>
+            </div>
+            <p class="product-cat">Computer & Laptop</p>
+            <p class="product-title">Laptop Creator 13 A11UE Intel Core i7 16GB Core i7</p>
+            <div class="product-stars">★★★★☆</div>
+            <div class="flex items-center gap-1 mt-1">
+              <span class="product-price">$289.99</span>
+              <span class="product-old-price">$379.00</span>
+            </div>
+            <button class="add-to-cart-btn" onclick="addToCart('Laptop Creator 13', 289.99)"><i class="fas fa-cart-plus mr-1"></i>Add to Cart</button>
+          </div>
+          <div class="product-card bg-white">
+            <div class="relative">
+              <span class="discount-badge">-15%</span>
+              <div style="text-align:center;padding:10px 0;font-size:64px;">📱</div>
+            </div>
+            <p class="product-cat">Computer & Laptop</p>
+            <p class="product-title">Laptop Creator 13 A11UE Intel Core i7 16GB Core i7</p>
+            <div class="product-stars">★★★★☆</div>
+            <div class="flex items-center gap-1 mt-1">
+              <span class="product-price">$289.99</span>
+              <span class="product-old-price">$379.00</span>
+            </div>
+            <button class="add-to-cart-btn" onclick="addToCart('Smartphone 13', 289.99)"><i class="fas fa-cart-plus mr-1"></i>Add to Cart</button>
+          </div>
+          <div class="product-card bg-white">
+            <div class="relative">
+              <span class="new-badge">New</span>
+              <div style="text-align:center;padding:10px 0;font-size:64px;">⌚</div>
+            </div>
+            <p class="product-cat">Computer & Laptop</p>
+            <p class="product-title">Laptop Creator 13 A11UE Intel Core i7 16GB Core i7</p>
+            <div class="product-stars">★★★★☆</div>
+            <div class="flex items-center gap-1 mt-1">
+              <span class="product-price">$289.99</span>
+              <span class="product-old-price">$379.00</span>
+            </div>
+            <button class="add-to-cart-btn" onclick="addToCart('Smartwatch 13', 289.99)"><i class="fas fa-cart-plus mr-1"></i>Add to Cart</button>
+          </div>
+          <!-- Row 2 -->
+          <div class="product-card bg-white">
+            <div class="relative">
+              <span class="discount-badge">-20%</span>
+              <div style="text-align:center;padding:10px 0;font-size:64px;">🎮</div>
+            </div>
+            <p class="product-cat">Computer & Laptop</p>
+            <p class="product-title">Laptop Creator 13 A11UE Intel Core i7 16GB Core i7</p>
+            <div class="product-stars">★★★☆☆</div>
+            <div class="flex items-center gap-1 mt-1">
+              <span class="product-price">$789.99</span>
+              <span class="product-old-price">$999.00</span>
+            </div>
+            <button class="add-to-cart-btn" onclick="addToCart('Gaming Console', 789.99)"><i class="fas fa-cart-plus mr-1"></i>Add to Cart</button>
+          </div>
+          <div class="product-card bg-white">
+            <div class="relative">
+              <span class="new-badge">New</span>
+              <div style="text-align:center;padding:10px 0;font-size:64px;">🎧</div>
+            </div>
+            <p class="product-cat">Computer & Laptop</p>
+            <p class="product-title">Laptop Creator 13 A11UE Intel Core i7 16GB Core i7</p>
+            <div class="product-stars">★★★★☆</div>
+            <div class="flex items-center gap-1 mt-1">
+              <span class="product-price">$789.99</span>
+              <span class="product-old-price">$999.00</span>
+            </div>
+            <button class="add-to-cart-btn" onclick="addToCart('Headphones Max', 789.99)"><i class="fas fa-cart-plus mr-1"></i>Add to Cart</button>
+          </div>
+          <div class="product-card bg-white">
+            <div class="relative">
+              <span class="discount-badge">-10%</span>
+              <div style="text-align:center;padding:10px 0;font-size:64px;">📷</div>
+            </div>
+            <p class="product-cat">Computer & Laptop</p>
+            <p class="product-title">Laptop Creator 13 A11UE Intel Core i7 16GB Core i7</p>
+            <div class="product-stars">★★★★★</div>
+            <div class="flex items-center gap-1 mt-1">
+              <span class="product-price">$789.99</span>
+              <span class="product-old-price">$999.00</span>
+            </div>
+            <button class="add-to-cart-btn" onclick="addToCart('DSLR Camera Pro', 789.99)"><i class="fas fa-cart-plus mr-1"></i>Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <!-- Right Banner -->
+      <div class="col-span-3">
+        <div style="background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);border-radius:12px;padding:24px;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-height:420px;">
+          <p style="color:#64748b;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">TECHNOLOGY</p>
+          <div style="font-size:80px;margin:16px 0;">💻</div>
+          <h3 style="font-size:28px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px;">3 54</h3>
+          <p style="color:#94a3b8;font-size:13px;margin-bottom:16px;">Premium Tech at Your Fingertips</p>
+          <div style="font-size:36px;margin-bottom:16px;">🌿</div>
+          <button style="background:#2563eb;color:#fff;border:none;padding:10px 24px;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;" onclick="addToCart('Tech Bundle', 354.99)">Shop Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRENDING THIS WEEK #2 + VR BANNER -->
+<section class="py-6" style="background:#fff;">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="grid grid-cols-12 gap-6">
+      <!-- Trending products -->
+      <div class="col-span-9">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="section-title">Trending This Week</h2>
+          <a href="#" class="view-all-link">View All Products ›</a>
+        </div>
+        <div class="relative">
+          <button class="nav-arrow" onclick="slideTrending2(-1)" style="position:absolute;left:-16px;top:50%;transform:translateY(-50%);z-index:10;"><i class="fas fa-chevron-left"></i></button>
+          <div style="overflow:hidden;">
+            <div class="flex gap-4" id="trendingTrack2" style="transition:transform 0.4s ease;">
+              <div class="product-card bg-white" style="min-width:calc(100%/4 - 12px);flex-shrink:0;">
+                <div class="relative">
+                  <span class="discount-badge">-15%</span>
+                  <div style="text-align:center;padding:10px 0;font-size:72px;">💻</div>
+                </div>
+                <p class="product-cat">Computer & Laptop</p>
+                <p class="product-title">Laptop Creator 15 A11UE Intel Core i7 16GB RAM...</p>
+                <div class="product-stars">★★★★☆</div>
+                <div class="flex items-center gap-1 mt-1">
+                  <span class="product-price">$789.99</span>
+                  <span class="product-old-price">$999.00</span>
+                </div>
+                <button class="add-to-cart-btn" onclick="addToCart('Laptop Elite', 789.99)">Add to Cart</button>
+              </div>
+              <div class="product-card bg-white" style="min-width:calc(100%/4 - 12px);flex-shrink:0;">
+                <div class="relative">
+                  <span class="new-badge">New</span>
+                  <div style="text-align:center;padding:10px 0;font-size:72px;">📱</div>
+                </div>
+                <p class="product-cat">Computer & Laptop</p>
+                <p class="product-title">Laptop Creator 15 A11UE Intel Core i7 16GB RAM...</p>
+                <div class="product-stars">★★★★★</div>
+                <div class="flex items-center gap-1 mt-1">
+                  <span class="product-price">$789.99</span>
+                  <span class="product-old-price">$999.00</span>
+                </div>
+                <button class="add-to-cart-btn" onclick="addToCart('Phone Ultra', 789.99)">Add to Cart</button>
+              </div>
+              <div class="product-card bg-white" style="min-width:calc(100%/4 - 12px);flex-shrink:0;">
+                <div class="relative">
+                  <span class="discount-badge">-20%</span>
+                  <div style="text-align:center;padding:10px 0;font-size:72px;">🎮</div>
+                </div>
+                <p class="product-cat">Computer & Laptop</p>
+                <p class="product-title">Laptop Creator 15 A11UE Intel Core i7 16GB RAM...</p>
+                <div class="product-stars">★★★★☆</div>
+                <div class="flex items-center gap-1 mt-1">
+                  <span class="product-price">$789.99</span>
+                  <span class="product-old-price">$999.00</span>
+                </div>
+                <button class="add-to-cart-btn" onclick="addToCart('Gaming Pro', 789.99)">Add to Cart</button>
+              </div>
+              <div class="product-card bg-white" style="min-width:calc(100%/4 - 12px);flex-shrink:0;">
+                <div class="relative">
+                  <span class="discount-badge">-12%</span>
+                  <div style="text-align:center;padding:10px 0;font-size:72px;">📺</div>
+                </div>
+                <p class="product-cat">Computer & Laptop</p>
+                <p class="product-title">Laptop Creator 15 A11UE Intel Core i7 16GB RAM...</p>
+                <div class="product-stars">★★★★☆</div>
+                <div class="flex items-center gap-1 mt-1">
+                  <span class="product-price">$789.99</span>
+                  <span class="product-old-price">$999.00</span>
+                </div>
+                <button class="add-to-cart-btn" onclick="addToCart('Smart TV 4K', 789.99)">Add to Cart</button>
+              </div>
+              <!-- More cards -->
+              <div class="product-card bg-white" style="min-width:calc(100%/4 - 12px);flex-shrink:0;">
+                <div class="relative">
+                  <span class="new-badge">New</span>
+                  <div style="text-align:center;padding:10px 0;font-size:72px;">🎧</div>
+                </div>
+                <p class="product-cat">Audio</p>
+                <p class="product-title">Wireless Headphones Pro Active Noise Cancelling</p>
+                <div class="product-stars">★★★★★</div>
+                <div class="flex items-center gap-1 mt-1">
+                  <span class="product-price">$149.99</span>
+                  <span class="product-old-price">$199.00</span>
+                </div>
+                <button class="add-to-cart-btn" onclick="addToCart('Headphones NC Pro', 149.99)">Add to Cart</button>
+              </div>
+            </div>
+          </div>
+          <button class="nav-arrow" onclick="slideTrending2(1)" style="position:absolute;right:-16px;top:50%;transform:translateY(-50%);z-index:10;"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+      <!-- VR Banner -->
+      <div class="col-span-3">
+        <div style="background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);border-radius:12px;padding:24px;height:100%;display:flex;flex-direction:column;justify-content:flex-start;min-height:300px;color:#fff;">
+          <p style="font-size:11px;color:#64748b;font-weight:700;letter-spacing:2px;text-transform:uppercase;">BEST SELLER 2025</p>
+          <h3 style="font-size:26px;font-weight:900;margin:10px 0;line-height:1.2;">Best VR<br/>Goggles</h3>
+          <p style="font-size:13px;color:#94a3b8;margin-bottom:16px;">Perfect to enjoy VR games.</p>
+          <div style="font-size:70px;margin:10px 0;text-align:center;">🥽</div>
+          <button style="background:#2563eb;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;margin-top:auto;" onclick="addToCart('VR Goggles Pro', 299.99)">Shop Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section style="background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);padding:48px 0;">
+  <div class="max-w-7xl mx-auto px-4 text-center">
+    <h2 style="font-size:28px;font-weight:800;color:#fff;margin-bottom:8px;">Subscribe to Our Newsletter</h2>
+    <p style="font-size:14px;color:#bfdbfe;margin-bottom:24px;">Get the latest deals and offers directly in your inbox</p>
+    <div style="display:flex;max-width:480px;margin:0 auto;gap:0;border-radius:8px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.2);">
+      <input type="email" placeholder="Enter your email address..." style="flex:1;padding:14px 20px;border:none;outline:none;font-size:14px;" id="newsletterEmail"/>
+      <button style="background:#f97316;color:#fff;border:none;padding:14px 24px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;" onclick="subscribeNewsletter()">Subscribe</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="pt-12 pb-4">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="grid grid-cols-5 gap-8 pb-10" style="border-bottom:1px solid #334155;">
+      <!-- Brand -->
+      <div class="col-span-1">
+        <div style="font-size:24px;font-weight:800;margin-bottom:12px;">
+          <span style="color:#2563eb;">⚡digi</span><span style="color:#f97316;">taz</span>
+        </div>
+        <p style="font-size:13px;color:#94a3b8;line-height:1.7;">Your one-stop shop for all electronics and gadgets at the best prices.</p>
+        <div class="flex gap-3 mt-4">
+          <a href="#" style="color:#2563eb;font-size:18px;"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" style="color:#1da1f2;font-size:18px;"><i class="fab fa-twitter"></i></a>
+          <a href="#" style="color:#e1306c;font-size:18px;"><i class="fab fa-instagram"></i></a>
+          <a href="#" style="color:#ff0000;font-size:18px;"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+      <!-- Quick Links -->
+      <div>
+        <h4>Quick Links</h4>
+        <a href="#">Home</a>
+        <a href="#">About Us</a>
+        <a href="#">Shop</a>
+        <a href="#">Contact</a>
+        <a href="#">Blog</a>
+      </div>
+      <!-- Customer Service -->
+      <div>
+        <h4>Customer Service</h4>
+        <a href="#">Order Tracking</a>
+        <a href="#">Returns & Refunds</a>
+        <a href="#">FAQ</a>
+        <a href="#">Shipping Policy</a>
+        <a href="#">Privacy Policy</a>
+      </div>
+      <!-- Categories -->
+      <div>
+        <h4>Categories</h4>
+        <a href="#">Laptops & Computers</a>
+        <a href="#">Smartphones</a>
+        <a href="#">Headphones</a>
+        <a href="#">Cameras</a>
+        <a href="#">Gaming</a>
+        <a href="#">Smart Watches</a>
+      </div>
+      <!-- Contact -->
+      <div>
+        <h4>Contact Us</h4>
+        <p style="font-size:13px;color:#94a3b8;margin-bottom:8px;"><i class="fas fa-phone-alt mr-2" style="color:#2563eb;"></i> 1-800-888-9999</p>
+        <p style="font-size:13px;color:#94a3b8;margin-bottom:8px;"><i class="fas fa-envelope mr-2" style="color:#2563eb;"></i> support@digitaz.com</p>
+        <p style="font-size:13px;color:#94a3b8;margin-bottom:8px;"><i class="fas fa-map-marker-alt mr-2" style="color:#2563eb;"></i> 123 Digital Ave, Tech City</p>
+        <div style="margin-top:12px;">
+          <p style="font-size:12px;color:#64748b;margin-bottom:6px;">We Accept:</p>
+          <div class="flex gap-2">
+            <span style="background:#1a1f71;color:#fff;padding:4px 8px;border-radius:4px;font-size:12px;font-weight:700;">VISA</span>
+            <span style="background:#eb001b;color:#fff;padding:4px 8px;border-radius:4px;font-size:12px;font-weight:700;">MC</span>
+            <span style="background:#003087;color:#fff;padding:4px 8px;border-radius:4px;font-size:12px;font-weight:700;">PP</span>
+            <span style="background:#2557d6;color:#fff;padding:4px 8px;border-radius:4px;font-size:12px;font-weight:700;">Stripe</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom py-4 text-center" style="margin-top:8px;">
+      <p>© 2025 Digitaz. All rights reserved. Designed with ❤️ for electronics lovers.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- CART MODAL -->
+<div id="cartModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;overflow-y:auto;">
+  <div style="background:#fff;max-width:480px;margin:60px auto;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+    <div style="background:#2563eb;color:#fff;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;">
+      <h3 style="font-size:18px;font-weight:700;"><i class="fas fa-shopping-cart mr-2"></i>Shopping Cart</h3>
+      <button onclick="closeCart()" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer;">✕</button>
+    </div>
+    <div id="cartItems" style="padding:16px;max-height:400px;overflow-y:auto;"></div>
+    <div style="padding:16px 24px;border-top:1px solid #eee;">
+      <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;margin-bottom:16px;">
+        <span>Total:</span><span style="color:#2563eb;" id="cartModalTotal">$0.00</span>
+      </div>
+      <button style="background:#2563eb;color:#fff;border:none;padding:12px;width:100%;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:8px;" onclick="checkout()">
+        <i class="fas fa-lock mr-2"></i>Checkout
+      </button>
+      <button style="background:#f1f5f9;color:#555;border:none;padding:10px;width:100%;border-radius:8px;font-size:14px;cursor:pointer;" onclick="clearCart()">Clear Cart</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ===== SLIDER =====
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.querySelectorAll('.slider-dot');
+
+  function goSlide(n) {
+    slides[currentSlide].classList.remove('active');
+    dots[currentSlide].classList.remove('active');
+    currentSlide = n;
+    slides[currentSlide].classList.add('active');
+    dots[currentSlide].classList.add('active');
+  }
+  function nextSlide() { goSlide((currentSlide + 1) % slides.length); }
+  function prevSlide() { goSlide((currentSlide - 1 + slides.length) % slides.length); }
+  setInterval(nextSlide, 4500);
+
+  // ===== COUNTDOWN TIMER =====
+  let totalSeconds = 8 * 3600 + 13 * 60 + 55;
+  function updateCountdown() {
+    if (totalSeconds <= 0) totalSeconds = 24 * 3600;
+    totalSeconds--;
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    document.getElementById('cdHours').textContent = String(h).padStart(2,'0');
+    document.getElementById('cdMins').textContent = String(m).padStart(2,'0');
+    document.getElementById('cdSecs').textContent = String(s).padStart(2,'0');
+  }
+  setInterval(updateCountdown, 1000);
+
+  // ===== CART =====
+  let cart = [];
+  function addToCart(name, price) {
+    const existing = cart.find(i => i.name === name);
+    if (existing) {
+      existing.qty++;
+    } else {
+      cart.push({ name, price, qty: 1 });
+    }
+    updateCartUI();
+    showNotification();
+  }
+  function updateCartUI() {
+    const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    const count = cart.reduce((s, i) => s + i.qty, 0);
+    document.getElementById('cartCount').textContent = count;
+    document.getElementById('cartTotal').textContent = '$' + total.toFixed(2);
+    document.getElementById('cartModalTotal').textContent = '$' + total.toFixed(2);
+    renderCartItems();
+  }
+  function renderCartItems() {
+    const el = document.getElementById('cartItems');
+    if (cart.length === 0) {
+      el.innerHTML = '<div style="text-align:center;padding:40px;color:#888;"><i class="fas fa-shopping-cart" style="font-size:48px;margin-bottom:12px;opacity:0.3;"></i><p>Your cart is empty</p></div>';
+      return;
+    }
+    el.innerHTML = cart.map((item, idx) => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 8px;border-bottom:1px solid #f1f5f9;">
+        <div style="flex:1;">
+          <p style="font-size:14px;font-weight:600;color:#1e293b;">${item.name}</p>
+          <p style="font-size:13px;color:#2563eb;font-weight:600;">$${item.price.toFixed(2)}</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button onclick="changeQty(${idx},-1)" style="background:#f1f5f9;border:none;width:26px;height:26px;border-radius:4px;cursor:pointer;font-size:14px;">−</button>
+          <span style="font-size:14px;font-weight:600;min-width:20px;text-align:center;">${item.qty}</span>
+          <button onclick="changeQty(${idx},1)" style="background:#2563eb;color:#fff;border:none;width:26px;height:26px;border-radius:4px;cursor:pointer;font-size:14px;">+</button>
+        </div>
+        <button onclick="removeItem(${idx})" style="background:none;border:none;color:#ef4444;cursor:pointer;margin-left:8px;font-size:16px;">✕</button>
+      </div>
+    `).join('');
+  }
+  function changeQty(idx, delta) {
+    cart[idx].qty += delta;
+    if (cart[idx].qty <= 0) cart.splice(idx, 1);
+    updateCartUI();
+  }
+  function removeItem(idx) {
+    cart.splice(idx, 1);
+    updateCartUI();
+  }
+  function clearCart() {
+    cart = [];
+    updateCartUI();
+  }
+  function openCart() {
+    renderCartItems();
+    document.getElementById('cartModal').style.display = 'block';
+  }
+  function closeCart() {
+    document.getElementById('cartModal').style.display = 'none';
+  }
+  function checkout() {
+    if (cart.length === 0) { alert('Your cart is empty!'); return; }
+    alert('Thank you for your purchase! Order total: ' + document.getElementById('cartModalTotal').textContent);
+    clearCart();
+    closeCart();
+  }
+  document.getElementById('cartModal').addEventListener('click', function(e) {
+    if (e.target === this) closeCart();
+  });
+
+  // ===== NOTIFICATION =====
+  function showNotification() {
+    const n = document.getElementById('cartNotif');
+    n.style.display = 'block';
+    setTimeout(() => { n.style.display = 'none'; }, 2000);
+  }
+
+  // ===== TRENDING SLIDER =====
+  let trendingIndex = 0;
+  const trendingCardWidth = 100/6;
+  function slideTrending(dir) {
+    const track = document.getElementById('trendingTrack');
+    const cards = track.children.length;
+    const visible = 6;
+    const maxIndex = cards - visible;
+    trendingIndex = Math.max(0, Math.min(trendingIndex + dir, maxIndex));
+    const cardEl = track.children[0];
+    const cardW = cardEl.offsetWidth + 16;
+    track.style.transform = `translateX(-${trendingIndex * cardW}px)`;
+  }
+
+  // ===== TRENDING SLIDER 2 =====
+  let trendingIndex2 = 0;
+  function slideTrending2(dir) {
+    const track = document.getElementById('trendingTrack2');
+    const cards = track.children.length;
+    const visible = 4;
+    const maxIndex = cards - visible;
+    trendingIndex2 = Math.max(0, Math.min(trendingIndex2 + dir, maxIndex));
+    const cardEl = track.children[0];
+    const cardW = cardEl.offsetWidth + 16;
+    track.style.transform = `translateX(-${trendingIndex2 * cardW}px)`;
+  }
+
+  // ===== DEPT MENU =====
+  let deptOpen = false;
+  function toggleDeptMenu() {
+    deptOpen = !deptOpen;
+    let menu = document.getElementById('deptMenu');
+    if (!menu) {
+      menu = document.createElement('div');
+      menu.id = 'deptMenu';
+      menu.style.cssText = 'position:absolute;top:100%;left:0;background:#fff;border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,0.15);padding:8px 0;z-index:999;min-width:200px;';
+      const depts = ['Laptops & Computers','Smartphones','Headphones & Audio','Digital Cameras','Smart Watches','Televisions','Gaming','Home Appliances','Tablets','Networking'];
+      depts.forEach(d => {
+        const item = document.createElement('div');
+        item.textContent = d;
+        item.style.cssText = 'padding:9px 20px;font-size:13px;cursor:pointer;color:#333;';
+        item.onmouseover = () => item.style.background = '#eff6ff';
+        item.onmouseout = () => item.style.background = 'transparent';
+        item.onclick = () => { document.getElementById('searchInput').value = d; toggleDeptMenu(); };
+        menu.appendChild(item);
+      });
+      document.querySelector('.dept-btn').style.position = 'relative';
+      document.querySelector('.dept-btn').parentElement.style.position = 'relative';
+      document.querySelector('.dept-btn').after(menu);
+    }
+    menu.style.display = deptOpen ? 'block' : 'none';
+  }
+
+  // ===== SEARCH =====
+  function doSearch() {
+    const q = document.getElementById('searchInput').value.trim();
+    if (q) alert('Searching for: ' + q);
+  }
+  function handleSearch(e) {
+    if (e.key === 'Enter') doSearch();
+  }
+
+  // ===== NEWSLETTER =====
+  function subscribeNewsletter() {
+    const email = document.getElementById('newsletterEmail').value.trim();
+    if (!email || !email.includes('@')) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+    alert('Thank you for subscribing! Check your inbox for exclusive deals.');
+    document.getElementById('newsletterEmail').value = '';
+  }
+
+  // ===== CATEGORY FILTER =====
+  function filterCategory(cat) {
+    document.getElementById('searchInput').value = cat;
+    alert('Browsing category: ' + cat);
+  }
+
+  // ===== SCROLL CATS =====
+  function scrollCats(dir) {
+    const grid = document.getElementById('catsGrid');
+    grid.scrollBy({ left: dir * 200, behavior: 'smooth' });
+  }
+
+  // Initialize cart display
+  updateCartUI();
+</script>
+</body>
+</html>

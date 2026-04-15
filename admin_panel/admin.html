@@ -1,4 +1,4 @@
-<!-- admin_panel/index.html -->
+<!-- admin_panel/admin.html -->
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -1924,24 +1924,45 @@ window.navTo = function(section) {
 // SITE SETTINGS
 // ────────────────────────────────────────────
 async function loadSiteSettings() {
+  // Default values from index.html
+  const defaults = {
+    title: 'ইবনে খালদুন ইনস্টিটিউট – অনলাইনে নতুন দক্ষতা অর্জন করুন',
+    tagline: 'অনলাইনে নতুন দক্ষতা অর্জন করুন',
+    headerHeight: '70',
+    primaryColor: '#F5C518',
+    greenColor: '#066144',
+    primaryDarkColor: '#d4a90e',
+    logoHeader: '',
+    logoFooter: '',
+  };
   try {
     const data = await api('GET', '/api/admin/site-settings');
-    if (data) {
-      document.getElementById('ss-title').value = data.title || '';
-      document.getElementById('ss-tagline').value = data.tagline || '';
-      document.getElementById('ss-favicon').value = data.favicon || '';
-      document.getElementById('ss-header-h').value = data.headerHeight || '70';
-      document.getElementById('ss-primary-hex').value = data.primaryColor || '#F5C518';
-      document.getElementById('ss-primary-color').value = data.primaryColor || '#F5C518';
-      document.getElementById('ss-green-hex').value = data.greenColor || '#066144';
-      document.getElementById('ss-green-color').value = data.greenColor || '#066144';
-      document.getElementById('ss-primarydark-hex').value = data.primaryDarkColor || '#d4a90e';
-      document.getElementById('ss-primarydark-color').value = data.primaryDarkColor || '#d4a90e';
-      document.getElementById('ss-logo-header').value = data.logoHeader || '';
-      document.getElementById('ss-logo-footer').value = data.logoFooter || '';
-      updateLogoPreview();
-    }
-  } catch(e) { /* new setup, empty */ }
+    const d = (data && Object.keys(data).length) ? data : defaults;
+    document.getElementById('ss-title').value = d.title || defaults.title;
+    document.getElementById('ss-tagline').value = d.tagline || defaults.tagline;
+    document.getElementById('ss-favicon').value = d.favicon || '';
+    document.getElementById('ss-header-h').value = d.headerHeight || defaults.headerHeight;
+    document.getElementById('ss-primary-hex').value = d.primaryColor || defaults.primaryColor;
+    document.getElementById('ss-primary-color').value = d.primaryColor || defaults.primaryColor;
+    document.getElementById('ss-green-hex').value = d.greenColor || defaults.greenColor;
+    document.getElementById('ss-green-color').value = d.greenColor || defaults.greenColor;
+    document.getElementById('ss-primarydark-hex').value = d.primaryDarkColor || defaults.primaryDarkColor;
+    document.getElementById('ss-primarydark-color').value = d.primaryDarkColor || defaults.primaryDarkColor;
+    document.getElementById('ss-logo-header').value = d.logoHeader || '';
+    document.getElementById('ss-logo-footer').value = d.logoFooter || '';
+    updateLogoPreview();
+  } catch(e) {
+    // Fill defaults on error
+    document.getElementById('ss-title').value = defaults.title;
+    document.getElementById('ss-tagline').value = defaults.tagline;
+    document.getElementById('ss-header-h').value = defaults.headerHeight;
+    document.getElementById('ss-primary-hex').value = defaults.primaryColor;
+    document.getElementById('ss-primary-color').value = defaults.primaryColor;
+    document.getElementById('ss-green-hex').value = defaults.greenColor;
+    document.getElementById('ss-green-color').value = defaults.greenColor;
+    document.getElementById('ss-primarydark-hex').value = defaults.primaryDarkColor;
+    document.getElementById('ss-primarydark-color').value = defaults.primaryDarkColor;
+  }
 }
 
 function updateLogoPreview() {
@@ -2025,16 +2046,29 @@ let navLinksData = [
 ];
 
 async function loadNavigation() {
+  const defaultLinks = [
+    {name:'হোম', link:'#home'},
+    {name:'কোর্স', link:'#courses'},
+    {name:'ইন্সট্রাক্টর', link:'#instructors'},
+    {name:'ব্লগ', link:'#blog'},
+    {name:'যোগাযোগ', link:'#contact'},
+  ];
   try {
     const data = await api('GET', '/api/admin/navigation');
-    if (data) {
-      navLinksData = data.links || navLinksData;
+    if (data && data.links && data.links.length) {
+      navLinksData = data.links;
       document.getElementById('nav-login-text').value = data.loginText || 'লগইন';
       document.getElementById('nav-login-link').value = data.loginLink || '#login';
       document.getElementById('nav-reg-text').value = data.regText || 'রেজিস্ট্রেশন';
       document.getElementById('nav-reg-link').value = data.regLink || '#register';
+    } else {
+      navLinksData = defaultLinks;
+      document.getElementById('nav-login-text').value = 'লগইন';
+      document.getElementById('nav-reg-text').value = 'রেজিস্ট্রেশন';
     }
-  } catch(e) {}
+  } catch(e) {
+    navLinksData = defaultLinks;
+  }
   renderNavLinks();
 }
 
@@ -2089,28 +2123,57 @@ let heroCardsData = [
 ];
 
 async function loadHeroSection() {
+  const defaults = {
+    bgImage: '/frontend/images/nobobi.png',
+    eyebrow: 'অনলাইন শিক্ষার নতুন অভিজ্ঞতা',
+    h1Line1: 'ইসলামী জ্ঞান',
+    h1Line2: 'অনলাইনে শিখুন',
+    h1Line3: 'যেকোনো জায়গা থেকে',
+    subtitle: 'বিশেষজ্ঞ ইন্সট্রাক্টরদের কাছ থেকে কুরআন, আরবি ও ইসলামী বিষয়ে জ্ঞান অর্জন করুন।',
+    btnText: 'আরও জানুন',
+    btnLink: '#courses',
+    stats: [
+      {num:'৫০K+', label:'শিক্ষার্থী'},
+      {num:'১২০+', label:'কোর্স'},
+      {num:'৪.৯★', label:'রেটিং'},
+    ],
+  };
   try {
     const data = await api('GET', '/api/admin/hero-section');
-    if (data) {
-      document.getElementById('hero-bg').value = data.bgImage || '/frontend/images/nobobi.png';
-      document.getElementById('hero-eyebrow').value = data.eyebrow || '';
-      document.getElementById('hero-h1-1').value = data.h1Line1 || '';
-      document.getElementById('hero-h1-2').value = data.h1Line2 || '';
-      document.getElementById('hero-h1-3').value = data.h1Line3 || '';
-      document.getElementById('hero-sub').value = data.subtitle || '';
-      document.getElementById('hero-btn-text').value = data.btnText || 'আরও জানুন';
-      document.getElementById('hero-btn-link').value = data.btnLink || '#courses';
-      // Stats
-      const statRows = document.querySelectorAll('.hero-stat-row');
-      (data.stats || []).forEach((s, i) => {
-        if (statRows[i]) {
-          statRows[i].querySelector('.hero-stat-num').value = s.num || '';
-          statRows[i].querySelector('.hero-stat-label').value = s.label || '';
-        }
-      });
-      heroCardsData = data.cards || heroCardsData;
-    }
-  } catch(e) {}
+    const d = (data && Object.keys(data).length) ? data : defaults;
+    document.getElementById('hero-bg').value = d.bgImage || defaults.bgImage;
+    document.getElementById('hero-eyebrow').value = d.eyebrow || defaults.eyebrow;
+    document.getElementById('hero-h1-1').value = d.h1Line1 || defaults.h1Line1;
+    document.getElementById('hero-h1-2').value = d.h1Line2 || defaults.h1Line2;
+    document.getElementById('hero-h1-3').value = d.h1Line3 || defaults.h1Line3;
+    document.getElementById('hero-sub').value = d.subtitle || defaults.subtitle;
+    document.getElementById('hero-btn-text').value = d.btnText || defaults.btnText;
+    document.getElementById('hero-btn-link').value = d.btnLink || defaults.btnLink;
+    const statRows = document.querySelectorAll('.hero-stat-row');
+    ((d.stats && d.stats.length) ? d.stats : defaults.stats).forEach((s, i) => {
+      if (statRows[i]) {
+        statRows[i].querySelector('.hero-stat-num').value = s.num || '';
+        statRows[i].querySelector('.hero-stat-label').value = s.label || '';
+      }
+    });
+    heroCardsData = d.cards || heroCardsData;
+  } catch(e) {
+    document.getElementById('hero-bg').value = defaults.bgImage;
+    document.getElementById('hero-eyebrow').value = defaults.eyebrow;
+    document.getElementById('hero-h1-1').value = defaults.h1Line1;
+    document.getElementById('hero-h1-2').value = defaults.h1Line2;
+    document.getElementById('hero-h1-3').value = defaults.h1Line3;
+    document.getElementById('hero-sub').value = defaults.subtitle;
+    document.getElementById('hero-btn-text').value = defaults.btnText;
+    document.getElementById('hero-btn-link').value = defaults.btnLink;
+    const statRows = document.querySelectorAll('.hero-stat-row');
+    defaults.stats.forEach((s, i) => {
+      if (statRows[i]) {
+        statRows[i].querySelector('.hero-stat-num').value = s.num || '';
+        statRows[i].querySelector('.hero-stat-label').value = s.label || '';
+      }
+    });
+  }
   renderHeroCards();
 }
 
@@ -2160,19 +2223,30 @@ async function saveHeroSection() {
 let featuredCoursesData = [];
 
 async function loadFeaturedCourses() {
+  const defaults = {
+    sectionTitle: 'ফিচার্ড কোর্সসমূহ',
+    sectionSub: 'বিশেষজ্ঞদের দ্বারা পরিচালিত সেরা কোর্সগুলো বেছে নিন',
+    tabTop: 'সেরা বিক্রেতা', tabNew: 'নতুন কোর্সসমূহ',
+    tabFree: 'ফ্রি কোর্সসমূহ', tabPopular: 'জনপ্রিয়', tabBundle: 'বান্ডেল',
+  };
   try {
-    const data = await api('GET', '/api/admin/featured-courses');
-    if (data) {
-      document.getElementById('fc-section-title').value = data.sectionTitle || 'ফিচার্ড কোর্সসমূহ';
-      document.getElementById('fc-section-sub').value = data.sectionSub || '';
-      document.getElementById('fc-tab-top').value = data.tabTop || 'সেরা বিক্রেতা';
-      document.getElementById('fc-tab-new').value = data.tabNew || 'নতুন কোর্সসমূহ';
-      document.getElementById('fc-tab-free').value = data.tabFree || 'ফ্রি কোর্সসমূহ';
-      document.getElementById('fc-tab-popular').value = data.tabPopular || 'জনপ্রিয়';
-      document.getElementById('fc-tab-bundle').value = data.tabBundle || 'বান্ডেল';
-      featuredCoursesData = data.cards || [];
-    }
-  } catch(e) {}
+    const data = await api('GET', '/api/admin/featured-courses-config');
+    const d = (data && Object.keys(data).length) ? data : defaults;
+    document.getElementById('fc-section-title').value = d.sectionTitle || defaults.sectionTitle;
+    document.getElementById('fc-section-sub').value = d.sectionSub || defaults.sectionSub;
+    document.getElementById('fc-tab-top').value = d.tabTop || defaults.tabTop;
+    document.getElementById('fc-tab-new').value = d.tabNew || defaults.tabNew;
+    document.getElementById('fc-tab-free').value = d.tabFree || defaults.tabFree;
+    document.getElementById('fc-tab-popular').value = d.tabPopular || defaults.tabPopular;
+    document.getElementById('fc-tab-bundle').value = d.tabBundle || defaults.tabBundle;
+    featuredCoursesData = d.cards || [];
+  } catch(e) {
+    Object.entries(defaults).forEach(([k, v]) => {
+      const el = document.getElementById('fc-' + k.replace(/([A-Z])/g, '-$1').toLowerCase().replace('tab-','tab-'));
+      if (el) el.value = v;
+    });
+    featuredCoursesData = [];
+  }
   renderFeaturedCoursesTable();
 }
 
@@ -2255,7 +2329,7 @@ async function saveFeaturedCoursesConfig() {
     cards: featuredCoursesData,
   };
   try {
-    await api('POST', '/api/admin/featured-courses', body);
+    await api('POST', '/api/admin/featured-courses-config', body);
     toast('✅ ফিচার্ড কোর্স সেটিংস সংরক্ষিত হয়েছে');
   } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
 }
@@ -2376,18 +2450,33 @@ async function saveCourseDetail() {
 // CTA SECTION
 // ────────────────────────────────────────────
 async function loadCtaSection() {
+  const defaults = {
+    title1: 'আপনার',
+    title2: 'শেখার যাত্রা শুরু করতে প্রস্তুত?',
+    subtext: '৫০,০০০+ শিক্ষার্থীর সাথে যোগ দিন যারা ইতিমধ্যে গুরুত্বপূর্ণ দক্ষতা তৈরি করছেন। প্রথম কোর্সে ৩০% ছাড়!',
+    btnText: 'কোর্স দেখুন — আজই শুরু করুন',
+    btnLink: '#courses',
+    bgColor: '#111111',
+  };
   try {
     const data = await api('GET', '/api/admin/cta-section');
-    if (data) {
-      document.getElementById('cta-title1').value = data.title1 || '';
-      document.getElementById('cta-title2').value = data.title2 || '';
-      document.getElementById('cta-subtext').value = data.subtext || '';
-      document.getElementById('cta-btn-text').value = data.btnText || 'এখনই শুরু করুন';
-      document.getElementById('cta-btn-link').value = data.btnLink || '#courses';
-      document.getElementById('cta-bg-hex').value = data.bgColor || '#066144';
-      document.getElementById('cta-bg-color').value = data.bgColor || '#066144';
-    }
-  } catch(e) {}
+    const d = (data && Object.keys(data).length) ? data : defaults;
+    document.getElementById('cta-title1').value = d.title1 || defaults.title1;
+    document.getElementById('cta-title2').value = d.title2 || defaults.title2;
+    document.getElementById('cta-subtext').value = d.subtext || defaults.subtext;
+    document.getElementById('cta-btn-text').value = d.btnText || defaults.btnText;
+    document.getElementById('cta-btn-link').value = d.btnLink || defaults.btnLink;
+    document.getElementById('cta-bg-hex').value = d.bgColor || defaults.bgColor;
+    document.getElementById('cta-bg-color').value = d.bgColor || defaults.bgColor;
+  } catch(e) {
+    document.getElementById('cta-title1').value = defaults.title1;
+    document.getElementById('cta-title2').value = defaults.title2;
+    document.getElementById('cta-subtext').value = defaults.subtext;
+    document.getElementById('cta-btn-text').value = defaults.btnText;
+    document.getElementById('cta-btn-link').value = defaults.btnLink;
+    document.getElementById('cta-bg-hex').value = defaults.bgColor;
+    document.getElementById('cta-bg-color').value = defaults.bgColor;
+  }
 }
 
 async function saveCtaSection() {
@@ -2414,9 +2503,9 @@ async function loadWelcomePopup() {
     if (data) {
       document.getElementById('popup-enabled').checked = data.enabled !== false;
       document.getElementById('popup-title').value = data.title || '';
-      document.getElementById('popup-subtext').value = data.subtext || '';
-      document.getElementById('popup-btn1-text').value = data.btn1Text || '';
-      document.getElementById('popup-btn1-link').value = data.btn1Link || '';
+      document.getElementById('popup-subtext').value = data.subtext || data.subtitle || '';
+      document.getElementById('popup-btn1-text').value = data.btn1Text || data.btnText || '';
+      document.getElementById('popup-btn1-link').value = data.btn1Link || data.btnLink || '';
       document.getElementById('popup-btn2-text').value = data.btn2Text || '';
       document.getElementById('popup-course-name').value = data.courseName || '';
       document.getElementById('popup-course-img').value = data.courseImg || '';
@@ -2434,7 +2523,10 @@ async function saveWelcomePopup() {
   const body = {
     enabled: document.getElementById('popup-enabled').checked,
     title: document.getElementById('popup-title').value,
+    subtitle: document.getElementById('popup-subtext').value,
     subtext: document.getElementById('popup-subtext').value,
+    btnText: document.getElementById('popup-btn1-text').value,
+    btnLink: document.getElementById('popup-btn1-link').value,
     btn1Text: document.getElementById('popup-btn1-text').value,
     btn1Link: document.getElementById('popup-btn1-link').value,
     btn2Text: document.getElementById('popup-btn2-text').value,
@@ -2446,6 +2538,7 @@ async function saveWelcomePopup() {
     statStudents: document.getElementById('popup-stat-students').value,
     statCourses: document.getElementById('popup-stat-courses').value,
     statRating: document.getElementById('popup-stat-rating').value,
+    delay: 1200,
   };
   try {
     await api('POST', '/api/admin/welcome-popup', body);
@@ -2460,25 +2553,46 @@ let footerLinksData = [{name:'হোম',link:'#home'},{name:'কোর্স',l
 let footerCategoriesData = [{name:'কুরআন',link:'#quran'},{name:'আরবি',link:'#arabic'},{name:'ফিকহ',link:'#fiqh'}];
 
 async function loadFooter() {
+  const defaults = {
+    tagline: 'ইবনে খালদুন ইনস্টিটিউট',
+    desc: 'বিশ্বব্যাপী শিক্ষার্থীদের বিশেষজ্ঞ-নেতৃত্বাধীন কোর্স, ব্যবহারিক দক্ষতা এবং একটি সহায়ক কমিউনিটির মাধ্যমে ক্ষমতায়িত করা।',
+    copyright: '© ২০২৫ ইবনে খালদুন ইনস্টিটিউট। সর্বস্বত্ব সংরক্ষিত।',
+    address: 'মিরপুর-১, ঢাকা-১২১৬, বাংলাদেশ',
+    email: 'info@ibnkhaldun.edu.bd',
+    phone: '+880 1700-000000',
+    facebook: 'https://facebook.com',
+    youtube: 'https://youtube.com',
+    instagram: 'https://instagram.com',
+    twitter: 'https://twitter.com',
+  };
   try {
     const data = await api('GET', '/api/admin/footer');
-    if (data) {
-      document.getElementById('footer-tagline').value = data.tagline || '';
-      document.getElementById('footer-desc').value = data.desc || '';
-      document.getElementById('footer-copyright').value = data.copyright || '';
-      document.getElementById('footer-facebook').value = data.facebook || '';
-      document.getElementById('footer-youtube').value = data.youtube || '';
-      document.getElementById('footer-instagram').value = data.instagram || '';
-      document.getElementById('footer-twitter').value = data.twitter || '';
-      document.getElementById('footer-address').value = data.address || '';
-      document.getElementById('footer-email').value = data.email || '';
-      document.getElementById('footer-phone').value = data.phone || '';
-      document.getElementById('footer-payment-img').value = data.paymentImg || '';
-      if (data.paymentImg) { const p = document.getElementById('footer-payment-preview'); p.src = data.paymentImg; p.style.display='block'; }
-      footerLinksData = data.links || footerLinksData;
-      footerCategoriesData = data.categories || footerCategoriesData;
+    const d = (data && Object.keys(data).length) ? data : defaults;
+    document.getElementById('footer-tagline').value = d.tagline || defaults.tagline;
+    document.getElementById('footer-desc').value = d.desc || defaults.desc;
+    document.getElementById('footer-copyright').value = d.copyright || defaults.copyright;
+    document.getElementById('footer-facebook').value = d.facebook || defaults.facebook;
+    document.getElementById('footer-youtube').value = d.youtube || defaults.youtube;
+    document.getElementById('footer-instagram').value = d.instagram || defaults.instagram;
+    document.getElementById('footer-twitter').value = d.twitter || defaults.twitter;
+    document.getElementById('footer-address').value = d.address || defaults.address;
+    document.getElementById('footer-email').value = d.email || defaults.email;
+    document.getElementById('footer-phone').value = d.phone || defaults.phone;
+    document.getElementById('footer-payment-img').value = d.paymentImg || '';
+    if (d.paymentImg) {
+      const p = document.getElementById('footer-payment-preview');
+      if (p) { p.src = d.paymentImg; p.style.display = 'block'; }
     }
-  } catch(e) {}
+    footerLinksData = (d.links && d.links.length) ? d.links : footerLinksData;
+    footerCategoriesData = (d.categories && d.categories.length) ? d.categories : footerCategoriesData;
+  } catch(e) {
+    document.getElementById('footer-tagline').value = defaults.tagline;
+    document.getElementById('footer-desc').value = defaults.desc;
+    document.getElementById('footer-copyright').value = defaults.copyright;
+    document.getElementById('footer-address').value = defaults.address;
+    document.getElementById('footer-email').value = defaults.email;
+    document.getElementById('footer-phone').value = defaults.phone;
+  }
   renderFooterLinks();
   renderFooterCategories();
 }
