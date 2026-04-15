@@ -44,8 +44,8 @@ app.use(cors({
 
     // নির্দিষ্ট allowed origins
     const allowed = [
-      'https://ibn-khaldun-institute.vercel.app',
       'https://ibn-khaldun-institute-ucpf.vercel.app',
+      'https://ibn-khaldun-institute-tt9e.vercel.app',
       process.env.FRONTEND_URL,
       process.env.ADMIN_URL,
     ].filter(Boolean);
