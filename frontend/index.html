@@ -1,4 +1,4 @@
-<!-- admin.html/frontend -->
+<!-- index.html/frontend -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -3167,14 +3167,18 @@
 
       // Update course description tab dynamically
       var descEl = document.getElementById('course-description-content');
-      if (descEl && course.desc) {
+      if (descEl) {
+        // API desc বা hardcoded desc যেটাই থাকুক
+        var courseDesc = course.description || course.desc || '';
         var learnItems = (course.learns || []).map(function(l) {
           return '<li style="margin-bottom:6px">✅ ' + l + '</li>';
         }).join('');
-        descEl.innerHTML =
-          '<p style="margin-bottom:14px">' + course.desc + '</p>' +
-          (learnItems ? '<p style="margin-bottom:10px"><strong>এই কোর্সে যা শিখবেন:</strong></p>' +
-          '<ul style="padding-left:8px;color:var(--text-mid);font-size:14.5px;line-height:2;list-style:none">' + learnItems + '</ul>' : '');
+        if (courseDesc || learnItems) {
+          descEl.innerHTML =
+            '<p style="margin-bottom:14px">' + courseDesc.replace(/\n/g,'<br>') + '</p>' +
+            (learnItems ? '<p style="margin-bottom:10px"><strong>এই কোর্সে যা শিখবেন:</strong></p>' +
+            '<ul style="padding-left:8px;color:var(--text-mid);font-size:14.5px;line-height:2;list-style:none">' + learnItems + '</ul>' : '');
+        }
       }
 
       // Update top instructor row dynamically (clickable photo)
@@ -3226,85 +3230,117 @@
     }
 
     function updateSidebarImage() {
-      var img = document.getElementById('sidebar-course-img');
+      var img   = document.getElementById('sidebar-course-img');
       var emoji = document.getElementById('sidebar-course-emoji');
-      if (img && COURSE_IMAGES[currentCourseId]) img.src = COURSE_IMAGES[currentCourseId];
-      if (emoji && COURSES[currentCourseId]) emoji.textContent = COURSES[currentCourseId].emoji;
+      var c = COURSES[currentCourseId];
+      // API thumbnail কে অগ্রাধিকার দিই, না থাকলে hardcoded COURSE_IMAGES ব্যবহার করি
+      var thumbUrl = (c && (c.thumbnail || c.img)) || COURSE_IMAGES[currentCourseId];
+      if (img && thumbUrl) img.src = thumbUrl;
+      if (emoji && c) emoji.textContent = c.emoji || '📚';
     }
 
     // Render dynamic curriculum with lock/unlock
+    // Helper: একটি lesson item এর HTML তৈরি করে
+    function buildLessonItemHTML(lesson, courseId, enrolled) {
+      var isUnlocked = lesson.free || lesson.isFree || enrolled;
+      var progress = getCourseProgress(courseId, lesson.id);
+      var isDone = progress >= 100;
+      var thumb = lesson.videoId
+        ? 'https://img.youtube.com/vi/' + lesson.videoId + '/mqdefault.jpg'
+        : 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=200&h=112&fit=crop';
+      var dur = lesson.dur || lesson.duration || '';
+
+      if (isUnlocked) {
+        var iconClass = isDone ? 'li-done' : 'li-play';
+        var iconChar  = isDone ? '✓' : '▶';
+        var freeTag   = (lesson.free || lesson.isFree) && !enrolled
+          ? '<span style="color:var(--primary);font-size:11px;margin-left:6px;font-family:var(--font-nav);font-weight:700">বিনামূল্যে</span>' : '';
+        var clickFn   = 'playLessonVideoById(\'' + lesson.id + '\',\'' + lesson.title.replace(/'/g,'') + '\',\'' + dur + '\',\'' + (lesson.videoId||'') + '\',\'' + courseId + '\')';
+        return '<div class="lesson-item lesson-clickable curriculum-lesson-row" onclick="' + clickFn + '" style="align-items:flex-start;padding:10px 16px;gap:14px">' +
+          '<div class="curriculum-thumb" onclick="event.stopPropagation();' + clickFn + '" style="position:relative;width:96px;min-width:96px;height:56px;border-radius:6px;overflow:hidden;cursor:pointer;flex-shrink:0;border:2px solid transparent;transition:border-color 0.2s" onmouseover="this.style.borderColor=\'var(--primary)\'" onmouseout="this.style.borderColor=\'transparent\'">' +
+            '<img src="' + thumb + '" alt="' + lesson.title + '" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.src=\'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=200&h=112&fit=crop\'" />' +
+            '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.38);display:flex;align-items:center;justify-content:center">' +
+              '<div style="width:26px;height:26px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#111;padding-left:2px;box-shadow:0 2px 8px rgba(245,197,24,0.5)">▶</div>' +
+            '</div>' +
+            '<div style="position:absolute;bottom:4px;right:5px;background:rgba(0,0,0,0.75);color:#fff;font-size:9px;font-family:var(--font-nav);font-weight:700;padding:1px 5px;border-radius:3px">' + dur + '</div>' +
+          '</div>' +
+          '<div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;padding-top:2px">' +
+            '<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">' +
+              '<span class="lesson-icon ' + iconClass + '" style="flex-shrink:0">' + iconChar + '</span>' +
+              '<span class="lesson-name" style="font-size:13.5px;font-weight:600;line-height:1.4">' + lesson.title + freeTag + '</span>' +
+            '</div>' +
+            '<div style="display:flex;align-items:center;gap:12px;font-size:11px;color:var(--text-light);font-family:var(--font-nav)">' +
+              '<span>🎬 ভিডিও লেসন</span>' +
+              '<span>⏱ ' + dur + '</span>' +
+              (isDone ? '<span style="color:#16a34a;font-weight:700">✅ সম্পন্ন</span>' : '') +
+            '</div>' +
+          '</div></div>';
+      } else {
+        return '<div class="lesson-item lesson-locked curriculum-lesson-row" onclick="showPaymentModal()" style="align-items:flex-start;padding:10px 16px;gap:14px">' +
+          '<div style="position:relative;width:96px;min-width:96px;height:56px;border-radius:6px;overflow:hidden;flex-shrink:0;cursor:pointer">' +
+            '<img src="' + thumb + '" alt="locked" style="width:100%;height:100%;object-fit:cover;display:block;filter:blur(3px) brightness(0.5)" onerror="this.src=\'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=200&h=112&fit=crop\'" />' +
+            '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center">' +
+              '<div style="width:26px;height:26px;background:#444;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px">🔒</div>' +
+            '</div>' +
+          '</div>' +
+          '<div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;padding-top:2px">' +
+            '<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">' +
+              '<span class="lesson-icon li-lock" style="flex-shrink:0">🔒</span>' +
+              '<span class="lesson-name" style="font-size:13.5px;font-weight:600;line-height:1.4;color:var(--text-mid)">' + lesson.title + '</span>' +
+            '</div>' +
+            '<div style="display:flex;align-items:center;gap:12px;font-size:11px;color:var(--text-light);font-family:var(--font-nav)">' +
+              '<span>🎬 ভিডিও লেসন</span>' +
+              '<span>⏱ ' + dur + '</span>' +
+              '<span style="color:var(--primary);font-weight:700;cursor:pointer">কিনুন →</span>' +
+            '</div>' +
+          '</div></div>';
+      }
+    }
+
     function renderCurriculum(courseId) {
-      var lessons = COURSE_LESSONS[courseId] || COURSE_LESSONS['default'];
+      // API curriculum থেকে flat lessons তৈরি করি, না থাকলে hardcoded ব্যবহার করি
+      var apiCourse = COURSES[courseId];
+      var apiCurriculum = apiCourse && apiCourse._curriculum && apiCourse._curriculum.length > 0
+        ? apiCourse._curriculum : null;
+
       var enrolled = isLoggedIn && isEnrolled(courseId);
       var container = document.querySelector('#tab-curriculum .curriculum-section');
       if (!container) return;
 
-      var html = '<h3>কোর্স কারিকুলাম <span style="font-size:14px;font-weight:400;color:var(--text-mid)">• ' + lessons.length + ' লেসন</span></h3>';
-      html += '<div class="lesson-group"><div class="lesson-group-title">কোর্সের সকল লেসন <span>' + lessons.length + ' লেসন</span></div><div class="lesson-list">';
+      var html;
 
-      lessons.forEach(function(lesson, idx) {
-        var isUnlocked = lesson.free || enrolled;
-        var progress = getCourseProgress(courseId, lesson.id);
-        var isDone = progress >= 100;
-        var thumb = 'https://img.youtube.com/vi/' + lesson.videoId + '/mqdefault.jpg';
-
-        if (isUnlocked) {
-          var iconClass = isDone ? 'li-done' : 'li-play';
-          var iconChar  = isDone ? '✓' : '▶';
-          var freeTag   = lesson.free && !enrolled ? '<span style="color:var(--primary);font-size:11px;margin-left:6px;font-family:var(--font-nav);font-weight:700">বিনামূল্যে</span>' : '';
-          var clickFn   = 'playLessonVideoById(\'' + lesson.id + '\',\'' + lesson.title.replace(/'/g,'') + '\',\'' + lesson.dur + '\',\'' + lesson.videoId + '\',\'' + courseId + '\')';
-
-          html +=
-            '<div class="lesson-item lesson-clickable curriculum-lesson-row" onclick="' + clickFn + '" style="align-items:flex-start;padding:10px 16px;gap:14px">' +
-              // Thumbnail
-              '<div class="curriculum-thumb" onclick="event.stopPropagation();' + clickFn + '" style="position:relative;width:96px;min-width:96px;height:56px;border-radius:6px;overflow:hidden;cursor:pointer;flex-shrink:0;border:2px solid transparent;transition:border-color 0.2s" onmouseover="this.style.borderColor=\'var(--primary)\'" onmouseout="this.style.borderColor=\'transparent\'">' +
-                '<img src="' + thumb + '" alt="' + lesson.title + '" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.src=\'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=200&h=112&fit=crop\'" />' +
-                '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.38);display:flex;align-items:center;justify-content:center">' +
-                  '<div style="width:26px;height:26px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#111;padding-left:2px;box-shadow:0 2px 8px rgba(245,197,24,0.5)">▶</div>' +
-                '</div>' +
-                '<div style="position:absolute;bottom:4px;right:5px;background:rgba(0,0,0,0.75);color:#fff;font-size:9px;font-family:var(--font-nav);font-weight:700;padding:1px 5px;border-radius:3px">' + lesson.dur + '</div>' +
-              '</div>' +
-              // Text
-              '<div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;padding-top:2px">' +
-                '<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">' +
-                  '<span class="lesson-icon ' + iconClass + '" style="flex-shrink:0">' + iconChar + '</span>' +
-                  '<span class="lesson-name" style="font-size:13.5px;font-weight:600;line-height:1.4">' + lesson.title + freeTag + '</span>' +
-                '</div>' +
-                '<div style="display:flex;align-items:center;gap:12px;font-size:11px;color:var(--text-light);font-family:var(--font-nav)">' +
-                  '<span>🎬 ভিডিও লেসন</span>' +
-                  '<span>⏱ ' + lesson.dur + '</span>' +
-                  (isDone ? '<span style="color:#16a34a;font-weight:700">✅ সম্পন্ন</span>' : '') +
-                '</div>' +
-              '</div>' +
-            '</div>';
-
-        } else {
-          html +=
-            '<div class="lesson-item lesson-locked curriculum-lesson-row" onclick="showPaymentModal()" style="align-items:flex-start;padding:10px 16px;gap:14px">' +
-              // Blurred/locked thumbnail
-              '<div style="position:relative;width:96px;min-width:96px;height:56px;border-radius:6px;overflow:hidden;flex-shrink:0;cursor:pointer">' +
-                '<img src="' + thumb + '" alt="locked" style="width:100%;height:100%;object-fit:cover;display:block;filter:blur(3px) brightness(0.5)" onerror="this.src=\'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=200&h=112&fit=crop\'" />' +
-                '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center">' +
-                  '<div style="width:26px;height:26px;background:#444;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px">🔒</div>' +
-                '</div>' +
-              '</div>' +
-              // Text
-              '<div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;padding-top:2px">' +
-                '<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">' +
-                  '<span class="lesson-icon li-lock" style="flex-shrink:0">🔒</span>' +
-                  '<span class="lesson-name" style="font-size:13.5px;font-weight:600;line-height:1.4;color:var(--text-mid)">' + lesson.title + '</span>' +
-                '</div>' +
-                '<div style="display:flex;align-items:center;gap:12px;font-size:11px;color:var(--text-light);font-family:var(--font-nav)">' +
-                  '<span>🎬 ভিডিও লেসন</span>' +
-                  '<span>⏱ ' + lesson.dur + '</span>' +
-                  '<span style="color:var(--primary);font-weight:700;cursor:pointer">কিনুন →</span>' +
-                '</div>' +
-              '</div>' +
-            '</div>';
-        }
-      });
-
-      html += '</div></div>';
+      if (apiCurriculum) {
+        // API curriculum: সেকশন ভিত্তিক দেখাই
+        var totalLessons = apiCurriculum.reduce(function(t, s) { return t + (s.lessons||[]).length; }, 0);
+        html = '<h3>কোর্স কারিকুলাম <span style="font-size:14px;font-weight:400;color:var(--text-mid)">• ' + totalLessons + ' লেসন</span></h3>';
+        apiCurriculum.forEach(function(section, si) {
+          var sLessons = section.lessons || [];
+          html += '<div class="lesson-group">';
+          html += '<div class="lesson-group-title">' + (section.sectionTitle || 'সেকশন ' + (si+1)) +
+            ' <span>' + sLessons.length + ' লেসন</span></div>';
+          html += '<div class="lesson-list">';
+          sLessons.forEach(function(ls, li) {
+            var lessonObj = {
+              id: courseId + '-s' + si + '-l' + li,
+              title: ls.title || '',
+              dur: ls.duration || '',
+              videoId: ls.videoId || '',
+              free: ls.isFree || false,
+            };
+            html += buildLessonItemHTML(lessonObj, courseId, enrolled);
+          });
+          html += '</div></div>';
+        });
+      } else {
+        // Hardcoded fallback
+        var lessons = COURSE_LESSONS[courseId] || COURSE_LESSONS['default'];
+        html = '<h3>কোর্স কারিকুলাম <span style="font-size:14px;font-weight:400;color:var(--text-mid)">• ' + lessons.length + ' লেসন</span></h3>';
+        html += '<div class="lesson-group"><div class="lesson-group-title">কোর্সের সকল লেসন <span>' + lessons.length + ' লেসন</span></div><div class="lesson-list">';
+        lessons.forEach(function(lesson) {
+          html += buildLessonItemHTML(lesson, courseId, enrolled);
+        });
+        html += '</div></div>';
+      }
 
       // Payment modal at end
       html += document.querySelector('#tab-curriculum #payment-modal') ? '' :
@@ -4526,29 +4562,38 @@
 
     // ── Render API courses on homepage ──
     function renderAPICoursesOnHomepage(courses) {
-      // Merge into COURSES object so detail page works
+      // API ডেটা দিয়ে COURSES object সম্পূর্ণ আপডেট করি
+      // যাতে admin প্যানেল থেকে পরিবর্তন করলে frontend এ দেখা যায়
       courses.forEach(function(c) {
         var key = c.slug || c._id;
-        if (!COURSES[key]) {
-          COURSES[key] = {
-            id: key, _id: c._id,
-            title: c.title || '',
-            category: c.category || '',
-            instructor: c.instructor || '',
-            price: '৳' + (c.price || 0),
-            originalPrice: c.originalPrice ? '৳' + c.originalPrice : '',
-            discount: c.discount ? c.discount + '% ছাড়' : '',
-            description: c.description || c.shortDesc || '',
-            thumbnail: c.thumbnail || '',
-            duration: c.duration || '',
-            lessons: c.lessons || 0,
-            students: c.students || 0,
-            rating: c.rating || 4.5,
-            level: c.level || 'সকলের জন্য',
-            tags: c.tags || [],
-            emoji: '📚',
-          };
-        }
+        // সবসময় API ডেটা দিয়ে override করি (hardcoded ডেটার চেয়ে অগ্রাধিকার দিই)
+        COURSES[key] = {
+          id: key, _id: c._id,
+          title: c.title || (COURSES[key] && COURSES[key].title) || '',
+          category: c.category || '',
+          instructor: c.instructor || '',
+          price: '৳' + (c.price || 0),
+          originalPrice: c.originalPrice ? '৳' + c.originalPrice : '',
+          discount: c.discount ? c.discount + '% ছাড়' : '',
+          description: c.description || c.shortDesc || (COURSES[key] && COURSES[key].description) || '',
+          shortDesc: c.shortDesc || '',
+          thumbnail: c.thumbnail || (COURSES[key] && COURSES[key].img) || '',
+          img: c.thumbnail || (COURSES[key] && COURSES[key].img) || '',
+          duration: c.duration || (COURSES[key] && COURSES[key].hours ? COURSES[key].hours + ' ঘণ্টা' : ''),
+          lessons: c.lessons || 0,
+          students: c.students || 0,
+          rating: c.rating || 4.5,
+          level: c.level || 'সকলের জন্য',
+          language: c.language || 'বাংলা',
+          tags: c.tags || [],
+          emoji: (COURSES[key] && COURSES[key].emoji) || '📚',
+          gradient: (COURSES[key] && COURSES[key].gradient) || 'linear-gradient(135deg,#1a1a2e,#16213e)',
+          learns: (COURSES[key] && COURSES[key].learns) || [],
+          certDesc: (COURSES[key] && COURSES[key].certDesc) || [],
+          featured: c.featured || false,
+          // curriculum থেকে lessons তৈরি করি
+          _curriculum: c.curriculum || [],
+        };
       });
 
       // Build course card HTML

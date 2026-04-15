@@ -100,7 +100,7 @@ button, input, select { font-family: 'Hind Siliguri', sans-serif; }
 
 /* ===== HERO BANNER ===== */
 .hero-grid { display: grid; grid-template-columns: 1fr 210px; gap: 10px; margin-bottom: 12px; }
-.hero-main { background: linear-gradient(120deg,#1a1a2e 60%,#16213e 100%); position: relative; overflow: hidden; min-height: 280px; display: flex; align-items: center; }
+.hero-main { background: linear-gradient(120deg,#1a1a2e 60%,#16213e 100%); position: relative; overflow: hidden; min-height: 280px; height: 280px; display: flex; align-items: center; }
 .hero-main img { position: absolute; right: 0; top: 0; width: 55%; height: 100%; object-fit: cover; opacity: 0.8; }
 .hero-content { position: relative; z-index: 2; padding: 24px; }
 .hero-content .sub { color: #e84c3d; font-size: 12px; font-weight: 700; letter-spacing: 2px; margin-bottom: 6px; }
@@ -347,6 +347,86 @@ button, input, select { font-family: 'Hind Siliguri', sans-serif; }
   .off-circle .pct { font-size: 18px; }
   .special-text h2 { font-size: 15px; }
 }
+
+/* ===== HERO SLIDER ===== */
+.hero-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.6s ease; pointer-events: none; }
+.hero-slide.active { opacity: 1; pointer-events: all; }
+.hero-slide img { position: absolute; right: 0; top: 0; width: 55%; height: 100%; object-fit: cover; opacity: 0.8; }
+.hero-slide .hero-content { position: relative; z-index: 2; padding: 24px; }
+.hero-prev, .hero-next { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 12px; z-index: 10; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+.hero-prev { left: 10px; }
+.hero-next { right: 10px; }
+.hero-prev:hover, .hero-next:hover { background: #e84c3d; }
+.hero-dots { position: absolute; bottom: 10px; left: 24px; display: flex; gap: 5px; z-index: 10; }
+.hero-dot { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.4); cursor: pointer; transition: all 0.3s; width: 8px; }
+.hero-dot.active { width: 20px; background: #e84c3d; }
+
+/* ===== SIDEBAR ADS ===== */
+.sidebar-ads { padding: 10px; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid #eee; }
+.sidebar-ad-card { border-radius: 6px; overflow: hidden; position: relative; box-shadow: 0 2px 10px rgba(0,0,0,0.15); }
+.sidebar-ad-card img { width: 100%; height: 110px; object-fit: cover; display: block; }
+.sidebar-ad-body { padding: 8px 10px 10px; }
+.sidebar-ad-badge { position: absolute; top: 8px; right: 8px; background: #e84c3d; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; z-index: 2; }
+.sidebar-ad-btn { display: inline-block; margin-top: 6px; background: rgba(232,76,61,0.9); color: #fff; padding: 4px 10px; border-radius: 3px; font-size: 11px; font-weight: 700; transition: opacity 0.2s; }
+.sidebar-ad-btn:hover { opacity: 0.85; }
+.sidebar-ad-rotating { border-radius: 6px; overflow: hidden; position: relative; min-height: 150px; box-shadow: 0 2px 10px rgba(0,0,0,0.15); }
+.rot-ad { position: absolute; inset: 0; opacity: 0; transition: opacity 0.5s; }
+.rot-ad.active { opacity: 1; }
+.rot-ad img { width: 100%; height: 95px; object-fit: cover; display: block; }
+
+/* ===== PRODUCT DETAIL PAGE ===== */
+#productDetailPage { display: none; position: fixed; inset: 0; background: #f5f5f5; z-index: 8888; overflow-y: auto; }
+.pd-header { background: #fff; border-bottom: 2px solid #e84c3d; padding: 12px 0; position: sticky; top: 0; z-index: 100; }
+.pd-header-inner { display: flex; align-items: center; gap: 12px; }
+.pd-back-btn { background: #e84c3d; color: #fff; border: none; padding: 8px 14px; border-radius: 3px; cursor: pointer; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; font-family: 'Hind Siliguri', sans-serif; }
+.pd-breadcrumb { font-size: 12px; color: #aaa; }
+.pd-breadcrumb span { color: #333; }
+.pd-main { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding: 20px 0; }
+.pd-img-wrap { background: #fff; border: 1px solid #eee; border-radius: 4px; padding: 20px; display: flex; align-items: center; justify-content: center; }
+.pd-img-wrap img { width: 100%; max-height: 350px; object-fit: cover; border-radius: 4px; }
+.pd-info { padding: 0; }
+.pd-badge-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.pd-cat-tag { background: #fff3f0; color: #e84c3d; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; border: 1px solid #ffccc7; }
+.pd-discount-tag { background: #e84c3d; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+.pd-name { font-size: 22px; font-weight: 700; color: #222; line-height: 1.3; margin-bottom: 8px; }
+.pd-stars { color: #f39c12; font-size: 14px; margin-bottom: 12px; }
+.pd-stars span { color: #888; font-size: 12px; margin-left: 4px; }
+.pd-price-row { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.pd-price-new { font-size: 28px; font-weight: 800; color: #e84c3d; }
+.pd-price-old { font-size: 16px; color: #bbb; text-decoration: line-through; }
+.pd-divider { border: none; border-top: 1px solid #eee; margin: 14px 0; }
+.pd-desc { font-size: 13px; color: #666; line-height: 1.8; margin-bottom: 16px; }
+.pd-features { margin-bottom: 16px; }
+.pd-features div { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #555; padding: 4px 0; }
+.pd-features i { color: #27ae60; width: 14px; }
+.pd-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.pd-add-btn { background: #e84c3d; color: #fff; border: none; padding: 12px 24px; font-size: 14px; font-weight: 700; border-radius: 4px; cursor: pointer; flex: 1; min-width: 140px; font-family: 'Hind Siliguri', sans-serif; transition: background 0.2s; }
+.pd-add-btn:hover { background: #c0392b; }
+.pd-wish-btn { background: #fff; color: #e84c3d; border: 2px solid #e84c3d; padding: 12px 16px; font-size: 14px; border-radius: 4px; cursor: pointer; font-family: 'Hind Siliguri', sans-serif; }
+.pd-related { padding: 20px 0; }
+.pd-related h3 { font-size: 15px; font-weight: 700; color: #222; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid #e84c3d; display: inline-block; }
+.pd-related-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+@media (max-width: 768px) {
+  .pd-main { grid-template-columns: 1fr; }
+  .pd-related-grid { grid-template-columns: repeat(2, 1fr); }
+  .pd-name { font-size: 18px; }
+}
+
+/* ===== ALL PRODUCTS PAGE ===== */
+#allProductsPage { display: none; position: fixed; inset: 0; background: #f5f5f5; z-index: 8888; overflow-y: auto; }
+.ap-header { background: #fff; border-bottom: 2px solid #e84c3d; padding: 12px 0; position: sticky; top: 0; z-index: 100; }
+.ap-cats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 20px 0; }
+.ap-cat-card { background: #fff; border: 1px solid #eee; border-radius: 8px; overflow: hidden; cursor: pointer; transition: all 0.2s; text-align: center; }
+.ap-cat-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.12); transform: translateY(-3px); border-color: #e84c3d; }
+.ap-cat-card img { width: 100%; height: 150px; object-fit: cover; }
+.ap-cat-card .ap-cat-body { padding: 14px; }
+.ap-cat-card .ap-cat-name { font-size: 14px; font-weight: 700; color: #222; margin-bottom: 4px; }
+.ap-cat-card .ap-cat-count { font-size: 12px; color: #888; margin-bottom: 8px; }
+.ap-cat-btn { background: #e84c3d; color: #fff; border: none; padding: 6px 16px; border-radius: 3px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Hind Siliguri', sans-serif; }
+@media (max-width: 768px) {
+  .ap-cats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
 </style>
 </head>
 <body>
@@ -391,10 +471,7 @@ button, input, select { font-family: 'Hind Siliguri', sans-serif; }
       </div>
       <!-- Icons -->
       <div class="header-icons">
-        <a href="#" class="hicon hicon-label">
-          <i class="fas fa-user"></i>
-          <span>লগইন</span>
-        </a>
+
         <a href="#" class="hicon hicon-label">
           <i class="fas fa-map-marker-alt"></i>
           <span>ট্র্যাক</span>
@@ -432,15 +509,15 @@ button, input, select { font-family: 'Hind Siliguri', sans-serif; }
           <a href="#" onclick="filterProducts('pants',null);closeDept();"><i class="fas fa-user-tie"></i> প্যান্টস</a>
           <a href="#" onclick="filterProducts('panjabi',null);closeDept();"><i class="fas fa-vest"></i> পাঞ্জাবি</a>
           <a href="#" onclick="filterProducts('dropcolar',null);closeDept();"><i class="fas fa-tshirt"></i> কলার ছাড়া গেঞ্জি</a>
-          <a href="#" onclick="filterProducts('all',null);closeDept();" style="color:#e84c3d;font-weight:700;"><i class="fas fa-th-large"></i> সব পণ্য</a>
+          <a href="#" onclick="openAllProducts();closeDept();" style="color:#e84c3d;font-weight:700;"><i class="fas fa-th-large"></i> সব পণ্য</a>
         </div>
       </div>
       <div class="main-nav">
-        <a href="#" class="active">হোম</a>
+        <a href="#" class="active" onclick="showHome()">হোম</a>
         <a href="#">ফিচার্স</a>
         <a href="#">বেস্ট সেলিং</a>
         <a href="#" class="deal">ডিল <span class="badge-new">নতুন</span></a>
-        <a href="#">শপ</a>
+        <a href="#" onclick="openAllProducts()">সব পণ্য</a>
         <a href="#">ব্লগ</a>
       </div>
       <div class="nav-hotline">
@@ -473,10 +550,9 @@ button, input, select { font-family: 'Hind Siliguri', sans-serif; }
     <a href="#" onclick="filterProducts('pants',null);closeMobileNav();">👖 প্যান্টস</a>
     <a href="#" onclick="filterProducts('panjabi',null);closeMobileNav();">🩱 পাঞ্জাবি</a>
     <a href="#" onclick="filterProducts('dropcolar',null);closeMobileNav();">👕 কলার ছাড়া গেঞ্জি</a>
-    <a href="#" onclick="filterProducts('all',null);closeMobileNav();" style="color:#e84c3d;font-weight:700;">🔍 সব পণ্য দেখুন</a>
+    <a href="#" onclick="openAllProducts();closeMobileNav();" style="color:#e84c3d;font-weight:700;">🛍️ সব পণ্য দেখুন</a>
   </div>
   <div class="mobile-nav-links">
-    <a href="#"><i class="fas fa-user"></i> লগইন / রেজিস্টার</a>
     <a href="#"><i class="fas fa-map-marker-alt"></i> অর্ডার ট্র্যাক</a>
     <a href="#"><i class="fas fa-phone" style="color:#e84c3d;"></i> ০১৮০০-১২৩৪৫৬</a>
   </div>
@@ -607,6 +683,76 @@ button, input, select { font-family: 'Hind Siliguri', sans-serif; }
           <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f5f5f5;"><i class="fas fa-undo-alt" style="color:#e84c3d;font-size:16px;width:18px;"></i><div><div style="font-size:11px;font-weight:700;color:#333;">রিটার্ন পলিসি</div><div style="font-size:10px;color:#aaa;">৭ দিনের মধ্যে</div></div></div>
           <div style="display:flex;align-items:center;gap:8px;padding:7px 0;"><i class="fas fa-headset" style="color:#e84c3d;font-size:16px;width:18px;"></i><div><div style="font-size:11px;font-weight:700;color:#333;">২৪/৭ সাপোর্ট</div><div style="font-size:10px;color:#aaa;">যেকোনো সময়</div></div></div>
         </div>
+
+        <!-- ===== SIDEBAR ADS ===== -->
+        <div class="sidebar-ads">
+
+          <!-- Ad 1: Watch Sale -->
+          <div class="sidebar-ad-card" style="background:linear-gradient(135deg,#1a1a2e,#16213e);">
+            <div class="sidebar-ad-badge">৫০% ছাড়</div>
+            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=210&h=110&fit=crop" alt="Watch Ad">
+            <div class="sidebar-ad-body">
+              <div style="font-size:10px;color:#aaa;letter-spacing:1px;">প্রিমিয়াম ঘড়ি</div>
+              <div style="font-size:13px;font-weight:700;color:#fff;margin:3px 0;">স্মার্টওয়াচ সেল</div>
+              <div style="font-size:11px;color:#e84c3d;font-weight:700;">৳১,৯৯০ থেকে</div>
+              <a href="#" onclick="filterProducts('watch',null)" class="sidebar-ad-btn">এখনই কিনুন →</a>
+            </div>
+          </div>
+
+          <!-- Ad 2: Fashion Offer -->
+          <div class="sidebar-ad-card" style="background:linear-gradient(135deg,#e84c3d,#c0392b);">
+            <div class="sidebar-ad-badge" style="background:#fff;color:#e84c3d;">নতুন</div>
+            <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=210&h=110&fit=crop" alt="Fashion Ad">
+            <div class="sidebar-ad-body">
+              <div style="font-size:10px;color:rgba(255,255,255,0.7);letter-spacing:1px;">গ্রীষ্ম কালেকশন</div>
+              <div style="font-size:13px;font-weight:700;color:#fff;margin:3px 0;">ফ্যাশন সুপার সেল</div>
+              <div style="font-size:11px;color:#ffe;font-weight:700;">সর্বোচ্চ ৬০% ছাড়</div>
+              <a href="#" onclick="filterProducts('all',null)" class="sidebar-ad-btn" style="background:#fff;color:#e84c3d;">শপিং করুন →</a>
+            </div>
+          </div>
+
+          <!-- Ad 3: Panjabi -->
+          <div class="sidebar-ad-card" style="background:linear-gradient(135deg,#f39c12,#e67e22);">
+            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=210&h=100&fit=crop" alt="Panjabi Ad">
+            <div class="sidebar-ad-body">
+              <div style="font-size:10px;color:rgba(255,255,255,0.8);letter-spacing:1px;">ঈদ স্পেশাল</div>
+              <div style="font-size:13px;font-weight:700;color:#fff;margin:3px 0;">পাঞ্জাবি কালেকশন</div>
+              <div style="font-size:11px;color:#fff3;font-weight:700;margin-bottom:2px;">৳৮৯৯ থেকে শুরু</div>
+              <a href="#" onclick="filterProducts('panjabi',null)" class="sidebar-ad-btn" style="background:rgba(255,255,255,0.25);color:#fff;">দেখুন →</a>
+            </div>
+          </div>
+
+          <!-- Ad 4: Rotating Banner -->
+          <div class="sidebar-ad-rotating" id="sidebarRotAd">
+            <div class="rot-ad active" style="background:linear-gradient(120deg,#2c3e50,#34495e);">
+              <img src="https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=210&h=95&fit=crop" alt="">
+              <div style="padding:8px 10px;">
+                <div style="font-size:10px;color:#aaa;">টি-শার্ট অফার</div>
+                <div style="font-size:12px;font-weight:700;color:#fff;">পোলো টি-শার্ট</div>
+                <div style="font-size:11px;color:#e84c3d;font-weight:700;">৳৫৯০ মাত্র</div>
+              </div>
+            </div>
+            <div class="rot-ad" style="background:linear-gradient(120deg,#0f2027,#203a43);">
+              <img src="https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=210&h=95&fit=crop" alt="">
+              <div style="padding:8px 10px;">
+                <div style="font-size:10px;color:#aaa;">শার্ট সেল</div>
+                <div style="font-size:12px;font-weight:700;color:#fff;">ফরমাল শার্ট</div>
+                <div style="font-size:11px;color:#e84c3d;font-weight:700;">৳৮৯০ মাত্র</div>
+              </div>
+            </div>
+            <div class="rot-ad" style="background:linear-gradient(120deg,#1a1a2e,#2c2c54);">
+              <img src="https://images.unsplash.com/photo-1542272604-787c3835535d?w=210&h=95&fit=crop" alt="">
+              <div style="padding:8px 10px;">
+                <div style="font-size:10px;color:#aaa;">প্যান্ট অফার</div>
+                <div style="font-size:12px;font-weight:700;color:#fff;">জিন্স কালেকশন</div>
+                <div style="font-size:11px;color:#e84c3d;font-weight:700;">৳১,২৯০ মাত্র</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <!-- END SIDEBAR ADS -->
+
       </aside>
 
       <!-- ===== RIGHT CONTENT ===== -->
@@ -614,19 +760,45 @@ button, input, select { font-family: 'Hind Siliguri', sans-serif; }
 
         <!-- HERO BANNER -->
         <div class="hero-grid">
-          <div class="hero-main">
-            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=700&h=320&fit=crop" alt="Hero Watch">
-            <div class="hero-content">
-              <p class="sub">🔥 এক্সক্লুসিভ কালেকশন</p>
-              <h1>প্রিমিয়াম<br><span>ঘড়ি কালেকশন</span></h1>
-              <p>সেরা ব্র্যান্ডের ঘড়ি এখন সর্বোচ্চ ৫০% ছাড়ে পাওয়া যাচ্ছে।</p>
-              <button class="btn-shop" onclick="filterProducts('watch',null)">এখনই কিনুন</button>
+          <div class="hero-main" id="heroSlider">
+            <!-- Slide 1 -->
+            <div class="hero-slide active">
+              <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=700&h=320&fit=crop" alt="Hero Watch">
+              <div class="hero-content">
+                <p class="sub">🔥 এক্সক্লুসিভ কালেকশন</p>
+                <h1>প্রিমিয়াম<br><span>ঘড়ি কালেকশন</span></h1>
+                <p>সেরা ব্র্যান্ডের ঘড়ি এখন সর্বোচ্চ ৫০% ছাড়ে পাওয়া যাচ্ছে।</p>
+                <button class="btn-shop" onclick="filterProducts('watch',null)">এখনই কিনুন</button>
+              </div>
             </div>
-            <div class="hero-dots">
-              <div class="hero-dot active"></div>
-              <div class="hero-dot"></div>
-              <div class="hero-dot"></div>
+            <!-- Slide 2 -->
+            <div class="hero-slide">
+              <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=700&h=320&fit=crop" alt="Hero Fashion">
+              <div class="hero-content">
+                <p class="sub">🎯 সীমিত সময়ের অফার</p>
+                <h1>ফ্যাশন<br><span>সুপার সেল</span></h1>
+                <p>পোশাকে সর্বোচ্চ ৬০% ছাড় — শুধুমাত্র আজকের জন্য!</p>
+                <button class="btn-shop" onclick="filterProducts('shirt',null)">শপিং করুন</button>
+              </div>
             </div>
+            <!-- Slide 3 -->
+            <div class="hero-slide">
+              <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=700&h=320&fit=crop" alt="Hero Panjabi">
+              <div class="hero-content">
+                <p class="sub">✨ ঈদ স্পেশাল</p>
+                <h1>পাঞ্জাবি<br><span>কালেকশন ২০২৪</span></h1>
+                <p>কটন ও সিল্কের সেরা পাঞ্জাবি কালেকশন এখন পাওয়া যাচ্ছে।</p>
+                <button class="btn-shop" onclick="filterProducts('panjabi',null)">কালেকশন দেখুন</button>
+              </div>
+            </div>
+            <!-- Slider Controls -->
+            <div class="hero-dots" id="heroDots">
+              <div class="hero-dot active" onclick="goToSlide(0)"></div>
+              <div class="hero-dot" onclick="goToSlide(1)"></div>
+              <div class="hero-dot" onclick="goToSlide(2)"></div>
+            </div>
+            <button class="hero-prev" onclick="changeSlide(-1)"><i class="fas fa-chevron-left"></i></button>
+            <button class="hero-next" onclick="changeSlide(1)"><i class="fas fa-chevron-right"></i></button>
           </div>
           <div class="hero-side">
             <div class="hero-side-card" style="background:linear-gradient(135deg,#fff9e6,#ffe8a0);flex:1;">
@@ -1023,6 +1195,106 @@ button, input, select { font-family: 'Hind Siliguri', sans-serif; }
   </div>
 </footer>
 
+
+<!-- ===== PRODUCT DETAIL PAGE ===== -->
+<div id="productDetailPage">
+  <div class="pd-header">
+    <div class="container">
+      <div class="pd-header-inner">
+        <button class="pd-back-btn" onclick="closeProductPage()"><i class="fas fa-arrow-left"></i> ফিরে যান</button>
+        <div class="pd-breadcrumb">হোম → <span id="pdBreadCat"></span> → <span id="pdBreadName"></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="pd-main" id="pdMainContent">
+      <!-- Filled by JS -->
+    </div>
+    <div class="pd-related">
+      <h3>সম্পর্কিত পণ্য</h3>
+      <div class="pd-related-grid" id="pdRelatedGrid">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ALL PRODUCTS PAGE ===== -->
+<div id="allProductsPage">
+  <div class="ap-header">
+    <div class="container">
+      <div class="pd-header-inner">
+        <button class="pd-back-btn" onclick="closeAllProducts()"><i class="fas fa-arrow-left"></i> হোমে ফিরুন</button>
+        <div style="font-size:16px;font-weight:700;color:#222;">সব ক্যাটাগরি</div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div style="padding:16px 0 8px;">
+      <h2 style="font-size:18px;font-weight:700;color:#222;">আমাদের সকল ক্যাটাগরি</h2>
+      <p style="font-size:13px;color:#888;margin-top:4px;">আপনার পছন্দের ক্যাটাগরি বেছে নিন</p>
+    </div>
+    <div class="ap-cats-grid">
+      <div class="ap-cat-card" onclick="filterProducts('watch',null);closeAllProducts();">
+        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=150&fit=crop" alt="ওয়াচ">
+        <div class="ap-cat-body">
+          <div class="ap-cat-name">⌚ ওয়াচেস (ঘড়ি)</div>
+          <div class="ap-cat-count">ব্যাটারি, অটোমেটিক, স্মার্টওয়াচ</div>
+          <button class="ap-cat-btn">দেখুন →</button>
+        </div>
+      </div>
+      <div class="ap-cat-card" onclick="filterProducts('shirt',null);closeAllProducts();">
+        <img src="https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=300&h=150&fit=crop" alt="শার্ট">
+        <div class="ap-cat-body">
+          <div class="ap-cat-name">👔 শার্টস</div>
+          <div class="ap-cat-count">ফরমাল, ক্যাজুয়াল, ডেনিম শার্ট</div>
+          <button class="ap-cat-btn">দেখুন →</button>
+        </div>
+      </div>
+      <div class="ap-cat-card" onclick="filterProducts('tshirt',null);closeAllProducts();">
+        <img src="https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=300&h=150&fit=crop" alt="টি-শার্ট">
+        <div class="ap-cat-body">
+          <div class="ap-cat-name">👕 টি-শার্টস</div>
+          <div class="ap-cat-count">রাউন্ড নেক, পোলো, ভি-নেক</div>
+          <button class="ap-cat-btn">দেখুন →</button>
+        </div>
+      </div>
+      <div class="ap-cat-card" onclick="filterProducts('pants',null);closeAllProducts();">
+        <img src="https://images.unsplash.com/photo-1542272604-787c3835535d?w=300&h=150&fit=crop" alt="প্যান্ট">
+        <div class="ap-cat-body">
+          <div class="ap-cat-name">👖 প্যান্টস</div>
+          <div class="ap-cat-count">জিন্স, ফরমাল, ব্যাগি জিন্স</div>
+          <button class="ap-cat-btn">দেখুন →</button>
+        </div>
+      </div>
+      <div class="ap-cat-card" onclick="filterProducts('panjabi',null);closeAllProducts();">
+        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=150&fit=crop" alt="পাঞ্জাবি">
+        <div class="ap-cat-body">
+          <div class="ap-cat-name">🩱 পাঞ্জাবি</div>
+          <div class="ap-cat-count">কটন, সিল্ক, এমব্রয়ডারি</div>
+          <button class="ap-cat-btn">দেখুন →</button>
+        </div>
+      </div>
+      <div class="ap-cat-card" onclick="filterProducts('dropcolar',null);closeAllProducts();">
+        <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300&h=150&fit=crop" alt="ড্রপ শোল্ডার">
+        <div class="ap-cat-body">
+          <div class="ap-cat-name">👕 কলার ছাড়া গেঞ্জি</div>
+          <div class="ap-cat-count">বেসিক, অ্যাসিড ওয়াশ, বক্সি ফিট</div>
+          <button class="ap-cat-btn">দেখুন →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- All Products listing -->
+    <div style="padding:10px 0 20px;">
+      <h3 style="font-size:15px;font-weight:700;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid #e84c3d;display:inline-block;">সব পণ্য একসাথে</h3>
+      <div class="products-grid-5" id="allProductsGrid">
+        <!-- All product cards duplicated here by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Back to Top -->
 <div id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></div>
 
@@ -1206,6 +1478,157 @@ window.addEventListener('scroll', () => {
   btn.style.display = window.scrollY > 300 ? 'flex' : 'none';
 });
 document.getElementById('backTop').style.display = 'none';
+
+// ===== HERO SLIDER =====
+let heroCurrentSlide = 0;
+const heroSlides = document.querySelectorAll('.hero-slide');
+const heroDotEls = document.querySelectorAll('#heroDots .hero-dot');
+let heroInterval;
+
+function goToSlide(n) {
+  heroSlides[heroCurrentSlide].classList.remove('active');
+  heroDotEls[heroCurrentSlide].classList.remove('active');
+  heroCurrentSlide = (n + heroSlides.length) % heroSlides.length;
+  heroSlides[heroCurrentSlide].classList.add('active');
+  heroDotEls[heroCurrentSlide].classList.add('active');
+}
+function changeSlide(dir) {
+  goToSlide(heroCurrentSlide + dir);
+  clearInterval(heroInterval);
+  heroInterval = setInterval(() => goToSlide(heroCurrentSlide + 1), 4000);
+}
+heroInterval = setInterval(() => goToSlide(heroCurrentSlide + 1), 4000);
+
+// ===== SIDEBAR ADS ROTATING =====
+let rotAdCurrent = 0;
+const rotAds = document.querySelectorAll('.rot-ad');
+if (rotAds.length > 0) {
+  setInterval(() => {
+    rotAds[rotAdCurrent].classList.remove('active');
+    rotAdCurrent = (rotAdCurrent + 1) % rotAds.length;
+    rotAds[rotAdCurrent].classList.add('active');
+  }, 2500);
+}
+
+// ===== ALL PRODUCTS DB =====
+const allProductsDB = [
+  { name:'ক্লাসিক অটোমেটিক স্টিল ওয়াচ', price:2490, oldPrice:'৳৩,৫০০', cat:'watch', img:'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200&h=160&fit=crop', badge:'৩০%', stars:'★★★★★' },
+  { name:'স্লিম ফিট ফরমাল শার্ট', price:890, oldPrice:'৳১,২০০', cat:'shirt', img:'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=200&h=160&fit=crop', badge:'২৫%', stars:'★★★★☆' },
+  { name:'পোলো টি-শার্ট প্রিমিয়াম', price:590, oldPrice:'৳৯০০', cat:'tshirt', img:'https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=200&h=160&fit=crop', badge:'৩৫%', stars:'★★★★★' },
+  { name:'স্লিম ফিট জিন্স ডার্ক ব্লু', price:1290, oldPrice:'৳১,৬০০', cat:'pants', img:'https://images.unsplash.com/photo-1542272604-787c3835535d?w=200&h=160&fit=crop', badge:'২০%', stars:'★★★★☆' },
+  { name:'কটন পাঞ্জাবি সাদা', price:1490, oldPrice:'৳২,৫০০', cat:'panjabi', img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200&h=160&fit=crop', badge:'৪০%', stars:'★★★★★' },
+  { name:'বেসিক ড্রপ শোল্ডার টি', price:490, oldPrice:'৳৯০০', cat:'dropcolar', img:'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200&h=130&fit=crop', badge:'৪৫%', stars:'★★★★☆' },
+  { name:'স্মার্টওয়াচ প্রো ম্যাক্স', price:3990, oldPrice:'৳৭,৯৯০', cat:'watch', img:'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=200&h=130&fit=crop', badge:'৫০%', stars:'★★★★★' },
+  { name:'ডেনিম শার্ট ক্যাজুয়াল', price:1190, oldPrice:'৳১,৭০০', cat:'shirt', img:'https://images.unsplash.com/photo-1588359348347-9bc6cbbb689e?w=200&h=130&fit=crop', badge:'৩০%', stars:'★★★★☆' },
+  { name:'এমব্রয়ডারি সিল্ক পাঞ্জাবি', price:2190, oldPrice:'৳৩,৩৯০', cat:'panjabi', img:'https://images.unsplash.com/photo-1617137968427-85924c800a22?w=200&h=130&fit=crop', badge:'৩৫%', stars:'★★★★★' },
+  { name:'ব্যাগি জিন্স লুজ ফিট', price:1690, oldPrice:'৳২,২৫০', cat:'pants', img:'https://images.unsplash.com/photo-1542272604-787c3835535d?w=200&h=130&fit=crop&crop=bottom', badge:'২৫%', stars:'★★★★☆' },
+  { name:'ভি-নেক স্লিম টি-শার্ট', price:520, oldPrice:'৳৮৭০', cat:'tshirt', img:'https://images.unsplash.com/photo-1503341733017-1901578f9f1e?w=200&h=130&fit=crop', badge:'৪০%', stars:'★★★★☆' },
+  { name:'অ্যাসিড ওয়াশ ড্রপ শোল্ডার', price:550, oldPrice:'৳১,১০০', cat:'dropcolar', img:'https://images.unsplash.com/photo-1529720317453-c8da503f2051?w=200&h=130&fit=crop', badge:'৫০%', stars:'★★★★★' },
+  { name:'ডিজিটাল স্পোর্টস ওয়াচ', price:1590, oldPrice:'৳২,৪৫০', cat:'watch', img:'https://images.unsplash.com/photo-1508057198894-247b23fe5ade?w=200&h=130&fit=crop', badge:'৩৫%', stars:'★★★★☆' },
+  { name:'ফরমাল ট্রাউজার চারকোল', price:1390, oldPrice:'৳১,৭৫০', cat:'pants', img:'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=200&h=130&fit=crop', badge:'২০%', stars:'★★★★☆' },
+  { name:'বক্সি ফিট ড্রপ শোল্ডার', price:620, oldPrice:'৳১,০৭০', cat:'dropcolar', img:'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=200&h=130&fit=crop', badge:'৪২%', stars:'★★★★★' },
+];
+
+const catNames = { watch:'ওয়াচেস', shirt:'শার্টস', tshirt:'টি-শার্টস', pants:'প্যান্টস', panjabi:'পাঞ্জাবি', dropcolar:'ড্রপ শোল্ডার', all:'সব পণ্য' };
+
+// ===== PRODUCT DETAIL PAGE =====
+function openProductPage(name, price, oldPrice, cat, img, badge) {
+  const catName = catNames[cat] || cat;
+  document.getElementById('pdBreadCat').textContent = catName;
+  document.getElementById('pdBreadName').textContent = name;
+
+  // Related products (same category, different name)
+  const related = allProductsDB.filter(p => p.cat === cat && p.name !== name).slice(0, 4);
+  if (related.length === 0) {
+    const others = allProductsDB.filter(p => p.name !== name).slice(0, 4);
+    related.push(...others);
+  }
+
+  const pdMain = document.getElementById('pdMainContent');
+  pdMain.innerHTML = `
+    <div class="pd-img-wrap">
+      <img src="${img || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=350&fit=crop'}" alt="${name}">
+    </div>
+    <div class="pd-info">
+      <div class="pd-badge-row">
+        <span class="pd-cat-tag">${catName}</span>
+        ${badge ? `<span class="pd-discount-tag">${badge} ছাড়</span>` : ''}
+      </div>
+      <div class="pd-name">${name}</div>
+      <div class="pd-stars">★★★★☆ <span>(৪৩ টি রিভিউ)</span></div>
+      <div class="pd-price-row">
+        <span class="pd-price-new">৳${parseInt(price).toLocaleString('bn')}</span>
+        ${oldPrice ? `<span class="pd-price-old">${oldPrice}</span>` : ''}
+      </div>
+      <hr class="pd-divider">
+      <div class="pd-desc">উচ্চমানের উপকরণ দিয়ে তৈরি এই পণ্যটি দীর্ঘস্থায়ী এবং আরামদায়ক। বাংলাদেশের আবহাওয়ার সাথে সামঞ্জস্যপূর্ণ ডিজাইন। সহজে পরিষ্কার করা যায় এবং প্রতিদিনের ব্যবহারের জন্য উপযুক্ত।</div>
+      <div class="pd-features">
+        <div><i class="fas fa-check-circle"></i> উচ্চমানের উপকরণ</div>
+        <div><i class="fas fa-check-circle"></i> ৭ দিনের রিটার্ন পলিসি</div>
+        <div><i class="fas fa-check-circle"></i> ফ্রি ডেলিভারি (৳৫০০+)</div>
+        <div><i class="fas fa-check-circle"></i> অরিজিনাল প্রোডাক্ট গ্যারান্টি</div>
+      </div>
+      <div class="pd-actions">
+        <button class="pd-add-btn" onclick="addToCart('${name}', ${price}); this.innerHTML='✓ কার্টে যোগ হয়েছে!'; this.style.background='#27ae60'; setTimeout(()=>{this.innerHTML='<i class=\'fas fa-shopping-cart\'></i> কার্টে যোগ করুন'; this.style.background='';},2000)"><i class="fas fa-shopping-cart"></i> কার্টে যোগ করুন</button>
+        <button class="pd-wish-btn" onclick="this.style.background='#e84c3d';this.style.color='#fff';"><i class="fas fa-heart"></i></button>
+      </div>
+    </div>
+  `;
+
+  const relGrid = document.getElementById('pdRelatedGrid');
+  relGrid.innerHTML = related.map(p => `
+    <div class="product-card" onclick="openProductPage('${p.name}',${p.price},'${p.oldPrice}','${p.cat}','${p.img}','${p.badge}')" style="cursor:pointer;">
+      <span class="badge">${p.badge}</span>
+      <img class="pimg" src="${p.img}" alt="${p.name}">
+      <div class="p-price-old">${p.oldPrice}</div>
+      <div class="p-price-new">৳${p.price.toLocaleString()}</div>
+      <div class="p-name">${p.name}</div>
+      <div class="p-stars">${p.stars}</div>
+      <button class="add-btn" onclick="event.stopPropagation();addToCart('${p.name}',${p.price});"><i class="fas fa-shopping-cart" style="margin-right:3px;"></i> কার্টে যোগ</button>
+    </div>
+  `).join('');
+
+  document.getElementById('productDetailPage').style.display = 'block';
+  document.getElementById('productDetailPage').scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+}
+
+function closeProductPage() {
+  document.getElementById('productDetailPage').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+// ===== ALL PRODUCTS PAGE =====
+function openAllProducts() {
+  // Populate all products grid
+  const grid = document.getElementById('allProductsGrid');
+  grid.innerHTML = allProductsDB.map(p => `
+    <div class="product-card" onclick="openProductPage('${p.name}',${p.price},'${p.oldPrice}','${p.cat}','${p.img}','${p.badge}')" style="cursor:pointer;">
+      <span class="badge">${p.badge}</span>
+      <img class="pimg" src="${p.img}" alt="${p.name}">
+      <div class="p-price-old">${p.oldPrice}</div>
+      <div class="p-price-new">৳${p.price.toLocaleString()}</div>
+      <div class="p-name">${p.name}</div>
+      <div class="p-stars">${p.stars}</div>
+      <button class="add-btn" onclick="event.stopPropagation();addToCart('${p.name}',${p.price});"><i class="fas fa-shopping-cart" style="margin-right:3px;"></i> কার্টে যোগ</button>
+    </div>
+  `).join('');
+
+  document.getElementById('allProductsPage').style.display = 'block';
+  document.getElementById('allProductsPage').scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+}
+
+function closeAllProducts() {
+  document.getElementById('allProductsPage').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function showHome() {
+  closeProductPage();
+  closeAllProducts();
+}
+
 </script>
 </body>
 </html>

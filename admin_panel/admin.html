@@ -367,6 +367,12 @@
       .stats-grid { grid-template-columns: 1fr; }
       .content { padding: 16px; }
     }
+
+  /* ── Thumbnail Drag & Drop ── */
+  #thumb-drop-zone { transition: border-color 0.2s, background 0.2s; }
+  #thumb-drop-zone:hover { border-color: var(--primary) !important; background: rgba(245,197,24,0.06) !important; }
+  #thumb-drop-zone.drag-over { border-color: var(--primary) !important; background: rgba(245,197,24,0.1) !important; border-style: solid !important; }
+  #thumb-drop-zone.has-image { border-color: #22c55e !important; }
   </style>
 </head>
 <body>
@@ -1194,7 +1200,35 @@
       </div>
       <div class="field"><label>সংক্ষিপ্ত বিবরণ</label><textarea id="c-short-desc" placeholder="সংক্ষেপে বর্ণনা..."></textarea></div>
       <div class="field"><label>বিস্তারিত বিবরণ</label><textarea id="c-desc" placeholder="বিস্তারিত বর্ণনা..."></textarea></div>
-      <div class="field"><label>থাম্বনেইল URL</label><input id="c-thumbnail" placeholder="https://..."/></div>
+      <div class="field">
+        <label>থাম্বনেইল</label>
+        <!-- Drag & Drop Zone -->
+        <div id="thumb-drop-zone"
+          ondragover="event.preventDefault();this.classList.add('drag-over')"
+          ondragleave="this.classList.remove('drag-over')"
+          ondrop="handleThumbDrop(event)"
+          onclick="document.getElementById('thumb-file-input').click()"
+          style="border:2px dashed var(--border2);border-radius:var(--radius-sm);padding:20px;text-align:center;cursor:pointer;background:var(--bg3);transition:all 0.2s;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;position:relative">
+          <div id="thumb-drop-icon" style="font-size:28px">🖼️</div>
+          <div id="thumb-drop-text" style="font-size:12px;color:var(--text2)">ছবি এখানে টেনে আনুন অথবা ক্লিক করুন</div>
+          <div style="font-size:11px;color:var(--text3)">JPG, PNG, WEBP — সর্বোচ্চ 5MB</div>
+          <!-- Upload progress -->
+          <div id="thumb-progress-wrap" style="display:none;width:100%;margin-top:8px">
+            <div style="height:4px;background:var(--bg2);border-radius:2px;overflow:hidden">
+              <div id="thumb-progress-bar" style="height:100%;background:var(--primary);width:0%;transition:width 0.3s"></div>
+            </div>
+            <div id="thumb-progress-text" style="font-size:11px;color:var(--text2);margin-top:4px">আপলোড হচ্ছে...</div>
+          </div>
+          <!-- Preview -->
+          <img id="thumb-preview" src="" alt="" style="display:none;max-height:80px;border-radius:4px;margin-top:6px;object-fit:cover"/>
+          <input type="file" id="thumb-file-input" accept="image/*" style="display:none" onchange="handleThumbFileSelect(this)"/>
+        </div>
+        <!-- URL input (manual fallback) -->
+        <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+          <input id="c-thumbnail" placeholder="অথবা সরাসরি URL দিন..." style="flex:1"/>
+          <button type="button" onclick="clearThumb()" style="padding:6px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;color:var(--text2);cursor:pointer" title="পরিষ্কার করুন">✕</button>
+        </div>
+      </div>
       <div class="field"><label>ট্যাগ (কমা দিয়ে)</label><input id="c-tags" placeholder="quran, tajweed, beginner"/></div>
       <div class="row2">
         <div class="field"><label>
@@ -1518,6 +1552,87 @@ async function loadCourses() {
   } catch (e) { toast('কোর্স লোড হয়নি', 'error'); }
 }
 
+
+// ────────────────────────────────────────────────────────────
+// THUMBNAIL DRAG & DROP UPLOAD
+// ────────────────────────────────────────────────────────────
+function handleThumbDrop(e) {
+  e.preventDefault();
+  document.getElementById('thumb-drop-zone').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) uploadThumb(file);
+  else toast('শুধু ছবি ফাইল আপলোড করা যাবে', 'error');
+}
+function handleThumbFileSelect(input) {
+  const file = input.files[0];
+  if (file) uploadThumb(file);
+}
+async function uploadThumb(file) {
+  if (file.size > 5 * 1024 * 1024) { toast('ছবির আকার ৫MB এর বেশি হওয়া যাবে না', 'error'); return; }
+  // Show local preview immediately
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = document.getElementById('thumb-preview');
+    img.src = e.target.result; img.style.display = 'block';
+    document.getElementById('thumb-drop-icon').style.display = 'none';
+    document.getElementById('thumb-drop-text').textContent = file.name;
+    document.getElementById('thumb-drop-zone').classList.add('has-image');
+  };
+  reader.readAsDataURL(file);
+  // Upload to server
+  const progressWrap = document.getElementById('thumb-progress-wrap');
+  const progressBar  = document.getElementById('thumb-progress-bar');
+  const progressText = document.getElementById('thumb-progress-text');
+  progressWrap.style.display = 'block';
+  progressBar.style.width = '20%';
+  progressText.textContent = 'আপলোড হচ্ছে...';
+  try {
+    const token = localStorage.getItem('admin_token');
+    const formData = new FormData();
+    formData.append('file', file);
+    // Simulate progress
+    let prog = 20;
+    const interval = setInterval(() => { prog = Math.min(prog + 15, 85); progressBar.style.width = prog + '%'; }, 300);
+    const res = await fetch(API_BASE + '/api/admin/upload', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token },
+      body: formData
+    });
+    clearInterval(interval);
+    if (!res.ok) throw new Error('Upload failed: ' + res.status);
+    const data = await res.json();
+    progressBar.style.width = '100%';
+    progressText.textContent = '✅ আপলোড সফল!';
+    // Set the URL into the input
+    document.getElementById('c-thumbnail').value = data.url;
+    // Update preview with actual cloudinary URL
+    document.getElementById('thumb-preview').src = data.url;
+    setTimeout(() => { progressWrap.style.display = 'none'; progressBar.style.width = '0%'; }, 1500);
+    toast('✅ থাম্বনেইল আপলোড হয়েছে');
+  } catch (err) {
+    progressWrap.style.display = 'none';
+    progressBar.style.width = '0%';
+    toast('আপলোড ব্যর্থ: ' + err.message, 'error');
+  }
+}
+function clearThumb() {
+  document.getElementById('c-thumbnail').value = '';
+  document.getElementById('thumb-preview').style.display = 'none';
+  document.getElementById('thumb-preview').src = '';
+  document.getElementById('thumb-drop-icon').style.display = 'block';
+  document.getElementById('thumb-drop-text').textContent = 'ছবি এখানে টেনে আনুন অথবা ক্লিক করুন';
+  document.getElementById('thumb-drop-zone').classList.remove('has-image');
+  document.getElementById('thumb-file-input').value = '';
+}
+function previewExistingThumb(url) {
+  if (!url) { clearThumb(); return; }
+  const img = document.getElementById('thumb-preview');
+  img.src = url; img.style.display = 'block';
+  document.getElementById('thumb-drop-icon').style.display = 'none';
+  document.getElementById('thumb-drop-text').textContent = 'বর্তমান থাম্বনেইল (নতুন আপলোড করতে ক্লিক করুন)';
+  document.getElementById('thumb-drop-zone').classList.add('has-image');
+}
+
 function openCourseModal(course = null) {
   document.getElementById('course-modal-title').textContent = course ? 'কোর্স এডিট' : 'নতুন কোর্স';
   document.getElementById('course-id').value    = course?._id || '';
@@ -1535,6 +1650,9 @@ function openCourseModal(course = null) {
   document.getElementById('c-tags').value       = (course?.tags || []).join(', ');
   document.getElementById('c-featured').checked = course?.featured || false;
   document.getElementById('c-published').checked = course?.published !== false;
+  // Thumbnail preview
+  clearThumb();
+  if (course?.thumbnail) previewExistingThumb(course.thumbnail);
   openModal('course-modal');
 }
 
