@@ -435,8 +435,14 @@
         <div class="nav-item" onclick="navTo('instructors')"><span class="icon">👨‍🏫</span> ইন্সট্রাক্টর</div>
         <div class="nav-item" onclick="navTo('testimonials')"><span class="icon">💬</span> রিভিউ</div>
         <div class="nav-item" onclick="navTo('notices')"><span class="icon">📢</span> নোটিশ</div>
+        <div class="nav-section">Content</div>
+        <div class="nav-item" onclick="navTo('categories')"><span class="icon">🏷️</span> ক্যাটাগরি</div>
+        <div class="nav-item" onclick="navTo('course-tabs')"><span class="icon">🗂️</span> কোর্স ট্যাব</div>
+        <div class="nav-item" onclick="navTo('hero-courses')"><span class="icon">🖼️</span> হিরো কার্ড</div>
         <div class="nav-section">Business</div>
         <div class="nav-item" onclick="navTo('enrollments')"><span class="icon">📋</span> এনরোলমেন্ট</div>
+        <div class="nav-item" onclick="navTo('access-requests')"><span class="icon">🔐</span> অ্যাক্সেস রিকোয়েস্ট</div>
+        <div class="nav-item" onclick="navTo('users')"><span class="icon">👥</span> ব্যবহারকারী</div>
         <div class="nav-section">Settings</div>
         <div class="nav-item" onclick="navTo('settings')"><span class="icon">⚙️</span> সেটিংস</div>
       </nav>
@@ -630,6 +636,99 @@
                 <th>নাম</th><th>কোর্স</th><th>ফোন</th><th>পরিমাণ</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th>
               </tr></thead>
               <tbody id="enrollments-tbody"><tr><td colspan="6" class="loading">লোড হচ্ছে...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── CATEGORIES ── -->
+        <div class="page" id="page-categories">
+          <div class="card">
+            <div class="card-header">
+              <h3>🏷️ ক্যাটাগরি সমূহ</h3>
+              <button class="btn btn-primary" onclick="openCategoryModal()">+ নতুন ক্যাটাগরি</button>
+            </div>
+            <div class="card-body">
+              <table><thead><tr>
+                <th>আইকন</th><th>নাম</th><th>Slug</th><th>ক্রম</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th>
+              </tr></thead>
+              <tbody id="categories-tbody"><tr><td colspan="6" class="loading">লোড হচ্ছে...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── COURSE TABS ── -->
+        <div class="page" id="page-course-tabs">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-left">
+                <h3>🗂️ কোর্স ট্যাব</h3>
+                <span class="card-subtitle">index.html-এর courses-tabs সেকশন নিয়ন্ত্রণ করুন</span>
+              </div>
+              <button class="btn btn-primary" onclick="openCourseTabModal()">+ নতুন ট্যাব</button>
+            </div>
+            <div class="card-body">
+              <table><thead><tr>
+                <th>আইকন</th><th>লেবেল</th><th>Key</th><th>ক্রম</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th>
+              </tr></thead>
+              <tbody id="course-tabs-tbody"><tr><td colspan="6" class="loading">লোড হচ্ছে...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── HERO COURSES ── -->
+        <div class="page" id="page-hero-courses">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-left">
+                <h3>🖼️ হিরো কার্ড কোর্স</h3>
+                <span class="card-subtitle">index.html-এর স্ক্রোলিং ডেস্টিনেশন কার্ডে কোর্স দেখান</span>
+              </div>
+              <button class="btn btn-primary" onclick="openHeroCourseModal()">+ কার্ড যোগ করুন</button>
+            </div>
+            <div class="card-body" id="hero-courses-list" style="padding:20px">
+              <div class="loading">লোড হচ্ছে...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── ACCESS REQUESTS ── -->
+        <div class="page" id="page-access-requests">
+          <div class="card">
+            <div class="card-header">
+              <h3>🔐 অ্যাক্সেস রিকোয়েস্ট</h3>
+              <div style="display:flex;gap:8px">
+                <select onchange="filterAccessRequests(this.value)" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:13px">
+                  <option value="">সব</option>
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+              </div>
+            </div>
+            <div class="card-body">
+              <table><thead><tr>
+                <th>ব্যবহারকারী</th><th>ইমেইল</th><th>কোর্স</th><th>তারিখ</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th>
+              </tr></thead>
+              <tbody id="access-requests-tbody"><tr><td colspan="6" class="loading">লোড হচ্ছে...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── USERS ── -->
+        <div class="page" id="page-users">
+          <div class="card">
+            <div class="card-header">
+              <h3>👥 ব্যবহারকারী তালিকা</h3>
+            </div>
+            <div class="card-body">
+              <table><thead><tr>
+                <th>নাম</th><th>ইমেইল</th><th>এনরোল কোর্স</th><th>যোগদানের তারিখ</th>
+              </tr></thead>
+              <tbody id="users-tbody"><tr><td colspan="4" class="loading">লোড হচ্ছে...</td></tr></tbody>
               </table>
             </div>
           </div>
@@ -1179,8 +1278,7 @@
       <div class="row2">
         <div class="field"><label>ক্যাটাগরি</label>
           <select id="c-category">
-            <option>Quran</option><option>Arabic</option><option>Islamic Studies</option>
-            <option>Fiqh</option><option>Hadith</option><option>Other</option>
+            <option value="">লোড হচ্ছে...</option>
           </select>
         </div>
         <div class="field"><label>লেভেল</label>
@@ -1189,7 +1287,15 @@
           </select>
         </div>
       </div>
-      <div class="field"><label>ইন্সট্রাক্টর</label><input id="c-instructor" placeholder="শিক্ষকের নাম"/></div>
+      <div class="field">
+        <label>ইন্সট্রাক্টর * <small style="color:var(--text2)">(ইন্সট্রাক্টর না থাকলে কোর্স যোগ করা যাবে না)</small></label>
+        <select id="c-instructor">
+          <option value="">-- ইন্সট্রাক্টর বাছাই করুন --</option>
+        </select>
+        <div id="no-instructor-warning" style="display:none;margin-top:6px;padding:10px;background:var(--orange-bg);border:1px solid rgba(251,146,60,0.4);border-radius:8px;font-size:12px;color:var(--orange)">
+          ⚠️ কোনো ইন্সট্রাক্টর নেই! প্রথমে <a onclick="closeModal('course-modal');navTo('instructors')" style="color:var(--primary);cursor:pointer;text-decoration:underline">ইন্সট্রাক্টর যোগ করুন</a>
+        </div>
+      </div>
       <div class="row2">
         <div class="field"><label>মূল্য (৳)</label><input type="number" id="c-price" placeholder="0"/></div>
         <div class="field"><label>আসল মূল্য (৳)</label><input type="number" id="c-original-price" placeholder="0"/></div>
@@ -1328,6 +1434,97 @@
   </div>
 </div>
 
+<!-- Category Modal -->
+<div class="modal-overlay" id="category-modal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <h3 id="category-modal-title">নতুন ক্যাটাগরি</h3>
+      <button class="btn-close" onclick="closeModal('category-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="category-id"/>
+      <div class="row2">
+        <div class="field"><label>আইকন (Emoji)</label><input id="cat-icon" placeholder="📚" maxlength="4"/></div>
+        <div class="field"><label>নাম *</label><input id="cat-name" placeholder="Quran Studies"/></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Slug (auto)</label><input id="cat-slug" placeholder="quran-studies"/></div>
+        <div class="field"><label>ক্রম সংখ্যা</label><input type="number" id="cat-order" placeholder="0"/></div>
+      </div>
+      <div class="field"><label><input type="checkbox" id="cat-active" checked style="width:auto;margin-right:6px"/>সক্রিয়</label></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="closeModal('category-modal')">বাতিল</button>
+      <button class="btn btn-primary" onclick="saveCategory()">সংরক্ষণ করুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- Course Tab Modal -->
+<div class="modal-overlay" id="course-tab-modal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <h3 id="course-tab-modal-title">নতুন কোর্স ট্যাব</h3>
+      <button class="btn-close" onclick="closeModal('course-tab-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="course-tab-id"/>
+      <div class="row2">
+        <div class="field"><label>আইকন (Emoji)</label><input id="tab-icon" placeholder="🔥" maxlength="4"/></div>
+        <div class="field"><label>লেবেল * (বাংলা)</label><input id="tab-label" placeholder="সেরা বিক্রেতা"/></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Key (English, unique)</label><input id="tab-key" placeholder="top"/></div>
+        <div class="field"><label>ক্রম সংখ্যা</label><input type="number" id="tab-order" placeholder="0"/></div>
+      </div>
+      <div class="field"><label><input type="checkbox" id="tab-active" checked style="width:auto;margin-right:6px"/>সক্রিয়</label></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="closeModal('course-tab-modal')">বাতিল</button>
+      <button class="btn btn-primary" onclick="saveCourseTab()">সংরক্ষণ করুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- Hero Course Modal -->
+<div class="modal-overlay" id="hero-course-modal">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-header">
+      <h3 id="hero-course-modal-title">হিরো কার্ডে কোর্স যোগ করুন</h3>
+      <button class="btn-close" onclick="closeModal('hero-course-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="hc-index"/>
+      <div class="field">
+        <label>কোর্স বাছাই করুন *</label>
+        <select id="hc-course-select" onchange="onHeroCourseSelect(this)">
+          <option value="">-- কোর্স বাছাই করুন --</option>
+        </select>
+      </div>
+      <div id="hc-preview" style="display:none;padding:14px;background:var(--bg3);border-radius:var(--radius-sm);border:1px solid var(--border);margin-top:12px">
+        <div style="display:flex;gap:14px;align-items:center">
+          <img id="hc-prev-img" src="" alt="" style="width:80px;height:56px;object-fit:cover;border-radius:8px;flex-shrink:0"/>
+          <div>
+            <div id="hc-prev-title" style="font-weight:700;font-size:14px;margin-bottom:4px"></div>
+            <div id="hc-prev-inst" style="font-size:12px;color:var(--text2)"></div>
+          </div>
+        </div>
+      </div>
+      <div class="field" style="margin-top:12px"><label>উচ্চতা (px) — বড় বা ছোট কার্ড</label>
+        <select id="hc-height">
+          <option value="200">ছোট (200px)</option>
+          <option value="260" selected>মাঝারি (260px)</option>
+          <option value="320">বড় (320px)</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="closeModal('hero-course-modal')">বাতিল</button>
+      <button class="btn btn-primary" onclick="saveHeroCourse()">সংরক্ষণ করুন</button>
+    </div>
+  </div>
+</div>
+
 <!-- Toast -->
 <div id="toast"></div>
 
@@ -1451,17 +1648,29 @@ const pageTitles = {
   dashboard: 'ড্যাশবোর্ড', courses: 'কোর্স সমূহ',
   instructors: 'ইন্সট্রাক্টর', testimonials: 'রিভিউ',
   notices: 'নোটিশ', enrollments: 'এনরোলমেন্ট', settings: 'সেটিংস',
+  categories: 'ক্যাটাগরি', 'course-tabs': 'কোর্স ট্যাব',
+  'hero-courses': 'হিরো কার্ড কোর্স',
+  'access-requests': 'অ্যাক্সেস রিকোয়েস্ট',
+  users: 'ব্যবহারকারী',
 };
 
 function navTo(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  document.querySelector(`.nav-item[onclick="navTo('${page}')"]`).classList.add('active');
+  const pageEl = document.getElementById('page-' + page);
+  if (pageEl) pageEl.classList.add('active');
+  const navEl = document.querySelector(`.nav-item[onclick="navTo('${page}')"]`);
+  if (navEl) navEl.classList.add('active');
   document.getElementById('page-title').textContent = pageTitles[page] || page;
   document.getElementById('sidebar').classList.remove('open');
 
-  const loaders = { courses: loadCourses, instructors: loadInstructors, testimonials: loadTestimonials, notices: loadNotices, enrollments: loadEnrollments };
+  const loaders = {
+    courses: loadCourses, instructors: loadInstructors,
+    testimonials: loadTestimonials, notices: loadNotices,
+    enrollments: loadEnrollments, categories: loadCategories,
+    'course-tabs': loadCourseTabs, 'hero-courses': loadHeroCourses,
+    'access-requests': loadAccessRequests, users: loadUsers,
+  };
   if (loaders[page]) loaders[page]();
 }
 
@@ -1633,13 +1842,11 @@ function previewExistingThumb(url) {
   document.getElementById('thumb-drop-zone').classList.add('has-image');
 }
 
-function openCourseModal(course = null) {
+async function openCourseModal(course = null) {
   document.getElementById('course-modal-title').textContent = course ? 'কোর্স এডিট' : 'নতুন কোর্স';
   document.getElementById('course-id').value    = course?._id || '';
   document.getElementById('c-title').value      = course?.title || '';
-  document.getElementById('c-category').value   = course?.category || 'Quran';
   document.getElementById('c-level').value      = course?.level || 'সকলের জন্য';
-  document.getElementById('c-instructor').value = course?.instructor || '';
   document.getElementById('c-price').value      = course?.price || '';
   document.getElementById('c-original-price').value = course?.originalPrice || '';
   document.getElementById('c-duration').value   = course?.duration || '';
@@ -1650,9 +1857,41 @@ function openCourseModal(course = null) {
   document.getElementById('c-tags').value       = (course?.tags || []).join(', ');
   document.getElementById('c-featured').checked = course?.featured || false;
   document.getElementById('c-published').checked = course?.published !== false;
-  // Thumbnail preview
   clearThumb();
   if (course?.thumbnail) previewExistingThumb(course.thumbnail);
+
+  // Load categories dynamically
+  try {
+    const cats = await api('GET', '/api/admin/categories');
+    const catSel = document.getElementById('c-category');
+    if (cats.length > 0) {
+      catSel.innerHTML = cats.map(c => `<option value="${c.name}" ${course?.category === c.name ? 'selected' : ''}>${c.icon || ''} ${c.name}</option>`).join('');
+    } else {
+      catSel.innerHTML = '<option value="Quran">Quran</option><option value="Arabic">Arabic</option><option value="Islamic Studies">Islamic Studies</option><option value="Fiqh">Fiqh</option><option value="Hadith">Hadith</option><option value="Other">Other</option>';
+    }
+    if (course?.category) catSel.value = course.category;
+  } catch(e) {
+    document.getElementById('c-category').innerHTML = '<option>Quran</option><option>Arabic</option><option>Islamic Studies</option><option>Fiqh</option><option>Hadith</option><option>Other</option>';
+  }
+
+  // Load instructors dynamically
+  try {
+    const instructors = await api('GET', '/api/admin/instructors');
+    const instSel = document.getElementById('c-instructor');
+    const warning = document.getElementById('no-instructor-warning');
+    if (instructors.length === 0) {
+      instSel.innerHTML = '<option value="">-- কোনো ইন্সট্রাক্টর নেই --</option>';
+      warning.style.display = 'block';
+    } else {
+      warning.style.display = 'none';
+      instSel.innerHTML = '<option value="">-- ইন্সট্রাক্টর বাছাই করুন --</option>' +
+        instructors.map(i => `<option value="${i.name}" ${course?.instructor === i.name ? 'selected' : ''}>${i.name}${i.title ? ' — ' + i.title : ''}</option>`).join('');
+      if (course?.instructor) instSel.value = course.instructor;
+    }
+  } catch(e) {
+    document.getElementById('c-instructor').innerHTML = '<option value="">লোড ব্যর্থ</option>';
+  }
+
   openModal('course-modal');
 }
 
@@ -1669,10 +1908,14 @@ async function saveCourse() {
   const title = document.getElementById('c-title').value.trim();
   if (!title) { toast('শিরোনাম দিন', 'error'); return; }
 
+  const instructorEl = document.getElementById('c-instructor');
+  const instructorVal = instructorEl.value.trim();
+  if (!instructorVal) { toast('⚠️ ইন্সট্রাক্টর বাছাই করুন — ইন্সট্রাক্টর ছাড়া কোর্স যোগ করা যাবে না', 'error'); return; }
+
   const body = {
     title, category: document.getElementById('c-category').value,
     level: document.getElementById('c-level').value,
-    instructor: document.getElementById('c-instructor').value,
+    instructor: instructorVal,
     price: +document.getElementById('c-price').value || 0,
     originalPrice: +document.getElementById('c-original-price').value || 0,
     duration: document.getElementById('c-duration').value,
@@ -2898,6 +3141,338 @@ async function saveThemeSettings() {
   } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
 }
 
+
+// ────────────────────────────────────────────
+// CATEGORIES
+// ────────────────────────────────────────────
+async function loadCategories() {
+  try {
+    const list = await api('GET', '/api/admin/categories');
+    document.getElementById('categories-tbody').innerHTML = list.length
+      ? list.map(c => `<tr>
+          <td style="font-size:22px">${c.icon || '📚'}</td>
+          <td><strong>${c.name}</strong></td>
+          <td><code style="font-size:12px;color:var(--text2)">${c.slug}</code></td>
+          <td>${c.order || 0}</td>
+          <td><span class="badge badge-${c.active ? 'green' : 'red'}">${c.active ? 'সক্রিয়' : 'নিষ্ক্রিয়'}</span></td>
+          <td style="display:flex;gap:6px">
+            <button class="btn btn-edit btn-sm" onclick="editCategory('${c._id}')">✏️</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteCategory('${c._id}')">🗑️</button>
+          </td>
+        </tr>`).join('')
+      : '<tr><td colspan="6" style="text-align:center;color:var(--text2);padding:24px">কোনো ক্যাটাগরি নেই — উপরে "+ নতুন ক্যাটাগরি" বাটনে ক্লিক করুন</td></tr>';
+  } catch(e) { toast('লোড হয়নি', 'error'); }
+}
+
+function openCategoryModal(cat = null) {
+  document.getElementById('category-modal-title').textContent = cat ? 'ক্যাটাগরি এডিট' : 'নতুন ক্যাটাগরি';
+  document.getElementById('category-id').value = cat?._id || '';
+  document.getElementById('cat-icon').value    = cat?.icon || '📚';
+  document.getElementById('cat-name').value    = cat?.name || '';
+  document.getElementById('cat-slug').value    = cat?.slug || '';
+  document.getElementById('cat-order').value   = cat?.order ?? 0;
+  document.getElementById('cat-active').checked = cat?.active !== false;
+  // Auto-generate slug from name
+  document.getElementById('cat-name').oninput = function() {
+    document.getElementById('cat-slug').value = this.value.toLowerCase().replace(/\s+/g,'-').replace(/[^\w-]/g,'');
+  };
+  openModal('category-modal');
+}
+
+async function editCategory(id) {
+  try {
+    const list = await api('GET', '/api/admin/categories');
+    const c = list.find(x => x._id === id);
+    if (c) openCategoryModal(c);
+  } catch(e) { toast('লোড হয়নি', 'error'); }
+}
+
+async function saveCategory() {
+  const id   = document.getElementById('category-id').value;
+  const name = document.getElementById('cat-name').value.trim();
+  if (!name) { toast('নাম দিন', 'error'); return; }
+  const body = {
+    name,
+    icon:   document.getElementById('cat-icon').value || '📚',
+    slug:   document.getElementById('cat-slug').value || name.toLowerCase().replace(/\s+/g,'-'),
+    order:  +document.getElementById('cat-order').value || 0,
+    active: document.getElementById('cat-active').checked,
+  };
+  try {
+    if (id) await api('PUT', '/api/admin/categories/' + id, body);
+    else     await api('POST', '/api/admin/categories', body);
+    toast(id ? '✅ আপডেট হয়েছে' : '✅ ক্যাটাগরি তৈরি হয়েছে');
+    closeModal('category-modal');
+    loadCategories();
+  } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
+}
+
+async function deleteCategory(id) {
+  if (!confirm('ক্যাটাগরিটি মুছে ফেলবেন?')) return;
+  try {
+    await api('DELETE', '/api/admin/categories/' + id);
+    toast('✅ মুছে গেছে');
+    loadCategories();
+  } catch(e) { toast('মুছতে পারেনি', 'error'); }
+}
+
+// ────────────────────────────────────────────
+// COURSE TABS
+// ────────────────────────────────────────────
+async function loadCourseTabs() {
+  try {
+    const list = await api('GET', '/api/admin/course-tabs');
+    document.getElementById('course-tabs-tbody').innerHTML = list.length
+      ? list.map(t => `<tr>
+          <td style="font-size:20px">${t.icon || ''}</td>
+          <td><strong>${t.label}</strong></td>
+          <td><code style="font-size:12px;color:var(--text2)">${t.key}</code></td>
+          <td>${t.order || 0}</td>
+          <td><span class="badge badge-${t.active ? 'green' : 'red'}">${t.active ? 'সক্রিয়' : 'নিষ্ক্রিয়'}</span></td>
+          <td style="display:flex;gap:6px">
+            <button class="btn btn-edit btn-sm" onclick="editCourseTab('${t._id}')">✏️</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteCourseTab('${t._id}')">🗑️</button>
+          </td>
+        </tr>`).join('')
+      : '<tr><td colspan="6" style="text-align:center;color:var(--text2);padding:24px">কোনো ট্যাব নেই — "+ নতুন ট্যাব" বাটনে ক্লিক করুন</td></tr>';
+  } catch(e) { toast('লোড হয়নি', 'error'); }
+}
+
+function openCourseTabModal(tab = null) {
+  document.getElementById('course-tab-modal-title').textContent = tab ? 'ট্যাব এডিট' : 'নতুন কোর্স ট্যাব';
+  document.getElementById('course-tab-id').value = tab?._id || '';
+  document.getElementById('tab-icon').value      = tab?.icon || '';
+  document.getElementById('tab-label').value     = tab?.label || '';
+  document.getElementById('tab-key').value       = tab?.key || '';
+  document.getElementById('tab-order').value     = tab?.order ?? 0;
+  document.getElementById('tab-active').checked  = tab?.active !== false;
+  openModal('course-tab-modal');
+}
+
+async function editCourseTab(id) {
+  try {
+    const list = await api('GET', '/api/admin/course-tabs');
+    const t = list.find(x => x._id === id);
+    if (t) openCourseTabModal(t);
+  } catch(e) { toast('লোড হয়নি', 'error'); }
+}
+
+async function saveCourseTab() {
+  const id    = document.getElementById('course-tab-id').value;
+  const label = document.getElementById('tab-label').value.trim();
+  const key   = document.getElementById('tab-key').value.trim();
+  if (!label || !key) { toast('লেবেল ও Key দিন', 'error'); return; }
+  const body = {
+    label, key, icon: document.getElementById('tab-icon').value || '',
+    order: +document.getElementById('tab-order').value || 0,
+    active: document.getElementById('tab-active').checked,
+  };
+  try {
+    if (id) await api('PUT', '/api/admin/course-tabs/' + id, body);
+    else     await api('POST', '/api/admin/course-tabs', body);
+    toast(id ? '✅ আপডেট হয়েছে' : '✅ ট্যাব তৈরি হয়েছে');
+    closeModal('course-tab-modal');
+    loadCourseTabs();
+  } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
+}
+
+async function deleteCourseTab(id) {
+  if (!confirm('ট্যাবটি মুছে ফেলবেন?')) return;
+  try {
+    await api('DELETE', '/api/admin/course-tabs/' + id);
+    toast('✅ মুছে গেছে');
+    loadCourseTabs();
+  } catch(e) { toast('মুছতে পারেনি', 'error'); }
+}
+
+// ────────────────────────────────────────────
+// HERO COURSES (Scrolling destination cards)
+// ────────────────────────────────────────────
+let heroCoursesList = [];
+
+async function loadHeroCourses() {
+  const container = document.getElementById('hero-courses-list');
+  try {
+    const s = await api('GET', '/api/admin/featured-courses-config');
+    heroCoursesList = s.heroCards || [];
+    renderHeroCourses();
+  } catch(e) {
+    container.innerHTML = '<div style="color:var(--text2)">লোড হয়নি</div>';
+  }
+}
+
+function renderHeroCourses() {
+  const container = document.getElementById('hero-courses-list');
+  if (!heroCoursesList.length) {
+    container.innerHTML = '<div style="color:var(--text2);text-align:center;padding:30px">কোনো হিরো কার্ড নেই — "+ কার্ড যোগ করুন" বাটনে ক্লিক করুন<br><small>এখানে যোগ করা কোর্সগুলো index.html-এর হিরো স্ক্রোলিং কার্ডে দেখাবে</small></div>';
+    return;
+  }
+  container.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:16px">
+      ${heroCoursesList.map((c, i) => `
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;overflow:hidden;position:relative">
+          <img src="${c.thumbnail || 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=300&q=60'}" 
+            alt="${c.title}" style="width:100%;height:${c.height || 200}px;object-fit:cover;display:block"/>
+          <div style="position:absolute;bottom:0;left:0;right:0;padding:10px 12px;background:linear-gradient(to top,rgba(0,0,0,0.75),transparent)">
+            <div style="font-size:13px;font-weight:700;color:#fff;line-height:1.3">${c.title}</div>
+          </div>
+          <div style="position:absolute;top:8px;right:8px;display:flex;gap:4px">
+            <button onclick="editHeroCourse(${i})" style="background:rgba(0,0,0,0.7);border:none;border-radius:6px;color:#fff;padding:4px 8px;font-size:11px;cursor:pointer">✏️</button>
+            <button onclick="removeHeroCourse(${i})" style="background:rgba(239,68,68,0.8);border:none;border-radius:6px;color:#fff;padding:4px 8px;font-size:11px;cursor:pointer">🗑️</button>
+          </div>
+          <div style="position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.6);border-radius:6px;padding:2px 8px;font-size:11px;color:#fff">
+            #${i+1}
+          </div>
+        </div>`).join('')}
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="saveHeroCourseConfig()">💾 সংরক্ষণ করুন</button>
+  `;
+}
+
+async function openHeroCourseModal(editIndex = null) {
+  document.getElementById('hc-index').value = editIndex !== null ? editIndex : '';
+  document.getElementById('hc-preview').style.display = 'none';
+  document.getElementById('hero-course-modal-title').textContent = editIndex !== null ? 'হিরো কার্ড এডিট' : 'হিরো কার্ডে কোর্স যোগ';
+
+  // Load courses into select
+  try {
+    const courses = await api('GET', '/api/admin/courses');
+    const sel = document.getElementById('hc-course-select');
+    sel.innerHTML = '<option value="">-- কোর্স বাছাই করুন --</option>' +
+      courses.filter(c => c.published).map(c => `<option value="${c._id}" data-title="${c.title}" data-thumb="${c.thumbnail || ''}" data-inst="${c.instructor || ''}">${c.title}</option>`).join('');
+    if (editIndex !== null) {
+      const existing = heroCoursesList[editIndex];
+      if (existing) {
+        sel.value = existing.courseId || '';
+        document.getElementById('hc-height').value = existing.height || 260;
+        // Show preview
+        document.getElementById('hc-prev-img').src = existing.thumbnail || '';
+        document.getElementById('hc-prev-title').textContent = existing.title || '';
+        document.getElementById('hc-prev-inst').textContent = existing.instructor || '';
+        document.getElementById('hc-preview').style.display = 'block';
+      }
+    }
+  } catch(e) {
+    document.getElementById('hc-course-select').innerHTML = '<option value="">লোড ব্যর্থ</option>';
+  }
+  openModal('hero-course-modal');
+}
+
+function onHeroCourseSelect(sel) {
+  const opt = sel.options[sel.selectedIndex];
+  if (!opt.value) { document.getElementById('hc-preview').style.display = 'none'; return; }
+  document.getElementById('hc-prev-img').src = opt.dataset.thumb || 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=300&q=60';
+  document.getElementById('hc-prev-title').textContent = opt.dataset.title || opt.text;
+  document.getElementById('hc-prev-inst').textContent = opt.dataset.inst || '';
+  document.getElementById('hc-preview').style.display = 'block';
+}
+
+function saveHeroCourse() {
+  const sel = document.getElementById('hc-course-select');
+  const opt = sel.options[sel.selectedIndex];
+  if (!opt || !opt.value) { toast('কোর্স বাছাই করুন', 'error'); return; }
+  const card = {
+    courseId: opt.value,
+    title: opt.dataset.title || opt.text,
+    thumbnail: opt.dataset.thumb || '',
+    instructor: opt.dataset.inst || '',
+    height: +document.getElementById('hc-height').value || 260,
+  };
+  const idx = document.getElementById('hc-index').value;
+  if (idx !== '') heroCoursesList[+idx] = card;
+  else heroCoursesList.push(card);
+  closeModal('hero-course-modal');
+  renderHeroCourses();
+  toast('কার্ড যোগ হয়েছে — সংরক্ষণ করুন');
+}
+
+function editHeroCourse(i) { openHeroCourseModal(i); }
+
+function removeHeroCourse(i) {
+  if (!confirm('এই কার্ডটি সরাবেন?')) return;
+  heroCoursesList.splice(i, 1);
+  renderHeroCourses();
+  toast('সরানো হয়েছে — সংরক্ষণ করুন');
+}
+
+async function saveHeroCourseConfig() {
+  try {
+    const existing = await api('GET', '/api/admin/featured-courses-config');
+    await api('POST', '/api/admin/featured-courses-config', { ...existing, heroCards: heroCoursesList });
+    toast('✅ হিরো কার্ড সংরক্ষিত হয়েছে');
+  } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
+}
+
+// ────────────────────────────────────────────
+// ACCESS REQUESTS
+// ────────────────────────────────────────────
+let allAccessRequests = [];
+
+async function loadAccessRequests() {
+  try {
+    allAccessRequests = await api('GET', '/api/admin/access-requests');
+    renderAccessRequests(allAccessRequests);
+  } catch(e) { toast('লোড হয়নি', 'error'); }
+}
+
+function renderAccessRequests(list) {
+  document.getElementById('access-requests-tbody').innerHTML = list.length
+    ? list.map(r => `<tr>
+        <td><strong>${r.userName || '—'}</strong></td>
+        <td style="font-size:12px">${r.userEmail || '—'}</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:10px">
+            ${r.thumbnail ? `<img src="${r.thumbnail}" style="width:40px;height:28px;object-fit:cover;border-radius:4px;flex-shrink:0"/>` : ''}
+            <span style="font-size:13px">${r.courseTitle || '—'}</span>
+          </div>
+        </td>
+        <td style="font-size:12px;color:var(--text2)">${new Date(r.createdAt).toLocaleDateString('bn-BD')}</td>
+        <td><span class="badge badge-${r.status==='approved'?'green':r.status==='rejected'?'red':'yellow'}">${r.status==='approved'?'অনুমোদিত':r.status==='rejected'?'প্রত্যাখ্যাত':'অপেক্ষমাণ'}</span></td>
+        <td style="display:flex;gap:6px">
+          ${r.status==='pending' ? `
+            <button class="btn btn-success btn-sm" onclick="processAccessRequest('${r._id}','approved')">✅ অনুমোদন</button>
+            <button class="btn btn-danger btn-sm" onclick="processAccessRequest('${r._id}','rejected')">❌ প্রত্যাখ্যান</button>
+          ` : `<span style="font-size:12px;color:var(--text2)">সম্পন্ন</span>`}
+        </td>
+      </tr>`).join('')
+    : '<tr><td colspan="6" style="text-align:center;color:var(--text2);padding:24px">কোনো অনুরোধ নেই</td></tr>';
+}
+
+function filterAccessRequests(status) {
+  if (!status) renderAccessRequests(allAccessRequests);
+  else renderAccessRequests(allAccessRequests.filter(r => r.status === status));
+}
+
+async function processAccessRequest(id, status) {
+  const label = status === 'approved' ? 'অনুমোদন' : 'প্রত্যাখ্যান';
+  if (!confirm(`এই অনুরোধটি ${label} করবেন?`)) return;
+  try {
+    const result = await api('PUT', '/api/admin/access-requests/' + id, { status });
+    toast('✅ ' + result.message);
+    loadAccessRequests();
+    // Also refresh dashboard pending count
+    loadDashboard();
+  } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
+}
+
+// ────────────────────────────────────────────
+// USERS
+// ────────────────────────────────────────────
+async function loadUsers() {
+  try {
+    const list = await api('GET', '/api/admin/users');
+    document.getElementById('users-tbody').innerHTML = list.length
+      ? list.map(u => `<tr>
+          <td><strong>${u.name}</strong></td>
+          <td style="font-size:12px">${u.email}</td>
+          <td>
+            <span style="background:var(--blue-bg);color:var(--blue);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600">${(u.enrolledCourses||[]).length} টি কোর্স</span>
+          </td>
+          <td style="font-size:12px;color:var(--text2)">${new Date(u.createdAt).toLocaleDateString('bn-BD')}</td>
+        </tr>`).join('')
+      : '<tr><td colspan="4" style="text-align:center;color:var(--text2);padding:24px">কোনো ব্যবহারকারী নেই</td></tr>';
+  } catch(e) { toast('লোড হয়নি', 'error'); }
+}
 
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
   overlay.addEventListener('click', e => {

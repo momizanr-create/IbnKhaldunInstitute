@@ -10,9 +10,9 @@
 <!-- Hind Siliguri + Poppins Font -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Sans+Bengali:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  * { font-family: 'Hind Siliguri', 'Poppins', sans-serif; box-sizing: border-box; }
+  * { font-family: 'Noto Sans Bengali', 'Hind Siliguri', 'Poppins', sans-serif; box-sizing: border-box; }
   :root { --primary: #1a2a4a; --accent: #2563eb; }
   body { background: #f3f4f6; }
 
@@ -410,6 +410,117 @@
   .hero-arrow-left { left: 16px; }
   .hero-arrow-right { right: 16px; }
 
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .modal-box { max-width: 98vw !important; border-radius: 10px !important; }
+    #productModal .modal-box { max-height: 95vh; }
+    .cart-sidebar { width: 100% !important; right: -100% !important; }
+    .cart-sidebar.open { right: 0 !important; }
+    .hero-slide { padding: 30px 12px !important; min-height: 300px !important; }
+    .hero-slide > div > div:last-child { display: none !important; }
+    .bs-card { flex: 0 0 calc(50% - 10px) !important; }
+    .testi-grid { grid-template-columns: 1fr 1fr !important; }
+    .offer-card { flex: 0 0 200px !important; }
+    .about-grid { grid-template-columns: 1fr !important; }
+    .contact-grid { grid-template-columns: 1fr !important; }
+    .product-detail-grid { grid-template-columns: 1fr !important; }
+    .footer-grid { grid-template-columns: 1fr 1fr !important; }
+    #productModal .modal-box > div > div { grid-template-columns: 1fr !important; }
+    .order-btn-grid { grid-template-columns: 1fr 1fr; }
+    .pd-zoom-result { display: none !important; }
+  }
+  @media (max-width: 480px) {
+    .bs-card { flex: 0 0 calc(100% - 0px) !important; }
+    .offer-card { flex: 0 0 180px !important; }
+    .testi-grid { grid-template-columns: 1fr !important; }
+    .order-btn-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ===== AUTO SCROLL BEST SELLERS ===== */
+  .bs-auto-track { display: flex; gap: 20px; animation: bsAutoScroll 35s linear infinite; width: max-content; }
+  .bs-auto-track:hover { animation-play-state: paused; }
+  @keyframes bsAutoScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+  /* ===== OFFER SECTION ===== */
+  .offer-section { background: linear-gradient(135deg,#fff7ed 0%,#fef3c7 100%); padding: 48px 0; border-bottom: 1px solid #fde68a; overflow: hidden; }
+  .offer-track { display: flex; gap: 20px; animation: offerScroll 25s linear infinite; width: max-content; }
+  .offer-track:hover { animation-play-state: paused; }
+  @keyframes offerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  .offer-card { flex: 0 0 240px; background: #fff; border-radius: 12px; overflow: hidden; border: 2px solid #f59e0b; box-shadow: 0 4px 16px rgba(245,158,11,0.15); cursor: pointer; transition: transform 0.3s, box-shadow 0.3s; position: relative; }
+  .offer-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(245,158,11,0.25); }
+  .offer-card-img { width: 100%; height: 180px; object-fit: cover; display: block; }
+  .offer-card-body { padding: 12px 14px 14px; }
+  .offer-badge { position: absolute; top: 10px; left: 10px; background: linear-gradient(135deg,#ef4444,#f97316); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px; z-index: 2; }
+
+  /* ===== TESTIMONIALS NEW DESIGN ===== */
+  .testimonials-section { background: #f8f9fb; padding: 72px 20px; }
+  .testimonials-section .badge-pill { display: inline-block; background: #fef3c7; border: 1px solid #f59e0b; color: #92400e; font-size: 13px; font-weight: 700; padding: 5px 18px; border-radius: 20px; margin-bottom: 14px; }
+  .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  @media (max-width: 900px) { .testi-grid { grid-template-columns: 1fr 1fr !important; } }
+  @media (max-width: 580px) { .testi-grid { grid-template-columns: 1fr !important; } }
+  .testi-card { background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 2px 16px rgba(0,0,0,0.06); transition: transform 0.3s, box-shadow 0.3s; border: 1px solid #f0f0f0; }
+  .testi-card:hover { transform: translateY(-5px); box-shadow: 0 12px 32px rgba(0,0,0,0.12); }
+  .testi-card.featured { border: 2px solid #1a2a4a; }
+  .testi-stars { color: #f59e0b; font-size: 15px; margin-bottom: 12px; }
+  .testi-text { color: #374151; font-size: 14px; line-height: 1.7; margin-bottom: 16px; }
+  .testi-author { display: flex; align-items: center; gap: 12px; }
+  .testi-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .testi-name { font-weight: 700; color: #1a2a4a; font-size: 14px; }
+  .testi-role { font-size: 12px; color: #6b7280; }
+  .testi-dots { display: flex; justify-content: center; gap: 8px; margin-top: 32px; }
+  .testi-dot { width: 10px; height: 10px; border-radius: 50%; background: #d1d5db; border: none; cursor: pointer; transition: background 0.3s, transform 0.3s; }
+  .testi-dot.active { background: #1a2a4a; transform: scale(1.3); }
+
+  /* ===== IMAGE ZOOM ===== */
+  .pd-img-wrapper { position: relative; overflow: visible; cursor: zoom-in; background: #f5f5f3; border-radius: 8px; }
+  .pd-zoom-lens { position: absolute; width: 80px; height: 80px; border: 2px solid #1a2a4a; border-radius: 50%; pointer-events: none; display: none; background: rgba(26,42,74,0.1); z-index: 5; }
+  .pd-zoom-result { position: fixed; top: 80px; right: 40px; width: 280px; height: 280px; border: 2px solid #e5e7eb; border-radius: 8px; background-repeat: no-repeat; display: none; z-index: 20; box-shadow: 0 8px 32px rgba(0,0,0,0.25); background-color: #fff; }
+  .pd-img-fullscreen { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 9999; display: flex; align-items: center; justify-content: center; cursor: zoom-out; }
+  .pd-img-fullscreen img { max-width: 90vw; max-height: 90vh; border-radius: 8px; object-fit: contain; }
+
+  /* ===== ORDER BUTTONS ===== */
+  .order-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .obtn { border: none; border-radius: 8px; padding: 11px 10px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; transition: all 0.2s; font-family: inherit; }
+  .obtn-cart { background: #f97316; color: #fff; }
+  .obtn-cart:hover { background: #ea6c0a; transform: translateY(-2px); }
+  .obtn-buy { background: #1a2a4a; color: #fff; }
+  .obtn-buy:hover { background: #2563eb; transform: translateY(-2px); }
+  .obtn-wa { background: #25d366; color: #fff; }
+  .obtn-wa:hover { background: #1ebe5b; transform: translateY(-2px); }
+  .obtn-call { background: #1e40af; color: #fff; }
+  .obtn-call:hover { background: #1d4ed8; transform: translateY(-2px); }
+
+  /* ===== REVIEW FORM ===== */
+  .review-star-input { display: flex; gap: 4px; flex-direction: row-reverse; justify-content: flex-end; }
+  .review-star-input input { display: none; }
+  .review-star-input label { font-size: 24px; color: #d1d5db; cursor: pointer; transition: color 0.2s; }
+  .review-star-input label:hover, .review-star-input label:hover ~ label, .review-star-input input:checked ~ label { color: #f59e0b; }
+  .review-card { background: #f8fafc; border-radius: 10px; padding: 14px; margin-bottom: 10px; border-left: 3px solid #2563eb; }
+
+  /* ===== WHATSAPP FLOAT ===== */
+  .wa-float { position: fixed; bottom: 28px; right: 28px; z-index: 1500; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+  .wa-float-btn { width: 58px; height: 58px; background: #25d366; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #fff; box-shadow: 0 4px 20px rgba(37,211,102,0.5); cursor: pointer; transition: transform 0.3s, box-shadow 0.3s; border: none; animation: waPulse 2s ease-in-out infinite; }
+  .wa-float-btn:hover { transform: scale(1.12); box-shadow: 0 8px 28px rgba(37,211,102,0.7); animation: none; }
+  @keyframes waPulse { 0%,100%{box-shadow:0 4px 20px rgba(37,211,102,0.5);} 50%{box-shadow:0 4px 28px rgba(37,211,102,0.8);} }
+  .wa-tooltip { background: #1a2a4a; color: #fff; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 8px; white-space: nowrap; opacity: 0; transform: translateX(10px); transition: all 0.3s; pointer-events: none; }
+  .wa-float:hover .wa-tooltip { opacity: 1; transform: translateX(0); }
+
+  /* ===== AD POPUP ===== */
+  .ad-popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 9000; display: flex; align-items: center; justify-content: center; }
+  .ad-popup-box { background: #fff; border-radius: 20px; overflow: hidden; max-width: 460px; width: 95%; position: relative; animation: popIn 0.5s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes popIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .ad-close-btn { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.5); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s; }
+  .ad-close-btn:hover { background: rgba(0,0,0,0.8); }
+
+  /* ===== FOOTER RESPONSIVE ===== */
+  .footer-inner-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.2fr; gap: 40px; }
+  @media (max-width: 1024px) { .footer-inner-grid { grid-template-columns: 1fr 1fr; gap: 32px; } }
+  @media (max-width: 580px) { .footer-inner-grid { grid-template-columns: 1fr; gap: 24px; } }
+  .footer-new { background: linear-gradient(160deg, #0f1c35 0%, #1a2a4a 60%, #1e3a5f 100%); }
+  .footer-contact-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-bottom: 10px; transition: background 0.2s; }
+  .footer-contact-item:hover { background: rgba(255,255,255,0.10); }
+  .footer-contact-icon { width: 38px; height: 38px; border-radius: 8px; background: rgba(37,99,235,0.3); display: flex; align-items: center; justify-content: center; color: #60a5fa; font-size: 16px; flex-shrink: 0; }
+
   /* Category Marquee */
   .cat-marquee-outer { background: #fff; border-bottom: 1px solid #e5e7eb; overflow: hidden; padding: 16px 0; }
   .cat-marquee-center { max-width: 1200px; margin: 0 auto; overflow: hidden; position: relative; }
@@ -456,6 +567,37 @@
 </style>
 </head>
 <body>
+
+<!-- ===== AD POPUP ===== -->
+<div class="ad-popup-overlay" id="adPopup" style="display:none;">
+  <div class="ad-popup-box">
+    <button class="ad-close-btn" onclick="closeAdPopup()"><i class="fas fa-times"></i></button>
+    <div style="background:linear-gradient(135deg,#1a2a4a 0%,#2563eb 100%);padding:0;position:relative;overflow:hidden;">
+      <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80" alt="Special Offer" style="width:100%;height:200px;object-fit:cover;opacity:0.4;display:block;">
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;">
+        <div style="background:#f59e0b;color:#1a2a4a;font-size:11px;font-weight:800;padding:4px 14px;border-radius:20px;letter-spacing:1px;margin-bottom:10px;">✨ বিশেষ অফার</div>
+        <h2 style="color:#fff;font-size:28px;font-weight:900;line-height:1.2;margin-bottom:8px;">ঈদ সেল শুরু!<br><span style="color:#fde68a;">৫০% পর্যন্ত ছাড়</span></h2>
+        <p style="color:#bfdbfe;font-size:14px;margin-bottom:0;">সীমিত সময়ের অফার — এখনই সুযোগ নিন!</p>
+      </div>
+    </div>
+    <div style="padding:20px;text-align:center;background:#fff;">
+      <p style="color:#6b7280;font-size:13px;margin-bottom:16px;">নতুন কালেকশন দেখুন এবং পছন্দের পণ্যটি অর্ডার করুন।</p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button onclick="closeAdPopup();showCategoryPage('Punjabi')" style="background:#1a2a4a;color:#fff;border:none;border-radius:8px;padding:10px 22px;font-weight:700;font-size:14px;cursor:pointer;transition:background 0.2s;font-family:inherit;" onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#1a2a4a'"><i class="fas fa-shopping-bag" style="margin-right:6px;"></i>কেনাকাটা শুরু করুন</button>
+        <button onclick="closeAdPopup()" style="background:#f3f4f6;color:#6b7280;border:none;border-radius:8px;padding:10px 18px;font-size:13px;cursor:pointer;font-family:inherit;">না ধন্যবাদ</button>
+      </div>
+      <p style="color:#d1d5db;font-size:11px;margin-top:12px;cursor:pointer;" onclick="closeAdPopup()">এই অফারটি বন্ধ করুন</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WHATSAPP FLOAT ===== -->
+<div class="wa-float">
+  <span class="wa-tooltip">WhatsApp-এ অর্ডার করুন</span>
+  <button class="wa-float-btn" onclick="window.open('https://wa.me/8801700000000?text=আমি%20একটি%20পণ্য%20অর্ডার%20করতে%20চাই','_blank')" title="WhatsApp এ অর্ডার করুন">
+    <i class="fab fa-whatsapp"></i>
+  </button>
+</div>
 
 <!-- CART OVERLAY -->
 <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
@@ -767,14 +909,27 @@
   <div class="best-sellers-section">
     <div class="best-sellers-inner-wrap">
       <div class="best-sellers-header">
-        <h2><i class="fas fa-fire" style="color:#ef4444;margin-right:10px;"></i>OUR BEST SELLERS</h2>
-        <div style="display:flex;gap:8px;">
-          <button class="bs-nav-btn" onclick="bsSlide(-1)"><i class="fas fa-chevron-left"></i></button>
-          <button class="bs-nav-btn" onclick="bsSlide(1)"><i class="fas fa-chevron-right"></i></button>
-        </div>
+        <h2><i class="fas fa-fire" style="color:#ef4444;margin-right:10px;"></i>আমাদের বেস্ট সেলার</h2>
+        <span style="font-size:13px;color:#6b7280;">সেরা পণ্যগুলো দেখুন</span>
       </div>
-      <div class="bs-scroll-wrapper">
-        <div class="bs-scroll-inner" id="bsScrollInner"></div>
+      <div class="bs-scroll-wrapper" style="overflow:hidden;">
+        <div class="bs-auto-track" id="bsAutoTrack"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OFFER SECTION -->
+  <div class="offer-section">
+    <div style="max-width:1200px;margin:0 auto;padding:0 20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+        <div>
+          <div style="display:inline-block;background:#fef3c7;border:1px solid #f59e0b;color:#92400e;font-size:12px;font-weight:700;padding:4px 14px;border-radius:20px;margin-bottom:8px;"><i class="fas fa-bolt" style="margin-right:4px;"></i>বিশেষ অফার</div>
+          <h2 style="font-size:22px;font-weight:800;color:#1a2a4a;margin:0;">চলতি অফার পণ্যসমূহ</h2>
+        </div>
+        <button onclick="showPage('shop')" style="background:#f97316;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;">সব দেখুন <i class="fas fa-arrow-right" style="margin-left:4px;"></i></button>
+      </div>
+      <div style="overflow:hidden;">
+        <div class="offer-track" id="offerTrack"></div>
       </div>
     </div>
   </div>
@@ -796,37 +951,71 @@
   </section>
 
   <!-- TESTIMONIALS -->
-  <section style="padding:60px 20px;background:#fff;">
+  <div class="testimonials-section">
     <div style="max-width:1100px;margin:0 auto;">
-      <h2 class="section-title">What Customers Say</h2>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;">
-        <div style="background:#f8fafc;border-radius:14px;padding:24px;border-left:4px solid #2563eb;">
-          <div class="stars" style="margin-bottom:10px;font-size:18px;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-          <p style="color:#374151;font-size:15px;margin-bottom:14px;">"Amazing quality! The Bluetooth speaker exceeded all my expectations. Fast delivery too!"</p>
-          <div style="display:flex;align-items:center;gap:10px;">
-            <div style="width:36px;height:36px;background:#2563eb;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;">S</div>
-            <div style="font-weight:700;color:#1a2a4a;">Sarah M.</div>
+      <div style="text-align:center;margin-bottom:40px;">
+        <span class="badge-pill"><i class="fas fa-star" style="margin-right:6px;color:#f59e0b;"></i>ক্রেতাদের গল্প</span>
+        <h2 style="font-size:clamp(28px,4vw,42px);font-weight:800;color:#1a2a4a;margin:0 0 10px;">হাজারো ক্রেতার ভালোবাসা</h2>
+        <div style="width:60px;height:3px;background:#f59e0b;margin:0 auto 14px;border-radius:2px;"></div>
+        <p style="color:#6b7280;font-size:15px;max-width:520px;margin:0 auto;">TechEmporium থেকে কেনাকাটা করা বাস্তব ক্রেতাদের বাস্তব অভিজ্ঞতা।</p>
+      </div>
+      <div class="testi-grid">
+        <div class="testi-card">
+          <div class="testi-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+          <p class="testi-text">TechEmporium-এর ওয়েবসাইট ও অনলাইন প্ল্যাটফর্ম আমার কেনাকাটার অভিজ্ঞতাকে সম্পূর্ণ বদলে দিয়েছে। পণ্যের মান অসাধারণ!</p>
+          <div class="testi-author">
+            <div class="testi-avatar" style="background:#fde68a;">🧑</div>
+            <div><div class="testi-name">মার্কাস হোসেন</div><div class="testi-role">ফ্রন্টএন্ড ডেভেলপার</div></div>
           </div>
         </div>
-        <div style="background:#f8fafc;border-radius:14px;padding:24px;border-left:4px solid #2563eb;">
-          <div class="stars" style="margin-bottom:10px;font-size:18px;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-          <p style="color:#374151;font-size:15px;margin-bottom:14px;">"Great smartwatch at a reasonable price. The TechEmporium team was very helpful!"</p>
-          <div style="display:flex;align-items:center;gap:10px;">
-            <div style="width:36px;height:36px;background:#2563eb;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;">J</div>
-            <div style="font-weight:700;color:#1a2a4a;">James K.</div>
+        <div class="testi-card featured">
+          <div class="testi-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+          <p class="testi-text">TechEmporium-এর মাধ্যমে আমি সম্পূর্ণ বিক্রয় থেকে অর্থ রাখি এবং শুধুমাত্র ন্যূনতম ফি দিই। এটি সত্যিই চমৎকার! সেরা শপিং সাইট।</p>
+          <div class="testi-author">
+            <div class="testi-avatar" style="background:#dbeafe;">👩</div>
+            <div><div class="testi-name">মোহাম্মদ আলী</div><div class="testi-role">অনলাইন শিক্ষার্থী</div></div>
           </div>
         </div>
-        <div style="background:#f8fafc;border-radius:14px;padding:24px;border-left:4px solid #2563eb;">
-          <div class="stars" style="margin-bottom:10px;font-size:18px;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
-          <p style="color:#374151;font-size:15px;margin-bottom:14px;">"The earbuds are fantastic! Sound quality is top-notch. Will definitely buy again."</p>
-          <div style="display:flex;align-items:center;gap:10px;">
-            <div style="width:36px;height:36px;background:#2563eb;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;">P</div>
-            <div style="font-weight:700;color:#1a2a4a;">Priya R.</div>
+        <div class="testi-card">
+          <div class="testi-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+          <p class="testi-text">TechEmporium প্রায় সবকিছুই আছে যা আমার অনলাইন কেনাকাটার জন্য দরকার। সেরা অংশীদার।</p>
+          <div class="testi-author">
+            <div class="testi-avatar" style="background:#fce7f3;">🧑‍💻</div>
+            <div><div class="testi-name">জেক আলম</div><div class="testi-role">শিক্ষার্থী</div></div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+          <p class="testi-text">ইন্সটিটিউটটি তৃতীয় পক্ষের সার্ভিস ফি কমাতে এবং সরাসরি বিক্রয় বাড়াতে অসাধারণ সাহায্য করেছে।</p>
+          <div class="testi-author">
+            <div class="testi-avatar" style="background:#d1fae5;">🧑‍🎓</div>
+            <div><div class="testi-name">তারা বিশ্বাস</div><div class="testi-role">উদ্যোক্তা</div></div>
+          </div>
+        </div>
+        <div class="testi-card featured">
+          <div class="testi-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+          <p class="testi-text">আমার পণ্যগুলো রাত দেরি করে পরিচালিত হলেও TechEmporium-এর কাস্টমার সাপোর্ট সবদা সক্রিয় থেকে যেকোনো সমস্যায় সাহায্য করেছে।</p>
+          <div class="testi-author">
+            <div class="testi-avatar" style="background:#ede9fe;">👩‍💼</div>
+            <div><div class="testi-name">ডারিল ইসলাম</div><div class="testi-role">ব্যবসায়ী উদ্যোক্তা</div></div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+          <p class="testi-text">তারা আমাদের বড় প্রতিষ্ঠানগুলোর সাথে প্রতিযোগিতা করতে এবং প্রযুক্তির উপর আরও বেশি নিয়ন্ত্রণ নিতে সাহায্য করেছে।</p>
+          <div class="testi-author">
+            <div class="testi-avatar" style="background:#fee2e2;">👨‍🔬</div>
+            <div><div class="testi-name">মাইকেল বি.</div><div class="testi-role">গবেষক</div></div>
           </div>
         </div>
       </div>
+      <div class="testi-dots">
+        <button class="testi-dot active"></button>
+        <button class="testi-dot"></button>
+        <button class="testi-dot"></button>
+      </div>
     </div>
-  </section>
+  </div>
 
 </div>
 
@@ -999,81 +1188,121 @@
 </div>
 
 <!-- ==================== FOOTER ==================== -->
-<footer style="padding:60px 20px 0;">
-  <div style="max-width:1200px;margin:0 auto;">
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:40px;padding-bottom:40px;border-bottom:1px solid rgba(255,255,255,0.1);">
+<footer class="footer-new" style="color:#cbd5e1;">
+  <!-- Top accent bar -->
+  <div style="background:linear-gradient(90deg,#c9a84c,#f59e0b,#c9a84c);height:4px;"></div>
+
+  <div style="max-width:1200px;margin:0 auto;padding:56px 20px 0;">
+    <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:40px;padding-bottom:40px;border-bottom:1px solid rgba(255,255,255,0.08);" class="footer-inner-grid">
 
       <!-- Brand -->
       <div>
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-          <div style="background:#2563eb;width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;">
-            <i class="fas fa-microchip" style="color:#fff;font-size:16px;"></i>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
+          <div style="background:linear-gradient(135deg,#2563eb,#1a2a4a);width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(37,99,235,0.4);">
+            <i class="fas fa-microchip" style="color:#c9a84c;font-size:20px;"></i>
           </div>
-          <span style="color:#fff;font-size:18px;font-weight:800;">TechEmporium</span>
+          <div>
+            <div style="color:#c9a84c;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">TechEmporium</div>
+            <div style="color:#fff;font-size:20px;font-weight:900;letter-spacing:-0.5px;line-height:1;">STORE</div>
+          </div>
         </div>
-        <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin-bottom:20px;">Your one-stop destination for the latest tech gadgets and accessories. Quality products, unbeatable prices.</p>
-        <div style="display:flex;gap:10px;">
-          <a href="#" class="social-icon" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-          <a href="#" class="social-icon" title="Twitter / X"><i class="fab fa-x-twitter"></i></a>
-          <a href="#" class="social-icon" title="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="#" class="social-icon" title="YouTube"><i class="fab fa-youtube"></i></a>
-          <a href="#" class="social-icon" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        <p style="color:#94a3b8;font-size:14px;line-height:1.8;margin-bottom:20px;">আপনার বিশ্বস্ত অনলাইন শপিং গন্তব্য। সেরা মানের পণ্য, সাশ্রয়ী মূল্য এবং দ্রুত ডেলিভারি।</p>
+        <!-- Contact items -->
+        <div class="footer-contact-item">
+          <div class="footer-contact-icon"><i class="fas fa-phone-alt"></i></div>
+          <div>
+            <div style="font-size:11px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.5px;">হটলাইন</div>
+            <div style="color:#e2e8f0;font-weight:700;font-size:14px;">+880 1700-000000</div>
+          </div>
+        </div>
+        <div class="footer-contact-item">
+          <div class="footer-contact-icon"><i class="fab fa-whatsapp"></i></div>
+          <div>
+            <div style="font-size:11px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.5px;">WhatsApp</div>
+            <div style="color:#e2e8f0;font-weight:700;font-size:14px;">+880 1800-000000</div>
+          </div>
+        </div>
+        <div class="footer-contact-item">
+          <div class="footer-contact-icon"><i class="fas fa-clock"></i></div>
+          <div>
+            <div style="font-size:11px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.5px;">সময়</div>
+            <div style="color:#e2e8f0;font-size:13px;">শনি–বৃহঃ: সকাল ৯টা – রাত ৯টা</div>
+          </div>
+        </div>
+        <!-- Social -->
+        <div style="display:flex;gap:10px;margin-top:16px;">
+          <a href="#" class="social-icon" title="Facebook" style="background:rgba(24,119,242,0.2);"><i class="fab fa-facebook-f" style="color:#60a5fa;"></i></a>
+          <a href="#" class="social-icon" title="Instagram" style="background:rgba(225,48,108,0.2);"><i class="fab fa-instagram" style="color:#f472b6;"></i></a>
+          <a href="#" class="social-icon" title="YouTube" style="background:rgba(255,0,0,0.15);"><i class="fab fa-youtube" style="color:#f87171;"></i></a>
+          <a href="#" class="social-icon" title="WhatsApp" style="background:rgba(37,211,102,0.2);"><i class="fab fa-whatsapp" style="color:#4ade80;"></i></a>
+          <a href="#" class="social-icon" title="TikTok" style="background:rgba(255,255,255,0.08);"><i class="fab fa-tiktok" style="color:#e2e8f0;"></i></a>
         </div>
       </div>
 
       <!-- Quick Links -->
       <div>
-        <h4 style="color:#fff;font-weight:700;font-size:16px;margin-bottom:16px;"><i class="fas fa-link" style="margin-right:6px;color:#60a5fa;"></i>Quick Links</h4>
-        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
-          <li><a onclick="showPage('home')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:8px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'"><i class="fas fa-home" style="width:14px;color:#60a5fa;"></i>Home</a></li>
-          <li><a onclick="showPage('shop')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:8px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'"><i class="fas fa-store" style="width:14px;color:#60a5fa;"></i>Shop</a></li>
-          <li><a onclick="showPage('categories')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:8px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'"><i class="fas fa-th-large" style="width:14px;color:#60a5fa;"></i>Categories</a></li>
-          <li><a onclick="showPage('about')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:8px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'"><i class="fas fa-info-circle" style="width:14px;color:#60a5fa;"></i>About Us</a></li>
-          <li><a onclick="showPage('contact')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:8px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'"><i class="fas fa-envelope" style="width:14px;color:#60a5fa;"></i>Contact</a></li>
+        <h4 style="color:#fff;font-weight:700;font-size:16px;margin-bottom:20px;display:flex;align-items:center;gap:8px;"><span style="width:3px;height:18px;background:#c9a84c;border-radius:2px;display:inline-block;"></span>দ্রুত লিঙ্ক</h4>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px;">
+          <li><a onclick="showPage('home')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:10px;transition:all 0.2s;padding:4px 0;" onmouseover="this.style.color='#c9a84c';this.style.paddingLeft='6px'" onmouseout="this.style.color='#94a3b8';this.style.paddingLeft='0'"><i class="fas fa-home" style="width:14px;color:#2563eb;"></i>হোম</a></li>
+          <li><a onclick="showPage('shop')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:10px;transition:all 0.2s;padding:4px 0;" onmouseover="this.style.color='#c9a84c';this.style.paddingLeft='6px'" onmouseout="this.style.color='#94a3b8';this.style.paddingLeft='0'"><i class="fas fa-store" style="width:14px;color:#2563eb;"></i>শপ</a></li>
+          <li><a onclick="showPage('categories')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:10px;transition:all 0.2s;padding:4px 0;" onmouseover="this.style.color='#c9a84c';this.style.paddingLeft='6px'" onmouseout="this.style.color='#94a3b8';this.style.paddingLeft='0'"><i class="fas fa-th-large" style="width:14px;color:#2563eb;"></i>ক্যাটাগরি</a></li>
+          <li><a onclick="showPage('about')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:10px;transition:all 0.2s;padding:4px 0;" onmouseover="this.style.color='#c9a84c';this.style.paddingLeft='6px'" onmouseout="this.style.color='#94a3b8';this.style.paddingLeft='0'"><i class="fas fa-info-circle" style="width:14px;color:#2563eb;"></i>আমাদের সম্পর্কে</a></li>
+          <li><a onclick="showPage('contact')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:10px;transition:all 0.2s;padding:4px 0;" onmouseover="this.style.color='#c9a84c';this.style.paddingLeft='6px'" onmouseout="this.style.color='#94a3b8';this.style.paddingLeft='0'"><i class="fas fa-envelope" style="width:14px;color:#2563eb;"></i>যোগাযোগ</a></li>
         </ul>
       </div>
 
       <!-- Categories -->
       <div>
-        <h4 style="color:#fff;font-weight:700;font-size:16px;margin-bottom:16px;"><i class="fas fa-tags" style="margin-right:6px;color:#60a5fa;"></i>Categories</h4>
-        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
-          <li><a onclick="showCategoryPage('Watches')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:8px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'"><i class="fas fa-clock" style="width:14px;color:#60a5fa;"></i>Watches</a></li>
-          <li><a onclick="showCategoryPage('Shirts')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:8px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'"><i class="fas fa-shirt" style="width:14px;color:#60a5fa;"></i>Shirts</a></li>
-          <li><a onclick="showCategoryPage('T-Shirts')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:8px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'"><i class="fas fa-tshirt" style="width:14px;color:#60a5fa;"></i>T-Shirts</a></li>
-          <li><a onclick="showCategoryPage('Pants')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:8px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'"><i class="fas fa-person" style="width:14px;color:#60a5fa;"></i>Pants</a></li>
-          <li><a onclick="showCategoryPage('Punjabi')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:8px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'"><i class="fas fa-vest" style="width:14px;color:#60a5fa;"></i>Punjabi</a></li>
-          <li><a onclick="showCategoryPage('Drop Shoulder T-Shirt')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:8px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'"><i class="fas fa-layer-group" style="width:14px;color:#60a5fa;"></i>Drop Shoulder</a></li>
+        <h4 style="color:#fff;font-weight:700;font-size:16px;margin-bottom:20px;display:flex;align-items:center;gap:8px;"><span style="width:3px;height:18px;background:#c9a84c;border-radius:2px;display:inline-block;"></span>ক্যাটাগরি</h4>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px;">
+          <li><a onclick="showCategoryPage('Watches')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:10px;transition:all 0.2s;padding:4px 0;" onmouseover="this.style.color='#c9a84c';this.style.paddingLeft='6px'" onmouseout="this.style.color='#94a3b8';this.style.paddingLeft='0'"><i class="fas fa-clock" style="width:14px;color:#2563eb;"></i>ঘড়ি</a></li>
+          <li><a onclick="showCategoryPage('Shirts')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:10px;transition:all 0.2s;padding:4px 0;" onmouseover="this.style.color='#c9a84c';this.style.paddingLeft='6px'" onmouseout="this.style.color='#94a3b8';this.style.paddingLeft='0'"><i class="fas fa-shirt" style="width:14px;color:#2563eb;"></i>শার্ট</a></li>
+          <li><a onclick="showCategoryPage('T-Shirts')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:10px;transition:all 0.2s;padding:4px 0;" onmouseover="this.style.color='#c9a84c';this.style.paddingLeft='6px'" onmouseout="this.style.color='#94a3b8';this.style.paddingLeft='0'"><i class="fas fa-tshirt" style="width:14px;color:#2563eb;"></i>টি-শার্ট</a></li>
+          <li><a onclick="showCategoryPage('Pants')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:10px;transition:all 0.2s;padding:4px 0;" onmouseover="this.style.color='#c9a84c';this.style.paddingLeft='6px'" onmouseout="this.style.color='#94a3b8';this.style.paddingLeft='0'"><i class="fas fa-person" style="width:14px;color:#2563eb;"></i>প্যান্ট</a></li>
+          <li><a onclick="showCategoryPage('Punjabi')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:10px;transition:all 0.2s;padding:4px 0;" onmouseover="this.style.color='#c9a84c';this.style.paddingLeft='6px'" onmouseout="this.style.color='#94a3b8';this.style.paddingLeft='0'"><i class="fas fa-vest" style="width:14px;color:#2563eb;"></i>পাঞ্জাবি</a></li>
+          <li><a onclick="showCategoryPage('Drop Shoulder T-Shirt')" style="cursor:pointer;font-size:14px;color:#94a3b8;display:flex;align-items:center;gap:10px;transition:all 0.2s;padding:4px 0;" onmouseover="this.style.color='#c9a84c';this.style.paddingLeft='6px'" onmouseout="this.style.color='#94a3b8';this.style.paddingLeft='0'"><i class="fas fa-layer-group" style="width:14px;color:#2563eb;"></i>ড্রপ শোল্ডার</a></li>
         </ul>
       </div>
 
-      <!-- Newsletter & Payment -->
+      <!-- Payment & Policy -->
       <div>
-        <h4 style="color:#fff;font-weight:700;font-size:16px;margin-bottom:16px;"><i class="fas fa-bell" style="margin-right:6px;color:#60a5fa;"></i>Newsletter</h4>
-        <p style="color:#94a3b8;font-size:14px;margin-bottom:16px;">Subscribe to get the latest deals and tech news.</p>
-        <div style="display:flex;gap:8px;margin-bottom:28px;">
-          <input type="email" placeholder="your@email.com" class="form-input" style="flex:1;background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15);color:#fff;" id="newsletterEmail">
-          <button onclick="subscribeNewsletter()" class="btn-dark" style="background:#2563eb;padding:10px 14px;white-space:nowrap;"><i class="fas fa-paper-plane"></i></button>
+        <h4 style="color:#fff;font-weight:700;font-size:16px;margin-bottom:20px;display:flex;align-items:center;gap:8px;"><span style="width:3px;height:18px;background:#c9a84c;border-radius:2px;display:inline-block;"></span>পেমেন্ট পদ্ধতি</h4>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:24px;">
+          <div style="background:rgba(233,30,140,0.1);border:1px solid rgba(233,30,140,0.3);border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:6px;">
+            <i class="fas fa-mobile-alt" style="color:#e91e8c;font-size:16px;"></i>
+            <span style="color:#f9a8d4;font-size:12px;font-weight:700;">bKash</span>
+          </div>
+          <div style="background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.3);border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:6px;">
+            <i class="fas fa-mobile-alt" style="color:#f97316;font-size:16px;"></i>
+            <span style="color:#fed7aa;font-size:12px;font-weight:700;">Nagad</span>
+          </div>
+          <div style="background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.3);border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:6px;">
+            <i class="fas fa-mobile-alt" style="color:#8b5cf6;font-size:16px;"></i>
+            <span style="color:#ddd6fe;font-size:12px;font-weight:700;">Rocket</span>
+          </div>
+          <div style="background:rgba(26,86,219,0.15);border:1px solid rgba(26,86,219,0.3);border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:6px;">
+            <i class="fab fa-cc-visa" style="color:#60a5fa;font-size:16px;"></i>
+            <span style="color:#bfdbfe;font-size:12px;font-weight:700;">VISA</span>
+          </div>
         </div>
 
-        <!-- Payment Methods -->
-        <h5 style="color:#fff;font-weight:600;font-size:14px;margin-bottom:12px;"><i class="fas fa-credit-card" style="margin-right:6px;color:#60a5fa;"></i>We Accept</h5>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <span class="payment-badge"><i class="fas fa-mobile-alt" style="margin-right:4px;color:#e91e8c;"></i>bKash</span>
-          <span class="payment-badge"><i class="fas fa-mobile-alt" style="margin-right:4px;color:#f97316;"></i>Nagad</span>
-          <span class="payment-badge"><i class="fas fa-mobile-alt" style="margin-right:4px;color:#8b5cf6;"></i>Rocket</span>
-          <span class="payment-badge"><i class="fab fa-cc-visa" style="margin-right:4px;color:#1a56db;font-size:14px;"></i>VISA</span>
-          <span class="payment-badge"><i class="fab fa-cc-mastercard" style="margin-right:4px;color:#eb001b;font-size:14px;"></i>MasterCard</span>
+        <h4 style="color:#fff;font-weight:700;font-size:15px;margin-bottom:14px;display:flex;align-items:center;gap:8px;"><span style="width:3px;height:16px;background:#c9a84c;border-radius:2px;display:inline-block;"></span>আমাদের গ্যারান্টি</h4>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;border-radius:8px;background:rgba(34,197,94,0.15);display:flex;align-items:center;justify-content:center;"><i class="fas fa-truck" style="color:#4ade80;font-size:13px;"></i></div><span style="color:#94a3b8;font-size:13px;">দ্রুত ডেলিভারি</span></div>
+          <div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;border-radius:8px;background:rgba(59,130,246,0.15);display:flex;align-items:center;justify-content:center;"><i class="fas fa-shield-alt" style="color:#60a5fa;font-size:13px;"></i></div><span style="color:#94a3b8;font-size:13px;">১ বছরের ওয়ারেন্টি</span></div>
+          <div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;border-radius:8px;background:rgba(234,179,8,0.15);display:flex;align-items:center;justify-content:center;"><i class="fas fa-undo" style="color:#fbbf24;font-size:13px;"></i></div><span style="color:#94a3b8;font-size:13px;">৭ দিনে রিটার্ন</span></div>
+          <div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;border-radius:8px;background:rgba(239,68,68,0.15);display:flex;align-items:center;justify-content:center;"><i class="fas fa-headset" style="color:#f87171;font-size:13px;"></i></div><span style="color:#94a3b8;font-size:13px;">২৪/৭ কাস্টমার সাপোর্ট</span></div>
         </div>
       </div>
     </div>
 
     <!-- Bottom bar -->
-    <div style="padding:24px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
-      <div style="color:#64748b;font-size:13px;"><i class="fas fa-copyright" style="margin-right:4px;"></i>2025 TechEmporium. All rights reserved.</div>
-      <div style="display:flex;gap:20px;">
-        <a href="#" style="color:#64748b;font-size:13px;" onmouseover="this.style.color='#94a3b8'" onmouseout="this.style.color='#64748b'"><i class="fas fa-shield-alt" style="margin-right:4px;"></i>Privacy Policy</a>
-        <a href="#" style="color:#64748b;font-size:13px;" onmouseover="this.style.color='#94a3b8'" onmouseout="this.style.color='#64748b'"><i class="fas fa-file-contract" style="margin-right:4px;"></i>Terms of Service</a>
-        <a href="#" style="color:#64748b;font-size:13px;" onmouseover="this.style.color='#94a3b8'" onmouseout="this.style.color='#64748b'"><i class="fas fa-undo" style="margin-right:4px;"></i>Refund Policy</a>
+    <div style="padding:20px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+      <div style="color:#475569;font-size:13px;"><i class="fas fa-copyright" style="margin-right:4px;"></i>২০২৫ TechEmporium। সর্বস্বত্ব সংরক্ষিত।</div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;">
+        <a href="#" style="color:#475569;font-size:13px;transition:color 0.2s;" onmouseover="this.style.color='#94a3b8'" onmouseout="this.style.color='#475569'"><i class="fas fa-shield-alt" style="margin-right:4px;"></i>প্রাইভেসি পলিসি</a>
+        <a href="#" style="color:#475569;font-size:13px;transition:color 0.2s;" onmouseover="this.style.color='#94a3b8'" onmouseout="this.style.color='#475569'"><i class="fas fa-file-contract" style="margin-right:4px;"></i>সেবার শর্ত</a>
+        <a href="#" style="color:#475569;font-size:13px;transition:color 0.2s;" onmouseover="this.style.color='#94a3b8'" onmouseout="this.style.color='#475569'"><i class="fas fa-undo" style="margin-right:4px;"></i>রিফান্ড পলিসি</a>
       </div>
     </div>
   </div>
@@ -1468,88 +1697,129 @@ function openProductDetail(productId) {
   const related = products.filter(pr => pr.category === p.category && pr.id !== p.id).slice(0, 4);
   const discount = p.oldPrice ? Math.round((1 - p.price/p.oldPrice)*100) : 0;
 
-  // Simulate multiple images using the same img + a couple of unsplash variations
   const thumbs = [p.image, p.image.replace('w=400','w=400').replace('q=80','q=60'), p.image.replace('w=400','w=300')];
+  const reviews = getReviews(productId);
 
   document.getElementById('productModalContent').innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;min-height:480px;">
-      <!-- LEFT: image gallery -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;min-height:480px;" class="product-detail-grid">
+      <!-- LEFT: image gallery with zoom -->
       <div style="background:#f5f5f3;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;position:relative;">
-        <!-- Prev/Next arrows -->
-        <button id="pdPrev" onclick="pdThumbNav(-1)" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);background:#fff;border:1px solid #e5e7eb;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:#555;"><i class="fas fa-chevron-left"></i></button>
-        <button id="pdNext" onclick="pdThumbNav(1)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:#fff;border:1px solid #e5e7eb;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:#555;"><i class="fas fa-chevron-right"></i></button>
-        <img id="pdMainImg" src="${p.image}" alt="${p.name}" style="width:100%;max-height:280px;object-fit:contain;border-radius:8px;margin-bottom:12px;">
-        <div style="display:flex;gap:10px;">
+        <button id="pdPrev" onclick="pdThumbNav(-1)" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);background:#fff;border:1px solid #e5e7eb;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:#555;z-index:5;"><i class="fas fa-chevron-left"></i></button>
+        <button id="pdNext" onclick="pdThumbNav(1)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:#fff;border:1px solid #e5e7eb;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:#555;z-index:5;"><i class="fas fa-chevron-right"></i></button>
+        <div class="pd-img-wrapper" id="pdImgWrapper" style="width:100%;max-height:280px;position:relative;overflow:hidden;background:#f5f5f3;border-radius:8px;margin-bottom:12px;">
+          <div class="pd-zoom-lens" id="pdZoomLens"></div>
+          <img id="pdMainImg" src="${p.image}" alt="${p.name}" style="width:100%;max-height:280px;object-fit:contain;display:block;">
+          <div class="pd-zoom-result" id="pdZoomResult"></div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
           ${thumbs.map((t,i) => `<div class="pd-thumb ${i===0?'pd-thumb-active':''}" onclick="selectPdThumb(${i},'${t}')" style="width:52px;height:52px;border-radius:6px;overflow:hidden;border:2px solid ${i===0?'#1a2a4a':'#e5e7eb'};cursor:pointer;transition:border-color 0.2s;background:#fff;display:flex;align-items:center;justify-content:center;"><img src="${t}" style="width:100%;height:100%;object-fit:contain;padding:4px;"></div>`).join('')}
         </div>
         ${p.badge ? `<span style="position:absolute;top:14px;left:14px;background:#ef4444;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:4px;">${p.badge}</span>` : ''}
       </div>
 
       <!-- RIGHT: product info -->
-      <div style="padding:28px 28px 20px;display:flex;flex-direction:column;overflow-y:auto;max-height:82vh;">
+      <div style="padding:24px 24px 16px;display:flex;flex-direction:column;overflow-y:auto;max-height:82vh;">
         <div style="font-size:11px;color:#999;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Item Code ${String(p.id).padStart(7,'0')}</div>
         <h2 style="font-size:20px;font-weight:700;color:#1a1a1a;margin-bottom:10px;line-height:1.35;">${p.name}</h2>
 
         <!-- Rating -->
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:14px;">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;">
           <span class="stars" style="font-size:13px;">${starsHtml(p.rating)}</span>
-          <span style="color:#555;font-size:13px;">${p.rating} (${p.reviews} reviews)</span>
+          <span style="color:#555;font-size:13px;">${p.rating} (${p.reviews + reviews.length} রিভিউ)</span>
         </div>
 
-        <p style="color:#555;font-size:13.5px;line-height:1.7;margin-bottom:18px;">${p.description}</p>
+        <p style="color:#555;font-size:13px;line-height:1.7;margin-bottom:14px;">${p.description}</p>
 
-        <!-- Specs strip -->
-        <div style="display:flex;gap:0;border-top:1px solid #ececec;border-bottom:1px solid #ececec;margin-bottom:20px;">
-          ${p.features.slice(0,3).map((f,i) => `<div style="flex:1;padding:10px 12px;${i>0?'border-left:1px solid #ececec':''}"><div style="font-size:10px;color:#999;font-weight:600;text-transform:uppercase;margin-bottom:2px;">${i===0?'Key Feature':i===1?'Included':'Extra'}</div><div style="font-size:12px;color:#333;font-weight:600;">${f}</div></div>`).join('')}
+        <!-- Price -->
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="font-size:26px;font-weight:800;color:#1a1a1a;">৳${p.price.toLocaleString()}</span>
+          ${p.oldPrice ? `<span style="font-size:15px;color:#aaa;text-decoration:line-through;">৳${p.oldPrice.toLocaleString()}</span><span style="background:#dcfce7;color:#16a34a;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;">${discount}% ছাড়</span>` : ''}
         </div>
 
-        <!-- Color label -->
+        <!-- Qty -->
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-          <span style="font-size:13px;font-weight:600;color:#555;">Category:</span>
-          <select style="border:1px solid #d1d5db;border-radius:6px;padding:6px 12px;font-size:13px;color:#333;background:#fff;cursor:pointer;"><option>${p.category}</option></select>
-          <span style="font-size:22px;font-weight:800;color:#1a1a1a;margin-left:auto;">৳${p.price.toLocaleString()}</span>
-        </div>
-        ${p.oldPrice ? `<div style="text-align:right;margin-top:-10px;margin-bottom:14px;"><span style="font-size:13px;color:#aaa;text-decoration:line-through;">৳${p.oldPrice.toLocaleString()}</span> <span style="background:#dcfce7;color:#16a34a;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;margin-left:6px;">${discount}% OFF</span></div>` : ''}
-
-        <!-- Qty + Add to cart -->
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <span style="font-size:13px;font-weight:600;color:#555;">পরিমাণ:</span>
           <div style="display:flex;align-items:center;border:1px solid #d1d5db;border-radius:6px;overflow:hidden;">
             <button class="qty-btn" onclick="changeProdQty(-1)" style="border-radius:0;border:none;border-right:1px solid #d1d5db;"><i class="fas fa-minus" style="font-size:10px;"></i></button>
             <span id="prodQty" style="font-weight:700;min-width:40px;text-align:center;font-size:16px;padding:0 8px;">${prodQty}</span>
             <button class="qty-btn" onclick="changeProdQty(1)" style="border-radius:0;border:none;border-left:1px solid #d1d5db;"><i class="fas fa-plus" style="font-size:10px;"></i></button>
           </div>
-          <button onclick="addToCart(${p.id}, parseInt(document.getElementById('prodQty').textContent));closeProductModal();" style="flex:1;background:#1a2a4a;color:#fff;border:none;border-radius:6px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;transition:background 0.2s;" onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#1a2a4a'"><i class="fas fa-shopping-cart" style="margin-right:6px;"></i>ADD TO CART</button>
-          <button onclick="addToCart(${p.id}, parseInt(document.getElementById('prodQty').textContent));closeProductModal();showOrderForm();" style="padding:11px 16px;background:#fff;border:2px solid #1a2a4a;color:#1a2a4a;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all 0.2s;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#fff'">FIND A STORE</button>
+        </div>
+
+        <!-- 4 Order Buttons -->
+        <div class="order-btn-grid">
+          <button class="obtn obtn-cart" onclick="addToCart(${p.id}, parseInt(document.getElementById('prodQty').textContent));closeProductModal();"><i class="fas fa-shopping-bag"></i> কার্টে যোগ</button>
+          <button class="obtn obtn-buy" onclick="addToCart(${p.id}, parseInt(document.getElementById('prodQty').textContent));closeProductModal();showOrderForm();"><i class="fas fa-bolt"></i> এখনই কিনুন</button>
+          <button class="obtn obtn-wa" onclick="waOrder('${p.name.replace(/'/g,"\\'")}',${p.price})"><i class="fab fa-whatsapp"></i> WhatsApp অর্ডার</button>
+          <button class="obtn obtn-call" onclick="callOrder()"><i class="fas fa-phone-alt"></i> কল করে অর্ডার</button>
         </div>
 
         <!-- Trust badges -->
-        <div style="display:flex;gap:16px;font-size:12px;color:#777;padding:12px 0;border-top:1px solid #f0f0f0;">
-          <span><i class="fas fa-truck" style="margin-right:4px;color:#2563eb;"></i>Free delivery over ৳999</span>
-          <span><i class="fas fa-undo" style="margin-right:4px;color:#2563eb;"></i>30-day returns</span>
-          <span><i class="fas fa-shield-alt" style="margin-right:4px;color:#2563eb;"></i>1-Year Warranty</span>
+        <div style="display:flex;gap:12px;font-size:11px;color:#777;padding:10px 0;border-top:1px solid #f0f0f0;flex-wrap:wrap;">
+          <span><i class="fas fa-truck" style="margin-right:4px;color:#2563eb;"></i>৯৯৯+ টাকায় ফ্রি ডেলিভারি</span>
+          <span><i class="fas fa-undo" style="margin-right:4px;color:#2563eb;"></i>৭ দিনে রিটার্ন</span>
+          <span><i class="fas fa-shield-alt" style="margin-right:4px;color:#2563eb;"></i>১ বছরের ওয়ারেন্টি</span>
         </div>
 
-        <!-- People Also Viewed -->
+        <!-- Related -->
         ${related.length > 0 ? `
-        <div style="margin-top:16px;border-top:1px solid #f0f0f0;padding-top:14px;">
-          <h4 style="font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:12px;">People Also Viewed</h4>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+        <div style="margin-top:12px;border-top:1px solid #f0f0f0;padding-top:12px;">
+          <h4 style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:10px;">এই ক্যাটাগরির অন্যান্য পণ্য</h4>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
             ${related.map(r => `
               <div style="cursor:pointer;text-align:center;" onclick="closeProductModal();setTimeout(()=>openProductDetail(${r.id}),200)">
-                <div style="background:#f5f5f3;border-radius:6px;overflow:hidden;margin-bottom:6px;height:72px;display:flex;align-items:center;justify-content:center;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                <div style="background:#f5f5f3;border-radius:6px;overflow:hidden;margin-bottom:4px;height:64px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">
                   <img src="${r.image}" style="width:100%;height:100%;object-fit:contain;padding:6px;">
                 </div>
-                <div style="font-size:11px;color:#333;font-weight:500;line-height:1.3;margin-bottom:3px;">${r.name}</div>
-                <div style="font-size:12px;font-weight:700;color:#1a2a4a;">৳${r.price.toLocaleString()}</div>
+                <div style="font-size:10px;color:#333;font-weight:500;line-height:1.3;margin-bottom:2px;">${r.name}</div>
+                <div style="font-size:11px;font-weight:700;color:#2563eb;">৳${r.price.toLocaleString()}</div>
               </div>
             `).join('')}
           </div>
         </div>` : ''}
+
+        <!-- REVIEWS SECTION -->
+        <div style="margin-top:16px;border-top:2px solid #f0f0f0;padding-top:14px;">
+          <h4 style="font-size:15px;font-weight:700;color:#1a2a4a;margin-bottom:14px;"><i class="fas fa-star" style="color:#f59e0b;margin-right:6px;"></i>ক্রেতার রিভিউ</h4>
+          <div id="reviewsList_${p.id}">${renderReviewsHtml(p.id)}</div>
+
+          <!-- Review Form -->
+          <div style="background:#f8fafc;border-radius:10px;padding:16px;margin-top:12px;border:1px solid #e5e7eb;">
+            <h5 style="font-size:13px;font-weight:700;color:#1a2a4a;margin-bottom:12px;"><i class="fas fa-pen" style="margin-right:6px;color:#2563eb;"></i>আপনার রিভিউ দিন</h5>
+            <div style="margin-bottom:10px;">
+              <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:4px;">রেটিং *</label>
+              <div class="review-star-input">
+                <input type="radio" name="rStar_${p.id}" id="rs5_${p.id}" value="5"><label for="rs5_${p.id}" title="৫ তারা">★</label>
+                <input type="radio" name="rStar_${p.id}" id="rs4_${p.id}" value="4"><label for="rs4_${p.id}" title="৪ তারা">★</label>
+                <input type="radio" name="rStar_${p.id}" id="rs3_${p.id}" value="3"><label for="rs3_${p.id}" title="৩ তারা">★</label>
+                <input type="radio" name="rStar_${p.id}" id="rs2_${p.id}" value="2"><label for="rs2_${p.id}" title="২ তারা">★</label>
+                <input type="radio" name="rStar_${p.id}" id="rs1_${p.id}" value="1"><label for="rs1_${p.id}" title="১ তারা">★</label>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+              <div>
+                <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:4px;">আপনার নাম *</label>
+                <input type="text" id="rName_${p.id}" placeholder="নাম লিখুন" class="form-input" style="font-size:13px;">
+              </div>
+              <div>
+                <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:4px;">এলাকা / জেলা</label>
+                <input type="text" id="rLocation_${p.id}" placeholder="যেমন: ঢাকা" class="form-input" style="font-size:13px;">
+              </div>
+            </div>
+            <div style="margin-bottom:10px;">
+              <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:4px;">মন্তব্য *</label>
+              <textarea id="rText_${p.id}" placeholder="পণ্য সম্পর্কে আপনার মতামত লিখুন..." class="form-input" rows="3" style="resize:none;font-size:13px;"></textarea>
+            </div>
+            <button onclick="submitReview(${p.id})" style="background:#2563eb;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;transition:background 0.2s;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'"><i class="fas fa-paper-plane" style="margin-right:6px;"></i>রিভিউ জমা দিন</button>
+          </div>
+        </div>
       </div>
     </div>
   `;
 
   document.getElementById('productModal').classList.add('active');
+  // Init zoom after render
+  setTimeout(() => initImageZoom('pdMainImg', 'pdImgWrapper'), 100);
 }
 
 let prodQty = 1;
@@ -1569,7 +1839,10 @@ let pdThumbs = [];
 function selectPdThumb(idx, src) {
   pdCurrentThumb = idx;
   const img = document.getElementById('pdMainImg');
-  if (img) img.src = src;
+  if (img) {
+    img.src = src;
+    setTimeout(() => initImageZoom('pdMainImg', 'pdImgWrapper'), 100);
+  }
   document.querySelectorAll('.pd-thumb').forEach((t,i) => {
     t.style.borderColor = i === idx ? '#1a2a4a' : '#e5e7eb';
   });
@@ -1795,15 +2068,13 @@ function initCategoryMarquee() {
   inner.innerHTML = items + items;
 }
 
-// ===================== BEST SELLERS SLIDER =====================
-let bsCurrentIndex = 0;
+// ===================== BEST SELLERS AUTO SCROLL =====================
 function initBestSellers() {
-  const inner = document.getElementById('bsScrollInner');
-  if (!inner) return;
-  // Use all products as "best sellers"
-  inner.innerHTML = products.map(p => `
-    <div class="bs-card" onclick="openProductDetail(${p.id})">
-      <img src="${p.image}" alt="${p.name}" class="bs-card-img">
+  const track = document.getElementById('bsAutoTrack');
+  if (!track) return;
+  const cards = products.map(p => `
+    <div class="bs-card" onclick="openProductDetail(${p.id})" style="flex:0 0 220px;">
+      <img src="${p.image}" alt="${p.name}" class="bs-card-img" style="width:100%;height:200px;object-fit:cover;background:#fafafa;display:block;">
       <div class="bs-card-body">
         ${p.badge ? `<span style="font-size:10px;font-weight:700;color:#ef4444;text-transform:uppercase;letter-spacing:.5px;">${p.badge}</span>` : ''}
         <div class="bs-card-name">${p.name}</div>
@@ -1814,17 +2085,141 @@ function initBestSellers() {
       </div>
     </div>
   `).join('');
+  // Duplicate for seamless loop
+  track.innerHTML = cards + cards;
 }
 
-function bsSlide(dir) {
-  const wrapper = document.querySelector('.bs-scroll-wrapper');
-  const inner = document.getElementById('bsScrollInner');
-  if (!inner || !wrapper) return;
-  const cardWidth = 220 + 20; // card min-width + gap
-  const visible = Math.floor(wrapper.offsetWidth / cardWidth);
-  const maxIndex = Math.max(0, products.length - visible);
-  bsCurrentIndex = Math.max(0, Math.min(bsCurrentIndex + dir, maxIndex));
-  inner.style.transform = `translateX(-${bsCurrentIndex * cardWidth}px)`;
+// ===================== OFFER SECTION =====================
+function initOfferSection() {
+  const track = document.getElementById('offerTrack');
+  if (!track) return;
+  const offerProducts = products.filter(p => p.oldPrice);
+  const cards = offerProducts.map(p => {
+    const disc = Math.round((1 - p.price/p.oldPrice)*100);
+    return `
+    <div class="offer-card" onclick="openProductDetail(${p.id})">
+      <span class="offer-badge">-${disc}% ছাড়</span>
+      <img src="${p.image}" alt="${p.name}" class="offer-card-img">
+      <div class="offer-card-body">
+        <div style="font-size:12px;font-weight:700;color:#1a2a4a;margin-bottom:4px;line-height:1.3;">${p.name}</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <span style="font-size:16px;font-weight:800;color:#f97316;">৳${p.price.toLocaleString()}</span>
+          <span style="font-size:12px;color:#9ca3af;text-decoration:line-through;">৳${p.oldPrice.toLocaleString()}</span>
+        </div>
+        <button onclick="event.stopPropagation();addToCart(${p.id})" style="width:100%;background:#f97316;color:#fff;border:none;border-radius:6px;padding:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;"><i class="fas fa-cart-plus" style="margin-right:4px;"></i>কার্টে যোগ করুন</button>
+      </div>
+    </div>`;
+  }).join('');
+  track.innerHTML = cards + cards;
+}
+
+// ===================== AD POPUP =====================
+function closeAdPopup() {
+  const el = document.getElementById('adPopup');
+  if (el) { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(() => el.remove(), 300); }
+}
+
+// ===================== PRODUCT REVIEWS =====================
+let productReviews = JSON.parse(localStorage.getItem('productReviews') || '{}');
+
+function saveReview(productId, review) {
+  if (!productReviews[productId]) productReviews[productId] = [];
+  productReviews[productId].unshift(review);
+  localStorage.setItem('productReviews', JSON.stringify(productReviews));
+}
+
+function getReviews(productId) {
+  return productReviews[productId] || [];
+}
+
+function renderReviewsHtml(productId) {
+  const reviews = getReviews(productId);
+  if (reviews.length === 0) return '<p style="color:#9ca3af;font-size:13px;text-align:center;padding:16px;">এখনো কোনো রিভিউ নেই। প্রথম রিভিউ দিন!</p>';
+  return reviews.map(r => `
+    <div class="review-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <div style="font-weight:700;color:#1a2a4a;font-size:13px;">${r.name} <span style="font-size:11px;color:#9ca3af;font-weight:400;">— ${r.location}</span></div>
+        <div style="color:#f59e0b;font-size:12px;">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
+      </div>
+      <p style="color:#374151;font-size:13px;margin:0;line-height:1.6;">${r.text}</p>
+      <div style="font-size:11px;color:#9ca3af;margin-top:4px;">${new Date(r.date).toLocaleDateString('bn-BD')}</div>
+    </div>
+  `).join('');
+}
+
+function submitReview(productId) {
+  const name = document.getElementById(`rName_${productId}`).value.trim();
+  const location = document.getElementById(`rLocation_${productId}`).value.trim();
+  const text = document.getElementById(`rText_${productId}`).value.trim();
+  const rating = document.querySelector(`input[name="rStar_${productId}"]:checked`)?.value;
+  if (!name || !text || !rating) { showToast('নাম, রেটিং ও মন্তব্য দিন'); return; }
+  saveReview(productId, { name, location: location || 'বাংলাদেশ', text, rating: parseInt(rating), date: Date.now() });
+  showToast('রিভিউ সফলভাবে যোগ হয়েছে!');
+  document.getElementById(`reviewsList_${productId}`).innerHTML = renderReviewsHtml(productId);
+  document.getElementById(`rName_${productId}`).value = '';
+  document.getElementById(`rLocation_${productId}`).value = '';
+  document.getElementById(`rText_${productId}`).value = '';
+  const radios = document.querySelectorAll(`input[name="rStar_${productId}"]`);
+  radios.forEach(r => r.checked = false);
+}
+
+// ===================== IMAGE ZOOM =====================
+function initImageZoom(imgId, wrapperId) {
+  const img = document.getElementById(imgId);
+  const wrapper = document.getElementById(wrapperId);
+  if (!img || !wrapper) return;
+  const lens = document.getElementById('pdZoomLens');
+  const result = document.getElementById('pdZoomResult');
+  if (!lens || !result) return;
+
+  const zoom = 2.5;
+
+  wrapper.addEventListener('mouseenter', () => {
+    lens.style.display = 'block';
+    result.style.display = 'block';
+    result.style.backgroundImage = `url('${img.src}')`;
+    const bw = result.offsetWidth;
+    const bh = result.offsetHeight;
+    const iw = img.naturalWidth || img.offsetWidth;
+    const ih = img.naturalHeight || img.offsetHeight;
+    result.style.backgroundSize = (img.offsetWidth * zoom) + 'px ' + (img.offsetHeight * zoom) + 'px';
+  });
+
+  wrapper.addEventListener('mousemove', (e) => {
+    const rect = img.getBoundingClientRect();
+    let x = e.clientX - rect.left;
+    let y = e.clientY - rect.top;
+    const lw = lens.offsetWidth / 2;
+    const lh = lens.offsetHeight / 2;
+    x = Math.max(lw, Math.min(x, img.offsetWidth - lw));
+    y = Math.max(lh, Math.min(y, img.offsetHeight - lh));
+    lens.style.left = (x - lw) + 'px';
+    lens.style.top = (y - lh) + 'px';
+    result.style.backgroundPosition = `-${(x * zoom) - result.offsetWidth/2}px -${(y * zoom) - result.offsetHeight/2}px`;
+  });
+
+  wrapper.addEventListener('mouseleave', () => {
+    lens.style.display = 'none';
+    result.style.display = 'none';
+  });
+
+  img.addEventListener('click', () => {
+    const fs = document.createElement('div');
+    fs.className = 'pd-img-fullscreen';
+    fs.innerHTML = `<img src="${img.src}" alt=""><button style="position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.2);border:none;color:#fff;font-size:24px;cursor:pointer;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i class="fas fa-times"></i></button>`;
+    fs.addEventListener('click', () => fs.remove());
+    document.body.appendChild(fs);
+  });
+}
+
+// ===================== WHATSAPP ORDER =====================
+function waOrder(productName, price) {
+  const msg = encodeURIComponent(`আমি এই পণ্যটি অর্ডার করতে চাই:\n🛍️ ${productName}\n💰 মূল্য: ৳${price}\n\nঅনুগ্রহ করে আমাকে সাহায্য করুন।`);
+  window.open(`https://wa.me/8801700000000?text=${msg}`, '_blank');
+}
+
+function callOrder() {
+  window.open('tel:+8801700000000');
 }
 
 // ===================== PRODUCT CARD WITH LINK =====================
@@ -1838,9 +2233,16 @@ window.addEventListener('DOMContentLoaded', () => {
   renderHome();
   initCategoryMarquee();
   initBestSellers();
+  initOfferSection();
 
   // Start hero slider auto-play
   heroAutoPlay = setInterval(() => heroGoTo(heroCurrentSlide + 1), 5000);
+
+  // Show ad popup after 1.5 seconds
+  setTimeout(() => {
+    const popup = document.getElementById('adPopup');
+    if (popup) popup.style.display = 'flex';
+  }, 1500);
 });
 </script>
 </body>

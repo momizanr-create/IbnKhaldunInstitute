@@ -159,6 +159,65 @@ const enrollmentSchema = new mongoose.Schema({
 });
 const Enrollment = mongoose.model('Enrollment', enrollmentSchema);
 
+// ── User Schema (for student accounts) ──
+const userSchema = new mongoose.Schema({
+  name:      { type: String, required: true },
+  email:     { type: String, unique: true, required: true, lowercase: true },
+  password:  { type: String, required: true },
+  avatar:    { type: String, default: '' },
+  enrolledCourses: [{
+    courseId:   { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
+    courseSlug: String,
+    courseTitle: String,
+    thumbnail:  String,
+    enrolledAt: { type: Date, default: Date.now },
+    progress:   { type: Number, default: 0 }, // 0-100 percent
+    completedLessons: [String], // lesson videoIds
+    certificateIssued: { type: Boolean, default: false },
+  }],
+  createdAt: { type: Date, default: Date.now },
+});
+const User = mongoose.model('User', userSchema);
+
+// ── Category Schema ──
+const categorySchema = new mongoose.Schema({
+  name:     { type: String, required: true },
+  slug:     { type: String, unique: true },
+  icon:     { type: String, default: '📚' },
+  order:    { type: Number, default: 0 },
+  active:   { type: Boolean, default: true },
+  createdAt:{ type: Date, default: Date.now },
+});
+const Category = mongoose.model('Category', categorySchema);
+
+// ── Course Tab Schema ──
+const courseTabSchema = new mongoose.Schema({
+  label:  { type: String, required: true },
+  key:    { type: String, required: true, unique: true },
+  icon:   { type: String, default: '' },
+  order:  { type: Number, default: 0 },
+  active: { type: Boolean, default: true },
+  createdAt: { type: Date, default: Date.now },
+});
+const CourseTab = mongoose.model('CourseTab', courseTabSchema);
+
+// ── Course Access Request Schema ──
+const accessRequestSchema = new mongoose.Schema({
+  userId:      { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  userName:    String,
+  userEmail:   String,
+  courseId:    { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
+  courseTitle: String,
+  courseSlug:  String,
+  thumbnail:   String,
+  price:       Number,
+  status:      { type: String, default: 'pending' }, // pending, approved, rejected
+  message:     String,
+  createdAt:   { type: Date, default: Date.now },
+  processedAt: Date,
+});
+const AccessRequest = mongoose.model('AccessRequest', accessRequestSchema);
+
 // ============================================================
 // AUTH MIDDLEWARE
 // ============================================================
@@ -780,6 +839,218 @@ app.post('/api/admin/upload', authMiddleware, upload.single('file'), async (req,
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
     res.json({ url: req.file.path, public_id: req.file.filename });
   } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ============================================================
+// USER AUTH (Student Accounts)
+// ============================================================
+app.post('/api/user/register', async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    if (!name || !email || !password)
+      return res.status(400).json({ error: 'নাম, ইমেইল ও পাসওয়ার্ড দিন' });
+    const exists = await User.findOne({ email: email.toLowerCase() });
+    if (exists) return res.status(400).json({ error: 'এই ইমেইল দিয়ে আগেই অ্যাকাউন্ট আছে' });
+    const hashed = await bcrypt.hash(password, 10);
+    const user = await User.create({ name, email: email.toLowerCase(), password: hashed });
+    const token = jwt.sign({ id: user._id, email: user.email, name: user.name }, JWT_SECRET, { expiresIn: '30d' });
+    res.json({ token, user: { id: user._id, name: user.name, email: user.email, enrolledCourses: [] } });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/user/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) return res.status(400).json({ error: 'ইমেইল ও পাসওয়ার্ড দিন' });
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) return res.status(401).json({ error: 'ইমেইল বা পাসওয়ার্ড ভুল' });
+    const ok = await bcrypt.compare(password, user.password);
+    if (!ok) return res.status(401).json({ error: 'ইমেইল বা পাসওয়ার্ড ভুল' });
+    const token = jwt.sign({ id: user._id, email: user.email, name: user.name }, JWT_SECRET, { expiresIn: '30d' });
+    res.json({ token, user: { id: user._id, name: user.name, email: user.email, enrolledCourses: user.enrolledCourses } });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// User middleware
+function userAuthMiddleware(req, res, next) {
+  const token = req.headers['authorization']?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'লগইন করুন' });
+  try {
+    req.user = jwt.verify(token, JWT_SECRET);
+    next();
+  } catch {
+    res.status(401).json({ error: 'সেশন শেষ, আবার লগইন করুন' });
+  }
+}
+
+app.get('/api/user/me', userAuthMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json(user);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// Update lesson progress
+app.post('/api/user/progress', userAuthMiddleware, async (req, res) => {
+  try {
+    const { courseId, lessonId } = req.body;
+    const user = await User.findById(req.user.id);
+    const enrollment = user.enrolledCourses.find(e => e.courseId.toString() === courseId);
+    if (!enrollment) return res.status(403).json({ error: 'এই কোর্সে এনরোল নেই' });
+    if (!enrollment.completedLessons.includes(lessonId)) {
+      enrollment.completedLessons.push(lessonId);
+    }
+    // Get total lessons for this course
+    const course = await Course.findById(courseId);
+    let totalLessons = 0;
+    if (course?.curriculum) {
+      course.curriculum.forEach(sec => { totalLessons += (sec.lessons || []).length; });
+    }
+    if (totalLessons > 0) {
+      enrollment.progress = Math.round((enrollment.completedLessons.length / totalLessons) * 100);
+    }
+    if (enrollment.progress >= 100) {
+      enrollment.certificateIssued = true;
+    }
+    await user.save();
+    res.json({ progress: enrollment.progress, certificate: enrollment.certificateIssued });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ============================================================
+// CATEGORIES
+// ============================================================
+app.get('/api/categories', async (req, res) => {
+  try { res.json(await Category.find({ active: true }).sort({ order: 1, createdAt: 1 })); }
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.get('/api/admin/categories', authMiddleware, async (req, res) => {
+  try { res.json(await Category.find().sort({ order: 1, createdAt: 1 })); }
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.post('/api/admin/categories', authMiddleware, async (req, res) => {
+  try {
+    const { name, icon, order } = req.body;
+    if (!name) return res.status(400).json({ error: 'নাম দিন' });
+    const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+    const cat = await Category.create({ name, slug, icon: icon || '📚', order: order || 0 });
+    res.json(cat);
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.put('/api/admin/categories/:id', authMiddleware, async (req, res) => {
+  try {
+    const cat = await Category.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(cat);
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.delete('/api/admin/categories/:id', authMiddleware, async (req, res) => {
+  try { await Category.findByIdAndDelete(req.params.id); res.json({ message: 'Deleted' }); }
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ============================================================
+// COURSE TABS
+// ============================================================
+app.get('/api/course-tabs', async (req, res) => {
+  try { res.json(await CourseTab.find({ active: true }).sort({ order: 1 })); }
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.get('/api/admin/course-tabs', authMiddleware, async (req, res) => {
+  try { res.json(await CourseTab.find().sort({ order: 1 })); }
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.post('/api/admin/course-tabs', authMiddleware, async (req, res) => {
+  try {
+    const tab = await CourseTab.create(req.body);
+    res.json(tab);
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.put('/api/admin/course-tabs/:id', authMiddleware, async (req, res) => {
+  try {
+    const tab = await CourseTab.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(tab);
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.delete('/api/admin/course-tabs/:id', authMiddleware, async (req, res) => {
+  try { await CourseTab.findByIdAndDelete(req.params.id); res.json({ message: 'Deleted' }); }
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ============================================================
+// COURSE ACCESS REQUESTS
+// ============================================================
+app.post('/api/access-request', userAuthMiddleware, async (req, res) => {
+  try {
+    const { courseId, courseTitle, courseSlug, thumbnail, price } = req.body;
+    // Check if already enrolled
+    const user = await User.findById(req.user.id);
+    const alreadyEnrolled = user.enrolledCourses.some(e => e.courseId.toString() === courseId);
+    if (alreadyEnrolled) return res.status(400).json({ error: 'আপনি ইতিমধ্যে এই কোর্সে এনরোল আছেন' });
+    // Check if pending request already exists
+    const existing = await AccessRequest.findOne({ userId: req.user.id, courseId, status: 'pending' });
+    if (existing) return res.status(400).json({ error: 'আপনার অনুরোধ ইতিমধ্যে পাঠানো হয়েছে, অনুমোদনের অপেক্ষায় আছে' });
+    const req2 = await AccessRequest.create({
+      userId: req.user.id,
+      userName: req.user.name,
+      userEmail: req.user.email,
+      courseId, courseTitle, courseSlug, thumbnail,
+      price: price || 0,
+    });
+    res.json({ message: 'অ্যাক্সেস অনুরোধ পাঠানো হয়েছে', requestId: req2._id });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.get('/api/admin/access-requests', authMiddleware, async (req, res) => {
+  try {
+    const { status } = req.query;
+    const query = status ? { status } : {};
+    res.json(await AccessRequest.find(query).sort({ createdAt: -1 }));
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// Admin approves / rejects access request
+app.put('/api/admin/access-requests/:id', authMiddleware, async (req, res) => {
+  try {
+    const { status } = req.body; // 'approved' or 'rejected'
+    const request = await AccessRequest.findByIdAndUpdate(
+      req.params.id,
+      { status, processedAt: new Date() },
+      { new: true }
+    );
+    if (!request) return res.status(404).json({ error: 'Request not found' });
+
+    if (status === 'approved') {
+      // Add course to user's enrolled courses
+      await User.findByIdAndUpdate(request.userId, {
+        $push: {
+          enrolledCourses: {
+            courseId: request.courseId,
+            courseSlug: request.courseSlug,
+            courseTitle: request.courseTitle,
+            thumbnail: request.thumbnail,
+            enrolledAt: new Date(),
+            progress: 0,
+          }
+        }
+      });
+    }
+    res.json({ message: status === 'approved' ? '✅ অ্যাক্সেস দেওয়া হয়েছে' : '❌ অনুরোধ প্রত্যাখ্যান করা হয়েছে', request });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// User checks their own access request status for a course
+app.get('/api/access-request/status/:courseId', userAuthMiddleware, async (req, res) => {
+  try {
+    const req2 = await AccessRequest.findOne({ userId: req.user.id, courseId: req.params.courseId });
+    res.json(req2 ? { status: req2.status } : { status: 'none' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// Admin — list all users
+app.get('/api/admin/users', authMiddleware, async (req, res) => {
+  try { res.json(await User.find().select('-password').sort({ createdAt: -1 })); }
+  catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ============================================================
