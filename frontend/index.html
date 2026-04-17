@@ -2401,13 +2401,31 @@
                         </button>
                       </div>
 
-                      <!-- Phone + TrxID -->
                       <div id="payment-number-input" class="hidden" style="margin-bottom:14px">
-                        <div style="font-size:11px;color:#888;font-family:var(--font-nav);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px" id="payment-method-label">আপনার বিকাশ নম্বর:</div>
-                        <input class="form-input" type="tel" id="payment-phone" placeholder="01XXXXXXXXX" style="margin-bottom:8px;background:#111;border-color:#333;color:#fff" />
-                        <div style="font-size:11px;color:#888;font-family:var(--font-nav);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">ট্রেনজেকশন আইডি (TrxID):</div>
-                        <input class="form-input" type="text" id="payment-trx" placeholder="XXXXXXXXXX" style="background:#111;border-color:#333;color:#fff" />
-                      </div>
+  
+  <div style="display:flex; gap:10px;">
+    
+    <!-- Phone -->
+    <div style="flex:1;">
+      <div style="font-size:11px;color:#888;font-family:var(--font-nav);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px" id="payment-method-label">
+        আপনার বিকাশ নম্বর:
+      </div>
+      <input class="form-input" type="tel" id="payment-phone" placeholder="01XXXXXXXXX"
+        style="width:100%;background:#111;border-color:#333;color:#fff" />
+    </div>
+
+    <!-- TrxID -->
+    <div style="flex:1;">
+      <div style="font-size:11px;color:#888;font-family:var(--font-nav);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">
+        ট্রেনজেকশন আইডি (TrxID):
+      </div>
+      <input class="form-input" type="text" id="payment-trx" placeholder="XXXXXXXXXX"
+        style="width:100%;background:#111;border-color:#333;color:#fff" />
+    </div>
+
+  </div>
+
+</div>
 
                       <button class="btn btn-primary btn-lg" style="width:100%;font-size:14px" onclick="confirmPayment()">✅ পেমেন্ট নিশ্চিত করুন →</button>
                     </div>
