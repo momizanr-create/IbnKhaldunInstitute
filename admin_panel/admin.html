@@ -650,9 +650,30 @@
             </div>
             <div class="card-body">
               <table><thead><tr>
+                <th>আইকন</th><th>নাম</th><th>Slug</th><th>সাব ক্যাটাগরি</th><th>ক্রম</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th>
+              </tr></thead>
+              <tbody id="categories-tbody"><tr><td colspan="7" class="loading">লোড হচ্ছে...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Sub-category inline panel -->
+          <div id="subcategory-panel" style="display:none" class="card">
+            <div class="card-header">
+              <div class="card-header-left">
+                <h3 id="subcat-panel-title">📂 সাব ক্যাটাগরি</h3>
+                <span class="card-subtitle" id="subcat-panel-sub">নির্বাচিত ক্যাটাগরির সাব ক্যাটাগরি পরিচালনা</span>
+              </div>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-primary btn-sm" onclick="openSubCategoryModal()">+ সাব ক্যাটাগরি যোগ</button>
+                <button class="btn btn-sm" style="background:var(--bg3);border:1px solid var(--border)" onclick="closeSubCategoryPanel()">✕ বন্ধ করুন</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <table><thead><tr>
                 <th>আইকন</th><th>নাম</th><th>Slug</th><th>ক্রম</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th>
               </tr></thead>
-              <tbody id="categories-tbody"><tr><td colspan="6" class="loading">লোড হচ্ছে...</td></tr></tbody>
+              <tbody id="subcategories-tbody"></tbody>
               </table>
             </div>
           </div>
@@ -710,9 +731,9 @@
             </div>
             <div class="card-body">
               <table><thead><tr>
-                <th>ব্যবহারকারী</th><th>ইমেইল</th><th>কোর্স</th><th>তারিখ</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th>
+                <th>ব্যবহারকারী</th><th>ফোন / ট্রেনজেকশন</th><th>পেমেন্ট পদ্ধতি</th><th>কোর্স</th><th>তারিখ</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th>
               </tr></thead>
-              <tbody id="access-requests-tbody"><tr><td colspan="6" class="loading">লোড হচ্ছে...</td></tr></tbody>
+              <tbody id="access-requests-tbody"><tr><td colspan="7" class="loading">লোড হচ্ছে...</td></tr></tbody>
               </table>
             </div>
           </div>
@@ -1277,13 +1298,25 @@
       <div class="field"><label>শিরোনাম *</label><input id="c-title" placeholder="কোর্সের নাম"/></div>
       <div class="row2">
         <div class="field"><label>ক্যাটাগরি</label>
-          <select id="c-category">
+          <select id="c-category" onchange="loadSubCatOptions(this.value)">
             <option value="">লোড হচ্ছে...</option>
           </select>
         </div>
+        <div class="field"><label>সাব ক্যাটাগরি</label>
+          <select id="c-subcategory">
+            <option value="">-- প্রথমে ক্যাটাগরি বাছুন --</option>
+          </select>
+        </div>
+      </div>
+      <div class="row2">
         <div class="field"><label>লেভেল</label>
           <select id="c-level">
             <option>সকলের জন্য</option><option>শুরু</option><option>মধ্যবর্তী</option><option>উন্নত</option>
+          </select>
+        </div>
+        <div class="field"><label>কোর্স ট্যাব</label>
+          <select id="c-tab-key">
+            <option value="">-- ট্যাব বাছুন --</option>
           </select>
         </div>
       </div>
@@ -1436,7 +1469,7 @@
 
 <!-- Category Modal -->
 <div class="modal-overlay" id="category-modal">
-  <div class="modal" style="max-width:420px">
+  <div class="modal" style="max-width:560px">
     <div class="modal-header">
       <h3 id="category-modal-title">নতুন ক্যাটাগরি</h3>
       <button class="btn-close" onclick="closeModal('category-modal')">×</button>
@@ -1445,7 +1478,7 @@
       <input type="hidden" id="category-id"/>
       <div class="row2">
         <div class="field"><label>আইকন (Emoji)</label><input id="cat-icon" placeholder="📚" maxlength="4"/></div>
-        <div class="field"><label>নাম *</label><input id="cat-name" placeholder="Quran Studies"/></div>
+        <div class="field"><label>নাম *</label><input id="cat-name" placeholder="Quran Studies" oninput="autoCatSlug()"/></div>
       </div>
       <div class="row2">
         <div class="field"><label>Slug (auto)</label><input id="cat-slug" placeholder="quran-studies"/></div>
@@ -1456,6 +1489,32 @@
     <div class="modal-footer">
       <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="closeModal('category-modal')">বাতিল</button>
       <button class="btn btn-primary" onclick="saveCategory()">সংরক্ষণ করুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- SubCategory Modal -->
+<div class="modal-overlay" id="subcategory-modal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <h3 id="subcategory-modal-title">নতুন সাব ক্যাটাগরি</h3>
+      <button class="btn-close" onclick="closeModal('subcategory-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="subcategory-id"/>
+      <div class="row2">
+        <div class="field"><label>আইকন (Emoji)</label><input id="subcat-icon" placeholder="📖" maxlength="4"/></div>
+        <div class="field"><label>নাম *</label><input id="subcat-name" placeholder="তাজওয়িদ" oninput="autoSubcatSlug()"/></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Slug (auto)</label><input id="subcat-slug" placeholder="tajweed"/></div>
+        <div class="field"><label>ক্রম সংখ্যা</label><input type="number" id="subcat-order" placeholder="0"/></div>
+      </div>
+      <div class="field"><label><input type="checkbox" id="subcat-active" checked style="width:auto;margin-right:6px"/>সক্রিয়</label></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="closeModal('subcategory-modal')">বাতিল</button>
+      <button class="btn btn-primary" onclick="saveSubCategory()">সংরক্ষণ করুন</button>
     </div>
   </div>
 </div>
@@ -1860,18 +1919,34 @@ async function openCourseModal(course = null) {
   clearThumb();
   if (course?.thumbnail) previewExistingThumb(course.thumbnail);
 
-  // Load categories dynamically
+  // Load categories dynamically (with sub-categories)
+  let allCats = [];
   try {
-    const cats = await api('GET', '/api/admin/categories');
+    allCats = await api('GET', '/api/admin/categories');
     const catSel = document.getElementById('c-category');
-    if (cats.length > 0) {
-      catSel.innerHTML = cats.map(c => `<option value="${c.name}" ${course?.category === c.name ? 'selected' : ''}>${c.icon || ''} ${c.name}</option>`).join('');
+    if (allCats.length > 0) {
+      catSel.innerHTML = '<option value="">-- ক্যাটাগরি বাছুন --</option>' +
+        allCats.map(c => `<option value="${c.slug||c.name}" ${course?.category === (c.slug||c.name) ? 'selected' : ''}>${c.icon || ''} ${c.name}</option>`).join('');
     } else {
-      catSel.innerHTML = '<option value="Quran">Quran</option><option value="Arabic">Arabic</option><option value="Islamic Studies">Islamic Studies</option><option value="Fiqh">Fiqh</option><option value="Hadith">Hadith</option><option value="Other">Other</option>';
+      catSel.innerHTML = '<option value="quran">Quran</option><option value="arabic">Arabic</option><option value="fiqh">Fiqh</option><option value="hadith">Hadith</option><option value="other">Other</option>';
     }
     if (course?.category) catSel.value = course.category;
+    // Load subcategories for selected category
+    window._allCatsData = allCats;
+    loadSubCatOptions(catSel.value, course?.subCategory);
   } catch(e) {
-    document.getElementById('c-category').innerHTML = '<option>Quran</option><option>Arabic</option><option>Islamic Studies</option><option>Fiqh</option><option>Hadith</option><option>Other</option>';
+    document.getElementById('c-category').innerHTML = '<option>Quran</option><option>Arabic</option><option>Fiqh</option><option>Hadith</option><option>Other</option>';
+  }
+
+  // Load course tabs
+  try {
+    const tabs = await api('GET', '/api/admin/course-tabs');
+    const tabSel = document.getElementById('c-tab-key');
+    tabSel.innerHTML = '<option value="">-- ট্যাব বাছুন --</option>' +
+      (tabs || []).map(t => `<option value="${t.key}" ${course?.tabKey === t.key ? 'selected' : ''}>${t.icon || ''} ${t.label}</option>`).join('');
+    if (course?.tabKey) tabSel.value = course.tabKey;
+  } catch(e) {
+    document.getElementById('c-tab-key').innerHTML = '<option value="">লোড ব্যর্থ</option>';
   }
 
   // Load instructors dynamically
@@ -1895,6 +1970,20 @@ async function openCourseModal(course = null) {
   openModal('course-modal');
 }
 
+// Load subcategory dropdown based on selected category
+function loadSubCatOptions(catVal, selectedSub) {
+  const subSel = document.getElementById('c-subcategory');
+  const cats = window._allCatsData || [];
+  const found = cats.find(c => (c.slug || c.name) === catVal);
+  if (found && found.subCategories && found.subCategories.length) {
+    const activeSubs = found.subCategories.filter(s => s.active !== false);
+    subSel.innerHTML = '<option value="">-- সাব ক্যাটাগরি (ঐচ্ছিক) --</option>' +
+      activeSubs.map(s => `<option value="${s.slug||s.name}" ${selectedSub === (s.slug||s.name) ? 'selected' : ''}>${s.icon || ''} ${s.name}</option>`).join('');
+  } else {
+    subSel.innerHTML = '<option value="">-- কোনো সাব ক্যাটাগরি নেই --</option>';
+  }
+}
+
 async function editCourse(id) {
   try {
     const courses = await api('GET', '/api/admin/courses');
@@ -1912,8 +2001,13 @@ async function saveCourse() {
   const instructorVal = instructorEl.value.trim();
   if (!instructorVal) { toast('⚠️ ইন্সট্রাক্টর বাছাই করুন — ইন্সট্রাক্টর ছাড়া কোর্স যোগ করা যাবে না', 'error'); return; }
 
+  const tabKeyVal = document.getElementById('c-tab-key').value;
+  const subCatVal = document.getElementById('c-subcategory').value;
+
   const body = {
     title, category: document.getElementById('c-category').value,
+    subCategory: subCatVal || '',
+    tabKey: tabKeyVal || '',
     level: document.getElementById('c-level').value,
     instructor: instructorVal,
     price: +document.getElementById('c-price').value || 0,
@@ -1936,15 +2030,13 @@ async function saveCourse() {
     loadCourses();
   } catch (e) { toast('সমস্যা: ' + e.message, 'error'); }
 }
-
-async function deleteCourse(id) {
   if (!confirm('কোর্সটি মুছে ফেলবেন?')) return;
   try {
     await api('DELETE', '/api/admin/courses/' + id);
     toast('✅ কোর্স মুছে গেছে');
     loadCourses();
   } catch (e) { toast('মুছতে পারেনি', 'error'); }
-}
+
 
 // ────────────────────────────────────────────
 // INSTRUCTORS
@@ -3143,8 +3235,11 @@ async function saveThemeSettings() {
 
 
 // ────────────────────────────────────────────
-// CATEGORIES
+// CATEGORIES (সাব ক্যাটাগরি সহ)
 // ────────────────────────────────────────────
+let _currentCatId = null;
+let _currentCatName = '';
+
 async function loadCategories() {
   try {
     const list = await api('GET', '/api/admin/categories');
@@ -3153,6 +3248,12 @@ async function loadCategories() {
           <td style="font-size:22px">${c.icon || '📚'}</td>
           <td><strong>${c.name}</strong></td>
           <td><code style="font-size:12px;color:var(--text2)">${c.slug}</code></td>
+          <td>
+            <span style="background:var(--blue-bg);color:var(--blue);padding:3px 8px;border-radius:20px;font-size:12px;cursor:pointer"
+              onclick="openSubCategoryPanel('${c._id}','${c.name.replace(/'/g,"\\'")}')">
+              📂 ${(c.subCategories||[]).length} টি সাব ক্যাটাগরি
+            </span>
+          </td>
           <td>${c.order || 0}</td>
           <td><span class="badge badge-${c.active ? 'green' : 'red'}">${c.active ? 'সক্রিয়' : 'নিষ্ক্রিয়'}</span></td>
           <td style="display:flex;gap:6px">
@@ -3160,8 +3261,111 @@ async function loadCategories() {
             <button class="btn btn-danger btn-sm" onclick="deleteCategory('${c._id}')">🗑️</button>
           </td>
         </tr>`).join('')
-      : '<tr><td colspan="6" style="text-align:center;color:var(--text2);padding:24px">কোনো ক্যাটাগরি নেই — উপরে "+ নতুন ক্যাটাগরি" বাটনে ক্লিক করুন</td></tr>';
+      : '<tr><td colspan="7" style="text-align:center;color:var(--text2);padding:24px">কোনো ক্যাটাগরি নেই — উপরে "+ নতুন ক্যাটাগরি" বাটনে ক্লিক করুন</td></tr>';
   } catch(e) { toast('লোড হয়নি', 'error'); }
+}
+
+async function openSubCategoryPanel(catId, catName) {
+  _currentCatId = catId;
+  _currentCatName = catName;
+  document.getElementById('subcat-panel-title').textContent = '📂 সাব ক্যাটাগরি — ' + catName;
+  document.getElementById('subcat-panel-sub').textContent = catName + ' ক্যাটাগরির সাব ক্যাটাগরি পরিচালনা';
+  document.getElementById('subcategory-panel').style.display = 'block';
+  document.getElementById('subcategory-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  await loadSubCategories();
+}
+
+function closeSubCategoryPanel() {
+  document.getElementById('subcategory-panel').style.display = 'none';
+  _currentCatId = null;
+}
+
+async function loadSubCategories() {
+  if (!_currentCatId) return;
+  try {
+    const list = await api('GET', '/api/admin/categories');
+    const cat = list.find(c => c._id === _currentCatId);
+    const subs = cat?.subCategories || [];
+    document.getElementById('subcategories-tbody').innerHTML = subs.length
+      ? subs.map(s => `<tr>
+          <td style="font-size:18px">${s.icon || '📂'}</td>
+          <td><strong>${s.name}</strong></td>
+          <td><code style="font-size:12px;color:var(--text2)">${s.slug}</code></td>
+          <td>${s.order || 0}</td>
+          <td><span class="badge badge-${s.active !== false ? 'green' : 'red'}">${s.active !== false ? 'সক্রিয়' : 'নিষ্ক্রিয়'}</span></td>
+          <td style="display:flex;gap:6px">
+            <button class="btn btn-edit btn-sm" onclick="editSubCategory('${s._id}')">✏️</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteSubCategory('${s._id}')">🗑️</button>
+          </td>
+        </tr>`).join('')
+      : '<tr><td colspan="6" style="text-align:center;color:var(--text2);padding:20px">কোনো সাব ক্যাটাগরি নেই — "+ সাব ক্যাটাগরি যোগ" বাটনে ক্লিক করুন</td></tr>';
+  } catch(e) { toast('লোড হয়নি', 'error'); }
+}
+
+function openSubCategoryModal(sub = null) {
+  document.getElementById('subcategory-modal-title').textContent = sub ? 'সাব ক্যাটাগরি এডিট' : 'নতুন সাব ক্যাটাগরি';
+  document.getElementById('subcategory-id').value   = sub?._id || '';
+  document.getElementById('subcat-icon').value      = sub?.icon || '📂';
+  document.getElementById('subcat-name').value      = sub?.name || '';
+  document.getElementById('subcat-slug').value      = sub?.slug || '';
+  document.getElementById('subcat-order').value     = sub?.order ?? 0;
+  document.getElementById('subcat-active').checked  = sub?.active !== false;
+  openModal('subcategory-modal');
+}
+
+function autoSubcatSlug() {
+  const name = document.getElementById('subcat-name').value;
+  document.getElementById('subcat-slug').value = name.toLowerCase().replace(/\s+/g,'-').replace(/[^\w-]/g,'');
+}
+
+async function editSubCategory(subId) {
+  try {
+    const list = await api('GET', '/api/admin/categories');
+    const cat = list.find(c => c._id === _currentCatId);
+    const sub = (cat?.subCategories || []).find(s => s._id === subId);
+    if (sub) openSubCategoryModal(sub);
+  } catch(e) { toast('লোড হয়নি', 'error'); }
+}
+
+async function saveSubCategory() {
+  if (!_currentCatId) { toast('ক্যাটাগরি নির্বাচন করুন', 'error'); return; }
+  const subId = document.getElementById('subcategory-id').value;
+  const name  = document.getElementById('subcat-name').value.trim();
+  if (!name) { toast('নাম দিন', 'error'); return; }
+  const body = {
+    name,
+    icon:   document.getElementById('subcat-icon').value || '📂',
+    slug:   document.getElementById('subcat-slug').value || name.toLowerCase().replace(/\s+/g,'-'),
+    order:  +document.getElementById('subcat-order').value || 0,
+    active: document.getElementById('subcat-active').checked,
+  };
+  try {
+    if (subId) {
+      await api('PUT', `/api/admin/categories/${_currentCatId}/subcategories/${subId}`, body);
+      toast('✅ সাব ক্যাটাগরি আপডেট হয়েছে');
+    } else {
+      await api('POST', `/api/admin/categories/${_currentCatId}/subcategories`, body);
+      toast('✅ সাব ক্যাটাগরি তৈরি হয়েছে');
+    }
+    closeModal('subcategory-modal');
+    await loadSubCategories();
+    await loadCategories();
+  } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
+}
+
+async function deleteSubCategory(subId) {
+  if (!confirm('সাব ক্যাটাগরিটি মুছে ফেলবেন?')) return;
+  try {
+    await api('DELETE', `/api/admin/categories/${_currentCatId}/subcategories/${subId}`);
+    toast('✅ মুছে গেছে');
+    await loadSubCategories();
+    await loadCategories();
+  } catch(e) { toast('মুছতে পারেনি', 'error'); }
+}
+
+function autoCatSlug() {
+  const name = document.getElementById('cat-name').value;
+  document.getElementById('cat-slug').value = name.toLowerCase().replace(/\s+/g,'-').replace(/[^\w-]/g,'');
 }
 
 function openCategoryModal(cat = null) {
@@ -3172,10 +3376,6 @@ function openCategoryModal(cat = null) {
   document.getElementById('cat-slug').value    = cat?.slug || '';
   document.getElementById('cat-order').value   = cat?.order ?? 0;
   document.getElementById('cat-active').checked = cat?.active !== false;
-  // Auto-generate slug from name
-  document.getElementById('cat-name').oninput = function() {
-    document.getElementById('cat-slug').value = this.value.toLowerCase().replace(/\s+/g,'-').replace(/[^\w-]/g,'');
-  };
   openModal('category-modal');
 }
 
@@ -3212,6 +3412,7 @@ async function deleteCategory(id) {
   try {
     await api('DELETE', '/api/admin/categories/' + id);
     toast('✅ মুছে গেছে');
+    if (_currentCatId === id) closeSubCategoryPanel();
     loadCategories();
   } catch(e) { toast('মুছতে পারেনি', 'error'); }
 }
@@ -3418,12 +3619,24 @@ async function loadAccessRequests() {
 function renderAccessRequests(list) {
   document.getElementById('access-requests-tbody').innerHTML = list.length
     ? list.map(r => `<tr>
-        <td><strong>${r.userName || '—'}</strong></td>
-        <td style="font-size:12px">${r.userEmail || '—'}</td>
+        <td>
+          <strong>${r.userName || '—'}</strong>
+          <div style="font-size:11px;color:var(--text2)">${r.userEmail || '—'}</div>
+        </td>
+        <td style="font-size:12px">
+          ${r.userPhone ? `<div>📞 <strong>${r.userPhone}</strong></div>` : ''}
+          ${r.transactionId ? `<div style="color:var(--primary);font-family:monospace">🆔 ${r.transactionId}</div>` : '<div style="color:var(--text2)">—</div>'}
+        </td>
+        <td>
+          ${r.paymentMethod ? `<span style="background:var(--blue-bg);color:var(--blue);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600">${r.paymentMethod}</span>` : '—'}
+        </td>
         <td>
           <div style="display:flex;align-items:center;gap:10px">
             ${r.thumbnail ? `<img src="${r.thumbnail}" style="width:40px;height:28px;object-fit:cover;border-radius:4px;flex-shrink:0"/>` : ''}
-            <span style="font-size:13px">${r.courseTitle || '—'}</span>
+            <div>
+              <span style="font-size:13px">${r.courseTitle || '—'}</span>
+              ${r.price ? `<div style="font-size:11px;color:var(--primary);font-weight:700">৳${r.price}</div>` : ''}
+            </div>
           </div>
         </td>
         <td style="font-size:12px;color:var(--text2)">${new Date(r.createdAt).toLocaleDateString('bn-BD')}</td>
@@ -3435,7 +3648,7 @@ function renderAccessRequests(list) {
           ` : `<span style="font-size:12px;color:var(--text2)">সম্পন্ন</span>`}
         </td>
       </tr>`).join('')
-    : '<tr><td colspan="6" style="text-align:center;color:var(--text2);padding:24px">কোনো অনুরোধ নেই</td></tr>';
+    : '<tr><td colspan="7" style="text-align:center;color:var(--text2);padding:24px">কোনো অনুরোধ নেই</td></tr>';
 }
 
 function filterAccessRequests(status) {

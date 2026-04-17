@@ -92,7 +92,7 @@ const Admin = mongoose.model('Admin', adminSchema);
 
 const courseSchema = new mongoose.Schema({
   title: String, slug: { type: String, unique: true },
-  category: String, instructor: String,
+  category: String, subCategory: String, instructor: String,
   price: Number, originalPrice: Number, discount: Number,
   description: String, shortDesc: String,
   thumbnail: String, previewVideo: String,
@@ -108,6 +108,7 @@ const courseSchema = new mongoose.Schema({
   }],
   featured:  { type: Boolean, default: false },
   published: { type: Boolean, default: true },
+  tabKey:    { type: String, default: '' },   // কোন ট্যাবে দেখাবে
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
@@ -180,13 +181,21 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema);
 
 // ── Category Schema ──
+const subCategorySchema = new mongoose.Schema({
+  name:   { type: String, required: true },
+  slug:   { type: String, required: true },
+  icon:   { type: String, default: '' },
+  order:  { type: Number, default: 0 },
+  active: { type: Boolean, default: true },
+});
 const categorySchema = new mongoose.Schema({
-  name:     { type: String, required: true },
-  slug:     { type: String, unique: true },
-  icon:     { type: String, default: '📚' },
-  order:    { type: Number, default: 0 },
-  active:   { type: Boolean, default: true },
-  createdAt:{ type: Date, default: Date.now },
+  name:         { type: String, required: true },
+  slug:         { type: String, unique: true },
+  icon:         { type: String, default: '📚' },
+  order:        { type: Number, default: 0 },
+  active:       { type: Boolean, default: true },
+  subCategories:[ subCategorySchema ],
+  createdAt:    { type: Date, default: Date.now },
 });
 const Category = mongoose.model('Category', categorySchema);
 
@@ -203,18 +212,21 @@ const CourseTab = mongoose.model('CourseTab', courseTabSchema);
 
 // ── Course Access Request Schema ──
 const accessRequestSchema = new mongoose.Schema({
-  userId:      { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  userName:    String,
-  userEmail:   String,
-  courseId:    { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
-  courseTitle: String,
-  courseSlug:  String,
-  thumbnail:   String,
-  price:       Number,
-  status:      { type: String, default: 'pending' }, // pending, approved, rejected
-  message:     String,
-  createdAt:   { type: Date, default: Date.now },
-  processedAt: Date,
+  userId:          { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  userName:        String,
+  userEmail:       String,
+  userPhone:       String,          // ফোন নম্বর
+  transactionId:   String,          // ট্রানজেকশন আইডি
+  paymentMethod:   String,          // bKash, Nagad, Rocket, Card
+  courseId:        { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
+  courseTitle:     String,
+  courseSlug:      String,
+  thumbnail:       String,
+  price:           Number,
+  status:          { type: String, default: 'pending' }, // pending, approved, rejected
+  message:         String,
+  createdAt:       { type: Date, default: Date.now },
+  processedAt:     Date,
 });
 const AccessRequest = mongoose.model('AccessRequest', accessRequestSchema);
 
@@ -919,7 +931,7 @@ app.post('/api/user/progress', userAuthMiddleware, async (req, res) => {
 });
 
 // ============================================================
-// CATEGORIES
+// CATEGORIES (with sub-categories)
 // ============================================================
 app.get('/api/categories', async (req, res) => {
   try { res.json(await Category.find({ active: true }).sort({ order: 1, createdAt: 1 })); }
@@ -931,22 +943,69 @@ app.get('/api/admin/categories', authMiddleware, async (req, res) => {
 });
 app.post('/api/admin/categories', authMiddleware, async (req, res) => {
   try {
-    const { name, icon, order } = req.body;
+    const { name, icon, order, subCategories } = req.body;
     if (!name) return res.status(400).json({ error: 'নাম দিন' });
     const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
-    const cat = await Category.create({ name, slug, icon: icon || '📚', order: order || 0 });
+    const cat = await Category.create({
+      name, slug, icon: icon || '📚', order: order || 0,
+      subCategories: (subCategories || []).map(s => ({
+        name: s.name, icon: s.icon || '',
+        slug: s.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, ''),
+        order: s.order || 0, active: s.active !== false,
+      })),
+    });
     res.json(cat);
   } catch (e) { res.status(400).json({ error: e.message }); }
 });
 app.put('/api/admin/categories/:id', authMiddleware, async (req, res) => {
   try {
-    const cat = await Category.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const update = { ...req.body };
+    if (update.subCategories) {
+      update.subCategories = update.subCategories.map(s => ({
+        ...s,
+        slug: s.slug || s.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, ''),
+      }));
+    }
+    const cat = await Category.findByIdAndUpdate(req.params.id, update, { new: true });
     res.json(cat);
   } catch (e) { res.status(400).json({ error: e.message }); }
 });
 app.delete('/api/admin/categories/:id', authMiddleware, async (req, res) => {
   try { await Category.findByIdAndDelete(req.params.id); res.json({ message: 'Deleted' }); }
   catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// Subcategory CRUD helpers
+app.post('/api/admin/categories/:id/subcategories', authMiddleware, async (req, res) => {
+  try {
+    const cat = await Category.findById(req.params.id);
+    if (!cat) return res.status(404).json({ error: 'Category not found' });
+    const { name, icon, order } = req.body;
+    const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+    cat.subCategories.push({ name, slug, icon: icon || '', order: order || 0, active: true });
+    await cat.save();
+    res.json(cat);
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.put('/api/admin/categories/:id/subcategories/:subId', authMiddleware, async (req, res) => {
+  try {
+    const cat = await Category.findById(req.params.id);
+    if (!cat) return res.status(404).json({ error: 'Category not found' });
+    const sub = cat.subCategories.id(req.params.subId);
+    if (!sub) return res.status(404).json({ error: 'SubCategory not found' });
+    Object.assign(sub, req.body);
+    await cat.save();
+    res.json(cat);
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.delete('/api/admin/categories/:id/subcategories/:subId', authMiddleware, async (req, res) => {
+  try {
+    const cat = await Category.findById(req.params.id);
+    if (!cat) return res.status(404).json({ error: 'Category not found' });
+    cat.subCategories.pull(req.params.subId);
+    await cat.save();
+    res.json(cat);
+  } catch (e) { res.status(400).json({ error: e.message }); }
 });
 
 // ============================================================
@@ -982,7 +1041,8 @@ app.delete('/api/admin/course-tabs/:id', authMiddleware, async (req, res) => {
 // ============================================================
 app.post('/api/access-request', userAuthMiddleware, async (req, res) => {
   try {
-    const { courseId, courseTitle, courseSlug, thumbnail, price } = req.body;
+    const { courseId, courseTitle, courseSlug, thumbnail, price,
+            userPhone, transactionId, paymentMethod } = req.body;
     // Check if already enrolled
     const user = await User.findById(req.user.id);
     const alreadyEnrolled = user.enrolledCourses.some(e => e.courseId.toString() === courseId);
@@ -991,9 +1051,12 @@ app.post('/api/access-request', userAuthMiddleware, async (req, res) => {
     const existing = await AccessRequest.findOne({ userId: req.user.id, courseId, status: 'pending' });
     if (existing) return res.status(400).json({ error: 'আপনার অনুরোধ ইতিমধ্যে পাঠানো হয়েছে, অনুমোদনের অপেক্ষায় আছে' });
     const req2 = await AccessRequest.create({
-      userId: req.user.id,
-      userName: req.user.name,
-      userEmail: req.user.email,
+      userId:        req.user.id,
+      userName:      req.user.name,
+      userEmail:     req.user.email,
+      userPhone:     userPhone || '',
+      transactionId: transactionId || '',
+      paymentMethod: paymentMethod || '',
       courseId, courseTitle, courseSlug, thumbnail,
       price: price || 0,
     });

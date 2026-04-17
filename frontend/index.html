@@ -1957,59 +1957,40 @@
       </div>
     </div>
     <div class="container">
-      <!-- কোর্স টাইপ ট্যাব -->
-      <div class="courses-tabs" style="margin:28px 0 0">
-        <button class="courses-tab active" onclick="switchCourseTypeTab(this,'all')">সব কোর্স</button>
-        <button class="courses-tab" onclick="switchCourseTypeTab(this,'free')">🆓 ফ্রি কোর্সসমূহ</button>
-        <button class="courses-tab" onclick="switchCourseTypeTab(this,'popular')">🔥 জনপ্রিয় কোর্সসমূহ</button>
-        <button class="courses-tab" onclick="switchCourseTypeTab(this,'bundle')">📦 বান্ডেল কোর্সসমূহ</button>
+      <!-- কোর্স টাইপ ট্যাব — API থেকে ক্যাটাগরি লোড হবে -->
+      <div class="courses-tabs" style="margin:28px 0 0" id="courses-category-tabs">
+        <button class="courses-tab active" onclick="switchCategoryTab(this,'all')">সব কোর্স</button>
+        <!-- JS দিয়ে API ক্যাটাগরি লোড হবে -->
       </div>
 
-      <!-- সব কোর্স বিভাগ ফিল্টার -->
-      <div id="course-type-all">
-        <div class="courses-filters">
-          <button class="filter-btn active" onclick="filterCourses(this,'all')">সব</button>
-          <button class="filter-btn" onclick="filterCourses(this,'quran')">📖 কুরআন শিক্ষা</button>
-          <button class="filter-btn" onclick="filterCourses(this,'productivity')">⚡ প্রোডাক্টিভিটি</button>
-          <button class="filter-btn" onclick="filterCourses(this,'family')">👨‍👩‍👧 পারিবারিক জীবন</button>
-          <button class="filter-btn" onclick="filterCourses(this,'seerah')">🕌 সীরাহ ও ইতিহাস</button>
-          <button class="filter-btn" onclick="filterCourses(this,'sunnah')">☪️ সুন্নাহ ও লাইফস্টাইল</button>
-          <button class="filter-btn" onclick="filterCourses(this,'fiqh')">⚖️ ফিকহ</button>
-        </div>
-        <p class="courses-count" id="courses-count">৬টি কোর্স দেখানো হচ্ছে</p>
-        <div class="courses-grid-4" id="courses-container">
-        <div class="course-card" data-cat="quran" data-course-id="quran-tajweed" onclick="openCourseDetail('quran-tajweed')">
-          <div class="course-thumb"><img src="https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&h=220&fit=crop" alt="Quran Education" /><div class="thumb-overlay"><span class="thumb-overlay-text">কোর্সটি দেখুন</span></div></div>
-          <div class="card-body"><div class="card-rating-row"><span class="card-stars">★★★★★</span><span class="card-students">👥 3,200</span></div><div class="card-title">Quran Tajweed: সহিহ তেলাওয়াতের সম্পূর্ণ গাইড</div><div class="card-instructor">🎓 শায়েখ আব্দুল্লাহ • ৩৬ ঘণ্টা</div></div>
-          <div class="card-footer-mobe"><div class="vacation-points">ক্যাটাগরি: <strong>Quran</strong></div><div class="card-price-mobe">৳১,২০০</div></div>
-        </div>
-        <div class="course-card" data-cat="productivity" data-course-id="islamic-productivity" onclick="openCourseDetail('islamic-productivity')">
-          <div class="course-thumb"><img src="https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=400&h=220&fit=crop" alt="Productivity" /><div class="thumb-overlay"><span class="thumb-overlay-text">কোর্সটি দেখুন</span></div></div>
-          <div class="card-body"><div class="card-rating-row"><span class="card-stars">★★★★★</span><span class="card-students">👥 5,800</span></div><div class="card-title">ইসলামিক প্রোডাক্টিভিটি: জীবন গোছানোর ইসলামিক পদ্ধতি</div><div class="card-instructor">🎓 উস্তাদ রাশেদ • ২৪ ঘণ্টা</div></div>
-          <div class="card-footer-mobe"><div class="vacation-points">ক্যাটাগরি: <strong>Productivity</strong></div><div class="card-price-mobe">৳৮০০</div></div>
-        </div>
-        <div class="course-card" data-cat="family" data-course-id="islamic-family" onclick="openCourseDetail('islamic-family')">
-          <div class="course-thumb"><img src="https://images.unsplash.com/photo-1511895426328-dc8714191011?w=400&h=220&fit=crop" alt="Family Life" /><div class="thumb-overlay"><span class="thumb-overlay-text">কোর্সটি দেখুন</span></div></div>
-          <div class="card-body"><div class="card-rating-row"><span class="card-stars">★★★★☆</span><span class="card-students">👥 4,100</span></div><div class="card-title">ইসলামিক পারিবারিক জীবন: সুখী সংসার গড়ার পথ</div><div class="card-instructor">🎓 ড. ফারুক আহমেদ • ২০ ঘণ্টা</div></div>
-          <div class="card-footer-mobe"><div class="vacation-points">ক্যাটাগরি: <strong>Family</strong></div><div class="card-price-mobe">৳৯০০</div></div>
-        </div>
-        <div class="course-card" data-cat="seerah" data-course-id="seerah-nabi" onclick="openCourseDetail('seerah-nabi')">
-          <div class="course-thumb"><img src="https://images.unsplash.com/photo-1564769625905-50e93615e769?w=400&h=220&fit=crop" alt="Seerah" /><div class="thumb-overlay"><span class="thumb-overlay-text">কোর্সটি দেখুন</span></div></div>
-          <div class="card-body"><div class="card-rating-row"><span class="card-stars">★★★★★</span><span class="card-students">👥 7,500</span></div><div class="card-title">সীরাতুন নবী ﷺ: নবীজির জীবনের পূর্ণাঙ্গ ইতিহাস</div><div class="card-instructor">🎓 উস্তাদ ইউসুফ • ৪৮ ঘণ্টা</div></div>
-          <div class="card-footer-mobe"><div class="vacation-points">ক্যাটাগরি: <strong>Seerah</strong></div><div class="card-price-mobe">৳১,৫০০</div></div>
-        </div>
-        <div class="course-card" data-cat="sunnah" data-course-id="sunnah-life" onclick="openCourseDetail('sunnah-life')">
-          <div class="course-thumb"><img src="https://images.unsplash.com/photo-1585036156171-384164a8c675?w=400&h=220&fit=crop" alt="Sunnah" /><div class="thumb-overlay"><span class="thumb-overlay-text">কোর্সটি দেখুন</span></div></div>
-          <div class="card-body"><div class="card-rating-row"><span class="card-stars">★★★★★</span><span class="card-students">👥 6,200</span></div><div class="card-title">সুন্নাহর আলোয় জীবন: দৈনন্দিন ইসলামিক লাইফস্টাইল</div><div class="card-instructor">🎓 শায়েখ নাজমুল • ৩০ ঘণ্টা</div></div>
-          <div class="card-footer-mobe"><div class="vacation-points">ক্যাটাগরি: <strong>Sunnah</strong></div><div class="card-price-mobe">৳১,০০০</div></div>
-        </div>
-        <div class="course-card" data-cat="fiqh" data-course-id="fiqhul-ibadat" onclick="openCourseDetail('fiqhul-ibadat')">
-          <div class="course-thumb"><img src="https://images.unsplash.com/photo-1554232456-8727aae0cfa4?w=400&h=220&fit=crop" alt="Fiqh" /><div class="thumb-overlay"><span class="thumb-overlay-text">কোর্সটি দেখুন</span></div></div>
-          <div class="card-body"><div class="card-rating-row"><span class="card-stars">★★★★☆</span><span class="card-students">👥 3,900</span></div><div class="card-title">ফিকহুল ইবাদাত: নামাজ, রোজা ও হজের বিধিবিধান</div><div class="card-instructor">🎓 মুফতি আমীর • ৪২ ঘণ্টা</div></div>
-          <div class="card-footer-mobe"><div class="vacation-points">ক্যাটাগরি: <strong>Fiqh</strong></div><div class="card-price-mobe">৳১,১০০</div></div>
+      <!-- সাব ক্যাটাগরি ফিল্টার বার — ক্যাটাগরি ক্লিক করলে এখানে সাব ক্যাটাগরি দেখাবে -->
+      <div id="subcategory-filter-bar" style="display:none;padding:12px 0 0">
+        <div class="courses-filters" id="subcategory-filters" style="margin-bottom:0">
+          <!-- JS দিয়ে সাব ক্যাটাগরি বাটন আসবে -->
         </div>
       </div>
-      </div><!-- /course-type-all -->
+
+      <!-- কোর্স কাউন্ট ও গ্রিড -->
+      <div id="courses-main-area">
+        <!-- কোর্স টাইপ ট্যাব (static tabs) -->
+        <div class="courses-tabs" style="margin:20px 0 0;border-top:1px solid var(--border);padding-top:16px" id="courses-type-tabs">
+          <button class="courses-tab active" data-type="all" onclick="switchCourseTypeTab(this,'all')">📚 সব</button>
+          <!-- JS দিয়ে API ট্যাব লোড হবে -->
+        </div>
+        <div class="courses-filters" id="courses-filter-btns">
+          <button class="filter-btn active" onclick="filterCourses(this,'all')">সব</button>
+          <!-- API থেকে সাব ক্যাটাগরি ফিল্টার লোড হবে -->
+        </div>
+        <p class="courses-count" id="courses-count">কোর্স লোড হচ্ছে...</p>
+        <div class="courses-grid-4" id="courses-container">
+          <!-- API থেকে কোর্স কার্ড লোড হবে -->
+          <div style="grid-column:1/-1;text-align:center;padding:48px 0;color:var(--text-mid)">
+            <div style="font-size:32px;margin-bottom:12px">⏳</div>
+            <div>কোর্স লোড হচ্ছে...</div>
+          </div>
+        </div>
+      </div><!-- /courses-main-area -->
+      </div><!-- /courses container -->
 
       <!-- ফ্রি কোর্সসমূহ ট্যাব -->
       <div id="course-type-free" style="display:none;padding:28px 0">
@@ -2017,27 +1998,12 @@
           <span class="section-label">বিনামূল্যে শিখুন</span>
           <h2 class="section-title">ফ্রি কোর্সসমূহ</h2>
           <div class="section-title-underline"></div>
-          <p class="section-sub">কোনো খরচ ছাড়াই জ্ঞান অর্জন করুন। আমাদের বিনামূল্যের কোর্সগুলো দিয়ে শেখা শুরু করুন।</p>
+          <p class="section-sub">কোনো খরচ ছাড়াই জ্ঞান অর্জন করুন।</p>
         </div>
-        <div class="courses-grid-4">
-          <div class="course-card" data-course-id="quran-tajweed" onclick="openCourseDetail('quran-tajweed')">
-            <div class="course-thumb">
-              <img src="https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&h=220&fit=crop" alt="Free Course" />
-              <div class="badge-bestseller" style="background:#16a34a">ফ্রি</div>
-              <div class="thumb-overlay"><span class="thumb-overlay-text">কোর্সটি দেখুন</span></div>
-            </div>
-            <div class="card-body">
-              <div class="card-rating-row"><span class="card-stars">★★★★★</span><span class="card-students">👥 ১৫,০০০+</span></div>
-              <div class="card-title">কুরআন পরিচিতি: আলিফ-বা-তা থেকে শুরু</div>
-              <div class="card-instructor">🎓 শায়েখ আব্দুল্লাহ</div>
-            </div>
-            <div class="card-footer-mobe">
-              <div class="vacation-points">ক্যাটাগরি: <strong>Quran</strong></div>
-              <div class="card-price-mobe" style="color:#16a34a;font-weight:800">বিনামূল্যে</div>
-            </div>
-          </div>
+        <div class="courses-grid-4" id="free-courses-container">
+          <!-- JS পপুলেট করবে -->
         </div>
-      </div><!-- /course-type-free -->
+      </div>
 
       <!-- জনপ্রিয় কোর্সসমূহ ট্যাব -->
       <div id="course-type-popular" style="display:none;padding:28px 0">
@@ -2045,27 +2011,12 @@
           <span class="section-label">সর্বোচ্চ চাহিদা</span>
           <h2 class="section-title">জনপ্রিয় কোর্সসমূহ</h2>
           <div class="section-title-underline"></div>
-          <p class="section-sub">হাজারো শিক্ষার্থীর পছন্দের কোর্সগুলো। সবচেয়ে বেশি রেটিং ও এনরোলমেন্ট পাওয়া কোর্সগুলো এখানে।</p>
+          <p class="section-sub">হাজারো শিক্ষার্থীর পছন্দের কোর্সগুলো।</p>
         </div>
-        <div class="courses-grid-4">
-          <div class="course-card" data-course-id="seerah-nabi" onclick="openCourseDetail('seerah-nabi')">
-            <div class="course-thumb">
-              <img src="https://images.unsplash.com/photo-1564769625905-50e93615e769?w=400&h=220&fit=crop" alt="Popular Course" />
-              <div class="badge-bestseller">🔥 সেরা<br>বিক্রেতা</div>
-              <div class="thumb-overlay"><span class="thumb-overlay-text">কোর্সটি দেখুন</span></div>
-            </div>
-            <div class="card-body">
-              <div class="card-rating-row"><span class="card-stars">★★★★★</span><span class="card-students">👥 ৭,৫০০</span></div>
-              <div class="card-title">সীরাতুন নবী ﷺ: নবীজির জীবনের পূর্ণাঙ্গ ইতিহাস</div>
-              <div class="card-instructor">🎓 উস্তাদ ইউসুফ</div>
-            </div>
-            <div class="card-footer-mobe">
-              <div class="vacation-points">ক্যাটাগরি: <strong>Seerah</strong></div>
-              <div class="card-price-mobe">৳১,৫০০</div>
-            </div>
-          </div>
+        <div class="courses-grid-4" id="popular-courses-container">
+          <!-- JS পপুলেট করবে -->
         </div>
-      </div><!-- /course-type-popular -->
+      </div>
 
       <!-- বান্ডেল কোর্সসমূহ ট্যাব -->
       <div id="course-type-bundle" style="display:none;padding:28px 0">
@@ -2073,27 +2024,12 @@
           <span class="section-label">বিশেষ সাশ্রয়</span>
           <h2 class="section-title">বান্ডেল কোর্সসমূহ</h2>
           <div class="section-title-underline"></div>
-          <p class="section-sub">একসাথে একাধিক কোর্স কিনুন এবং বিশেষ ছাড় পান। বান্ডেলে সর্বোচ্চ সাশ্রয় করুন।</p>
+          <p class="section-sub">একসাথে একাধিক কোর্স কিনুন এবং বিশেষ ছাড় পান।</p>
         </div>
-        <div class="courses-grid-4">
-          <div class="course-card" onclick="showToast('বান্ডেল কোর্সের জন্য আমাদের সাথে যোগাযোগ করুন!')">
-            <div class="course-thumb">
-              <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=220&fit=crop" alt="Bundle Course" />
-              <div class="badge-bestseller" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">📦 বান্ডেল</div>
-              <div class="thumb-overlay"><span class="thumb-overlay-text">বান্ডেল দেখুন</span></div>
-            </div>
-            <div class="card-body">
-              <div class="card-rating-row"><span class="card-stars">★★★★★</span><span class="card-students">📚 ৩টি কোর্স</span></div>
-              <div class="card-title">ইসলামিক জ্ঞান বান্ডেল: তাজওয়িদ + সীরাহ + ফিকহ</div>
-              <div class="card-instructor">🎓 একাধিক ইন্সট্রাক্টর</div>
-            </div>
-            <div class="card-footer-mobe">
-              <div class="vacation-points">সাশ্রয়: <strong style="color:#16a34a">৪০% ছাড়</strong></div>
-              <div class="card-price-mobe"><span style="text-decoration:line-through;color:#999;font-size:13px">৳৩,৫০০</span> ৳২,১০০</div>
-            </div>
-          </div>
+        <div class="courses-grid-4" id="bundle-courses-container">
+          <!-- JS পপুলেট করবে -->
         </div>
-      </div><!-- /course-type-bundle -->
+      </div>
 
     </div>
   </div>
@@ -2414,37 +2350,59 @@
                 <button class="modal-close" onclick="closePaymentModal()">✕</button>
                 <div style="text-align:center;margin-bottom:20px">
                   <div style="font-size:48px;margin-bottom:10px">🔒</div>
-                  <h3 style="color:#fff;margin-bottom:8px">এই লেসনটি লকড</h3>
+                  <h3 style="color:#fff;margin-bottom:8px" id="pm-locked-title">এই লেসনটি লকড</h3>
                   <p style="color:#888;font-size:14px">এই ভিডিওটি দেখতে লগইন করুন এবং কোর্সে এনরোল করুন।</p>
                 </div>
                 <div id="payment-login-required" class="">
-                  <div style="background:#111;border:1px solid #333;border-radius:4px;padding:16px;margin-bottom:16px">
-                    <div style="font-family:var(--font-nav);font-size:13px;font-weight:700;color:#fff;margin-bottom:12px">📦 কোর্স প্যাকেজ</div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-                      <span class="payment-course-name" style="color:#aaa;font-size:14px">Quran Tajweed সম্পূর্ণ কোর্স</span>
-                      <span class="payment-course-price" style="font-size:18px;font-weight:700;color:var(--primary)">৳১,২০০</span>
+                  <!-- কোর্স প্যাকেজ তথ্য -->
+                  <div style="background:#111;border:1px solid #2a2a2a;border-radius:8px;padding:16px;margin-bottom:16px">
+                    <div style="font-family:var(--font-nav);font-size:11px;font-weight:700;color:var(--primary);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">🧡 কোর্স প্যাকেজ</div>
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+                      <span class="payment-course-name" style="color:#fff;font-size:14px;font-weight:700;line-height:1.4;flex:1;margin-right:10px">Quran Tajweed সম্পূর্ণ কোর্স</span>
+                      <span class="payment-course-price" style="font-size:20px;font-weight:800;color:var(--primary);flex-shrink:0">৳১,২০০</span>
                     </div>
-                    <div style="font-size:12px;color:#666;text-decoration:line-through">নিয়মিত মূল্য: ৳২,৫০০</div>
-                    <div style="font-size:11px;color:#16a34a;margin-top:4px">✅ ৫২% ছাড় — সীমিত সময়ের অফার!</div>
+                    <div style="font-size:12px;color:#555;text-decoration:line-through" id="pm-old-price">নিয়মিত মূল্য: ৳২,৫০০</div>
+                    <div style="font-size:11px;color:#16a34a;margin-top:4px;font-weight:700" id="pm-discount-badge">✅ ৫২% ছাড় — সীমিত সময়ের অফার!</div>
                   </div>
+
                   <div style="display:flex;flex-direction:column;gap:10px">
+                    <!-- Step 1: Login check -->
                     <div id="payment-step1" class="">
-                      <p style="font-size:13px;color:#888;text-align:center;margin-bottom:12px">প্রথমে লগইন করুন, তারপর পেমেন্ট করুন</p>
-                      <button class="btn btn-primary btn-lg" style="width:100%" onclick="startPaymentFlow()">🔐 লগইন করে এনরোল করুন →</button>
+                      <p style="font-size:13px;color:#888;text-align:center;margin-bottom:12px">পেমেন্ট করতে প্রথমে লগইন করুন</p>
+                      <button class="btn btn-primary btn-lg" style="width:100%" onclick="startPaymentFlow()">🔐 লগইন করে পেমেন্ট করুন →</button>
                     </div>
+
+                    <!-- Step 2: Payment method + details -->
                     <div id="payment-step2" class="hidden">
-                      <p style="font-size:13px;color:#aaa;margin-bottom:12px;text-align:center">পেমেন্ট পদ্ধতি বেছে নিন:</p>
+                      <p style="font-size:13px;color:#aaa;margin-bottom:10px;text-align:center;font-weight:600">পেমেন্ট পদ্ধতি বেছে নিন:</p>
                       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
-                        <button onclick="selectPayment(this)" class="pay-method-btn" style="padding:12px;border:1.5px solid #333;border-radius:4px;background:#111;color:#aaa;font-size:13px;cursor:pointer;transition:all 0.2s">📱 bKash</button>
-                        <button onclick="selectPayment(this)" class="pay-method-btn" style="padding:12px;border:1.5px solid #333;border-radius:4px;background:#111;color:#aaa;font-size:13px;cursor:pointer;transition:all 0.2s">💳 Nagad</button>
-                        <button onclick="selectPayment(this)" class="pay-method-btn" style="padding:12px;border:1.5px solid #333;border-radius:4px;background:#111;color:#aaa;font-size:13px;cursor:pointer;transition:all 0.2s">🏦 রকেট</button>
-                        <button onclick="selectPayment(this)" class="pay-method-btn" style="padding:12px;border:1.5px solid #333;border-radius:4px;background:#111;color:#aaa;font-size:13px;cursor:pointer;transition:all 0.2s">💳 কার্ড</button>
+                        <button onclick="selectPayment(this)" data-method="bKash"
+                          class="pay-method-btn" style="padding:14px 8px;border:1.5px solid #333;border-radius:8px;background:#111;color:#aaa;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px">
+                          <span style="font-size:18px">📱</span> bKash
+                        </button>
+                        <button onclick="selectPayment(this)" data-method="Nagad"
+                          class="pay-method-btn" style="padding:14px 8px;border:1.5px solid #333;border-radius:8px;background:#111;color:#aaa;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px">
+                          <span style="font-size:18px">💳</span> Nagad
+                        </button>
+                        <button onclick="selectPayment(this)" data-method="Rocket"
+                          class="pay-method-btn" style="padding:14px 8px;border:1.5px solid #333;border-radius:8px;background:#111;color:#aaa;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px">
+                          <span style="font-size:18px">🏦</span> রকেট
+                        </button>
+                        <button onclick="selectPayment(this)" data-method="Card"
+                          class="pay-method-btn" style="padding:14px 8px;border:1.5px solid #333;border-radius:8px;background:#111;color:#aaa;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px">
+                          <span style="font-size:18px">💴</span> কার্ড
+                        </button>
                       </div>
-                      <div id="payment-number-input" class="hidden" style="margin-bottom:12px">
-                        <input class="form-input" type="text" id="payment-phone" placeholder="পেমেন্ট নম্বর লিখুন" style="margin-bottom:8px" />
-                        <input class="form-input" type="text" id="payment-trx" placeholder="Transaction ID লিখুন" />
+
+                      <!-- Phone + TrxID -->
+                      <div id="payment-number-input" class="hidden" style="margin-bottom:14px">
+                        <div style="font-size:11px;color:#888;font-family:var(--font-nav);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px" id="payment-method-label">আপনার বিকাশ নম্বর:</div>
+                        <input class="form-input" type="tel" id="payment-phone" placeholder="01XXXXXXXXX" style="margin-bottom:8px;background:#111;border-color:#333;color:#fff" />
+                        <div style="font-size:11px;color:#888;font-family:var(--font-nav);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">ট্রেনজেকশন আইডি (TrxID):</div>
+                        <input class="form-input" type="text" id="payment-trx" placeholder="XXXXXXXXXX" style="background:#111;border-color:#333;color:#fff" />
                       </div>
-                      <button class="btn btn-primary btn-lg" style="width:100%" onclick="confirmPayment()">✅ পেমেন্ট নিশ্চিত করুন →</button>
+
+                      <button class="btn btn-primary btn-lg" style="width:100%;font-size:14px" onclick="confirmPayment()">✅ পেমেন্ট নিশ্চিত করুন →</button>
                     </div>
                   </div>
                   <div style="margin-top:14px;font-size:11px;text-align:center;color:#555">🔒 ৩০ দিনের মানি-ব্যাক গ্যারান্টি • নিরাপদ পেমেন্ট</div>
@@ -2888,6 +2846,7 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
       setTimeout(runFadeIn, 50);
       if (page === 'detail') { setTimeout(updateLessonAccess, 100); updateSidebarEnrollBtn(); updateSidebarImage(); }
+      if (page === 'courses') { loadCoursesPage(); }
       // Show/hide footer — hide on auth page only
       var footer = document.getElementById('global-footer');
       if (footer) {
@@ -2918,26 +2877,173 @@
       });
     }
 
-    function switchCourseTypeTab(btn, type) {
-      document.querySelectorAll('#page-courses .courses-tab').forEach(t => t.classList.remove('active'));
+    // ─── ক্যাটাগরি ট্যাব + সাব ক্যাটাগরি ফিল্টার ───
+    var _allCoursesData = [];
+    var _allCategoriesData = [];
+    var _currentCatFilter = 'all';
+    var _currentSubCatFilter = 'all';
+    var _currentTypeFilter = 'all';
+
+    // কোর্স কার্ড তৈরি করার helper
+    function buildCourseCard(c) {
+      var slug = c.slug || c._id;
+      var img  = c.thumbnail || 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&h=220&fit=crop';
+      var price = c.price ? '৳' + c.price : 'বিনামূল্যে';
+      var priceColor = c.price ? '' : 'color:#16a34a;font-weight:800';
+      var catVal = c.category || '';
+      var subCatVal = c.subCategory || '';
+      var tabVal = c.tabKey || '';
+      return `<div class="course-card" data-cat="${catVal}" data-subcat="${subCatVal}" data-tab="${tabVal}" data-course-id="${slug}" onclick="openCourseDetail('${slug}')">
+        <div class="course-thumb">
+          <img src="${img}" alt="${c.title}" loading="lazy"/>
+          ${c.featured ? '<div class="badge-bestseller">🔥 সেরা</div>' : ''}
+          <div class="thumb-overlay"><span class="thumb-overlay-text">কোর্সটি দেখুন</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-rating-row">
+            <span class="card-stars">${'★'.repeat(Math.round(c.rating||4.5))}${'☆'.repeat(5-Math.round(c.rating||4.5))}</span>
+            <span class="card-students">👥 ${c.students||0}</span>
+          </div>
+          <div class="card-title">${c.title}</div>
+          <div class="card-instructor">🎓 ${c.instructor||''} ${c.duration ? '• ' + c.duration : ''}</div>
+        </div>
+        <div class="card-footer-mobe">
+          <div class="vacation-points">ক্যাটাগরি: <strong>${catVal}</strong></div>
+          <div class="card-price-mobe" style="${priceColor}">${price}</div>
+        </div>
+      </div>`;
+    }
+
+    // কোর্স পেজে ক্যাটাগরি ট্যাব ও ট্যাব লোড
+    async function loadCoursesPage() {
+      try {
+        var [cats, courses, tabs] = await Promise.all([
+          fetch(API_BASE + '/api/categories').then(r => r.json()),
+          fetch(API_BASE + '/api/courses').then(r => r.json()),
+          fetch(API_BASE + '/api/course-tabs').then(r => r.json()),
+        ]);
+        _allCategoriesData = cats || [];
+        _allCoursesData    = courses || [];
+
+        // ── Category tabs (top row) ──
+        var catTabsEl = document.getElementById('courses-category-tabs');
+        if (catTabsEl) {
+          catTabsEl.innerHTML = '<button class="courses-tab active" onclick="switchCategoryTab(this,\'all\')">সব কোর্স</button>' +
+            _allCategoriesData.map(c =>
+              `<button class="courses-tab" onclick="switchCategoryTab(this,'${c.slug||c.name}')">${c.icon||''} ${c.name}</button>`
+            ).join('');
+        }
+
+        // ── Course type tabs (from API course-tabs) ──
+        var typeTabsEl = document.getElementById('courses-type-tabs');
+        if (typeTabsEl && tabs && tabs.length) {
+          typeTabsEl.innerHTML = '<button class="courses-tab active" data-type="all" onclick="switchCourseTypeTab(this,\'all\')">📚 সব</button>' +
+            tabs.map(t =>
+              `<button class="courses-tab" data-type="${t.key}" onclick="switchCourseTypeTab(this,'${t.key}')">${t.icon||''} ${t.label}</button>`
+            ).join('');
+        }
+
+        // Initial render: সব কোর্স
+        renderCoursesGrid();
+      } catch(e) {
+        var el = document.getElementById('courses-container');
+        if (el) el.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#999">কোর্স লোড হয়নি। পরে চেষ্টা করুন।</div>';
+      }
+    }
+
+    function switchCategoryTab(btn, cat) {
+      document.querySelectorAll('#courses-category-tabs .courses-tab').forEach(t => t.classList.remove('active'));
       btn.classList.add('active');
-      ['all','free','popular','bundle'].forEach(function(t) {
-        var el = document.getElementById('course-type-' + t);
-        if (el) el.style.display = (t === type) ? '' : 'none';
+      _currentCatFilter    = cat;
+      _currentSubCatFilter = 'all';
+      _currentTypeFilter   = 'all';
+
+      // ── সাব ক্যাটাগরি ফিল্টার বার আপডেট ──
+      var barEl     = document.getElementById('subcategory-filter-bar');
+      var filterEl  = document.getElementById('subcategory-filters');
+      if (cat === 'all') {
+        if (barEl) barEl.style.display = 'none';
+      } else {
+        var found = _allCategoriesData.find(c => (c.slug||c.name) === cat);
+        if (found && found.subCategories && found.subCategories.length) {
+          var activeSubs = found.subCategories.filter(s => s.active !== false);
+          if (activeSubs.length) {
+            filterEl.innerHTML = '<button class="filter-btn active" onclick="filterBySubCat(this,\'all\')">সব</button>' +
+              activeSubs.map(s =>
+                `<button class="filter-btn" onclick="filterBySubCat(this,'${s.slug||s.name}')">${s.icon||''} ${s.name}</button>`
+              ).join('');
+            barEl.style.display = '';
+          } else {
+            barEl.style.display = 'none';
+          }
+        } else {
+          barEl.style.display = 'none';
+        }
+      }
+
+      // Tab type reset
+      document.querySelectorAll('#courses-type-tabs .courses-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.type === 'all');
       });
+
+      renderCoursesGrid();
+    }
+
+    function filterBySubCat(btn, subCat) {
+      document.querySelectorAll('#subcategory-filters .filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      _currentSubCatFilter = subCat;
+      renderCoursesGrid();
+    }
+
+    function switchCourseTypeTab(btn, type) {
+      document.querySelectorAll('#courses-type-tabs .courses-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      _currentTypeFilter = type;
+      renderCoursesGrid();
     }
 
     function filterCourses(btn, cat) {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      // Legacy support — route to switchCategoryTab
+      var tabEl = document.querySelector(`#courses-category-tabs .courses-tab[onclick*="'${cat}'"]`);
+      if (tabEl) { switchCategoryTab(tabEl, cat); return; }
+      // Fallback inline filter
+      document.querySelectorAll('#courses-filter-btns .filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      const cards = document.querySelectorAll('#courses-container .course-card');
-      let count = 0;
-      cards.forEach(card => {
-        const match = cat === 'all' || card.dataset.cat === cat;
-        card.style.display = match ? '' : 'none';
-        if (match) count++;
+      _currentCatFilter = cat;
+      renderCoursesGrid();
+    }
+
+    function renderCoursesGrid() {
+      var filtered = _allCoursesData.filter(function(c) {
+        var catMatch  = _currentCatFilter === 'all' || (c.category || '').toLowerCase() === _currentCatFilter.toLowerCase() || c.category === _currentCatFilter;
+        var subMatch  = _currentSubCatFilter === 'all' || (c.subCategory || '').toLowerCase() === _currentSubCatFilter.toLowerCase();
+        var typeMatch = _currentTypeFilter === 'all' || (c.tabKey || '') === _currentTypeFilter;
+        return catMatch && subMatch && typeMatch;
       });
-      document.getElementById('courses-count').textContent = `${count}টি কোর্স দেখানো হচ্ছে`;
+
+      var container = document.getElementById('courses-container');
+      var countEl   = document.getElementById('courses-count');
+      if (!container) return;
+
+      if (!filtered.length) {
+        container.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px 0;color:var(--text-mid)"><div style="font-size:48px;margin-bottom:12px">🔍</div><div>এই ক্যাটাগরিতে কোনো কোর্স নেই</div></div>';
+        if (countEl) countEl.textContent = '০টি কোর্স পাওয়া গেছে';
+        return;
+      }
+
+      container.innerHTML = filtered.map(buildCourseCard).join('');
+      if (countEl) countEl.textContent = filtered.length + 'টি কোর্স দেখানো হচ্ছে';
+
+      // Also populate type-specific containers
+      var tabContainers = { free: 'free-courses-container', popular: 'popular-courses-container', bundle: 'bundle-courses-container' };
+      Object.entries(tabContainers).forEach(function([key, id]) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var sub = _allCoursesData.filter(c => (c.tabKey||'') === key);
+        el.innerHTML = sub.length ? sub.map(buildCourseCard).join('') :
+          '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#999">এই ট্যাবে কোনো কোর্স নেই</div>';
+      });
     }
 
     function switchTab(btn, id) {
@@ -3119,10 +3225,37 @@
     // AUTO-RESTORE SESSION
     // ===========================
     function restoreSession() {
+      // প্রথমে API token দিয়ে চেক
+      var token = lsGet('userToken', null);
+      if (token) {
+        fetch(API_BASE + '/api/user/me', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        }).then(function(r) { return r.json(); }).then(function(user) {
+          if (user && user.name) {
+            currentUser = user;
+            isLoggedIn = true;
+            setLoginState(true);
+            renderDashboard();
+          } else {
+            // Token expired, clear
+            lsSet('userToken', null);
+            lsSet('currentUserEmail', null);
+          }
+        }).catch(function() {
+          // Fallback to localStorage user
+          var saved = lsGet('currentUserEmail', null);
+          if (!saved) return;
+          var users = lsGet('registeredUsers', []);
+          var user = users.find(function(u) { return u.email === saved; });
+          if (user) { currentUser = user; isLoggedIn = true; setLoginState(true); renderDashboard(); }
+        });
+        return;
+      }
+      // Legacy localStorage session
       var saved = lsGet('currentUserEmail', null);
       if (!saved) return;
       var users = lsGet('registeredUsers', []);
-      var user = users.find(u => u.email === saved);
+      var user = users.find(function(u) { return u.email === saved; });
       if (user) {
         currentUser = user;
         isLoggedIn = true;
@@ -3342,56 +3475,27 @@
         html += '</div></div>';
       }
 
-      // Payment modal at end
-      html += document.querySelector('#tab-curriculum #payment-modal') ? '' :
-        `<div id="payment-modal" class="modal-overlay hidden" onclick="closePaymentModal(event)">
-          <div class="modal-box" style="max-width:460px">
-            <button class="modal-close" onclick="closePaymentModal()">✕</button>
-            <div style="text-align:center;margin-bottom:20px">
-              <div style="font-size:48px;margin-bottom:10px">🔒</div>
-              <h3 style="color:#fff;margin-bottom:8px">এই লেসনটি লকড</h3>
-              <p style="color:#888;font-size:14px">এই ভিডিওটি দেখতে লগইন করুন এবং কোর্সে এনরোল করুন।</p>
-            </div>
-            <div id="payment-login-required" class="">
-              <div style="background:#111;border:1px solid #333;border-radius:4px;padding:16px;margin-bottom:16px">
-                <div style="font-family:var(--font-nav);font-size:13px;font-weight:700;color:#fff;margin-bottom:12px">📦 কোর্স প্যাকেজ</div>
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-                  <span class="payment-course-name" style="color:#aaa;font-size:14px">কোর্স</span>
-                  <span class="payment-course-price" style="font-size:18px;font-weight:700;color:var(--primary)">৳১,২০০</span>
-                </div>
-                <div style="font-size:12px;color:#666;text-decoration:line-through">নিয়মিত মূল্য: ৳২,৫০০</div>
-                <div style="font-size:11px;color:#16a34a;margin-top:4px">✅ ৫২% ছাড় — সীমিত সময়ের অফার!</div>
-              </div>
-              <div id="payment-step1" class="">
-                <p style="font-size:13px;color:#888;text-align:center;margin-bottom:12px">প্রথমে লগইন করুন, তারপর পেমেন্ট করুন</p>
-                <button class="btn btn-primary btn-lg" style="width:100%" onclick="startPaymentFlow()">🔐 লগইন করে এনরোল করুন →</button>
-              </div>
-              <div id="payment-step2" class="hidden">
-                <p style="font-size:13px;color:#aaa;margin-bottom:12px;text-align:center">পেমেন্ট পদ্ধতি বেছে নিন:</p>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
-                  <button onclick="selectPayment(this)" class="pay-method-btn" style="padding:12px;border:1.5px solid #333;border-radius:4px;background:#111;color:#aaa;font-size:13px;cursor:pointer;transition:all 0.2s">📱 bKash</button>
-                  <button onclick="selectPayment(this)" class="pay-method-btn" style="padding:12px;border:1.5px solid #333;border-radius:4px;background:#111;color:#aaa;font-size:13px;cursor:pointer;transition:all 0.2s">💳 Nagad</button>
-                  <button onclick="selectPayment(this)" class="pay-method-btn" style="padding:12px;border:1.5px solid #333;border-radius:4px;background:#111;color:#aaa;font-size:13px;cursor:pointer;transition:all 0.2s">🏦 রকেট</button>
-                  <button onclick="selectPayment(this)" class="pay-method-btn" style="padding:12px;border:1.5px solid #333;border-radius:4px;background:#111;color:#aaa;font-size:13px;cursor:pointer;transition:all 0.2s">💳 কার্ড</button>
-                </div>
-                <div id="payment-number-input" class="hidden" style="margin-bottom:12px">
-                  <input class="form-input" type="text" id="payment-phone" placeholder="পেমেন্ট নম্বর লিখুন" style="margin-bottom:8px" />
-                  <input class="form-input" type="text" id="payment-trx" placeholder="Transaction ID লিখুন" />
-                </div>
-                <button class="btn btn-primary btn-lg" style="width:100%" onclick="confirmPayment()">✅ পেমেন্ট নিশ্চিত করুন →</button>
-              </div>
-              <div style="margin-top:14px;font-size:11px;text-align:center;color:#555">🔒 ৩০ দিনের মানি-ব্যাক গ্যারান্টি • নিরাপদ পেমেন্ট</div>
-            </div>
-          </div>
-        </div>`;
-
       container.innerHTML = html;
+
+      // ── প্রথম ভিডিও ডিফল্ট সিলেক্ট ও অটো প্লে ──
+      setTimeout(function() {
+        var firstLesson = container.querySelector('.lesson-item.lesson-clickable.curriculum-lesson-row');
+        if (firstLesson) {
+          firstLesson.classList.add('lesson-active');
+          firstLesson.style.background = 'rgba(245,197,24,0.08)';
+          firstLesson.style.borderLeft = '3px solid var(--primary)';
+          // If no video currently playing, click the first one
+          var nowPlaying = document.getElementById('now-playing-label');
+          if (!nowPlaying || nowPlaying.classList.contains('hidden')) {
+            firstLesson.click();
+          }
+        }
+      }, 150);
     }
 
     // ===========================
-    // VIDEO PROGRESS TRACKING
+    // VIDEO PROGRESS TRACKING (API + localStorage)
     // ===========================
-    // Storage key: videoProgress_{courseId}_{lessonId} = { pct: 0-100, currentTime: seconds }
     function getProgressKey(courseId, lessonId) {
       return 'vp_' + courseId + '_' + lessonId;
     }
@@ -3401,29 +3505,21 @@
     }
     function saveProgress(courseId, lessonId, pct, currentTime) {
       lsSet(getProgressKey(courseId, lessonId), { pct: pct, currentTime: currentTime || 0 });
-      // Sync to MongoDB if logged in and lesson is newly completed (>=95%)
-      if (pct >= 95 && isLoggedIn && currentUser) {
-        var token = localStorage.getItem('user_token');
-        var c = COURSES[courseId];
-        if (token && c && c._id) {
-          fetch(API_BASE + '/api/user/progress', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-            body: JSON.stringify({ courseId: c._id, lessonId: lessonId })
-          })
-          .then(r => r.json())
-          .then(data => {
-            if (data.certificate) {
-              // Certificate earned!
-              showToast('🏆 অভিনন্দন! কোর্সটি সম্পন্ন হয়েছে। সার্টিফিকেট পেয়েছেন!');
-              setTimeout(() => showCertificate(courseId), 2500);
-            } else if (data.progress !== undefined) {
-              // Update progress display
-              var pctEl = document.getElementById('progress-pct-' + courseId);
-              if (pctEl) pctEl.textContent = data.progress + '%';
-            }
-          }).catch(() => {});
-        }
+      // Sync to API if logged in
+      var token = lsGet('userToken', null);
+      if (token && pct >= 100) {
+        var apiCourse = COURSES[courseId];
+        var cid = apiCourse && apiCourse._id ? apiCourse._id : courseId;
+        fetch(API_BASE + '/api/user/progress', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ courseId: cid, lessonId: lessonId })
+        }).then(function(r) { return r.json(); }).then(function(data) {
+          if (data.progress !== undefined) {
+            // Update dashboard progress display
+            updateDashboardProgressFromApi(courseId, data.progress);
+          }
+        }).catch(function() {});
       }
     }
     function getSavedTime(courseId, lessonId) {
@@ -3431,12 +3527,34 @@
       return data.currentTime || 0;
     }
 
-    // Overall course progress = avg of all lessons
+    // Overall course progress: API data অথবা localStorage থেকে
     function getOverallCourseProgress(courseId) {
+      // প্রথমে API enrolled data চেক করি
+      var token = lsGet('userToken', null);
+      if (token && currentUser && currentUser.enrolledCourses) {
+        var enr = currentUser.enrolledCourses.find(function(e) {
+          return e.courseSlug === courseId || (e.courseId && e.courseId === courseId);
+        });
+        if (enr && enr.progress !== undefined) return enr.progress;
+      }
+      // Fallback to localStorage
       var lessons = COURSE_LESSONS[courseId] || COURSE_LESSONS['default'];
-      if (!lessons.length) return 0;
+      if (!lessons || !lessons.length) return 0;
       var total = lessons.reduce(function(sum, l) { return sum + getCourseProgress(courseId, l.id); }, 0);
       return Math.round(total / lessons.length);
+    }
+
+    function updateDashboardProgressFromApi(courseId, pct) {
+      var cards = document.querySelectorAll('.enrolled-card');
+      cards.forEach(function(card) {
+        var btn = card.querySelector('button');
+        if (btn && btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(courseId)) {
+          var bar   = card.querySelector('.progress-bar-fill');
+          var pctEl = card.querySelector('.progress-pct');
+          if (bar)   bar.style.width = pct + '%';
+          if (pctEl) pctEl.textContent = pct + '%';
+        }
+      });
     }
 
     // ===========================
@@ -3462,41 +3580,37 @@
       var pass  = passInput  ? passInput.value.trim()  : '';
       if (!email || !pass) { showToast('⚠️ ইমেইল ও পাসওয়ার্ড দিন'); return; }
 
-      // Show loading
-      showToast('⌛ লগইন হচ্ছে...');
+      var btn = document.querySelector('#auth-login .btn-primary');
+      if (btn) { btn.disabled = true; btn.textContent = 'লগইন হচ্ছে...'; }
+
+      // API login
       fetch(API_BASE + '/api/user/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password: pass })
-      })
-      .then(r => r.json())
-      .then(data => {
+        body: JSON.stringify({ email: email, password: pass })
+      }).then(function(r) { return r.json(); }).then(function(data) {
+        if (btn) { btn.disabled = false; btn.textContent = 'লগইন করুন →'; }
         if (data.error) { showToast('❌ ' + data.error); return; }
-        // Save token + user
-        localStorage.setItem('user_token', data.token);
-        localStorage.setItem('user_data', JSON.stringify(data.user));
-        currentUser = data.user;
-        // Sync enrolled courses into local state
-        if (data.user.enrolledCourses && data.user.enrolledCourses.length) {
-          currentUser.enrolledCourses = data.user.enrolledCourses.map(e => e.courseSlug || e.courseId);
-        }
-        showToast('👋 স্বাগতম ' + data.user.name + '!');
-        setTimeout(() => {
+        currentUser = data.user || data;
+        lsSet('userToken', data.token);
+        lsSet('currentUserEmail', email);
+        showToast('👋 স্বাগতম ' + (currentUser.name || '') + '!');
+        setTimeout(function() {
           setLoginState(true);
           updateLessonAccess();
           renderDashboard();
           navigate('dashboard');
         }, 800);
-      })
-      .catch(() => {
-        // Fallback to localStorage if server unreachable
+      }).catch(function() {
+        if (btn) { btn.disabled = false; btn.textContent = 'লগইন করুন →'; }
+        // Fallback to localStorage
         var users = lsGet('registeredUsers', []);
-        var user = users.find(u => u.email === email && u.pass === pass);
+        var user = users.find(function(u) { return u.email === email && u.pass === pass; });
         if (!user) { showToast('❌ ইমেইল বা পাসওয়ার্ড সঠিক নয়।'); return; }
         currentUser = user;
         lsSet('currentUserEmail', email);
-        showToast('👋 স্বাগতম ' + user.name + '! (অফলাইন মোড)');
-        setTimeout(() => { setLoginState(true); updateLessonAccess(); renderDashboard(); navigate('dashboard'); }, 800);
+        showToast('👋 স্বাগতম ' + user.name + '!');
+        setTimeout(function() { setLoginState(true); updateLessonAccess(); renderDashboard(); navigate('dashboard'); }, 800);
       });
     }
 
@@ -3514,45 +3628,43 @@
       if (pass.length < 6) { showToast('⚠️ পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে'); return; }
       if (pass !== conf) { showToast('⚠️ পাসওয়ার্ড মিলছে না'); return; }
 
-      showToast('⌛ অ্যাকাউন্ট তৈরি হচ্ছে...');
+      var btn = document.querySelector('#auth-register .btn-primary');
+      if (btn) { btn.disabled = true; btn.textContent = 'তৈরি হচ্ছে...'; }
+
+      // API register
       fetch(API_BASE + '/api/user/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password: pass })
-      })
-      .then(r => r.json())
-      .then(data => {
-        if (data.error) { showToast('❌ ' + data.error); return; }
-        localStorage.setItem('user_token', data.token);
-        localStorage.setItem('user_data', JSON.stringify(data.user));
-        currentUser = data.user;
-        currentUser.enrolledCourses = [];
-        showToast('🎉 অ্যাকাউন্ট তৈরি হয়েছে! স্বাগতম ' + name + '!');
-        setTimeout(() => { setLoginState(true); renderDashboard(); navigate('dashboard'); }, 800);
-      })
-      .catch(() => {
-        // Fallback localStorage
-        var users = lsGet('registeredUsers', []);
-        if (users.find(u => u.email === email)) { showToast('⚠️ এই ইমেইল দিয়ে ইতিমধ্যে অ্যাকাউন্ট আছে'); return; }
-        var newUser = { name, email, pass, enrolledCourses: [] };
-        users.push(newUser);
-        lsSet('registeredUsers', users);
-        currentUser = newUser;
+        body: JSON.stringify({ name: name, email: email, password: pass })
+      }).then(function(r) { return r.json(); }).then(function(data) {
+        if (btn) { btn.disabled = false; btn.textContent = 'একাউন্ট তৈরি করুন →'; }
+        if (data.error) { showToast('⚠️ ' + data.error); return; }
+        currentUser = data.user || { name: name, email: email, enrolledCourses: [] };
+        lsSet('userToken', data.token);
         lsSet('currentUserEmail', email);
-        showToast('🎉 অ্যাকাউন্ট তৈরি হয়েছে! (অফলাইন মোড)');
-        setTimeout(() => { setLoginState(true); renderDashboard(); navigate('dashboard'); }, 800);
+        showToast('🎉 অ্যাকাউন্ট তৈরি হয়েছে! স্বাগতম ' + name + '!');
+        setTimeout(function() { setLoginState(true); renderDashboard(); navigate('dashboard'); }, 800);
+      }).catch(function() {
+        if (btn) { btn.disabled = false; btn.textContent = 'একাউন্ট তৈরি করুন →'; }
+        // Fallback
+        var users = lsGet('registeredUsers', []);
+        if (users.find(function(u) { return u.email === email; })) { showToast('⚠️ এই ইমেইলে ইতিমধ্যে অ্যাকাউন্ট আছে'); return; }
+        var newUser = { name: name, email: email, pass: pass, enrolledCourses: [] };
+        users.push(newUser); lsSet('registeredUsers', users);
+        currentUser = newUser; lsSet('currentUserEmail', email);
+        showToast('🎉 অ্যাকাউন্ট তৈরি হয়েছে!');
+        setTimeout(function() { setLoginState(true); renderDashboard(); navigate('dashboard'); }, 800);
       });
     }
 
     function logoutAction() {
       currentUser = null;
       isLoggedIn = false;
-      localStorage.removeItem('user_token');
-      localStorage.removeItem('user_data');
       lsSet('currentUserEmail', null);
+      lsSet('userToken', null);
       setLoginState(false);
       showToast('👋 লগআউট সফল!');
-      setTimeout(() => navigate('home'), 800);
+      setTimeout(function() { navigate('home'); }, 800);
     }
 
     // ===========================
@@ -3562,52 +3674,65 @@
       if (!currentUser) return;
       var wel = document.querySelector('.dash-welcome h2');
       if (wel) wel.textContent = 'স্বাগতম, ' + currentUser.name + '! 👋';
-      var usernameEl = document.querySelector('.dash-username');
+      var usernameEl  = document.querySelector('.dash-username');
       var useremailEl = document.querySelector('.dash-useremail');
-      if (usernameEl) usernameEl.textContent = currentUser.name;
+      if (usernameEl)  usernameEl.textContent  = currentUser.name;
       if (useremailEl) useremailEl.textContent = currentUser.email;
 
-      var enrolled = currentUser.enrolledCourses || [];
-      document.getElementById('stat-enrolled').textContent = enrolled.length;
+      // Support both API enrolled objects and legacy slug arrays
+      var enrolledRaw = currentUser.enrolledCourses || [];
+      var enrolledList = enrolledRaw.map(function(e) {
+        if (typeof e === 'string') return { slug: e, title: (COURSES[e] && COURSES[e].title) || e, progress: getOverallCourseProgress(e) };
+        return { slug: e.courseSlug || e.courseId, title: e.courseTitle || '', thumbnail: e.thumbnail || '', progress: e.progress !== undefined ? e.progress : getOverallCourseProgress(e.courseSlug || e.courseId), _id: e.courseId };
+      });
 
-      // Count completed
-      var completed = enrolled.filter(cid => getOverallCourseProgress(cid) >= 100).length;
+      document.getElementById('stat-enrolled').textContent  = enrolledList.length;
+
+      var completed = enrolledList.filter(function(e) { return e.progress >= 100; }).length;
       document.getElementById('stat-completed').textContent = completed;
 
-      var totalHours = enrolled.reduce((s, cid) => s + parseInt((COURSES[cid] && COURSES[cid].hours) || 0), 0);
+      var totalHours = enrolledList.reduce(function(s, e) {
+        var c = COURSES[e.slug];
+        return s + parseInt((c && c.hours) || 0);
+      }, 0);
       document.getElementById('stat-hours').textContent = totalHours + 'ঘণ্টা';
 
-      var list = document.getElementById('dashboard-enrolled-list');
-      var noMsg = document.getElementById('no-courses-msg');
-      Array.from(list.children).forEach(c => { if (c.id !== 'no-courses-msg') c.remove(); });
+      var list   = document.getElementById('dashboard-enrolled-list');
+      var noMsg  = document.getElementById('no-courses-msg');
+      Array.from(list.children).forEach(function(c) { if (c.id !== 'no-courses-msg') c.remove(); });
 
-      if (enrolled.length === 0) {
+      if (enrolledList.length === 0) {
         noMsg.classList.remove('hidden');
       } else {
         noMsg.classList.add('hidden');
-        enrolled.forEach(cid => {
-          var c = COURSES[cid];
-          if (!c) return;
-          var pct = getOverallCourseProgress(cid);
-          var card = document.createElement('div');
+        enrolledList.forEach(function(enr) {
+          var cid = enr.slug;
+          var c   = COURSES[cid] || {};
+          var pct = enr.progress !== undefined ? enr.progress : getOverallCourseProgress(cid);
+          var thumb = enr.thumbnail || (c.thumbnail || c.img) || 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=120&h=80&fit=crop';
+          var title = enr.title || c.title || cid;
+          var inst  = c.instructor || '';
+          var card  = document.createElement('div');
           card.className = 'enrolled-card';
-          var thumb = (c.thumbnail || c.img) ? `<img src="${c.thumbnail||c.img}" style="width:100%;height:100%;object-fit:cover;border-radius:4px"/>` : c.emoji || '📚';
-          card.innerHTML = `
-            <div class="enrolled-thumb" style="${c.thumbnail||c.img ? '' : 'background:'+c.gradient}">${thumb}</div>
-            <div class="enrolled-info">
-              <div class="enrolled-title">${c.title}</div>
-              <div class="enrolled-instructor">ইন্সট্রাক্টর: ${c.instructor || '—'}</div>
-              <div class="progress-row">
-                <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
-                <div class="progress-pct" id="progress-pct-${cid}">${pct}%</div>
-              </div>
-            </div>
-            <div class="enrolled-actions">
-              ${pct >= 100
+          card.innerHTML =
+            '<div class="enrolled-thumb" style="background:' + (c.gradient||'#1a1a1a') + ';overflow:hidden;padding:0">' +
+              (thumb
+                ? '<img src="' + thumb + '" alt="' + title + '" style="width:100%;height:100%;object-fit:cover;display:block"/>'
+                : '<span>' + (c.emoji || '📚') + '</span>') +
+            '</div>' +
+            '<div class="enrolled-info">' +
+              '<div class="enrolled-title">' + title + '</div>' +
+              (inst ? '<div class="enrolled-instructor">ইন্সট্রাক্টর: ' + inst + '</div>' : '') +
+              '<div class="progress-row">' +
+                '<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:' + pct + '%"></div></div>' +
+                '<div class="progress-pct">' + pct + '%</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="enrolled-actions">' +
+              (pct >= 100
                 ? '<button class="btn btn-primary" onclick="showCertificate(\'' + cid + '\')">🏆 সার্টিফিকেট →</button>'
-                : '<button class="btn btn-primary" onclick="continueLearning(\'' + cid + '\')">শেখা চালিয়ে যান →</button>'
-              }
-            </div>`;
+                : '<button class="btn btn-primary" onclick="continueLearning(\'' + cid + '\')">শেখা চালিয়ে যান →</button>') +
+            '</div>';
           list.insertBefore(card, noMsg);
         });
       }
@@ -3632,7 +3757,11 @@
     // ===========================
     function isEnrolled(courseId) {
       if (!currentUser) return false;
-      return (currentUser.enrolledCourses || []).includes(courseId);
+      var enrolled = currentUser.enrolledCourses || [];
+      return enrolled.some(function(e) {
+        if (typeof e === 'string') return e === courseId;
+        return e.courseSlug === courseId || (e.courseId && (e.courseId === courseId || e.courseId.toString() === courseId));
+      });
     }
 
     function updateLessonAccess() {
@@ -3676,97 +3805,94 @@
     }
 
     // ===========================
-    // PAYMENT / ACCESS REQUEST MODAL
+    // PAYMENT MODAL
     // ===========================
     function showPaymentModal() {
       if (!isLoggedIn) { showToast('🔐 প্রথমে লগইন করুন...'); setTimeout(() => navigate('auth'), 1200); return; }
       if (isEnrolled(currentCourseId)) { showToast('✅ আপনি এই কোর্সে ইতিমধ্যে এনরোল হয়েছেন'); return; }
-
-      // Show access request modal instead
+      var modal = document.getElementById('payment-modal');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      document.getElementById('payment-step1').classList.remove('hidden');
+      document.getElementById('payment-step2').classList.add('hidden');
+      document.getElementById('payment-number-input').classList.add('hidden');
+      document.querySelectorAll('.pay-method-btn').forEach(b => b.classList.remove('selected'));
+      // Update course info in modal
       var c = COURSES[currentCourseId];
-      var existing = document.getElementById('access-req-modal');
-      if (existing) existing.remove();
-
-      var modal = document.createElement('div');
-      modal.id = 'access-req-modal';
-      modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)';
-      modal.innerHTML = `
-        <div style="background:#1e1e1e;border-radius:16px;max-width:480px;width:100%;overflow:hidden;border:1px solid #333;box-shadow:0 20px 60px rgba(0,0,0,0.6)">
-          <div style="padding:24px 28px 16px;border-bottom:1px solid #2a2a2a">
-            <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--primary);margin-bottom:8px">🔐 কোর্স অ্যাক্সেস অনুরোধ</div>
-            <h3 style="font-size:20px;font-weight:800;color:#fff;line-height:1.3">${c ? c.title : 'কোর্সটি'}</h3>
-            <p style="font-size:13px;color:#888;margin-top:8px;line-height:1.6">অ্যাডমিনের অনুমোদনের পর আপনার অ্যাকাউন্টে কোর্সটি যোগ হবে।</p>
-          </div>
-          <div style="padding:20px 28px">
-            ${c && c.price ? `<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:14px;background:#2a2a2a;border-radius:8px">
-              ${c.thumbnail || c.img ? `<img src="${c.thumbnail || c.img}" style="width:64px;height:44px;object-fit:cover;border-radius:6px;flex-shrink:0"/>` : ''}
-              <div>
-                <div style="font-size:14px;font-weight:700;color:#fff">${c.title}</div>
-                <div style="font-size:18px;font-weight:800;color:var(--primary);margin-top:2px">${c.price}</div>
-              </div>
-            </div>` : ''}
-            <button onclick="submitAccessRequest()" style="width:100%;padding:14px;background:var(--primary);color:#1a1a1a;border:none;border-radius:8px;font-family:var(--font-nav);font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;margin-bottom:10px">📩 অ্যাক্সেস অনুরোধ পাঠান →</button>
-            <button onclick="document.getElementById('access-req-modal').remove()" style="width:100%;padding:12px;background:transparent;color:#888;border:1.5px solid #444;border-radius:8px;font-family:var(--font-nav);font-size:12px;font-weight:700;cursor:pointer">বাতিল করুন</button>
-          </div>
-          <button onclick="document.getElementById('access-req-modal').remove()" style="position:absolute;top:12px;right:14px;background:rgba(255,255,255,0.08);border:none;color:#aaa;width:30px;height:30px;border-radius:50%;font-size:16px;cursor:pointer">✕</button>
-        </div>`;
-      document.body.appendChild(modal);
+      if (c) {
+        document.querySelectorAll('.payment-course-name').forEach(el => el.textContent = c.title);
+        document.querySelectorAll('.payment-course-price').forEach(el => el.textContent = c.price ? '৳' + c.price : '');
+        var oldPriceEl = document.getElementById('pm-old-price');
+        if (oldPriceEl && c.originalPrice) oldPriceEl.textContent = 'নিয়মিত মূল্য: ৳' + c.originalPrice;
+        var discEl = document.getElementById('pm-discount-badge');
+        if (discEl && c.discount) discEl.textContent = '✅ ' + c.discount + '% ছাড় — সীমিত সময়ের অফার!';
+      }
     }
-
-    function submitAccessRequest() {
-      if (!isLoggedIn || !currentUser) { showToast('🔐 লগইন করুন'); return; }
-      var c = COURSES[currentCourseId];
-      if (!c) { showToast('কোর্স পাওয়া যায়নি'); return; }
-      var token = localStorage.getItem('user_token');
-      if (!token) { showToast('🔐 আবার লগইন করুন'); navigate('auth'); return; }
-
-      var btn = document.querySelector('#access-req-modal button');
-      if (btn) { btn.textContent = '⌛ পাঠানো হচ্ছে...'; btn.disabled = true; }
-
-      fetch(API_BASE + '/api/access-request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-        body: JSON.stringify({
-          courseId: c._id || currentCourseId,
-          courseTitle: c.title,
-          courseSlug: currentCourseId,
-          thumbnail: c.thumbnail || c.img || '',
-          price: parseInt((c.price || '0').replace(/[^\d]/g, '')) || 0,
-        })
-      })
-      .then(r => r.json())
-      .then(data => {
-        document.getElementById('access-req-modal').remove();
-        if (data.error) { showToast('⚠️ ' + data.error); return; }
-        showToast('✅ অনুরোধ পাঠানো হয়েছে! অ্যাডমিন অনুমোদন করলে আপনার একাউন্টে কোর্সটি যোগ হবে।');
-      })
-      .catch(() => {
-        document.getElementById('access-req-modal').remove();
-        showToast('⚠️ সার্ভার সংযোগ ব্যর্থ। পরে আবার চেষ্টা করুন।');
-      });
-    }
-
     function closePaymentModal(e) {
-      var modal = document.getElementById('access-req-modal') || document.getElementById('payment-modal');
+      var modal = document.getElementById('payment-modal');
       if (!modal) return;
       if (e && e.target !== modal && !e.target.classList.contains('modal-close')) return;
       modal.classList.add('hidden');
     }
     function startPaymentFlow() {
-      var step1 = document.getElementById('payment-step1');
-      var step2 = document.getElementById('payment-step2');
-      if (step1) step1.classList.add('hidden');
-      if (step2) step2.classList.remove('hidden');
+      if (!isLoggedIn) { document.getElementById('payment-modal').classList.add('hidden'); showToast('🔐 প্রথমে লগইন করুন...'); setTimeout(() => navigate('auth'), 1200); return; }
+      document.getElementById('payment-step1').classList.add('hidden');
+      document.getElementById('payment-step2').classList.remove('hidden');
     }
     function selectPayment(btn) {
       document.querySelectorAll('.pay-method-btn').forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
-      var numInput = document.getElementById('payment-number-input');
-      if (numInput) numInput.classList.remove('hidden');
+      document.getElementById('payment-number-input').classList.remove('hidden');
+      var method = btn.dataset.method || btn.textContent.trim();
+      var labelEl = document.getElementById('payment-method-label');
+      if (labelEl) {
+        var labels = { bKash: 'আপনার বিকাশ নম্বর:', Nagad: 'আপনার নগদ নম্বর:', Rocket: 'আপনার রকেট নম্বর:', Card: 'কার্ড নম্বর / রেফারেন্স:' };
+        labelEl.textContent = labels[method] || 'পেমেন্ট নম্বর:';
+      }
     }
     function confirmPayment() {
-      // Legacy — now handled by access request
-      submitAccessRequest();
+      var phone  = document.getElementById('payment-phone').value.trim();
+      var trx    = document.getElementById('payment-trx').value.trim();
+      var method = '';
+      document.querySelectorAll('.pay-method-btn').forEach(function(b) {
+        if (b.classList.contains('selected')) method = b.dataset.method || b.textContent.trim();
+      });
+      if (!phone || !trx) { showToast('⚠️ নম্বর ও Transaction ID দিন'); return; }
+      if (!method) { showToast('⚠️ পেমেন্ট পদ্ধতি বেছে নিন'); return; }
+
+      document.getElementById('payment-modal').classList.add('hidden');
+
+      // Send access request to admin (API)
+      var c = COURSES[currentCourseId] || {};
+      var userToken = lsGet('userToken', null);
+      if (userToken) {
+        fetch(API_BASE + '/api/access-request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + userToken },
+          body: JSON.stringify({
+            courseId:    c._id || currentCourseId,
+            courseTitle: c.title || currentCourseId,
+            courseSlug:  currentCourseId,
+            thumbnail:   c.thumbnail || '',
+            price:       parseInt((c.price || '').replace(/[^\d]/g, '')) || 0,
+            userPhone:   phone,
+            transactionId: trx,
+            paymentMethod: method,
+          })
+        }).then(r => r.json()).then(function(data) {
+          if (data.error) {
+            showToast('⚠️ ' + data.error);
+          } else {
+            showToast('📩 পেমেন্ট তথ্য অ্যাডমিনকে পাঠানো হয়েছে! অনুমোদনের পর অ্যাক্সেস পাবেন।');
+          }
+        }).catch(function() {
+          // Fallback: if API unavailable, show toast anyway
+          showToast('📩 আপনার অনুরোধ পাঠানো হয়েছে। অনুমোদনের জন্য অপেক্ষা করুন।');
+        });
+      } else {
+        showToast('🔐 অ্যাক্সেস অনুরোধ পাঠাতে লগইন করুন।');
+        setTimeout(() => navigate('auth'), 1500);
+      }
     }
 
     // ===========================
@@ -4943,86 +5069,11 @@
     // ── Init: load API data then check popup ──
     loadSiteDataFromAPI().then(function() {
       if (window._apiPopupData) {
-        sessionStorage.setItem('popup_shown', '1');
+        // Override default popup with API one (prevent double popup)
+        sessionStorage.setItem('popup_shown', '1'); // block default
         buildAPIPopup(window._apiPopupData);
       }
-      // Load course tabs from API
-      loadCourseTabsFromAPI();
-      // Load hero cards from API
-      loadHeroCardsFromAPI();
     });
-
-    // ── Restore session from MongoDB token ──
-    async function restoreSession() {
-      var token = localStorage.getItem('user_token');
-      var savedUser = localStorage.getItem('user_data');
-      if (!token || !savedUser) return;
-      try {
-        currentUser = JSON.parse(savedUser);
-        // Sync enrolled courses into flat array for isEnrolled()
-        if (currentUser.enrolledCourses && currentUser.enrolledCourses.length) {
-          var flat = currentUser.enrolledCourses.map(e => {
-            if (typeof e === 'string') return e;
-            return e.courseSlug || e.courseId;
-          });
-          currentUser.enrolledCourses = flat;
-        } else {
-          currentUser.enrolledCourses = [];
-        }
-        setLoginState(true);
-        updateLessonAccess();
-        renderDashboard();
-        // Refresh from server silently
-        fetch(API_BASE + '/api/user/me', { headers: { 'Authorization': 'Bearer ' + token } })
-          .then(r => r.json())
-          .then(data => {
-            if (data.error) return;
-            currentUser = { ...currentUser, ...data };
-            if (data.enrolledCourses) {
-              currentUser.enrolledCourses = data.enrolledCourses.map(e => e.courseSlug || e.courseId);
-            }
-            localStorage.setItem('user_data', JSON.stringify(data));
-            renderDashboard();
-            updateLessonAccess();
-          }).catch(() => {});
-      } catch(e) {}
-    }
-
-    // ── Load course tabs from API ──
-    async function loadCourseTabsFromAPI() {
-      try {
-        var res = await fetch(API_BASE + '/api/course-tabs');
-        var tabs = await res.json();
-        if (!Array.isArray(tabs) || tabs.length === 0) return;
-        var container = document.querySelector('.courses-tabs');
-        if (!container) return;
-        // Keep existing tabs but replace with API ones
-        container.innerHTML = tabs.map(function(t, i) {
-          return `<button class="courses-tab${i===0?' active':''}" onclick="switchCourseTab(this,'${t.key}')" data-tab="${t.key}">
-            ${t.icon ? t.icon + ' ' : ''}${t.label}
-          </button>`;
-        }).join('');
-      } catch(e) { /* keep default tabs */ }
-    }
-
-    // ── Load hero cards from API (featured courses config heroCards) ──
-    async function loadHeroCardsFromAPI() {
-      try {
-        var res = await fetch(API_BASE + '/api/featured-courses-config');
-        var config = await res.json();
-        if (!config || !config.heroCards || !config.heroCards.length) return;
-        var track = document.getElementById('hero-track') || document.querySelector('.hero-track');
-        if (!track) return;
-        // Replace hero track cards with admin-configured ones
-        var cardsHtml = config.heroCards.map(function(card) {
-          return `<div class="dest-card" style="width:180px;height:${card.height||260}px;background:url('${card.thumbnail||'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&q=70'}') center/cover no-repeat" onclick="openCourseDetail('${card.courseId}')">
-            <div class="dest-card-label">${card.title || ''}</div>
-          </div>`;
-        }).join('');
-        // Only replace if we have cards
-        if (cardsHtml) track.innerHTML = cardsHtml;
-      } catch(e) { /* keep default hero cards */ }
-    }
 
     restoreSession();
     runFadeIn();
