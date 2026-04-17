@@ -45,6 +45,11 @@
     .page { display: none; }
     .page.active { display: block; }
 
+    .top-banner {
+      display: none; background: #066144; color: #fff; font-family: var(--font-nav); font-size: 13px; font-weight: 700; text-align: center; padding: 9px 16px; line-height: 1.4;
+    }
+    .top-banner a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+
     /* HEADER */
     header {
       position: sticky; top: 0; z-index: 100;
@@ -1184,6 +1189,8 @@
   </style>
 </head>
 <body>
+
+  <div id="top-banner" class="top-banner"></div>
 
   <!-- HEADER -->
   <header id="main-header">
@@ -2877,6 +2884,44 @@
       });
     }
 
+    function normalizeFilterValue(v) {
+      return String(v || '').trim().toLowerCase();
+    }
+
+    function courseBelongsToCategory(course, cat) {
+      if (cat === 'all') return true;
+      var target = normalizeFilterValue(cat);
+      var found = _allCategoriesData.find(function(c) {
+        return normalizeFilterValue(c.slug) === target || normalizeFilterValue(c.name) === target;
+      });
+      var allowed = [target];
+      if (found) allowed.push(normalizeFilterValue(found.slug), normalizeFilterValue(found.name));
+      return allowed.indexOf(normalizeFilterValue(course.category)) !== -1 || allowed.indexOf(normalizeFilterValue(course.categorySlug)) !== -1;
+    }
+
+    function courseBelongsToSubCategory(course, subCat) {
+      if (subCat === 'all') return true;
+      var target = normalizeFilterValue(subCat);
+      var foundCat = _allCategoriesData.find(function(c) {
+        return (c.subCategories || []).some(function(s) {
+          return normalizeFilterValue(s.slug) === target || normalizeFilterValue(s.name) === target;
+        });
+      });
+      var foundSub = foundCat ? (foundCat.subCategories || []).find(function(s) {
+        return normalizeFilterValue(s.slug) === target || normalizeFilterValue(s.name) === target;
+      }) : null;
+      var allowed = [target];
+      if (foundSub) allowed.push(normalizeFilterValue(foundSub.slug), normalizeFilterValue(foundSub.name));
+      return allowed.indexOf(normalizeFilterValue(course.subCategory)) !== -1 || allowed.indexOf(normalizeFilterValue(course.subCategorySlug)) !== -1;
+    }
+
+    function syncCourseTypeTabsVisibility() {
+      var typeTabsEl = document.getElementById('courses-type-tabs');
+      var legacyFilterEl = document.getElementById('courses-filter-btns');
+      if (typeTabsEl) typeTabsEl.style.display = _currentCatFilter === 'all' ? '' : 'none';
+      if (legacyFilterEl) legacyFilterEl.style.display = 'none';
+    }
+
     // ─── ক্যাটাগরি ট্যাব + সাব ক্যাটাগরি ফিল্টার ───
     var _allCoursesData = [];
     var _allCategoriesData = [];
@@ -2943,7 +2988,7 @@
             ).join('');
         }
 
-        // Initial render: সব কোর্স
+        syncCourseTypeTabsVisibility();
         renderCoursesGrid();
       } catch(e) {
         var el = document.getElementById('courses-container');
@@ -2958,34 +3003,36 @@
       _currentSubCatFilter = 'all';
       _currentTypeFilter   = 'all';
 
-      // ── সাব ক্যাটাগরি ফিল্টার বার আপডেট ──
       var barEl     = document.getElementById('subcategory-filter-bar');
       var filterEl  = document.getElementById('subcategory-filters');
       if (cat === 'all') {
         if (barEl) barEl.style.display = 'none';
+        if (filterEl) filterEl.innerHTML = '';
       } else {
-        var found = _allCategoriesData.find(c => (c.slug||c.name) === cat);
-        if (found && found.subCategories && found.subCategories.length) {
+        var catKey = normalizeFilterValue(cat);
+        var found = _allCategoriesData.find(function(c) {
+          return normalizeFilterValue(c.slug) === catKey || normalizeFilterValue(c.name) === catKey;
+        });
+        if (found && found.subCategories && found.subCategories.length && filterEl) {
           var activeSubs = found.subCategories.filter(s => s.active !== false);
           if (activeSubs.length) {
             filterEl.innerHTML = '<button class="filter-btn active" onclick="filterBySubCat(this,\'all\')">সব</button>' +
-              activeSubs.map(s =>
-                `<button class="filter-btn" onclick="filterBySubCat(this,'${s.slug||s.name}')">${s.icon||''} ${s.name}</button>`
-              ).join('');
-            barEl.style.display = '';
-          } else {
+              activeSubs.map(function(s) {
+                return '<button class="filter-btn" onclick="filterBySubCat(this,\'' + (s.slug || s.name) + '\')">' + (s.icon || '') + ' ' + s.name + '</button>';
+              }).join('');
+            if (barEl) barEl.style.display = '';
+          } else if (barEl) {
             barEl.style.display = 'none';
           }
-        } else {
+        } else if (barEl) {
           barEl.style.display = 'none';
         }
       }
 
-      // Tab type reset
       document.querySelectorAll('#courses-type-tabs .courses-tab').forEach(t => {
         t.classList.toggle('active', t.dataset.type === 'all');
       });
-
+      syncCourseTypeTabsVisibility();
       renderCoursesGrid();
     }
 
@@ -3015,10 +3062,11 @@
     }
 
     function renderCoursesGrid() {
+      syncCourseTypeTabsVisibility();
       var filtered = _allCoursesData.filter(function(c) {
-        var catMatch  = _currentCatFilter === 'all' || (c.category || '').toLowerCase() === _currentCatFilter.toLowerCase() || c.category === _currentCatFilter;
-        var subMatch  = _currentSubCatFilter === 'all' || (c.subCategory || '').toLowerCase() === _currentSubCatFilter.toLowerCase();
-        var typeMatch = _currentTypeFilter === 'all' || (c.tabKey || '') === _currentTypeFilter;
+        var catMatch  = courseBelongsToCategory(c, _currentCatFilter);
+        var subMatch  = courseBelongsToSubCategory(c, _currentSubCatFilter);
+        var typeMatch = _currentCatFilter !== 'all' || _currentTypeFilter === 'all' || normalizeFilterValue(c.tabKey) === normalizeFilterValue(_currentTypeFilter) || normalizeFilterValue(c.type) === normalizeFilterValue(_currentTypeFilter);
         return catMatch && subMatch && typeMatch;
       });
 
@@ -4111,7 +4159,7 @@
       if (!c || !currentUser) return;
       var modal = document.getElementById('cert-modal');
       modal.classList.remove('hidden');
-      drawCertificate(currentUser.name, c.title, c.instructor, courseId);
+      drawCertificate(currentUser.name || 'Student', c.title || 'Course', c.instructor || '', courseId || 'course');
     }
 
     function drawCertificate(studentName, courseTitle, instructor, courseId) {
@@ -4121,8 +4169,11 @@
       canvas.height = H;
       var ctx = canvas.getContext('2d');
 
-      var c = COURSES[courseId];
-      var descLines = (c && c.certDesc) ? c.certDesc : [
+      studentName = studentName || 'Student';
+      courseTitle = courseTitle || 'Course';
+      courseId = courseId || 'course';
+      var c = COURSES[courseId] || {};
+      var descLines = (Array.isArray(c.certDesc) && c.certDesc.length) ? c.certDesc : [
         'has successfully completed the professional course on',
         'demonstrating a comprehensive understanding of Shariah-compliant finance,',
         'economic justice, and contemporary Islamic economic systems.'
@@ -4159,7 +4210,7 @@
         // Course title (bold, word-wrap)
         ctx.fillStyle = '#1a1a1a';
         ctx.font = '600 30px "Playfair Display", serif';
-        var words = courseTitle.split(' ');
+        var words = String(courseTitle || 'Course').split(' ');
         var line = '', lines = [], maxW = 1100;
         words.forEach(function(w) {
           var t = line + w + ' ';
@@ -4189,7 +4240,7 @@
         // Certificate ID
         ctx.fillStyle = '#999';
         ctx.font = '400 15px "Hind Siliguri", sans-serif';
-        var certId = 'IKI-' + courseId.toUpperCase().slice(0,8) + '-' + Date.now().toString(36).toUpperCase();
+        var certId = 'IKI-' + String(courseId || 'course').toUpperCase().slice(0,8) + '-' + Date.now().toString(36).toUpperCase();
         ctx.fillText('Certificate ID: ' + certId, W/2, 830);
       }
 
@@ -4658,6 +4709,7 @@
           if (siteSettings.logoFooter) {
             applyFooterLogo(siteSettings.logoFooter);
           }
+          applyTopBanner(siteSettings);
         }
 
         // ── NAVIGATION ──
@@ -4718,6 +4770,7 @@
               }
             });
           }
+          if (heroData.cards && heroData.cards.length) applyHeroCards(heroData.cards);
         }
 
         // ── CTA SECTION ──
@@ -4788,6 +4841,45 @@
       }
     }
 
+    function applyTopBanner(settings) {
+      var banner = document.getElementById('top-banner');
+      if (!banner || !settings) return;
+      var enabled = settings.topBannerEnabled === true || settings.topBannerEnabled === 'true';
+      var text = settings.topBannerText || '';
+      if (!enabled || !text.trim()) {
+        banner.style.display = 'none';
+        banner.innerHTML = '';
+        return;
+      }
+      var link = settings.topBannerLink || '';
+      banner.style.display = 'block';
+      banner.style.background = settings.topBannerBg || '#066144';
+      banner.style.color = settings.topBannerColor || '#ffffff';
+      banner.innerHTML = link ? '<a href="' + link + '">' + text + '</a>' : text;
+    }
+function applyHeroCards(cards) {
+  var track = document.getElementById('heroTrack');
+  if (!track || !Array.isArray(cards) || !cards.length) return;
+
+  var activeCards = cards.filter(function(c) { return c && c.label; });
+  if (!activeCards.length) return;
+
+  var render = function(c, i) {
+    var label = c.label || '';
+    var link = c.link || '#courses';
+    var target = link.indexOf('#') === 0 ? link.slice(1) : link;
+
+    var bg = c.img 
+      ? "background-image:url('" + c.img + "');background-size:cover;background-position:center;" 
+      : '';
+
+    var cls = 'dest-card dc-' + ((i % 7) + 1);
+
+    return '<div class="' + cls + '" style="width:150px;height:250px;' + bg + '" onclick="navigate(\'' + target + '\')"><span class="dest-card-label">' + label + '</span></div>';
+  };
+
+  track.innerHTML = activeCards.map(render).join('') + activeCards.map(render).join('');
+}
     // ── Render API courses on homepage ──
     function renderAPICoursesOnHomepage(courses) {
       // API ডেটা দিয়ে COURSES object সম্পূর্ণ আপডেট করি

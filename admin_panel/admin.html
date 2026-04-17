@@ -792,6 +792,15 @@
                 <div class="field"><label>ট্যাগলাইন</label><input id="ss-tagline" placeholder="অনলাইনে নতুন দক্ষতা অর্জন করুন"/></div>
                 <div class="field"><label>ফেভিকন URL</label><input id="ss-favicon" placeholder="https://..."/></div>
                 <div class="field"><label>হেডার হাইট (px)</label><input id="ss-header-h" placeholder="70" type="number"/></div>
+                <div style="border-top:1px solid var(--border);margin-top:14px;padding-top:14px">
+                  <label style="display:flex;gap:8px;align-items:center;margin-bottom:10px;color:var(--text);font-size:13px;font-weight:700"><input type="checkbox" id="ss-top-banner-enabled"/> টপ ব্যানার দেখান</label>
+                  <div class="field"><label>টপ ব্যানার টেক্সট</label><input id="ss-top-banner-text" placeholder="ভর্তি চলছে — আজই এনরোল করুন"/></div>
+                  <div class="field"><label>টপ ব্যানার লিঙ্ক</label><input id="ss-top-banner-link" placeholder="#courses"/></div>
+                  <div class="row2">
+                    <div class="field"><label>ব্যাকগ্রাউন্ড কালার</label><input id="ss-top-banner-bg" placeholder="#066144"/></div>
+                    <div class="field"><label>টেক্সট কালার</label><input id="ss-top-banner-color" placeholder="#ffffff"/></div>
+                  </div>
+                </div>
               </div>
             </div>
             <!-- Colors -->
@@ -2389,6 +2398,11 @@ async function loadSiteSettings() {
     primaryDarkColor: '#d4a90e',
     logoHeader: '',
     logoFooter: '',
+    topBannerEnabled: false,
+    topBannerText: '',
+    topBannerLink: '#courses',
+    topBannerBg: '#066144',
+    topBannerColor: '#ffffff',
   };
   try {
     const data = await api('GET', '/api/admin/site-settings');
@@ -2405,6 +2419,11 @@ async function loadSiteSettings() {
     document.getElementById('ss-primarydark-color').value = d.primaryDarkColor || defaults.primaryDarkColor;
     document.getElementById('ss-logo-header').value = d.logoHeader || '';
     document.getElementById('ss-logo-footer').value = d.logoFooter || '';
+    document.getElementById('ss-top-banner-enabled').checked = d.topBannerEnabled === true || d.topBannerEnabled === 'true';
+    document.getElementById('ss-top-banner-text').value = d.topBannerText || '';
+    document.getElementById('ss-top-banner-link').value = d.topBannerLink || defaults.topBannerLink;
+    document.getElementById('ss-top-banner-bg').value = d.topBannerBg || defaults.topBannerBg;
+    document.getElementById('ss-top-banner-color').value = d.topBannerColor || defaults.topBannerColor;
     updateLogoPreview();
   } catch(e) {
     // Fill defaults on error
@@ -2417,6 +2436,11 @@ async function loadSiteSettings() {
     document.getElementById('ss-green-color').value = defaults.greenColor;
     document.getElementById('ss-primarydark-hex').value = defaults.primaryDarkColor;
     document.getElementById('ss-primarydark-color').value = defaults.primaryDarkColor;
+    document.getElementById('ss-top-banner-enabled').checked = defaults.topBannerEnabled;
+    document.getElementById('ss-top-banner-text').value = defaults.topBannerText;
+    document.getElementById('ss-top-banner-link').value = defaults.topBannerLink;
+    document.getElementById('ss-top-banner-bg').value = defaults.topBannerBg;
+    document.getElementById('ss-top-banner-color').value = defaults.topBannerColor;
   }
 }
 
@@ -2454,6 +2478,11 @@ async function saveSiteSettings() {
     primaryDarkColor: document.getElementById('ss-primarydark-hex').value,
     logoHeader: document.getElementById('ss-logo-header').value,
     logoFooter: document.getElementById('ss-logo-footer').value,
+    topBannerEnabled: document.getElementById('ss-top-banner-enabled').checked,
+    topBannerText: document.getElementById('ss-top-banner-text').value,
+    topBannerLink: document.getElementById('ss-top-banner-link').value,
+    topBannerBg: document.getElementById('ss-top-banner-bg').value,
+    topBannerColor: document.getElementById('ss-top-banner-color').value,
   };
   try {
     await api('POST', '/api/admin/site-settings', body);
