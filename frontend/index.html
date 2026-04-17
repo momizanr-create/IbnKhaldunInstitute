@@ -196,9 +196,7 @@
     /* ===== HERO — Travel Style ===== */
     .hero {
       position: relative;
-      height: calc(100vh - var(--header-h));
-      min-height: 560px;
-      max-height: 900px;
+      min-height: calc(100vh - var(--header-h));
       display: flex; align-items: stretch;
       overflow: hidden;
     }
@@ -224,7 +222,6 @@
       align-items: center; justify-content: space-between;
       gap: 32px; padding: 56px 24px 40px;
       max-width: 1200px; margin: 0 auto;
-      height: 100%;
     }
 
     /* ── left text block ── */
@@ -279,8 +276,7 @@
     .hero-cards-outer {
       flex: 1; display: flex; flex-direction: column;
       align-items: flex-end; gap: 10px; overflow: hidden;
-      height: 100%;
-      max-height: 100%;
+      max-height: calc(100vh - var(--header-h) - 96px);
     }
     .hero-dot-grid {
       display: grid; grid-template-columns: repeat(6, 6px); gap: 6px;
@@ -1326,7 +1322,7 @@
   <!-- HEADER -->
   <header id="main-header">
     <nav class="nav-inner">
-      <a class="logo logo-img-wrap" href="#" onclick="navigate('home'); window.scrollTo({top:0,behavior:'smooth'}); return false;" title="লোগো পরিবর্তন করতে Right-click করুন">
+      <a class="logo logo-img-wrap" href="#" onclick="navigate('home')" title="লোগো পরিবর্তন করতে Right-click করুন">
         <img
           id="logo-main-img"
           src="images/ইবনে খলদুন.png"
@@ -1342,7 +1338,7 @@
           style="display:none" onchange="handleLogoUpload(event)" />
       </a>
       <ul class="nav-links">
-        <li><a href="#" onclick="navigate('home'); window.scrollTo({top:0,behavior:'smooth'}); return false;" id="nav-home" class="active">হোম</a></li>
+        <li><a href="#" onclick="navigate('home')" id="nav-home" class="active">হোম</a></li>
         <li><a href="#" onclick="navigate('courses')" id="nav-courses">ক্যাটাগরি</a></li>
         <li><a href="#" onclick="navigate('instructors')" id="nav-instructors">ইন্সট্রাক্টর</a></li>
         <li><a href="#" onclick="navigate('blog')" id="nav-blog">ব্লগ</a></li>
@@ -1361,7 +1357,7 @@
 
   <!-- Mobile Nav -->
   <div class="mobile-nav" id="mobile-nav">
-    <a href="#" onclick="navigate('home'); window.scrollTo({top:0,behavior:'smooth'}); toggleMobileNav()">🏠 হোম</a>
+    <a href="#" onclick="navigate('home'); toggleMobileNav()">🏠 হোম</a>
     <a href="#" onclick="navigate('courses'); toggleMobileNav()">📚 ক্যাটাগরি</a>
     <a href="#" onclick="navigate('instructors'); toggleMobileNav()">👨‍🏫 ইন্সট্রাক্টর</a>
     <a href="#" onclick="navigate('blog'); toggleMobileNav()">📝 ব্লগ</a>
