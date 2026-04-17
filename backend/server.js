@@ -1223,6 +1223,13 @@ app.get('/api/admin/users', authMiddleware, async (req, res) => {
   catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+
+const DEFAULT_CONTENT_BUNDLE = {heroSections:{home:{title:'ইবনে খালদুন ইনস্টিটিউট',subtitle:'অনলাইনে নতুন দক্ষতা অর্জন করুন',backgroundImage:''},courses:{title:'সকল কোর্সসমূহ',subtitle:'এক অক্ষর লিখলেই কোর্স রিকমেন্ডেশন দেখুন',backgroundImage:''},about:{title:'আমাদের সম্পর্কে',subtitle:'আমাদের উদ্দেশ্য, কাজ ও শিক্ষা দর্শন',backgroundImage:''},contact:{title:'যোগাযোগ করুন',subtitle:'আমরা আপনার পাশে আছি',backgroundImage:''}},about:{content:'<p>ইবনে খালদুন ইনস্টিটিউট অনলাইন শিক্ষার একটি নির্ভরযোগ্য প্ল্যাটফর্ম।</p>'},contact:{email:'info@ibnkhaldun.edu.bd',phone:'+880 1700-000000',address:'ঢাকা, বাংলাদেশ',content:'যে কোনো প্রশ্নে আমাদের সাথে যোগাযোগ করুন।'},faqs:[{question:'কোর্স কীভাবে শুরু করব?',answer:'পছন্দের কোর্স নির্বাচন করে এনরোল করুন।'}],promo:{title:'জনপ্রিয় কোর্স',subtitle:'সেরা কোর্সগুলো এক জায়গায়',buttonText:'কোর্স দেখুন',buttonLink:'#courses'},navLinks:[{name:'হোম',link:'#home'},{name:'কোর্সসমূহ',link:'#courses'},{name:'আমাদের সম্পর্কে',link:'#about'},{name:'যোগাযোগ',link:'#contact'}],categories:[{name:'কুরআন',slug:'quran',link:'quran'},{name:'আরবি',slug:'arabic',link:'arabic'}],sidebarBody:[{title:'কোর্স সহায়তা',body:'প্রয়োজনে অ্যাডমিনের সাথে যোগাযোগ করুন।'}]};
+async function getContentBundle(){const s=await Settings.findOne({key:'contentBundle'});return Object.assign({},DEFAULT_CONTENT_BUNDLE,s&&s.value?s.value:{})}
+app.get('/api/public-content-bundle',async(req,res)=>{try{res.json(await getContentBundle())}catch(e){res.status(500).json({error:e.message})}});
+app.get('/api/admin/content-bundle',authMiddleware,async(req,res)=>{try{res.json(await getContentBundle())}catch(e){res.status(500).json({error:e.message})}});
+app.post('/api/admin/content-bundle',authMiddleware,async(req,res)=>{try{await Settings.findOneAndUpdate({key:'contentBundle'},{key:'contentBundle',value:req.body||{},updatedAt:new Date()},{upsert:true});res.json({message:'Content bundle saved'})}catch(e){res.status(500).json({error:e.message})}});
+
 // ============================================================
 // AUTO-CREATE ADMIN
 // ============================================================

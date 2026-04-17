@@ -1199,6 +1199,120 @@
         grid-template-columns: 1fr;
       }
     }
+
+    .ik-course-search-wrap {
+      position: relative;
+      max-width: 560px;
+      margin: 18px 0 24px;
+    }
+    .ik-course-search-wrap input {
+      width: 100%;
+      padding: 13px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.3);
+      background: #fff;
+      color: #111;
+      outline: none;
+      box-shadow: 0 12px 34px rgba(0,0,0,.22);
+      font-family: var(--font-body);
+    }
+    .ik-course-suggestions {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      right: 0;
+      z-index: 60;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      max-height: 310px;
+      overflow-y: auto;
+    }
+    .ik-course-suggestions.open { display: block; }
+    .ik-course-suggestion {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+      padding: 10px 12px;
+      border: 0;
+      border-bottom: 1px solid #eee;
+      background: #fff;
+      color: #111;
+      cursor: pointer;
+      text-align: left;
+      font-family: var(--font-body);
+    }
+    .ik-course-suggestion:hover { background: rgba(245,197,24,.14); }
+    .ik-course-suggestion img {
+      width: 58px;
+      height: 42px;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .ik-managed-block {
+      margin: 26px 0;
+      padding: 24px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+    }
+    .ik-managed-faq {
+      padding: 16px;
+      margin: 12px 0;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--primary);
+      border-radius: var(--radius);
+    }
+    .ik-sidebar-box {
+      margin: 14px 0;
+      padding: 18px;
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--primary);
+      border-radius: var(--radius);
+    }
+    .ik-mobile-fullscreen {
+      display: none;
+      margin: 10px 0 18px;
+      padding: 10px 14px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--primary);
+      color: #111;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .instructor-socials {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 12px;
+    }
+    .social-mini {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 28px;
+      padding: 0 7px;
+      border-radius: 999px;
+      background: rgba(245,197,24,.14);
+      color: var(--text-dark);
+      font-size: 11px;
+      font-weight: 800;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+    @media(max-width: 768px) {
+      .ik-mobile-fullscreen { display: inline-flex; }
+    }
   </style>
 </head>
 <body>
@@ -2370,8 +2484,6 @@
   <!-- Toast -->
   <div class="toast" id="toast"><span id="toast-msg">✅ Success!</span></div>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-
   <!-- Certificate Modal -->
   <div id="cert-modal" class="modal-overlay hidden" onclick="if(event.target===this)this.classList.add('hidden')">
     <div class="modal-box" style="max-width:700px;width:95%;background:#fff;border:none;padding:0;overflow:hidden">
@@ -2710,7 +2822,7 @@
     var COURSES = {
       'quran-tajweed':       { title: 'Quran Tajweed: সহিহ তেলাওয়াতের সম্পূর্ণ গাইড',      instructor: 'শায়েখ আব্দুল্লাহ', instructorId: 'aaron-dolberg',     price: '৳১,২০০', hours: '৩৬', emoji: '📖', gradient: 'linear-gradient(135deg,#1a1a2e,#16213e)', img: 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&h=220&fit=crop',
         certDesc: ['has successfully completed the professional course on', 'demonstrating a comprehensive understanding of Tajweed rules,', 'Quranic recitation, and the proper pronunciation of Arabic letters.'],
-        desc: 'এই কোর্সটি আপনাকে একদম শুরু থেকে কুরআনের শুদ্ধ তেলাওয়াত শেখাবে। মাখারিজুল হুরুফ থেকে শুরু করে মদ্দ, গুন্নাহ, নুন সাকিন ও তানওয়ীনের প্রতিটি বিধান সহজ ও বৈজ্ঞানিক পদ্ধতিতে ব্যাখ্যা করা হয়েছে।<br><br>কোর্স শেষে আপনি সহিহভাবে কুরআন তেলাওয়াত করতে পারবেন এবং তাজওয়িদের মূল নিয়মগুলো আত্মস্থ করতে পারবেন।',
+        desc: 'এই কোর্সটি আপনাকে একদম শুরু থেকে কুরআনের শুদ্ধ তেলাওয়াত শেখাবে। মাখারিজুল হুরুফ থেকে শুরু করে মদ্ ��, গুন্নাহ, নুন সাকিন ও তানওয়ীনের প্রতিটি বিধান সহজ ও বৈজ্ঞানিক পদ্ধতিতে ব্যাখ্যা করা হয়েছে।<br><br>কোর্স শেষে আপনি সহিহভাবে কুরআন তেলাওয়াত করতে পারবেন এবং তাজওয়িদের মূল নিয়মগুলো আত্মস্থ করতে পারবেন।',
         learns: ['মাখারিজুল হুরুফ: আরবি হরফের সঠিক উচ্চারণস্থান চেনা', 'নুন সাকিন ও তানওয়ীনের চারটি বিধান: ইযহার, ইদগাম, ইখফা, ইকলাব', 'মদ্দ: বিভিন্ন প্রকার টানার নিয়ম ও পরিমাণ', 'ওয়াকফ ও ইবতিদা: থামার ও শুরুর নিয়ম', 'সূরা ফাতিহা ও ছোট সূরাগুলোর বিশদ অনুশীলন', 'সহিহ তেলাওয়াতের জন্য নিয়মিত অনুশীলনের পদ্ধতি'] },
 
       'seerah-nabi':         { title: 'সীরাতুন নবী ﷺ: নবীজির জীবনের পূর্ণাঙ্গ ইতিহাস',    instructor: 'উস্তাদ ইউসুফ',      instructorId: 'izzy-gesell',   price: '৳১,৫০০', hours: '৪৮', emoji: '🕌', gradient: 'linear-gradient(135deg,#2d1b69,#11998e)', img: 'https://images.unsplash.com/photo-1564769625905-50e93615e769?w=400&h=220&fit=crop',
@@ -3495,7 +3607,7 @@
           if (data.error) {
             showToast('⚠️ ' + data.error);
           } else {
-            showToast('📩 পেমেন্ট তথ্য অ্যাডমিনকে পাঠানো হয়েছে! অনুমোদনের পর অ্যাক্সেস পাবেন।');
+            showToast('📩 পেN��েন্ট তথ্য অ্যাডমিনকে পাঠানো হয়েছে! অনুমোদনের পর অ্যাক্সেস পাবেন।');
           }
         }).catch(function() {
           // Fallback: if API unavailable, show toast anyway
@@ -4914,6 +5026,344 @@
       }
       routeFromHash();
       window.addEventListener('hashchange', routeFromHash);
+    })();
+
+    (function() {
+      var managedBundle = {};
+
+      function text(value) {
+        return String(value == null ? '' : value);
+      }
+
+      function escapeHtml(value) {
+        return text(value).replace(/[&<>"]/g, function(ch) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch];
+        });
+      }
+
+      function internalPageFromLink(link) {
+        var raw = text(link || '#home').trim();
+        if (/^https?:\/\//i.test(raw) || raw.indexOf('mailto:') === 0 || raw.indexOf('tel:') === 0) return null;
+        return raw.replace(/^#/, '').replace(/^\//, '') || 'home';
+      }
+
+      function fetchContentBundle() {
+        return fetch('/api/public-content-bundle')
+          .then(function(response) {
+            if (!response.ok) throw new Error('content bundle unavailable');
+            return response.json();
+          })
+          .catch(function() {
+            return fetch('/api/settings')
+              .then(function(response) { return response.ok ? response.json() : {}; })
+              .then(function(settings) { return settings.contentBundle || settings.siteContent || {}; });
+          })
+          .catch(function() { return {}; });
+      }
+
+      function setActivePublicNav(page) {
+        document.querySelectorAll('.nav-links a, .mobile-nav a').forEach(function(link) {
+          var target = internalPageFromLink(link.getAttribute('href'));
+          link.classList.toggle('active', target === page);
+        });
+      }
+
+      function createManagedNavLink(item, isMobile) {
+        var href = item.link || '#home';
+        var targetPage = internalPageFromLink(href);
+        var anchor = document.createElement('a');
+        anchor.href = href;
+        anchor.textContent = item.name || item.label || 'লিংক';
+        if (targetPage) {
+          anchor.id = 'nav-' + targetPage;
+          anchor.addEventListener('click', function(event) {
+            event.preventDefault();
+            navigate(targetPage);
+            if (isMobile && typeof toggleMobileNav === 'function') toggleMobileNav();
+          });
+        } else {
+          anchor.target = '_blank';
+          anchor.rel = 'noopener';
+        }
+        return anchor;
+      }
+
+      function applyNavigation(bundle) {
+        var links = Array.isArray(bundle.navLinks) ? bundle.navLinks : [];
+        if (!links.length && bundle.navigation && Array.isArray(bundle.navigation.links)) links = bundle.navigation.links;
+        links = links.filter(function(link) { return link && (link.name || link.label); });
+        if (!links.length) return;
+
+        var desktopNav = document.querySelector('.nav-links');
+        if (desktopNav) {
+          desktopNav.innerHTML = '';
+          links.forEach(function(item) {
+            var li = document.createElement('li');
+            li.appendChild(createManagedNavLink(item, false));
+            desktopNav.appendChild(li);
+          });
+        }
+
+        var mobileNav = document.querySelector('.mobile-nav');
+        if (mobileNav) {
+          mobileNav.innerHTML = '';
+          links.forEach(function(item) {
+            mobileNav.appendChild(createManagedNavLink(item, true));
+          });
+        }
+
+        setActivePublicNav(localStorage.getItem('ik_active_nav') || 'home');
+      }
+
+      function applyCategories(bundle) {
+        var categories = Array.isArray(bundle.categories) ? bundle.categories : [];
+        var tabs = document.getElementById('courses-category-tabs');
+        if (!tabs || !categories.length) return;
+
+        tabs.innerHTML = '';
+        var allButton = document.createElement('button');
+        allButton.className = 'courses-tab active';
+        allButton.textContent = 'সব কোর্স';
+        allButton.addEventListener('click', function() { switchCategoryTab(allButton, 'all'); });
+        tabs.appendChild(allButton);
+
+        categories.forEach(function(category) {
+          var button = document.createElement('button');
+          button.className = 'courses-tab';
+          button.textContent = category.name || category.title || 'ক্যাটাগরি';
+          button.addEventListener('click', function() {
+            switchCategoryTab(button, category.link || category.slug || category.id || category.name || 'all');
+          });
+          tabs.appendChild(button);
+        });
+      }
+
+      function applyPageHero(page, data) {
+        if (!data) return;
+        var root = document.getElementById('page-' + page);
+        var hero = root && root.querySelector('.page-hero');
+        if (!hero) return;
+
+        var title = hero.querySelector('h1');
+        var subtitle = hero.querySelector('p');
+        if (title && data.title) title.textContent = data.title;
+        if (subtitle && data.subtitle) subtitle.textContent = data.subtitle;
+
+        var background = data.backgroundImage || data.bgImage;
+        if (background) {
+          hero.style.backgroundImage = "linear-gradient(rgba(0,0,0,.62),rgba(0,0,0,.62)),url('" + background + "')";
+          hero.style.backgroundSize = 'cover';
+          hero.style.backgroundPosition = 'center';
+          hero.style.color = '#fff';
+        }
+      }
+
+      function applyAboutAndFaq(bundle) {
+        var page = document.getElementById('page-about');
+        if (!page) return;
+        var container = page.querySelector('.container') || page;
+
+        if (bundle.about && bundle.about.content) {
+          var aboutBox = document.getElementById('ik-about-content');
+          if (!aboutBox) {
+            aboutBox = document.createElement('div');
+            aboutBox.id = 'ik-about-content';
+            aboutBox.className = 'ik-managed-block';
+            container.appendChild(aboutBox);
+          }
+          aboutBox.innerHTML = bundle.about.content;
+        }
+
+        var faqs = Array.isArray(bundle.faqs) ? bundle.faqs : [];
+        if (faqs.length) {
+          var faqBox = document.getElementById('ik-faqs');
+          if (!faqBox) {
+            faqBox = document.createElement('div');
+            faqBox.id = 'ik-faqs';
+            faqBox.className = 'ik-managed-block';
+            container.appendChild(faqBox);
+          }
+          faqBox.innerHTML = '<h2>সাধারণ জিজ্ঞাসা</h2>' + faqs.map(function(faq) {
+            return '<div class="ik-managed-faq"><h3>' + escapeHtml(faq.question) + '</h3><p>' + escapeHtml(faq.answer) + '</p></div>';
+          }).join('');
+        }
+      }
+
+      function applyContact(bundle) {
+        var contact = bundle.contact || {};
+        if (!Object.keys(contact).length || typeof applyContactContent !== 'function') return;
+        applyContactContent({
+          pageTitle: contact.pageTitle || contact.title,
+          pageSubtitle: contact.pageSubtitle || contact.subtitle,
+          label: contact.label,
+          heading: contact.heading,
+          formTitle: contact.formTitle,
+          email: contact.email,
+          phone: contact.phone,
+          address: contact.address,
+          hours: contact.hours
+        });
+      }
+
+      function applyPromo(bundle) {
+        var promo = bundle.promo || bundle.promoSection || {};
+        var title = document.getElementById('cta-title');
+        var subtitle = document.getElementById('cta-sub');
+        var button = document.getElementById('cta-btn');
+        if (title && promo.title) title.textContent = promo.title;
+        if (subtitle && promo.subtitle) subtitle.textContent = promo.subtitle;
+        if (button && promo.buttonText) button.textContent = promo.buttonText;
+        if (button && promo.buttonLink) {
+          var targetPage = internalPageFromLink(promo.buttonLink);
+          if (targetPage) button.onclick = function() { navigate(targetPage); };
+        }
+      }
+
+      function applySidebar(bundle) {
+        var items = Array.isArray(bundle.sidebarBody) ? bundle.sidebarBody : bundle.sidebarItems;
+        if (!Array.isArray(items) || !items.length) return;
+        var target = document.querySelector('#page-detail .detail-layout > div:last-child') || document.getElementById('page-detail');
+        if (!target) return;
+
+        var box = document.getElementById('ik-sidebar-body');
+        if (!box) {
+          box = document.createElement('div');
+          box.id = 'ik-sidebar-body';
+          target.appendChild(box);
+        }
+        box.innerHTML = items.map(function(item) {
+          return '<div class="ik-sidebar-box"><h3>' + escapeHtml(item.title) + '</h3><p>' + escapeHtml(item.body) + '</p></div>';
+        }).join('');
+      }
+
+      function courseList() {
+        if (window._apiCourses && window._apiCourses.length) return window._apiCourses;
+        return Object.keys(COURSES || {}).map(function(key) {
+          var course = COURSES[key] || {};
+          course.slug = course.slug || key;
+          return course;
+        });
+      }
+
+      function applyHeroSearch() {
+        if (document.getElementById('ik-course-search')) return;
+        var anchor = document.querySelector('.hero-left .hero-sub') || document.querySelector('.hero-left h1');
+        if (!anchor) return;
+
+        var wrapper = document.createElement('div');
+        wrapper.className = 'ik-course-search-wrap';
+        wrapper.innerHTML = '<input id="ik-course-search" type="search" placeholder="কোর্স খুঁজুন — একটি অক্ষর লিখলেই রিকমেন্ডেশন দেখুন"><div id="ik-course-suggestions" class="ik-course-suggestions"></div>';
+        anchor.insertAdjacentElement('afterend', wrapper);
+
+        var input = document.getElementById('ik-course-search');
+        var suggestions = document.getElementById('ik-course-suggestions');
+
+        input.addEventListener('input', function() {
+          var query = input.value.trim().toLowerCase();
+          var matches = query ? courseList().filter(function(course) {
+            return text(course.title).toLowerCase().indexOf(query) > -1 || text(course.instructor).toLowerCase().indexOf(query) > -1 || text(course.category).toLowerCase().indexOf(query) > -1;
+          }).slice(0, 6) : [];
+
+          suggestions.classList.toggle('open', matches.length > 0);
+          suggestions.innerHTML = matches.map(function(course) {
+            var key = escapeHtml(course.slug || course._id || course.id);
+            var image = escapeHtml(course.thumbnail || course.img || 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=120&q=80');
+            return '<button type="button" class="ik-course-suggestion" data-course-key="' + key + '"><img src="' + image + '" alt=""><span><strong>' + escapeHtml(course.title) + '</strong><br><small>' + escapeHtml(course.instructor || course.category) + '</small></span></button>';
+          }).join('');
+        });
+
+        suggestions.addEventListener('click', function(event) {
+          var button = event.target.closest('[data-course-key]');
+          if (!button) return;
+          suggestions.classList.remove('open');
+          input.value = '';
+          openCourseDetail(button.getAttribute('data-course-key'));
+        });
+      }
+
+      function applyMobileFullscreenVideo() {
+        var wrapper = document.getElementById('video-preview-wrap');
+        if (!wrapper || document.getElementById('ik-mobile-fullscreen')) return;
+
+        var button = document.createElement('button');
+        button.id = 'ik-mobile-fullscreen';
+        button.className = 'ik-mobile-fullscreen';
+        button.type = 'button';
+        button.textContent = 'ফুলস্ক্রিনে ভিডিও দেখুন';
+        button.addEventListener('click', function() {
+          var overlay = document.getElementById('video-thumbnail-overlay');
+          if (overlay && !overlay.classList.contains('hidden')) overlay.click();
+          setTimeout(function() {
+            var player = document.getElementById('yt-player-wrap') || wrapper;
+            if (player.requestFullscreen) player.requestFullscreen();
+            else if (player.webkitRequestFullscreen) player.webkitRequestFullscreen();
+          }, 350);
+        });
+        wrapper.insertAdjacentElement('afterend', button);
+      }
+
+      function applyInstructorSocialLinks() {
+        var instructors = window._apiInstructors || [];
+        if (!instructors.length) return;
+        document.querySelectorAll('.instructor-card').forEach(function(card, index) {
+          if (card.querySelector('.instructor-socials')) return;
+          var social = instructors[index] && instructors[index].social;
+          if (!social) return;
+          var links = [
+            ['fb', social.facebook],
+            ['x', social.twitter],
+            ['in', social.linkedin],
+            ['yt', social.youtube]
+          ].filter(function(item) { return item[1]; });
+          if (!links.length) return;
+
+          var holder = document.createElement('div');
+          holder.className = 'instructor-socials';
+          holder.innerHTML = links.map(function(item) {
+            return '<a class="social-mini" target="_blank" rel="noopener" href="' + escapeHtml(item[1]) + '">' + item[0] + '</a>';
+          }).join('');
+          card.appendChild(holder);
+        });
+      }
+
+      function applyManagedContent(bundle) {
+        managedBundle = bundle || {};
+        applyNavigation(managedBundle);
+        applyCategories(managedBundle);
+        var heroes = managedBundle.heroSections || managedBundle.pageHeroes || {};
+        applyPageHero('courses', heroes.courses);
+        applyPageHero('about', heroes.about);
+        applyPageHero('contact', heroes.contact);
+        applyAboutAndFaq(managedBundle);
+        applyContact(managedBundle);
+        applyPromo(managedBundle);
+        applySidebar(managedBundle);
+        applyHeroSearch();
+        applyMobileFullscreenVideo();
+        applyInstructorSocialLinks();
+      }
+
+      var originalNavigate = window.navigate;
+      if (typeof originalNavigate === 'function') {
+        window.navigate = function(page) {
+          try {
+            sessionStorage.setItem('ik_scroll_' + (window.currentPage || 'home'), String(window.scrollY || 0));
+            localStorage.setItem('ik_active_nav', page);
+          } catch(e) {}
+          originalNavigate(page);
+          setActivePublicNav(page);
+          setTimeout(function() {
+            var savedScroll = sessionStorage.getItem('ik_scroll_' + page);
+            if (savedScroll) window.scrollTo(0, parseInt(savedScroll, 10) || 0);
+            applyManagedContent(managedBundle);
+          }, 80);
+          return false;
+        };
+      }
+
+      fetchContentBundle().then(function(bundle) {
+        setTimeout(function() { applyManagedContent(bundle); }, 160);
+      });
     })();
     restoreSession();
     runFadeIn();
