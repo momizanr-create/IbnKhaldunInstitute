@@ -1550,7 +1550,28 @@
       <input type="hidden" id="blog-post-id"/>
       <div class="field"><label>শিরোনাম *</label><input id="bp-title" placeholder="পোস্টের শিরোনাম"/></div>
       <div class="row2"><div class="field"><label>ক্যাটাগরি</label><input id="bp-category" placeholder="কুরআন শিক্ষা"/></div><div class="field"><label>লেখক</label><input id="bp-author" placeholder="ইবনে খালদুন"/></div></div>
-      <div class="row2"><div class="field"><label>ছবি URL</label><input id="bp-image" placeholder="https://..."/></div><div class="field"><label>রিড টাইম</label><input id="bp-read-time" placeholder="৫ মিনিট পড়া"/></div></div>
+      <div class="field">
+        <label>ব্লগ কভার ছবি</label>
+        <div id="bp-img-drop-zone"
+          ondragover="event.preventDefault();this.classList.add('drag-over')"
+          ondragleave="this.classList.remove('drag-over')"
+          ondrop="handleBlogImgDrop(event)"
+          onclick="document.getElementById('bp-img-file-input').click()"
+          style="border:2px dashed var(--border2);border-radius:var(--radius-sm);padding:14px;text-align:center;cursor:pointer;background:var(--bg3);transition:all 0.2s;min-height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;position:relative;margin-bottom:8px">
+          <div id="bp-img-drop-icon" style="font-size:22px">🖼️</div>
+          <div id="bp-img-drop-text" style="font-size:12px;color:var(--text2)">ব্লগ ছবি টেনে আনুন বা ক্লিক করুন</div>
+          <div id="bp-img-progress" style="display:none;width:100%;margin-top:6px">
+            <div style="height:4px;background:var(--bg2);border-radius:2px;overflow:hidden">
+              <div id="bp-img-progress-bar" style="height:100%;background:var(--primary);width:0%;transition:width 0.3s"></div>
+            </div>
+            <div style="font-size:11px;color:var(--text2);margin-top:4px">আপলোড হচ্ছে...</div>
+          </div>
+          <img id="bp-img-preview" src="" alt="" style="display:none;max-height:90px;border-radius:6px;margin-top:6px;object-fit:cover;max-width:100%"/>
+          <input type="file" id="bp-img-file-input" accept="image/*" style="display:none" onchange="handleBlogImgFileSelect(this)"/>
+        </div>
+        <input id="bp-image" placeholder="অথবা সরাসরি URL দিন..." oninput="updateBlogImgPreview(this.value)"/>
+      </div>
+      <div class="row2"><div class="field"><label>রিড টাইম</label><input id="bp-read-time" placeholder="৫ মিনিট পড়া"/></div><div class="field"></div></div>
       <div class="field"><label>সংক্ষিপ্ত বিবরণ</label><textarea id="bp-excerpt"></textarea></div>
       <div class="field"><label>পূর্ণ কনটেন্ট</label><textarea id="bp-content" style="min-height:140px"></textarea></div>
       <div class="row2"><div class="field"><label><input type="checkbox" id="bp-featured" style="width:auto;margin-right:6px"/>ফিচার্ড</label></div><div class="field"><label><input type="checkbox" id="bp-published" checked style="width:auto;margin-right:6px"/>প্রকাশিত</label></div></div>
@@ -2331,7 +2352,7 @@ async function deleteCourse(id) {
 
 // ────────────────────────────────────────────
 // INSTRUCTORS
-// ────────────────────────────────────────────
+// ────────────────────────c��───────────────────
 async function loadInstructors() {
   try {
     const list = await api('GET', '/api/admin/instructors');
@@ -2565,6 +2586,81 @@ async function loadBlogPosts() {
     tbody.innerHTML = adminBlogPosts.length ? adminBlogPosts.map(p => '<tr><td><strong>' + escapeAdminHTML(p.title) + '</strong></td><td>' + escapeAdminHTML(p.category || '—') + '</td><td>' + escapeAdminHTML(p.author || '—') + '</td><td><span class="badge badge-' + (p.published ? 'green' : 'red') + '">' + (p.published ? 'প্রকাশিত' : 'লুকানো') + '</span></td><td style="display:flex;gap:6px"><button class="btn btn-edit btn-sm" onclick="editBlogPost(\'' + p._id + '\')">✏️</button><button class="btn btn-danger btn-sm" onclick="deleteBlogPost(\'' + p._id + '\')">🗑️</button></td></tr>').join('') : '<tr><td colspan="5" style="text-align:center;color:var(--text2);padding:24px">কোনো ব্লগ পোস্ট নেই</td></tr>';
   } catch (e) { toast('ব্লগ লোড হয়নি: ' + e.message, 'error'); }
 }
+function clearBlogImg() {
+  document.getElementById('bp-image').value = '';
+  const prev = document.getElementById('bp-img-preview');
+  if (prev) { prev.src = ''; prev.style.display = 'none'; }
+  const icon = document.getElementById('bp-img-drop-icon');
+  const text = document.getElementById('bp-img-drop-text');
+  if (icon) icon.style.display = 'block';
+  if (text) text.textContent = 'ব্লগ ছবি টেনে আনুন বা ক্লিক করুন';
+  const fi = document.getElementById('bp-img-file-input');
+  if (fi) fi.value = '';
+}
+function updateBlogImgPreview(url) {
+  const prev = document.getElementById('bp-img-preview');
+  if (!prev) return;
+  if (url) { prev.src = url; prev.style.display = 'block'; } else { prev.style.display = 'none'; }
+}
+function previewExistingBlogImg(url) {
+  if (!url) { clearBlogImg(); return; }
+  const prev = document.getElementById('bp-img-preview');
+  if (prev) { prev.src = url; prev.style.display = 'block'; }
+  const icon = document.getElementById('bp-img-drop-icon');
+  const text = document.getElementById('bp-img-drop-text');
+  if (icon) icon.style.display = 'none';
+  if (text) text.textContent = 'বর্তমান ছবি (নতুন আপলোড করতে ক্লিক করুন)';
+}
+function handleBlogImgDrop(e) {
+  e.preventDefault();
+  document.getElementById('bp-img-drop-zone').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) uploadBlogImg(file);
+  else toast('শুধু ছবি ফাইল আপলোড করা যাবে', 'error');
+}
+function handleBlogImgFileSelect(input) {
+  const file = input.files[0];
+  if (file) uploadBlogImg(file);
+}
+async function uploadBlogImg(file) {
+  if (file.size > 5 * 1024 * 1024) { toast('ছবির আকার ৫MB এর বেশি হওয়া যাবে না', 'error'); return; }
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const prev = document.getElementById('bp-img-preview');
+    if (prev) { prev.src = ev.target.result; prev.style.display = 'block'; }
+    const icon = document.getElementById('bp-img-drop-icon');
+    const text = document.getElementById('bp-img-drop-text');
+    if (icon) icon.style.display = 'none';
+    if (text) text.textContent = file.name;
+  };
+  reader.readAsDataURL(file);
+  const prog = document.getElementById('bp-img-progress');
+  const bar  = document.getElementById('bp-img-progress-bar');
+  if (prog) prog.style.display = 'block';
+  if (bar) bar.style.width = '20%';
+  try {
+    const token = localStorage.getItem('admin_token');
+    const formData = new FormData();
+    formData.append('file', file);
+    let p = 20;
+    const iv = setInterval(() => { p = Math.min(p + 15, 85); if (bar) bar.style.width = p + '%'; }, 300);
+    const res = await fetch(API + '/api/admin/upload', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token }, body: formData });
+    clearInterval(iv);
+    if (!res.ok) throw new Error('Upload failed: ' + res.status);
+    const data = await res.json();
+    if (bar) bar.style.width = '100%';
+    document.getElementById('bp-image').value = data.url;
+    const prev2 = document.getElementById('bp-img-preview');
+    if (prev2) prev2.src = data.url;
+    setTimeout(() => { if (prog) prog.style.display = 'none'; if (bar) bar.style.width = '0%'; }, 1500);
+    toast('✅ ব্লগ ছবি আপলোড হয়েছে');
+  } catch (err) {
+    if (prog) prog.style.display = 'none';
+    if (bar) bar.style.width = '0%';
+    toast('আপলোড ব্যর্থ: ' + err.message, 'error');
+  }
+}
+
 function openBlogPostModal(post) {
   post = post || null;
   document.getElementById('blog-post-modal-title').textContent = post ? 'ব্লগ পোস্ট এডিট' : 'নতুন ব্লগ পোস্ট';
@@ -2572,12 +2668,15 @@ function openBlogPostModal(post) {
   document.getElementById('bp-title').value = post && post.title || '';
   document.getElementById('bp-category').value = post && post.category || '';
   document.getElementById('bp-author').value = post && post.author || '';
-  document.getElementById('bp-image').value = post && post.image || '';
   document.getElementById('bp-read-time').value = post && post.readTime || '';
   document.getElementById('bp-excerpt').value = post && post.excerpt || '';
   document.getElementById('bp-content').value = post && post.content || '';
   document.getElementById('bp-featured').checked = !!(post && post.featured);
   document.getElementById('bp-published').checked = !post || post.published !== false;
+  clearBlogImg();
+  const imgUrl = post && post.image || '';
+  document.getElementById('bp-image').value = imgUrl;
+  if (imgUrl) previewExistingBlogImg(imgUrl);
   openModal('blog-post-modal');
 }
 function editBlogPost(id) { const post = adminBlogPosts.find(p => p._id === id); if (post) openBlogPostModal(post); }
@@ -3025,6 +3124,7 @@ function renderHeroCards() {
 
 function addHeroCard() { heroCardsData.push({label:'NEW',link:'#',img:''}); renderHeroCards(); }
 function removeHeroCard(i) { heroCardsData.splice(i,1); renderHeroCards(); }
+function saveHeroSectionSilent() { saveHeroSection(true); }
 
 async function saveHeroSection() {
   const statRows = document.querySelectorAll('.hero-stat-row');
@@ -3141,7 +3241,7 @@ function saveFeaturedCourseCard() {
     category: document.getElementById('fc-category').value,
     tab: document.getElementById('fc-tab').value,
   };
-  if (!card.id || !card.name) { toast('ID ও নাম আবশ্যক', 'error'); return; }
+  if (!card.id || !card.name) { toast('ID ও নাম আবশ্┯ক', 'error'); return; }
   if (idx !== '') { featuredCoursesData[parseInt(idx)] = card; }
   else { featuredCoursesData.push(card); }
   renderFeaturedCoursesTable();
@@ -3280,7 +3380,7 @@ async function saveCourseDetail() {
 
 // ────────────────────────────────────────────
 // CTA SECTION
-// ────────────────────────────────────────────
+// ─────────────────────────────────────────ht�──
 async function loadCtaSection() {
   const defaults = {
     title1: 'আপনার',
@@ -3963,7 +4063,7 @@ function onHeroCourseSelect(sel) {
   document.getElementById('hc-preview').style.display = 'block';
 }
 
-function saveHeroCourse() {
+async function saveHeroCourse() {
   const sel = document.getElementById('hc-course-select');
   const opt = sel.options[sel.selectedIndex];
   if (!opt || !opt.value) { toast('কোর্স বাছাই করুন', 'error'); return; }
@@ -3979,23 +4079,24 @@ function saveHeroCourse() {
   else heroCoursesList.push(card);
   closeModal('hero-course-modal');
   renderHeroCourses();
-  toast('কার্ড যোগ হয়েছে — সংরক্ষণ করুন');
+  await saveHeroCourseConfig(true);
 }
 
 function editHeroCourse(i) { openHeroCourseModal(i); }
 
-function removeHeroCourse(i) {
+async function removeHeroCourse(i) {
   if (!confirm('এই কার্ডটি সরাবেন?')) return;
   heroCoursesList.splice(i, 1);
   renderHeroCourses();
-  toast('সরানো হয়েছে — সংরক্ষণ করুন');
+  await saveHeroCourseConfig(true);
 }
 
-async function saveHeroCourseConfig() {
+async function saveHeroCourseConfig(silent) {
   try {
     const existing = await api('GET', '/api/admin/featured-courses-config');
     await api('POST', '/api/admin/featured-courses-config', { ...existing, heroCards: heroCoursesList });
-    toast('✅ হিরো কার্ড সংরক্ষিত হয়েছে');
+    if (!silent) toast('✅ হিরো কার্ড সংরক্ষিত হয়েছে');
+    else toast('✅ হিরো কার্ড সংরক্ষিত হয়েছে');
   } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
 }
 

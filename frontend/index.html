@@ -1706,6 +1706,11 @@
         </div>
       </div>
 
+      <!-- কোর্স গ্রিড ও কাউন্ট -->
+      <div id="courses-count" class="courses-count" style="margin-top:20px;margin-bottom:12px"></div>
+      <div id="courses-container" class="courses-grid" style="margin-bottom:40px">
+        <div style="grid-column:1/-1;text-align:center;padding:48px 0;color:var(--text-mid)">কোর্স লোড হচ্ছে...</div>
+      </div>
 
       </div><!-- /courses container -->
 
@@ -2428,6 +2433,7 @@
       setTimeout(runFadeIn, 50);
       if (page === 'detail') { setTimeout(updateLessonAccess, 100); updateSidebarEnrollBtn(); updateSidebarImage(); }
       if (page === 'courses') { loadCoursesPage(); }
+      if (page === 'instructors' && window._apiInstructors && window._apiInstructors.length) { renderAPIInstructors(window._apiInstructors); }
       // Update URL hash for bookmarking / sharing
       try {
         const hashMap = { home: '', courses: 'courses', about: 'about', contact: 'contact', instructors: 'instructors' };
@@ -2536,20 +2542,30 @@
     // কোর্স পেজে ক্যাটাগরি ও কোর্স লোড
     async function loadCoursesPage() {
       try {
-        var [cats, courses] = await Promise.all([
-          fetch(API_BASE + '/api/categories').then(r => r.json()),
-          fetch(API_BASE + '/api/courses').then(r => r.json()),
-        ]);
+        var cats, courses;
+        if (_allCategoriesData.length && _allCoursesData.length) {
+          cats = _allCategoriesData;
+          courses = _allCoursesData;
+        } else {
+          var results = await Promise.all([
+            fetch(API_BASE + '/api/categories').then(r => r.json()),
+            fetch(API_BASE + '/api/courses').then(r => r.json()),
+          ]);
+          cats = results[0];
+          courses = results[1];
+        }
         _allCategoriesData = cats || [];
         _allCoursesData    = courses || [];
 
         // ── Category tabs (top row) ──
         var catTabsEl = document.getElementById('courses-category-tabs');
         if (catTabsEl) {
-          catTabsEl.innerHTML = '<button class="courses-tab active" onclick="switchCategoryTab(this,\'all\')">সব কোর্স</button>' +
-            _allCategoriesData.map(c =>
-              `<button class="courses-tab" onclick="switchCategoryTab(this,'${c.slug||c.name}')">${c.icon||''} ${c.name}</button>`
-            ).join('');
+          var totalCount = _allCoursesData.length;
+          catTabsEl.innerHTML = '<button class="courses-tab active" onclick="switchCategoryTab(this,\'all\')">সব কোর্স' + (totalCount > 0 ? ' <span style="background:rgba(0,0,0,0.15);border-radius:10px;padding:1px 8px;font-size:11px;margin-left:4px">' + totalCount + '</span>' : '') + '</button>' +
+            _allCategoriesData.map(c => {
+              var cnt = _allCoursesData.filter(function(cr){ return courseBelongsToCategory(cr, c.slug||c.name); }).length;
+              return '<button class="courses-tab" onclick="switchCategoryTab(this,\'' + (c.slug||c.name) + '\')">' + (c.icon||'') + ' ' + c.name + (cnt > 0 ? ' <span style="background:rgba(0,0,0,0.15);border-radius:10px;padding:1px 8px;font-size:11px;margin-left:4px">' + cnt + '</span>' : '') + '</button>';
+            }).join('');
         }
         renderCoursesGrid();
       } catch(e) {
@@ -2578,9 +2594,10 @@
         if (found && found.subCategories && found.subCategories.length && filterEl) {
           var activeSubs = found.subCategories.filter(s => s.active !== false);
           if (activeSubs.length) {
-            filterEl.innerHTML = '<button class="filter-btn active" onclick="filterBySubCat(this,\'all\')">সব</button>' +
+            filterEl.innerHTML = '<button class="filter-btn active" onclick="filterBySubCat(this,\'all\')">সব <span style="background:rgba(0,0,0,0.12);border-radius:10px;padding:1px 7px;font-size:11px;margin-left:4px">' + _allCoursesData.filter(function(c){return courseBelongsToCategory(c,cat);}).length + '</span></button>' +
               activeSubs.map(function(s) {
-                return '<button class="filter-btn" onclick="filterBySubCat(this,\'' + (s.slug || s.name) + '\')">' + (s.icon || '') + ' ' + s.name + '</button>';
+                var cnt = _allCoursesData.filter(function(c){return courseBelongsToSubCategory(c,s.slug||s.name);}).length;
+                return '<button class="filter-btn" onclick="filterBySubCat(this,\'' + (s.slug || s.name) + '\')">' + (s.icon || '') + ' ' + s.name + (cnt>0?' <span style="background:rgba(0,0,0,0.12);border-radius:10px;padding:1px 7px;font-size:11px;margin-left:4px">'+cnt+'</span>':'') + '</button>';
               }).join('');
             if (barEl) barEl.style.display = '';
           } else if (barEl) {
@@ -2947,7 +2964,7 @@
             '<div style="display:flex;gap:20px;font-size:13.5px;color:var(--text-mid)"><span>★ ' + instData.rating + ' রেটিং</span><span>👥 ' + instData.students + ' শিক্ষার্থী</span><span>📚 ' + instData.courses.length + 'টি কোর্স</span></div>' +
             '</div></div>' +
             '<p style="font-size:14.5px;color:var(--text-mid);line-height:1.75">' + instData.bio + '</p>' +
-            '<div style="margin-top:14px"><button class="btn btn-outline" style="font-size:12px;padding:8px 20px" onclick="openInstructorProfile(\'' + course.instructorId + '\')">👤 সম্পূর্ণ প্রোফাইল দেখুন →</button></div>';
+            '<div style="margin-top:14px"><button class="btn btn-outline" style="font-size:12px;padding:8px 20px" onclick="openInstructorProfile(\'' + course.instructorId + '\')">👤 সম্পূর্ণ প্রোফা  �ল দেখুন →</button></div>';
         }
       }
 
@@ -4422,6 +4439,7 @@
 
         // ── COURSES (from MongoDB) ──
         if (apiCourses && Array.isArray(apiCourses) && apiCourses.length > 0) {
+          _allCoursesData = apiCourses;
           renderAPICoursesOnHomepage(apiCourses);
         }
 
@@ -4593,28 +4611,30 @@
           '</div></div></div>';
       }
 
-      // Fill top-sellers grid
+      // Fill grids by tabKey — courses with matching tabKey go in their tab
+      var tabMap = { top: 'top-sellers-grid', new: 'new-courses-grid', free: 'free-courses-grid', popular: 'popular-courses-grid', bundle: 'bundle-courses-grid' };
+      var tabCourses = { top: [], new: [], free: [], popular: [], bundle: [] };
+      courses.forEach(function(c) {
+        var key = (c.tabKey || '').toLowerCase();
+        if (tabCourses[key]) tabCourses[key].push(c);
+      });
+      // Fallback: if no tabKey-based courses, use defaults
+      var topCourses = tabCourses.top.length ? tabCourses.top : courses.slice(0, 8);
+      var newCourses = tabCourses.new.length ? tabCourses.new : courses.slice(0).reverse().slice(0, 8);
+      var freeCourses = tabCourses.free.length ? tabCourses.free : courses.filter(function(c) { return !c.price || c.price === 0 || c.price === '0'; });
+      var popCourses = tabCourses.popular.length ? tabCourses.popular : courses.slice().sort(function(a,b){ return (b.students||0)-(a.students||0); }).slice(0, 8);
+      var bundleCourses = tabCourses.bundle.length ? tabCourses.bundle : [];
+
       var topGrid = document.getElementById('top-sellers-grid');
-      if (topGrid && courses.length) {
-        topGrid.innerHTML = courses.slice(0, 8).map(makeCourseCard).join('');
-      }
-      // Fill new-courses grid
+      if (topGrid) topGrid.innerHTML = topCourses.length ? topCourses.map(makeCourseCard).join('') : '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#999">এই ট্যাবে কোনো কোর্স নেই</div>';
       var newGrid = document.getElementById('new-courses-grid');
-      if (newGrid && courses.length) {
-        newGrid.innerHTML = courses.slice(0).reverse().slice(0, 8).map(makeCourseCard).join('');
-      }
-      // Fill free courses grid
+      if (newGrid) newGrid.innerHTML = newCourses.length ? newCourses.map(makeCourseCard).join('') : '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#999">এই ট্যাবে কোনো কোর্স নেই</div>';
       var freeGrid = document.getElementById('free-courses-grid');
-      if (freeGrid) {
-        var freeCourses = courses.filter(function(c) { return c.price === 0 || c.price === '0'; });
-        if (freeCourses.length) freeGrid.innerHTML = freeCourses.map(makeCourseCard).join('');
-      }
-      // Fill popular grid
+      if (freeGrid) freeGrid.innerHTML = freeCourses.length ? freeCourses.map(makeCourseCard).join('') : '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#999">এই ট্যাবে কোনো ফ্রি কোর্স নেই</div>';
       var popGrid = document.getElementById('popular-courses-grid');
-      if (popGrid && courses.length) {
-        var sorted = courses.slice().sort(function(a,b){ return (b.students||0)-(a.students||0); });
-        popGrid.innerHTML = sorted.slice(0, 8).map(makeCourseCard).join('');
-      }
+      if (popGrid) popGrid.innerHTML = popCourses.length ? popCourses.map(makeCourseCard).join('') : '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#999">এই ট্যাবে কোনো কোর্স নেই</div>';
+      var bundleGrid = document.getElementById('bundle-courses-grid');
+      if (bundleGrid) bundleGrid.innerHTML = bundleCourses.length ? bundleCourses.map(makeCourseCard).join('') : '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#999">এই ট্যাবে কোনো বান্ডেল কোর্স নেই</div>';
       // Courses page grid
       var coursesContainer = document.getElementById('courses-container');
       if (coursesContainer && courses.length) {
@@ -4878,8 +4898,6 @@
     // ── Init: load API data then check popup ──
     loadSiteDataFromAPI().then(function() {
       if (window._apiPopupData) {
-        // Override default popup with API one (prevent double popup)
-        sessionStorage.setItem('popup_shown', '1'); // block default
         buildAPIPopup(window._apiPopupData);
       }
     });
