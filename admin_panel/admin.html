@@ -2030,13 +2030,15 @@ async function saveCourse() {
     loadCourses();
   } catch (e) { toast('সমস্যা: ' + e.message, 'error'); }
 }
+
+async function deleteCourse(id) {
   if (!confirm('কোর্সটি মুছে ফেলবেন?')) return;
   try {
     await api('DELETE', '/api/admin/courses/' + id);
     toast('✅ কোর্স মুছে গেছে');
     loadCourses();
   } catch (e) { toast('মুছতে পারেনি', 'error'); }
-
+}
 
 // ────────────────────────────────────────────
 // INSTRUCTORS
