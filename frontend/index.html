@@ -1186,6 +1186,19 @@
     .lesson-locked { cursor: pointer; opacity: 0.75; transition: all var(--transition); }
     .lesson-locked:hover { background: rgba(245,197,24,0.05); opacity: 1; }
     .pay-method-btn.selected { border-color: var(--primary) !important; color: var(--primary) !important; background: rgba(245,197,24,0.08) !important; }
+  
+    /* Contact page mobile responsiveness */
+    .contact-layout-grid {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) minmax(320px,420px);
+      gap: 32px;
+      align-items: start;
+    }
+    @media (max-width: 768px) {
+      .contact-layout-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1395,230 +1408,31 @@
         </div>
 
         <div id="top-sellers-grid" class="courses-grid fade-in">
-          <!-- Card 1 -->
-          <div class="course-card" data-course-id="quran-tajweed" onclick="openCourseDetail('quran-tajweed')">
-            <div class="course-thumb">
-              <img src="https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&h=220&fit=crop" alt="Quran Education" />
-              <div class="badge-bestseller">সেরা<br>বিক্রেতা</div>
-              <div class="thumb-overlay"><span class="thumb-overlay-text">কোর্সটি দেখুন</span></div>
-            </div>
-            <div class="card-body">
-              <div class="card-rating-row">
-                <span class="card-stars">★★★★★</span>
-                <span class="card-students">👥 ৩,২০০</span>
-              </div>
-              <div class="card-title">Quran Tajweed: সহিহ তেলাওয়াতের সম্পূর্ণ গাইড</div>
-              <div class="card-instructor">🎓 শায়েখ আব্দুল্লাহ</div>
-            </div>
-            <div class="card-footer-mobe">
-              <div class="vacation-points">ক্যাটাগরি: <strong>Quran</strong></div>
-              <div class="card-price-mobe">৳১,২০০</div>
-            </div>
-          </div>
-
-          <!-- Card 2 -->
-          <div class="course-card" data-course-id="seerah-nabi" onclick="openCourseDetail('seerah-nabi')">
-            <div class="course-thumb">
-              <img src="https://images.unsplash.com/photo-1564769625905-50e93615e769?w=400&h=220&fit=crop" alt="Seerah" />
-              <div class="badge-bestseller">সেরা<br>বিক্রেতা</div>
-              <div class="thumb-overlay"><span class="thumb-overlay-text">কোর্সটি দেখুন</span></div>
-            </div>
-            <div class="card-body">
-              <div class="card-rating-row">
-                <span class="card-stars">★★★★★</span>
-                <span class="card-students">👥 ৭,৫০০</span>
-              </div>
-              <div class="card-title">সীরাতুন নবী ﷺ: নবীজির জীবনের পূর্ণাঙ্গ ইতিহাস</div>
-              <div class="card-instructor">🎓 উস্তাদ ইউসুফ</div>
-            </div>
-            <div class="card-footer-mobe">
-              <div class="vacation-points">ক্যাটাগরি: <strong>Seerah</strong></div>
-              <div class="card-price-mobe">৳১,৫০০</div>
-            </div>
-          </div>
-
-          <!-- Card 3 -->
-          <div class="course-card" data-course-id="islamic-productivity" onclick="openCourseDetail('islamic-productivity')">
-            <div class="course-thumb">
-              <img src="https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=400&h=220&fit=crop" alt="Productivity" />
-              <div class="badge-bestseller">সেরা<br>বিক্রেতা</div>
-              <div class="thumb-overlay"><span class="thumb-overlay-text">কোর্সটি দেখুন</span></div>
-            </div>
-            <div class="card-body">
-              <div class="card-rating-row">
-                <span class="card-stars">★★★★★</span>
-                <span class="card-students">👥 ৫,৮০০</span>
-              </div>
-              <div class="card-title">ইস  �ামিক প্রোডাক্টিভিটি: জীবন গোছানোর ইসলামিক পদ্ধতি</div>
-              <div class="card-instructor">🎓 উস্তাদ রাশেদ</div>
-            </div>
-            <div class="card-footer-mobe">
-              <div class="vacation-points">ক্যাটাগরি: <strong>Productivity</strong></div>
-              <div class="card-price-mobe">৳৮০০</div>
-            </div>
-          </div>
-
-          <!-- Card 4 -->
-          <div class="course-card" data-course-id="sunnah-life" onclick="openCourseDetail('sunnah-life')">
-            <div class="course-thumb">
-              <img src="https://images.unsplash.com/photo-1585036156171-384164a8c675?w=400&h=220&fit=crop" alt="Sunnah" />
-              <div class="badge-bestseller">সেরা<br>বিক্রেতা</div>
-              <div class="thumb-overlay"><span class="thumb-overlay-text">কোর্সটি দেখুন</span></div>
-            </div>
-            <div class="card-body">
-              <div class="card-rating-row">
-                <span class="card-stars">★★★★★</span>
-                <span class="card-students">👥 ৬,২০০</span>
-              </div>
-              <div class="card-title">সুন্নাহর আলোয় জীবন: দৈনন্দিন ইসলামিক লাইফস্টাইল</div>
-              <div class="card-instructor">🎓 শায়েখ নাজমুল</div>
-            </div>
-            <div class="card-footer-mobe">
-              <div class="vacation-points">ক্যাটাগরি: <strong>Sunnah</strong></div>
-              <div class="card-price-mobe">৳১,০০০</div>
-            </div>
-          </div>
+          <div style="grid-column:1/-1;text-align:center;padding:40px 0;color:var(--text-mid)">কোর্স লোড হচ্ছে...</div>
         </div>
         <div id="top-sellers-btn" style="text-align:center">
           <button class="browse-more-btn" onclick="navigate('courses')">আরও সেরা কোর্স দেখুন</button>
         </div>
 
-        <div id="new-courses-grid" class="courses-grid fade-in" style="display:none">
-          <div class="course-card" data-course-id="islamic-family" onclick="openCourseDetail('islamic-family')">
-            <div class="course-thumb">
-              <img src="https://images.unsplash.com/photo-1511895426328-dc8714191011?w=400&h=220&fit=crop" alt="Family Life" />
-              <div class="thumb-overlay"><span class="thumb-overlay-text">কোর্সটি দেখুন</span></div>
-            </div>
-            <div class="card-body">
-              <div class="card-rating-row"><span class="card-stars">★★★★☆</span><span class="card-students">👥 4,100</span></div>
-              <div class="card-title">ইসলামিক পারিবারিক জীবন: সুখী সংসার গড়ার পথ</div>
-              <div class="card-instructor">🎓 ড. ফারুক আহমেদ</div>
-            </div>
-            <div class="card-footer-mobe">
-              <div class="vacation-points">ক্যাটাগরি: <strong>Family</strong></div>
-              <div class="card-price-mobe">৳৯০০</div>
-            </div>
-          </div>
-          <div class="course-card" data-course-id="fiqhul-ibadat" onclick="openCourseDetail('fiqhul-ibadat')">
-            <div class="course-thumb">
-              <img src="https://images.unsplash.com/photo-1554232456-8727aae0cfa4?w=400&h=220&fit=crop" alt="Fiqh" />
-              <div class="thumb-overlay"><span class="thumb-overlay-text">কোর্সটি দেখুন</span></div>
-            </div>
-            <div class="card-body">
-              <div class="card-rating-row"><span class="card-stars">★★★★☆</span><span class="card-students">👥 3,900</span></div>
-              <div class="card-title">ফিকহুল ইবাদাত: নামাজ, রোজা ও হজের বিধিবিধান</div>
-              <div class="card-instructor">🎓 মুফতি আমীর</div>
-            </div>
-            <div class="card-footer-mobe">
-              <div class="vacation-points">ক্যাটাগরি: <strong>Fiqh</strong></div>
-              <div class="card-price-mobe">৳১,১০০</div>
-            </div>
-          </div>
-          <div class="course-card" data-course-id="tafsir-quran" onclick="openCourseDetail('tafsir-quran')">
-            <div class="course-thumb">
-              <img src="https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&h=220&fit=crop" alt="Quran Tafsir" />
-              <div class="thumb-overlay"><span class="thumb-overlay-text">কোর্সটি দেখুন</span></div>
-            </div>
-            <div class="card-body">
-              <div class="card-rating-row"><span class="card-stars">★★★★★</span><span class="card-students">👥 2,600</span></div>
-              <div class="card-title">তাফসিরুল কুরআন: কুরআনের গভীর অর্থ ও ব্যাখ্যা</div>
-              <div class="card-instructor">🎓 শায়েখ আব্দুল্লাহ</div>
-            </div>
-            <div class="card-footer-mobe">
-              <div class="vacation-points">ক্যাটাগরি: <strong>Quran</strong></div>
-              <div class="card-price-mobe">৳১,৩০০</div>
-            </div>
-          </div>
-          <div class="course-card" data-course-id="islamic-history" onclick="openCourseDetail('islamic-history')">
-            <div class="course-thumb">
-              <img src="https://images.unsplash.com/photo-1564769625905-50e93615e769?w=400&h=220&fit=crop" alt="Islamic History" />
-              <div class="thumb-overlay"><span class="thumb-overlay-text">কোর্সটি দেখুন</span></div>
-            </div>
-            <div class="card-body">
-              <div class="card-rating-row"><span class="card-stars">★★★★★</span><span class="card-students">👥 4,800</span></div>
-              <div class="card-title">ইসলামি সভ্যতার ইতিহাস: খলিফাদের স্বর্ণযুগ</div>
-              <div class="card-instructor">🎓 উস্তাদ কামাল</div>
-            </div>
-            <div class="card-footer-mobe">
-              <div class="vacation-points">ক্যাটাগরি: <strong>History</strong></div>
-              <div class="card-price-mobe">৳১,৪০০</div>
-            </div>
-          </div>
-        </div>
+        <div id="new-courses-grid" class="courses-grid fade-in" style="display:none"></div>
         <div id="new-courses-btn" style="text-align:center;display:none">
           <button class="browse-more-btn" onclick="navigate('courses')">আরও নতুন কোর্স দেখুন</button>
         </div>
 
-        <!-- ফ্রি কোর্স গ্রিড -->
-        <div id="free-courses-grid" class="courses-grid fade-in" style="display:none">
-          <div class="course-card" data-course-id="quran-tajweed" onclick="openCourseDetail('quran-tajweed')">
-            <div class="course-thumb">
-              <img src="https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&h=220&fit=crop" alt="Free Course" />
-              <div class="badge-bestseller" style="background:#16a34a">🆓 ফ্রি</div>
-              <div class="thumb-overlay"><span class="thumb-overlay-text">কোর্সটি দেখুন</span></div>
-            </div>
-            <div class="card-body">
-              <div class="card-rating-row"><span class="card-stars">★★★★★</span><span class="card-students">👥 ১৫,০০০+</span></div>
-              <div class="card-title">কুরআন পরিচিতি: আলিফ-বা-তা থেকে শুরু</div>
-              <div class="card-instructor">🎓 শায়েখ আব্দুল্লাহ</div>
-            </div>
-            <div class="card-footer-mobe">
-              <div class="vacation-points">ক্যাটাগরি: <strong>Quran</strong></div>
-              <div class="card-price-mobe" style="color:#16a34a;font-weight:800">বিনামূল্যে</div>
-            </div>
-          </div>
-        </div>
+        <div id="free-courses-grid" class="courses-grid fade-in" style="display:none"></div>
         <div id="free-courses-btn" style="text-align:center;display:none">
           <button class="browse-more-btn" onclick="navigate('courses')">আরও ফ্রি কোর্স দেখুন</button>
         </div>
 
-        <!-- জনপ্রিয় কোর্স গ্রিড -->
-        <div id="popular-courses-grid" class="courses-grid fade-in" style="display:none">
-          <div class="course-card" data-course-id="seerah-nabi" onclick="openCourseDetail('seerah-nabi')">
-            <div class="course-thumb">
-              <img src="https://images.unsplash.com/photo-1564769625905-50e93615e769?w=400&h=220&fit=crop" alt="Popular" />
-              <div class="badge-bestseller">🔥 সেরা<br>বিক্রেতা</div>
-              <div class="thumb-overlay"><span class="thumb-overlay-text">কোর্সটি দেখুন</span></div>
-            </div>
-            <div class="card-body">
-              <div class="card-rating-row"><span class="card-stars">★★★★★</span><span class="card-students">👥 ৭,৫০০</span></div>
-              <div class="card-title">সীরাতুন নবী ﷺ: নবীজির জীবনের পূর্ণাঙ্গ ইতিহাস</div>
-              <div class="card-instructor">🎓 উস্তাদ ইউসুফ</div>
-            </div>
-            <div class="card-footer-mobe">
-              <div class="vacation-points">ক্যাটাগরি: <strong>Seerah</strong></div>
-              <div class="card-price-mobe">৳১,৫০০</div>
-            </div>
-          </div>
-        </div>
+        <div id="popular-courses-grid" class="courses-grid fade-in" style="display:none"></div>
         <div id="popular-courses-btn" style="text-align:center;display:none">
           <button class="browse-more-btn" onclick="navigate('courses')">আরও জনপ্রিয় কোর্স দেখুন</button>
         </div>
 
-        <!-- বান্ডেল কোর্স গ্রিড -->
-        <div id="bundle-courses-grid" class="courses-grid fade-in" style="display:none">
-          <div class="course-card" onclick="showToast('বান্ডেল কোর্সের জন্য যোগাযোগ করুন!')">
-            <div class="course-thumb">
-              <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=220&fit=crop" alt="Bundle" />
-              <div class="badge-bestseller" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">📦 বান্ডেল</div>
-              <div class="thumb-overlay"><span class="thumb-overlay-text">বান্ডেল দেখুন</span></div>
-            </div>
-            <div class="card-body">
-              <div class="card-rating-row"><span class="card-stars">★★★★★</span><span class="card-students">📚 ৩টি কোর্স</span></div>
-              <div class="card-title">ইসলামিক জ্ঞান বান্ডেল: তাজওয়িদ + সীরাহ + ফিকহ</div>
-              <div class="card-instructor">🎓 একাধিক ইন্সট্রাক্টর</div>
-            </div>
-            <div class="card-footer-mobe">
-              <div class="vacation-points">সাশ্রয়: <strong style="color:#16a34a">৪০% ছাড়</strong></div>
-              <div class="card-price-mobe"><span style="text-decoration:line-through;color:#999;font-size:12px">৳৩,৫০০</span> ৳২,১০০</div>
-            </div>
-          </div>
-        </div>
+        <div id="bundle-courses-grid" class="courses-grid fade-in" style="display:none"></div>
         <div id="bundle-courses-btn" style="text-align:center;display:none">
           <button class="browse-more-btn" onclick="navigate('courses')">আরও বান্ডেল কোর্স দেখুন</button>
         </div>
-
-      </div>
     </section>
 
     <!-- TOP INSTRUCTORS SECTION -->
@@ -1627,77 +1441,7 @@
         <h2 class="instructors-title fade-in">শীর্ষ ইন্সট্রাক্টরগণ</h2>
         <div class="instructors-underline fade-in"></div>
         <div class="instructors-grid fade-in" id="instructors-grid">
-
-          <div class="instructor-card" onclick="openInstructorProfile('aaron-dolberg')" style="cursor:pointer">
-            <div class="instructor-photo-wrap">
-              <div class="instructor-cap-icon">🎓</div>
-              <img class="instructor-photo" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=160&h=160&fit=crop&crop=face" alt="শায়েখ আব্দুল্লাহ" onclick="openInstructorProfile('aaron-dolberg')" title="শায়েখ আব্দুল্লাহ এর প্রোফাইল দেখুন" />
-            </div>
-            <div class="instructor-name">শায়েখ আব্দুল্লাহ</div>
-            <div class="instructor-bio">বিশিষ্ট কুরআন বিশেষজ্ঞ। তাজওয়িদ ও তাফসির বিষয়ে দীর্ঘ ২০ বছরের শিক্ষকতার অভিজ্ঞতা রয়েছে।</div>
-            <div class="instructor-socials">
-              <span class="social-mini">in</span>
-              <span class="social-mini">f</span>
-              <span class="social-mini">𝕏</span>
-            </div>
-          </div>
-
-          <div class="instructor-card" onclick="openInstructorProfile('izzy-gesell')" style="cursor:pointer">
-            <div class="instructor-photo-wrap">
-              <div class="instructor-cap-icon">🎓</div>
-              <img class="instructor-photo" src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=160&h=160&fit=crop&crop=face" alt="উস্তাদ ইউসুফ" onclick="openInstructorProfile('izzy-gesell')" title="উস্তাদ ইউসুফ এর প্রোফাইল দেখুন" />
-            </div>
-            <div class="instructor-name">উস্তাদ ইউসুফ</div>
-            <div class="instructor-bio">সীরাত ও ইসলামিক ইতিহাসের বিশেষজ্ঞ শিক্ষক। সুন্নাহর আলোকে জীবন গড়ার বিষয়ে পাঁচ হাজারেরও বেশি শিক্ষার্থীকে প্রশিক্ষণ দিয়েছেন।</div>
-            <div class="instructor-socials">
-              <span class="social-mini">in</span>
-              <span class="social-mini">f</span>
-              <span class="social-mini">𝕏</span>
-            </div>
-          </div>
-
-          <div class="instructor-card" onclick="openInstructorProfile('james-ball')" style="cursor:pointer">
-            <div class="instructor-photo-wrap">
-              <div class="instructor-cap-icon">🎓</div>
-              <img class="instructor-photo" src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=160&h=160&fit=crop&crop=face" alt="ড. ফারুক আহমেদ" onclick="openInstructorProfile('james-ball')" title="ড. ফারুক আহমেদ এর প্রোফাইল দেখুন" />
-            </div>
-            <div class="instructor-name">ড. ফারুক আহমেদ</div>
-            <div class="instructor-bio">ইসলামিক পারিবারিক আইন ও ফিকহ বিষয়ে পিএইচডি ডিগ্রিধারী। ইসলামিক পরিবার ও ইবাদাত বিধান বিষয়ে দেশ-বিদেশে বক্তৃতা দিয়ে থাকেন।</div>
-            <div class="instructor-socials">
-              <span class="social-mini">in</span>
-              <span class="social-mini">f</span>
-              <span class="social-mini">𝕏</span>
-            </div>
-          </div>
-
-          <div class="instructor-card" onclick="openInstructorProfile('james-wickett')" style="cursor:pointer">
-            <div class="instructor-photo-wrap">
-              <div class="instructor-cap-icon">🎓</div>
-              <img class="instructor-photo" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=160&h=160&fit=crop&crop=face" alt="উস্তাদ কামাল" onclick="openInstructorProfile('james-wickett')" title="উস্তাদ কামাল এর প্রোফাইল দেখুন" />
-            </div>
-            <div class="instructor-name">উস্তাদ কামাল</div>
-            <div class="instructor-bio">ইসলামিক সভ্যতার ইতিহাস ও তাফসির বিষয়ের অভিজ্ঞ গবেষক। বিভিন্ন ইসলামিক বিশ্ববিদ্যালয়ে অতিথি শিক্ষক হিসেবে কাজ করেছেন।</div>
-            <div class="instructor-socials">
-              <span class="social-mini">in</span>
-              <span class="social-mini">f</span>
-              <span class="social-mini">𝕏</span>
-            </div>
-          </div>
-
-          <div class="instructor-card" onclick="openInstructorProfile('jason-fox')" style="cursor:pointer">
-            <div class="instructor-photo-wrap">
-              <div class="instructor-cap-icon">🎓</div>
-              <img class="instructor-photo" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=160&h=160&fit=crop&crop=face" alt="উস্তাদ রাশেদ" onclick="openInstructorProfile('jason-fox')" title="উস্তাদ রাশেদ এর প্রোফাইল দেখুন" />
-            </div>
-            <div class="instructor-name">উস্তাদ রাশেদ</div>
-            <div class="instructor-bio">ইসলামিক প্রোডাক্টিভিটি ও লাইফস্টাইল বিশেষজ্ঞ। কুরআন-সুন্নাহর আলোকে জীবন ব্যবস্থাপনার উপর একাধিক বই রচনা করেছেন।</div>
-            <div class="instructor-socials">
-              <span class="social-mini">in</span>
-              <span class="social-mini">f</span>
-              <span class="social-mini">𝕏</span>
-            </div>
-          </div>
-
+          <div style="grid-column:1/-1;text-align:center;padding:40px 0;color:var(--text-mid)">ইন্সট্রাক্টর লোড হচ্ছে...</div>
         </div>
       </div>
     </section>
@@ -2445,7 +2189,7 @@
     </div>
     <div class="section">
       <div class="container">
-        <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,420px);gap:32px;align-items:start">
+        <div class="contact-layout-grid">
           <div>
             <div class="section-head">
               <span class="section-label" id="contact-section-label">যোগাযোগ</span>
@@ -2677,6 +2421,18 @@
     // NAVIGATION
     // ===========================
     function navigate(page) {
+      // Stop YouTube video when leaving detail page
+      const prevActive = document.querySelector('.page.active');
+      if (prevActive && prevActive.id === 'page-detail' && page !== 'detail') {
+        try {
+          if (typeof ytPlayer !== 'undefined' && ytPlayer && typeof ytPlayer.stopVideo === 'function') {
+            ytPlayer.stopVideo();
+          }
+          if (typeof ytProgressInterval !== 'undefined' && ytProgressInterval) {
+            clearInterval(ytProgressInterval);
+          }
+        } catch(e) {}
+      }
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('page-' + page).classList.add('active');
       document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
@@ -2686,6 +2442,13 @@
       setTimeout(runFadeIn, 50);
       if (page === 'detail') { setTimeout(updateLessonAccess, 100); updateSidebarEnrollBtn(); updateSidebarImage(); }
       if (page === 'courses') { loadCoursesPage(); }
+      // Update URL hash for bookmarking / sharing
+      try {
+        const hashMap = { home: '', courses: 'courses', about: 'about', contact: 'contact', instructors: 'instructors' };
+        if (hashMap[page] !== undefined) {
+          history.replaceState(null, '', hashMap[page] ? '#' + hashMap[page] : window.location.pathname);
+        }
+      } catch(e) {}
       // Show/hide footer — hide on auth page only
       var footer = document.getElementById('global-footer');
       if (footer) {
@@ -2950,7 +2713,7 @@
       'seerah-nabi':         { title: 'সীরাতুন নবী ﷺ: নবীজির জীবনের পূর্ণাঙ্গ ইতিহাস',    instructor: 'উস্তাদ ইউসুফ',      instructorId: 'izzy-gesell',   price: '৳১,৫০০', hours: '৪৮', emoji: '🕌', gradient: 'linear-gradient(135deg,#2d1b69,#11998e)', img: 'https://images.unsplash.com/photo-1564769625905-50e93615e769?w=400&h=220&fit=crop',
         certDesc: ['has successfully completed the professional course on', 'demonstrating a comprehensive understanding of the life of Prophet Muhammad ﷺ,', 'Islamic history, and the lessons from the Prophetic biography.'],
         desc: 'রাসূলুল্লাহ ﷺ-এর জন্ম থেকে ইন্তেকাল পর্যন্ত পুরো জীবনকাল এই কোর্সে বিস্তারিতভাবে আলোচনা করা হয়েছে। মক্কি জীবন, হিজরত, মদিনার সমাজ গঠন, গাযওয়াত এবং ইসলামের বিজয়ের গল্প একসাথে পাবেন।<br><br>এই কোর্সটি আপনাকে নবীজি ﷺ-এর জীবন থেকে শিক্ষা নিয়ে আধুনিক জীবনে প্রয়োগ করার অনুপ্রেরণা দেবে।',
-        learns: ['নবীজি ﷺ-এর জন্ম ও শৈশবকালীন জীবন', 'মক্কায় ইসলামের দাওয়াত ও প্রথম মুসলিমদের কষ্টসহিষ্ণুতা', 'হিজরতের ঘটনাপ্রবাহ ও মদিনায় ইসলামি রাষ্ট্র গঠন', 'বদর, উহুদ ও খন্দকসহ প্রধান গাযওয়াতের বিবরণ', 'মক্কা বিজয় ও ইসলামের বিস্তারের ইতিহাস', 'বিদায় হজের ভাষণ ও নবীজি ﷺ-এর চিরবিদায়'] },
+        learns: ['নবীজি ﷺ-এর জন্ম ও শৈশবকালীন জীবন', 'মক্কায় ইসলামের দাওয়াত ও প্রথম মুসলিমদের কষ্টসহিষ্ণুতা', 'হিজরতের ঘটনাপ্রবাহ ও মদিনায় ইসলামি রাষ্ট্র d,�ঠন', 'বদর, উহুদ ও খন্দকসহ প্রধান গাযওয়াতের বিবরণ', 'মক্কা বিজয় ও ইসলামের বিস্তারের ইতিহাস', 'বিদায় হজের ভাষণ ও নবীজি ﷺ-এর চিরবিদায়'] },
 
       'islamic-productivity':{ title: 'ইসলামিক প্রোডাক্টিভিটি: জীবন গোছানোর ইসলামিক পদ্ধতি', instructor: 'উস্তাদ রাশেদ', instructorId: 'jason-fox',  price: '৳৮০০',   hours: '২৪', emoji: '⚡', gradient: 'linear-gradient(135deg,#f7971e,#ffd200)', img: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=400&h=220&fit=crop',
         certDesc: ['has successfully completed the professional course on', 'demonstrating a comprehensive understanding of Islamic time management,', 'goal setting, and productivity methods based on Quranic principles.'],
@@ -3448,7 +3211,7 @@
           navigate('dashboard');
         }, 800);
       }).catch(function() {
-        if (btn) { btn.disabled = false; btn.textContent = 'লগইন oO�রুন →'; }
+        if (btn) { btn.disabled = false; btn.textContent = 'লগইন করুন →'; }
         // Fallback to localStorage
         var users = lsGet('registeredUsers', []);
         var user = users.find(function(u) { return u.email === email && u.pass === pass; });
@@ -4130,6 +3893,57 @@
     };
 
     function openInstructorProfile(instructorId) {
+      // Try API instructor data first
+      var apiInstList = window._apiInstructors || [];
+      var apiInst = apiInstList.find(function(x) {
+        return x._id === instructorId || x.slug === instructorId || x.name === instructorId;
+      });
+
+      if (apiInst) {
+        // Use API instructor data
+        var photoEl = document.getElementById('profile-photo');
+        if (photoEl) { photoEl.src = apiInst.photo || ''; photoEl.alt = apiInst.name || ''; }
+        var setTxt = function(id, val) { var el = document.getElementById(id); if (el) el.textContent = val || ''; };
+        setTxt('profile-name', apiInst.name);
+        setTxt('profile-tagline', apiInst.title || apiInst.tagline || '');
+        setTxt('profile-bio', apiInst.bio || '');
+        setTxt('profile-about', apiInst.bio || '');
+        setTxt('profile-breadcrumb', apiInst.name);
+        setTxt('profile-rating', apiInst.rating || '৪.৯★');
+        setTxt('profile-students', apiInst.students ? (apiInst.students + '+') : '');
+        setTxt('profile-reviews', apiInst.reviews || '');
+
+        // Find courses belonging to this instructor
+        var allCourses = window._apiCourses || [];
+        var instrCourses = allCourses.filter(function(c) {
+          return c.instructorId === apiInst._id || c.instructor === apiInst.name || c.instructorName === apiInst.name;
+        });
+        setTxt('profile-courses-count', instrCourses.length);
+
+        var grid = document.getElementById('profile-courses-grid');
+        if (grid) {
+          grid.innerHTML = '';
+          if (instrCourses.length === 0) {
+            grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--text-mid)">এই ইন্সট্রাক্টরের কোনো কোর্স পাওয়া যায়নি।</div>';
+          } else {
+            instrCourses.forEach(function(c) {
+              var card = document.createElement('div');
+              card.className = 'course-card';
+              var slug = c.slug || c._id;
+              card.onclick = function() { openCourseDetail(slug); };
+              var priceStr = c.price ? '৳' + c.price : 'বিনামূল্যে';
+              card.innerHTML = '<div class="course-thumb"><img src="' + (c.thumbnail || c.thumb || '') + '" alt="' + (c.title || '') + '" style="width:100%;height:100%;object-fit:cover" /><div class="thumb-overlay"><span class="thumb-overlay-text">কোর্সটি দেখুন</span></div></div>' +
+                '<div class="card-body"><div class="card-rating-row"><span class="card-stars">★★★★★</span></div><div class="card-title">' + (c.title || '') + '</div><div class="card-instructor">🎓 ' + (apiInst.name || '') + '</div></div>' +
+                '<div class="card-footer-mobe"><div class="vacation-points">ক্যাটাগরি: <strong>' + (c.category || '') + '</strong></div><div class="card-price-mobe">' + priceStr + '</div></div>';
+              grid.appendChild(card);
+            });
+          }
+        }
+        navigate('instructor');
+        return;
+      }
+
+      // Fallback: hardcoded INSTRUCTORS object
       var inst = INSTRUCTORS[instructorId];
       if (!inst) return;
       document.getElementById('profile-photo').src = inst.photo;
@@ -4144,7 +3958,6 @@
       document.getElementById('profile-courses-count').textContent = inst.courses.length;
       document.getElementById('profile-reviews').textContent = inst.reviews;
 
-      // Render instructor's courses
       var grid = document.getElementById('profile-courses-grid');
       grid.innerHTML = '';
       inst.courses.forEach(function(cid) {
@@ -4159,7 +3972,6 @@
           '<div class="card-footer-mobe"><div class="vacation-points">⏱ <strong>' + c.hours + ' ঘণ্টা</strong></div><div class="card-price-mobe">' + c.price + '</div></div>';
         grid.appendChild(card);
       });
-
       navigate('instructor');
     }
 
@@ -4632,11 +4444,30 @@
           renderAPITestimonials(apiTestimonials);
         }
 
+        // Store instructor + course data globally for profile pages
+        if (apiInstructors && Array.isArray(apiInstructors)) {
+          window._apiInstructors = apiInstructors;
+        }
+        if (apiCourses && Array.isArray(apiCourses)) {
+          window._apiCourses = apiCourses;
+        }
         // ── INSTRUCTORS (from MongoDB) ──
         if (apiInstructors && Array.isArray(apiInstructors) && apiInstructors.length > 0) {
           renderAPIInstructors(apiInstructors);
         }
 
+        // ── ABOUT PAGE — dynamic stats ──
+        (function() {
+          var statCards = document.querySelectorAll('#page-about .dash-stat-card');
+          if (statCards.length >= 3) {
+            var studentCount = (siteSettings && siteSettings.totalStudents) || (apiInstructors ? '' : '');
+            var courseCount = (apiCourses && Array.isArray(apiCourses)) ? apiCourses.length + '+' : (siteSettings && siteSettings.totalCourses) || '';
+            var instrCount = (apiInstructors && Array.isArray(apiInstructors)) ? apiInstructors.length + '+' : (siteSettings && siteSettings.totalInstructors) || '';
+            if (studentCount) statCards[0].querySelector('.dash-stat-num').textContent = studentCount;
+            if (courseCount) statCards[1].querySelector('.dash-stat-num').textContent = courseCount;
+            if (instrCount) statCards[2].querySelector('.dash-stat-num').textContent = instrCount;
+          }
+        })();
         // ── NOTICES ──
         if (apiNotices && Array.isArray(apiNotices) && apiNotices.length > 0) {
           renderAPINotices(apiNotices);
@@ -5003,6 +4834,19 @@
         popup.id = 'welcome-popup';
         popup.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)';
 
+        // Image-only popup mode
+        if (d.imageOnly && d.popupImageUrl) {
+          popup.id = 'welcome-popup';
+          popup.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)';
+          var imgEl = d.popupImageLink ? '<a href="' + d.popupImageLink + '" onclick="document.getElementById(\'welcome-popup\').remove()" style="display:block">' : '<div>';
+          var imgClose = d.popupImageLink ? '</a>' : '</div>';
+          popup.innerHTML = '<div style="position:relative;max-width:520px;width:100%">' +
+            imgEl + '<img src="' + d.popupImageUrl + '" alt="popup" style="width:100%;border-radius:12px;display:block;box-shadow:0 20px 60px rgba(0,0,0,0.6)"/>' + imgClose +
+            '<button onclick="document.getElementById(\'welcome-popup\').remove()" style="position:absolute;top:-14px;right:-14px;width:34px;height:34px;border-radius:50%;background:#fff;border:none;cursor:pointer;font-size:18px;line-height:1;box-shadow:0 4px 12px rgba(0,0,0,0.3)">✕</button>' +
+            '</div>';
+          document.body.appendChild(popup);
+          return;
+        }
         var courseSection = '';
         if (d.courseName) {
           var courseImg = d.courseImg || 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=120&h=80&fit=crop';
@@ -5054,67 +4898,23 @@
       }
     });
 
+    // ── URL hash routing ──
+    (function() {
+      var hashRoutes = { courses: 'courses', about: 'about', contact: 'contact', instructors: 'instructors' };
+      function routeFromHash() {
+        var hash = window.location.hash.replace('#', '').toLowerCase().trim();
+        if (hash && hashRoutes[hash]) {
+          var el = document.getElementById('page-' + hashRoutes[hash]);
+          if (el) navigate(hashRoutes[hash]);
+        }
+      }
+      routeFromHash();
+      window.addEventListener('hashchange', routeFromHash);
+    })();
     restoreSession();
     runFadeIn();
 
-    // ===========================
-    // FIRST VISIT POPUP AD
-    // ===========================
-    (function() {
-      if (sessionStorage.getItem('popup_shown')) return;
-      sessionStorage.setItem('popup_shown', '1');
-      setTimeout(function() {
-        var popup = document.createElement('div');
-        popup.id = 'welcome-popup';
-        popup.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)';
-        popup.innerHTML = `
-          <div style="background:#1e1e1e;border-radius:16px;max-width:520px;width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.6);position:relative;border:1px solid #333">
-            <!-- Top banner -->
-            <div style="background:linear-gradient(135deg,#2a1a00,#1a1a1a);padding:28px 28px 20px;border-bottom:2px solid var(--primary);text-align:center">
-              <div style="font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--primary);font-family:var(--font-nav);margin-bottom:8px">🎉 বিশেষ স্বাগত অফার</div>
-              <h2 style="font-family:var(--font-heading);font-size:clamp(22px,4vw,30px);font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px">প্রথম কোর্সে <span style="color:var(--primary)">৩০% ছাড়</span> পান!</h2>
-              <p style="font-size:13.5px;color:rgba(255,255,255,0.6);line-height:1.6;max-width:400px;margin:0 auto">ইবনে খালদুন ইনস্টিটিউটে আপনাকে স্বাগতম। আজই যেকোনো কোর্সে ভর্তি হন এবং বিশেষ ছাড় উপভোগ করুন।</p>
-            </div>
-            <!-- Course highlight -->
-            <div style="padding:20px 28px;display:flex;gap:16px;align-items:center;border-bottom:1px solid #2a2a2a">
-              <img src="https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=120&h=80&fit=crop" alt="কোর্স" style="width:100px;height:68px;object-fit:cover;border-radius:8px;flex-shrink:0" />
-              <div>
-                <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--primary);font-family:var(--font-nav);margin-bottom:4px">🔥 সেরা বিক্রেতা কোর্স</div>
-                <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;line-height:1.3">Quran Tajweed: সহিহ তেলাওয়াতের সম্পূর্ণ গাইড</div>
-                <div style="display:flex;align-items:center;gap:10px">
-                  <span style="font-size:18px;font-weight:800;color:var(--primary)">৳৮৪০</span>
-                  <span style="font-size:13px;color:#666;text-decoration:line-through">৳১,২০০</span>
-                  <span style="font-size:10px;font-weight:700;background:var(--primary);color:#1a1a1a;padding:2px 8px;border-radius:20px">৩০% ছাড়</span>
-                </div>
-              </div>
-            </div>
-            <!-- Stats row -->
-            <div style="padding:14px 28px;display:flex;gap:0;border-bottom:1px solid #2a2a2a">
-              <div style="flex:1;text-align:center;border-right:1px solid #2a2a2a">
-                <div style="font-size:18px;font-weight:800;color:var(--primary)">৫০K+</div>
-                <div style="font-size:10px;color:#666;font-family:var(--font-nav);text-transform:uppercase;letter-spacing:0.5px">শিক্ষার্থী</div>
-              </div>
-              <div style="flex:1;text-align:center;border-right:1px solid #2a2a2a">
-                <div style="font-size:18px;font-weight:800;color:var(--primary)">১২০+</div>
-                <div style="font-size:10px;color:#666;font-family:var(--font-nav);text-transform:uppercase;letter-spacing:0.5px">কোর্স</div>
-              </div>
-              <div style="flex:1;text-align:center">
-                <div style="font-size:18px;font-weight:800;color:var(--primary)">৪.৯★</div>
-                <div style="font-size:10px;color:#666;font-family:var(--font-nav);text-transform:uppercase;letter-spacing:0.5px">রেটিং</div>
-              </div>
-            </div>
-            <!-- CTA Buttons -->
-            <div style="padding:20px 28px 24px">
-              <button onclick="document.getElementById('welcome-popup').remove(); openCourseDetail('quran-tajweed');" style="width:100%;padding:14px;background:var(--primary);color:#1a1a1a;border:none;border-radius:8px;font-family:var(--font-nav);font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;margin-bottom:10px;transition:background 0.2s" onmouseover="this.style.background='#d4a90e'" onmouseout="this.style.background='var(--primary)'">এখনই কোর্সটি দেখুন →</button>
-              <button onclick="document.getElementById('welcome-popup').remove(); navigate('courses');" style="width:100%;padding:12px;background:transparent;color:#aaa;border:1.5px solid #444;border-radius:8px;font-family:var(--font-nav);font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='#444';this.style.color='#aaa'">সব কোর্স দেখুন</button>
-              <p style="text-align:center;font-size:11px;color:#555;margin-top:12px;font-family:var(--font-nav)">অফারটি সীমিত সময়ের জন্য • ৩০ দিনের মানি-ব্যাক গ্যারান্টি</p>
-            </div>
-            <!-- Close button -->            <button onclick="document.getElementById('welcome-popup').remove()" style="position:absolute;top:12px;right:14px;background:rgba(255,255,255,0.08);border:none;color:#aaa;width:30px;height:30px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.18)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">✕</button>
-          </div>
-        `;
-        document.body.appendChild(popup);
-      }, 1200);
-    })();
+
 
   </script>
 </body>

@@ -439,7 +439,6 @@
         <div class="nav-item" onclick="navTo('contact-content')"><span class="icon">📞</span> কনট্যাক্ট</div>
         <div class="nav-section">Content</div>
         <div class="nav-item" onclick="navTo('categories')"><span class="icon">🏷️</span> ক্যাটাগরি</div>
-        <div class="nav-item" onclick="navTo('course-tabs')"><span class="icon">🗂️</span> কোর্স ট্যাব</div>
         <div class="nav-item" onclick="navTo('hero-courses')"><span class="icon">🖼️</span> হিরো কার্ড</div>
         <div class="nav-section">Business</div>
         <div class="nav-item" onclick="navTo('enrollments')"><span class="icon">📋</span> এনরোলমেন্ট</div>
@@ -718,26 +717,6 @@
           </div>
         </div>
 
-        <!-- ── COURSE TABS ── -->
-        <div class="page" id="page-course-tabs">
-          <div class="card">
-            <div class="card-header">
-              <div class="card-header-left">
-                <h3>🗂️ কোর্স ট্যাব</h3>
-                <span class="card-subtitle">index.html-এর courses-tabs সেকশন নিয়ন্ত্রণ করুন</span>
-              </div>
-              <button class="btn btn-primary" onclick="openCourseTabModal()">+ নতুন ট্যাব</button>
-            </div>
-            <div class="card-body">
-              <table><thead><tr>
-                <th>আইকন</th><th>লেবেল</th><th>Key</th><th>ক্রম</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th>
-              </tr></thead>
-              <tbody id="course-tabs-tbody"><tr><td colspan="6" class="loading">লোড হচ্ছে...</td></tr></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
         <!-- ── HERO COURSES ── -->
         <div class="page" id="page-hero-courses">
           <div class="card">
@@ -935,7 +914,27 @@
             <div class="card">
               <div class="card-header"><h3>📝 মূল কন্টেন্ট</h3></div>
               <div class="card-body" style="padding:20px">
-                <div class="field"><label>ব্যাকগ্রাউন্ড ইমেজ URL</label><input id="hero-bg" placeholder="/frontend/images/nobobi.png"/></div>
+                <div class="field">
+                  <label>ব্যাকগ্রাউন্ড ইমেজ</label>
+                  <div id="hero-bg-drop-zone"
+                    ondragover="event.preventDefault();this.classList.add('drag-over')"
+                    ondragleave="this.classList.remove('drag-over')"
+                    ondrop="handleHeroBgDrop(event)"
+                    onclick="document.getElementById('hero-bg-file-input').click()"
+                    style="border:2px dashed var(--border2);border-radius:var(--radius-sm);padding:16px;text-align:center;cursor:pointer;background:var(--bg3);transition:all 0.2s;min-height:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;position:relative;margin-bottom:8px">
+                    <div style="font-size:24px">🖼️</div>
+                    <div style="font-size:12px;color:var(--text2)">ব্যাকগ্রাউন্ড ইমেজ টেনে আনুন বা ক্লিক করুন</div>
+                    <div id="hero-bg-upload-progress" style="display:none;width:100%;margin-top:6px">
+                      <div style="height:4px;background:var(--bg2);border-radius:2px;overflow:hidden">
+                        <div id="hero-bg-progress-bar" style="height:100%;background:var(--primary);width:0%;transition:width 0.3s"></div>
+                      </div>
+                      <div id="hero-bg-progress-text" style="font-size:11px;color:var(--text2);margin-top:4px">আপলোড হচ্ছে...</div>
+                    </div>
+                    <img id="hero-bg-preview" src="" alt="" style="display:none;max-height:60px;border-radius:4px;margin-top:6px;object-fit:cover;max-width:100%"/>
+                    <input type="file" id="hero-bg-file-input" accept="image/*" style="display:none" onchange="handleHeroBgFileSelect(this)"/>
+                  </div>
+                  <input id="hero-bg" placeholder="অথবা সরাসরি URL দিন..." oninput="updateHeroBgPreview(this.value)"/>
+                </div>
                 <div class="field"><label>Eyebrow টেক্সট (ছোট উপরের লাইন)</label><input id="hero-eyebrow" placeholder="অনলাইন শিক্ষার নতুন অভিজ্ঞতা"/></div>
                 <div class="field"><label>H1 লাইন ১</label><input id="hero-h1-1" placeholder="ইসলামী জ্ঞান"/></div>
                 <div class="field"><label>H1 লাইন ২ (হাইলাইট)</label><input id="hero-h1-2" placeholder="অনলাইনে শিখুন"/></div>
@@ -1113,6 +1112,37 @@
                     <input type="checkbox" id="popup-enabled" checked style="width:18px;height:18px;accent-color:var(--primary)"/>
                     পপআপ চালু রাখুন
                   </label>
+                </div>
+                <div class="field" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:12px">
+                  <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:700">
+                    <input type="checkbox" id="popup-image-only" style="width:18px;height:18px;accent-color:var(--primary)" onchange="togglePopupImageOnlyMode(this.checked)"/>
+                    🖼️ শুধু ইমেজ মোড (Image-only Popup)
+                  </label>
+                  <p style="font-size:12px;color:var(--text2);margin-top:6px">চালু করলে শুধু একটি পূর্ণ ইমেজ পপআপ দেখাবে — কোনো টেক্সট বা কোর্স তথ্য থাকবে না।</p>
+                  <div id="popup-image-only-section" style="display:none;margin-top:12px">
+                    <div class="field">
+                      <label>পপআপ ইমেজ</label>
+                      <div id="popup-img-drop-zone"
+                        ondragover="event.preventDefault();this.classList.add('drag-over')"
+                        ondragleave="this.classList.remove('drag-over')"
+                        ondrop="handlePopupImgDrop(event)"
+                        onclick="document.getElementById('popup-img-file-input').click()"
+                        style="border:2px dashed var(--border2);border-radius:var(--radius-sm);padding:16px;text-align:center;cursor:pointer;background:var(--bg2);transition:all 0.2s;min-height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;position:relative;margin-bottom:8px">
+                        <div style="font-size:24px">🖼️</div>
+                        <div style="font-size:12px;color:var(--text2)">পপআপ ইমেজ টেনে আনুন বা ক্লিক করুন</div>
+                        <div id="popup-img-progress" style="display:none;width:100%;margin-top:6px">
+                          <div style="height:4px;background:var(--bg2);border-radius:2px;overflow:hidden">
+                            <div id="popup-img-progress-bar" style="height:100%;background:var(--primary);width:0%;transition:width 0.3s"></div>
+                          </div>
+                          <div style="font-size:11px;color:var(--text2);margin-top:4px">আপলোড হচ্ছে...</div>
+                        </div>
+                        <img id="popup-img-preview" src="" alt="" style="display:none;max-height:100px;border-radius:8px;margin-top:6px;object-fit:cover;max-width:100%"/>
+                        <input type="file" id="popup-img-file-input" accept="image/*" style="display:none" onchange="handlePopupImgFileSelect(this)"/>
+                      </div>
+                      <input id="popup-image-url" placeholder="অথবা সরাসরি URL দিন..." oninput="updatePopupImgPreview(this.value)"/>
+                    </div>
+                    <div class="field"><label>ক্লিক করলে কোথায় যাবে (navigate key বা URL)</label><input id="popup-image-link" placeholder="courses"/></div>
+                  </div>
                 </div>
                 <div class="field"><label>শিরোনাম</label><input id="popup-title" placeholder="স্বাগতম!"/></div>
                 <div class="field"><label>সাবটেক্সট</label><textarea id="popup-subtext" placeholder="আমাদের সেরা কোর্সটি দেখুন..."></textarea></div>
@@ -1445,7 +1475,30 @@
       <div class="field"><label>নাম *</label><input id="i-name" placeholder="শিক্ষকের নাম"/></div>
       <div class="field"><label>পদবী</label><input id="i-title" placeholder="যেমন: হাফেজ, মুফতি"/></div>
       <div class="field"><label>বায়ো</label><textarea id="i-bio" placeholder="সংক্ষিপ্ত পরিচিতি..."></textarea></div>
-      <div class="field"><label>ফটো URL</label><input id="i-photo" placeholder="https://..."/></div>
+      <div class="field">
+        <label>ফটো</label>
+        <div id="instructor-photo-drop-zone"
+          ondragover="event.preventDefault();this.classList.add('drag-over')"
+          ondragleave="this.classList.remove('drag-over')"
+          ondrop="handleInstructorPhotoDrop(event)"
+          onclick="document.getElementById('instructor-photo-file-input').click()"
+          style="border:2px dashed var(--border2);border-radius:var(--radius-sm);padding:16px;text-align:center;cursor:pointer;background:var(--bg3);transition:all 0.2s;min-height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;position:relative;margin-bottom:8px">
+          <div style="font-size:24px">📷</div>
+          <div style="font-size:12px;color:var(--text2)">ফটো টেনে আনুন বা ক্লিক করুন</div>
+          <div id="instructor-photo-progress" style="display:none;width:100%;margin-top:6px">
+            <div style="height:4px;background:var(--bg2);border-radius:2px;overflow:hidden">
+              <div id="instructor-photo-progress-bar" style="height:100%;background:var(--primary);width:0%;transition:width 0.3s"></div>
+            </div>
+            <div style="font-size:11px;color:var(--text2);margin-top:4px">আপলোড হচ্ছে...</div>
+          </div>
+          <img id="instructor-photo-preview" src="" alt="" style="display:none;width:70px;height:70px;border-radius:50%;object-fit:cover;margin-top:6px;border:2px solid var(--border2)"/>
+          <input type="file" id="instructor-photo-file-input" accept="image/*" style="display:none" onchange="handleInstructorPhotoFileSelect(this)"/>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input id="i-photo" placeholder="অথবা সরাসরি URL দিন..." style="flex:1" oninput="updateInstructorPhotoPreview(this.value)"/>
+          <button type="button" onclick="clearInstructorPhoto()" style="padding:6px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;color:var(--text2);cursor:pointer" title="পরিষ্কার করুন">✕</button>
+        </div>
+      </div>
       <div class="field"><label>বিশেষজ্ঞতা (কমা দিয়ে)</label><input id="i-spec" placeholder="Quran, Hadith, Fiqh"/></div>
       <div class="row2">
         <div class="field"><label>শিক্ষার্থী</label><input type="number" id="i-students" placeholder="0"/></div>
@@ -1516,7 +1569,7 @@
     <div class="modal-body">
       <input type="hidden" id="notice-id"/>
       <div class="field"><label>শিরোনাম *</label><input id="n-title" placeholder="নোটিশের শিরোনাম"/></div>
-      <div class="field"><label>বিবরণ</label><textarea id="n-body" placeholder="নোটিশের বিস্তারিত..."></textarea></div>
+      <div class="field"><label>বিবরণ</label><textarea id="n-body" placeholder="নোটিশের বিস্g��ারিত..."></textarea></div>
       <div class="row2">
         <div class="field"><label>CTA বাটন লেখা</label><input id="n-cta-text" placeholder="যেমন: আরও জানুন"/></div>
         <div class="field"><label>CTA লিংক</label><input id="n-cta-link" placeholder="https://..."/></div>
@@ -1971,6 +2024,172 @@ function previewExistingThumb(url) {
   document.getElementById('thumb-drop-zone').classList.add('has-image');
 }
 
+// ─────────────────────────────────────────────────────────
+// HERO BACKGROUND IMAGE UPLOAD
+// ─────────────────────────────────────────────────────────
+function handleHeroBgDrop(e) {
+  e.preventDefault();
+  document.getElementById('hero-bg-drop-zone').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) uploadHeroBg(file);
+  else toast('শুধু ছবি ফাইল আপলোড করা যাবে', 'error');
+}
+function handleHeroBgFileSelect(input) {
+  const file = input.files[0];
+  if (file) uploadHeroBg(file);
+}
+function updateHeroBgPreview(url) {
+  const img = document.getElementById('hero-bg-preview');
+  if (!img) return;
+  if (url) { img.src = url; img.style.display = 'block'; } else { img.style.display = 'none'; }
+}
+async function uploadHeroBg(file) {
+  if (file.size > 10 * 1024 * 1024) { toast('ছবির আকার ১০MB এর বেশি হওয়া যাবে না', 'error'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById('hero-bg-preview');
+    img.src = e.target.result; img.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+  const prog = document.getElementById('hero-bg-upload-progress');
+  const bar = document.getElementById('hero-bg-progress-bar');
+  if (prog) prog.style.display = 'block';
+  if (bar) bar.style.width = '20%';
+  try {
+    const token = localStorage.getItem('admin_token');
+    const formData = new FormData(); formData.append('file', file);
+    let p = 20;
+    const iv = setInterval(() => { p = Math.min(p + 15, 85); if (bar) bar.style.width = p + '%'; }, 300);
+    const res = await fetch(API + '/api/admin/upload', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token }, body: formData });
+    clearInterval(iv);
+    if (!res.ok) throw new Error('Upload failed');
+    const data = await res.json();
+    if (bar) bar.style.width = '100%';
+    document.getElementById('hero-bg').value = data.url;
+    document.getElementById('hero-bg-preview').src = data.url;
+    setTimeout(() => { if (prog) prog.style.display = 'none'; if (bar) bar.style.width = '0%'; }, 1500);
+    toast('✅ হিরো ব্যাকগ্রাউন্ড আপলোড হয়েছে');
+  } catch (err) {
+    if (prog) prog.style.display = 'none'; if (bar) bar.style.width = '0%';
+    toast('আপলোড ব্যর্থ: ' + err.message, 'error');
+  }
+}
+
+// ─────────────────────────────────────────────────────────
+// INSTRUCTOR PHOTO UPLOAD
+// ─────────────────────────────────────────────────────────
+function handleInstructorPhotoDrop(e) {
+  e.preventDefault();
+  document.getElementById('instructor-photo-drop-zone').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) uploadInstructorPhoto(file);
+  else toast('শুধু ছবি ফাইল আপলোড করা যাবে', 'error');
+}
+function handleInstructorPhotoFileSelect(input) {
+  const file = input.files[0];
+  if (file) uploadInstructorPhoto(file);
+}
+function updateInstructorPhotoPreview(url) {
+  const img = document.getElementById('instructor-photo-preview');
+  if (!img) return;
+  if (url) { img.src = url; img.style.display = 'block'; } else { img.style.display = 'none'; }
+}
+function clearInstructorPhoto() {
+  document.getElementById('i-photo').value = '';
+  const img = document.getElementById('instructor-photo-preview');
+  if (img) { img.src = ''; img.style.display = 'none'; }
+  const fi = document.getElementById('instructor-photo-file-input');
+  if (fi) fi.value = '';
+}
+async function uploadInstructorPhoto(file) {
+  if (file.size > 5 * 1024 * 1024) { toast('ছবির আকার ৫MB এর বেশি হওয়া যাবে না', 'error'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById('instructor-photo-preview');
+    if (img) { img.src = e.target.result; img.style.display = 'block'; }
+  };
+  reader.readAsDataURL(file);
+  const prog = document.getElementById('instructor-photo-progress');
+  const bar = document.getElementById('instructor-photo-progress-bar');
+  if (prog) prog.style.display = 'block';
+  if (bar) bar.style.width = '20%';
+  try {
+    const token = localStorage.getItem('admin_token');
+    const formData = new FormData(); formData.append('file', file);
+    let p = 20;
+    const iv = setInterval(() => { p = Math.min(p + 15, 85); if (bar) bar.style.width = p + '%'; }, 300);
+    const res = await fetch(API + '/api/admin/upload', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token }, body: formData });
+    clearInterval(iv);
+    if (!res.ok) throw new Error('Upload failed');
+    const data = await res.json();
+    if (bar) bar.style.width = '100%';
+    document.getElementById('i-photo').value = data.url;
+    const img2 = document.getElementById('instructor-photo-preview');
+    if (img2) img2.src = data.url;
+    setTimeout(() => { if (prog) prog.style.display = 'none'; if (bar) bar.style.width = '0%'; }, 1500);
+    toast('✅ ইন্সট্রাক্টর ফটো আপলোড হয়েছে');
+  } catch (err) {
+    if (prog) prog.style.display = 'none'; if (bar) bar.style.width = '0%';
+    toast('আপলোড ব্যর্থ: ' + err.message, 'error');
+  }
+}
+
+// ─────────────────────────────────────────────────────────
+// POPUP IMAGE UPLOAD
+// ─────────────────────────────────────────────────────────
+function togglePopupImageOnlyMode(on) {
+  const sec = document.getElementById('popup-image-only-section');
+  if (sec) sec.style.display = on ? 'block' : 'none';
+}
+function handlePopupImgDrop(e) {
+  e.preventDefault();
+  document.getElementById('popup-img-drop-zone').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) uploadPopupImg(file);
+  else toast('শুধু ছবি ফাইল আপলোড করা যাবে', 'error');
+}
+function handlePopupImgFileSelect(input) {
+  const file = input.files[0];
+  if (file) uploadPopupImg(file);
+}
+function updatePopupImgPreview(url) {
+  const img = document.getElementById('popup-img-preview');
+  if (!img) return;
+  if (url) { img.src = url; img.style.display = 'block'; } else { img.style.display = 'none'; }
+}
+async function uploadPopupImg(file) {
+  if (file.size > 5 * 1024 * 1024) { toast('ছবির আকার ৫MB এর বেশি হওয়া যাবে না', 'error'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById('popup-img-preview');
+    if (img) { img.src = e.target.result; img.style.display = 'block'; }
+  };
+  reader.readAsDataURL(file);
+  const prog = document.getElementById('popup-img-progress');
+  const bar = document.getElementById('popup-img-progress-bar');
+  if (prog) prog.style.display = 'block';
+  if (bar) bar.style.width = '20%';
+  try {
+    const token = localStorage.getItem('admin_token');
+    const formData = new FormData(); formData.append('file', file);
+    let p = 20;
+    const iv = setInterval(() => { p = Math.min(p + 15, 85); if (bar) bar.style.width = p + '%'; }, 300);
+    const res = await fetch(API + '/api/admin/upload', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token }, body: formData });
+    clearInterval(iv);
+    if (!res.ok) throw new Error('Upload failed');
+    const data = await res.json();
+    if (bar) bar.style.width = '100%';
+    document.getElementById('popup-image-url').value = data.url;
+    const img2 = document.getElementById('popup-img-preview');
+    if (img2) img2.src = data.url;
+    setTimeout(() => { if (prog) prog.style.display = 'none'; if (bar) bar.style.width = '0%'; }, 1500);
+    toast('✅ পপআপ ইমেজ আপলোড হয়েছে');
+  } catch (err) {
+    if (prog) prog.style.display = 'none'; if (bar) bar.style.width = '0%';
+    toast('আপলোড ব্যর্থ: ' + err.message, 'error');
+  }
+}
+
 async function openCourseModal(course = null) {
   document.getElementById('course-modal-title').textContent = course ? 'কোর্স এডিট' : 'নতুন কোর্স';
   document.getElementById('course-id').value    = course?._id || '';
@@ -2142,6 +2361,14 @@ function openInstructorModal(inst = null) {
   document.getElementById('i-students').value     = inst?.students || '';
   document.getElementById('i-courses').value      = inst?.courses || '';
   document.getElementById('i-published').checked  = inst?.published !== false;
+  // Show/hide photo preview
+  const prevImg = document.getElementById('instructor-photo-preview');
+  if (prevImg) {
+    if (inst?.photo) { prevImg.src = inst.photo; prevImg.style.display = 'block'; }
+    else { prevImg.src = ''; prevImg.style.display = 'none'; }
+  }
+  const fi = document.getElementById('instructor-photo-file-input');
+  if (fi) fi.value = '';
   openModal('instructor-modal');
 }
 
@@ -2744,7 +2971,9 @@ async function loadHeroSection() {
   try {
     const data = await api('GET', '/api/admin/hero-section');
     const d = (data && Object.keys(data).length) ? data : defaults;
-    document.getElementById('hero-bg').value = d.bgImage || defaults.bgImage;
+    const bgVal = d.bgImage || defaults.bgImage;
+    document.getElementById('hero-bg').value = bgVal;
+    updateHeroBgPreview(bgVal);
     document.getElementById('hero-eyebrow').value = d.eyebrow || defaults.eyebrow;
     document.getElementById('hero-h1-1').value = d.h1Line1 || defaults.h1Line1;
     document.getElementById('hero-h1-2').value = d.h1Line2 || defaults.h1Line2;
@@ -3105,6 +3334,18 @@ async function loadWelcomePopup() {
     const data = await api('GET', '/api/admin/welcome-popup');
     if (data) {
       document.getElementById('popup-enabled').checked = data.enabled !== false;
+      const imgOnly = data.imageOnly === true;
+      document.getElementById('popup-image-only').checked = imgOnly;
+      togglePopupImageOnlyMode(imgOnly);
+      if (data.popupImageUrl) {
+        const el = document.getElementById('popup-image-url');
+        if (el) el.value = data.popupImageUrl;
+        updatePopupImgPreview(data.popupImageUrl);
+      }
+      if (data.popupImageLink) {
+        const el = document.getElementById('popup-image-link');
+        if (el) el.value = data.popupImageLink;
+      }
       document.getElementById('popup-title').value = data.title || '';
       document.getElementById('popup-subtext').value = data.subtext || data.subtitle || '';
       document.getElementById('popup-btn1-text').value = data.btn1Text || data.btnText || '';
@@ -3123,8 +3364,12 @@ async function loadWelcomePopup() {
 }
 
 async function saveWelcomePopup() {
+  const imgOnly = document.getElementById('popup-image-only').checked;
   const body = {
     enabled: document.getElementById('popup-enabled').checked,
+    imageOnly: imgOnly,
+    popupImageUrl: (document.getElementById('popup-image-url') || {}).value || '',
+    popupImageLink: (document.getElementById('popup-image-link') || {}).value || '',
     title: document.getElementById('popup-title').value,
     subtitle: document.getElementById('popup-subtext').value,
     subtext: document.getElementById('popup-subtext').value,
