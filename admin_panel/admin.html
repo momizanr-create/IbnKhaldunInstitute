@@ -435,6 +435,8 @@
         <div class="nav-item" onclick="navTo('instructors')"><span class="icon">👨‍🏫</span> ইন্সট্রাক্টর</div>
         <div class="nav-item" onclick="navTo('testimonials')"><span class="icon">💬</span> রিভিউ</div>
         <div class="nav-item" onclick="navTo('notices')"><span class="icon">📢</span> নোটিশ</div>
+        <div class="nav-item" onclick="navTo('blog-posts')"><span class="icon">📝</span> ব্লগ</div>
+        <div class="nav-item" onclick="navTo('contact-content')"><span class="icon">📞</span> কনট্যাক্ট</div>
         <div class="nav-section">Content</div>
         <div class="nav-item" onclick="navTo('categories')"><span class="icon">🏷️</span> ক্যাটাগরি</div>
         <div class="nav-item" onclick="navTo('course-tabs')"><span class="icon">🗂️</span> কোর্স ট্যাব</div>
@@ -615,6 +617,43 @@
               </table>
             </div>
           </div>
+        </div>
+
+
+
+        <!-- ── BLOG POSTS ── -->
+        <div class="page" id="page-blog-posts">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-left"><h3>📝 ব্লগ পোস্ট</h3><span class="card-subtitle">ওয়েবসাইটের Blog পেজের পোস্ট নিয়ন্ত্রণ করুন</span></div>
+              <button class="btn btn-primary" onclick="openBlogPostModal()">+ নতুন পোস্ট</button>
+            </div>
+            <div class="card-body">
+              <table><thead><tr><th>শিরোনাম</th><th>ক্যাটাগরি</th><th>লেখক</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th></tr></thead>
+              <tbody id="blog-posts-tbody"><tr><td colspan="5" class="loading">লোড হচ্ছে...</td></tr></tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── CONTACT CONTENT ── -->
+        <div class="page" id="page-contact-content">
+          <div class="page-header"><h2>📞 কনট্যাক্ট পেজ</h2><p>যোগাযোগ পেজের লেখা ও তথ্য নিয়ন্ত্রণ করুন</p></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+            <div class="card"><div class="card-header"><h3>✏️ পেজ কনটেন্ট</h3></div><div class="card-body" style="padding:20px">
+              <div class="field"><label>হিরো শিরোনাম</label><input id="contact-page-title" placeholder="যোগাযোগ করুন"/></div>
+              <div class="field"><label>হিরো সাবটাইটেল</label><input id="contact-page-subtitle" placeholder="আমাদের সাথে যোগাযোগ করুন"/></div>
+              <div class="field"><label>সেকশন লেবেল</label><input id="contact-label" placeholder="যোগাযোগ"/></div>
+              <div class="field"><label>সেকশন শিরোনাম</label><input id="contact-heading" placeholder="আমরা আপনার কথা শুনতে চাই"/></div>
+              <div class="field"><label>ফর্ম শিরোনাম</label><input id="contact-form-title-admin" placeholder="মেসেজ পাঠান"/></div>
+            </div></div>
+            <div class="card"><div class="card-header"><h3>📋 যোগাযোগের তথ্য</h3></div><div class="card-body" style="padding:20px">
+              <div class="field"><label>ইমেইল</label><input id="contact-email-info" placeholder="info@example.com"/></div>
+              <div class="field"><label>ফোন</label><input id="contact-phone-info" placeholder="+880..."/></div>
+              <div class="field"><label>ঠিকানা</label><input id="contact-address-info" placeholder="ঢাকা, বাংলাদেশ"/></div>
+              <div class="field"><label>সাপোর্ট সময়</label><input id="contact-hours-info" placeholder="শনি – বৃহস্পতিবার"/></div>
+            </div></div>
+          </div>
+          <div style="margin-top:16px;display:flex;gap:10px"><button class="btn btn-primary" onclick="saveContactContent()">💾 সংরক্ষণ করুন</button><button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="loadContactContent()">🔄 রিলোড</button></div>
         </div>
 
         <!-- ── ENROLLMENTS ── -->
@@ -1450,6 +1489,23 @@
   </div>
 </div>
 
+<!-- Blog Post Modal -->
+<div class="modal-overlay" id="blog-post-modal">
+  <div class="modal" style="max-width:680px">
+    <div class="modal-header"><h3 id="blog-post-modal-title">নতুন ব্লগ পোস্ট</h3><button class="btn-close" onclick="closeModal('blog-post-modal')">×</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="blog-post-id"/>
+      <div class="field"><label>শিরোনাম *</label><input id="bp-title" placeholder="পোস্টের শিরোনাম"/></div>
+      <div class="row2"><div class="field"><label>ক্যাটাগরি</label><input id="bp-category" placeholder="কুরআন শিক্ষা"/></div><div class="field"><label>লেখক</label><input id="bp-author" placeholder="ইবনে খালদুন"/></div></div>
+      <div class="row2"><div class="field"><label>ছবি URL</label><input id="bp-image" placeholder="https://..."/></div><div class="field"><label>রিড টাইম</label><input id="bp-read-time" placeholder="৫ মিনিট পড়া"/></div></div>
+      <div class="field"><label>সংক্ষিপ্ত বিবরণ</label><textarea id="bp-excerpt"></textarea></div>
+      <div class="field"><label>পূর্ণ কনটেন্ট</label><textarea id="bp-content" style="min-height:140px"></textarea></div>
+      <div class="row2"><div class="field"><label><input type="checkbox" id="bp-featured" style="width:auto;margin-right:6px"/>ফিচার্ড</label></div><div class="field"><label><input type="checkbox" id="bp-published" checked style="width:auto;margin-right:6px"/>প্রকাশিত</label></div></div>
+    </div>
+    <div class="modal-footer"><button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="closeModal('blog-post-modal')">বাতিল</button><button class="btn btn-primary" onclick="saveBlogPost()">সংরক্ষণ করুন</button></div>
+  </div>
+</div>
+
 <!-- Notice Modal -->
 <div class="modal-overlay" id="notice-modal">
   <div class="modal">
@@ -1637,6 +1693,9 @@ function toast(msg, type = 'success') {
 // ── Modal ──
 function openModal(id)  { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function escapeAdminHTML(value) {
+  return String(value || '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
+}
 
 // ────────────────────────────────────────────
 // LOGIN
@@ -1720,6 +1779,7 @@ const pageTitles = {
   'hero-courses': 'হিরো কার্ড কোর্স',
   'access-requests': 'অ্যাক্সেস রিকোয়েস্ট',
   users: 'ব্যবহারকারী',
+  'blog-posts': 'ব্লগ', 'contact-content': 'কনট্যাক্ট',
 };
 
 function navTo(page) {
@@ -1738,11 +1798,12 @@ function navTo(page) {
     enrollments: loadEnrollments, categories: loadCategories,
     'course-tabs': loadCourseTabs, 'hero-courses': loadHeroCourses,
     'access-requests': loadAccessRequests, users: loadUsers,
+    'blog-posts': loadBlogPosts, 'contact-content': loadContactContent,
   };
   if (loaders[page]) loaders[page]();
 }
 
-// ────────────────────────────────────────────
+// ───────────────────────────────────────────c��
 // DASHBOARD
 // ────────────────────────────────────────────
 async function loadDashboard() {
@@ -2264,6 +2325,64 @@ async function deleteNotice(id) {
     toast('✅ মুছে গেছে');
     loadNotices();
   } catch (e) { toast('মুছতে পারেনি', 'error'); }
+}
+
+// ────────────────────────────────────────────
+// BLOG POSTS
+// ────────────────────────────────────────────
+let adminBlogPosts = [];
+async function loadBlogPosts() {
+  try {
+    adminBlogPosts = await api('GET', '/api/admin/blog');
+    const tbody = document.getElementById('blog-posts-tbody');
+    tbody.innerHTML = adminBlogPosts.length ? adminBlogPosts.map(p => '<tr><td><strong>' + escapeAdminHTML(p.title) + '</strong></td><td>' + escapeAdminHTML(p.category || '—') + '</td><td>' + escapeAdminHTML(p.author || '—') + '</td><td><span class="badge badge-' + (p.published ? 'green' : 'red') + '">' + (p.published ? 'প্রকাশিত' : 'লুকানো') + '</span></td><td style="display:flex;gap:6px"><button class="btn btn-edit btn-sm" onclick="editBlogPost(\'' + p._id + '\')">✏️</button><button class="btn btn-danger btn-sm" onclick="deleteBlogPost(\'' + p._id + '\')">🗑️</button></td></tr>').join('') : '<tr><td colspan="5" style="text-align:center;color:var(--text2);padding:24px">কোনো ব্লগ পোস্ট নেই</td></tr>';
+  } catch (e) { toast('ব্লগ লোড হয়নি: ' + e.message, 'error'); }
+}
+function openBlogPostModal(post) {
+  post = post || null;
+  document.getElementById('blog-post-modal-title').textContent = post ? 'ব্লগ পোস্ট এডিট' : 'নতুন ব্লগ পোস্ট';
+  document.getElementById('blog-post-id').value = post && post._id || '';
+  document.getElementById('bp-title').value = post && post.title || '';
+  document.getElementById('bp-category').value = post && post.category || '';
+  document.getElementById('bp-author').value = post && post.author || '';
+  document.getElementById('bp-image').value = post && post.image || '';
+  document.getElementById('bp-read-time').value = post && post.readTime || '';
+  document.getElementById('bp-excerpt').value = post && post.excerpt || '';
+  document.getElementById('bp-content').value = post && post.content || '';
+  document.getElementById('bp-featured').checked = !!(post && post.featured);
+  document.getElementById('bp-published').checked = !post || post.published !== false;
+  openModal('blog-post-modal');
+}
+function editBlogPost(id) { const post = adminBlogPosts.find(p => p._id === id); if (post) openBlogPostModal(post); }
+async function saveBlogPost() {
+  const id = document.getElementById('blog-post-id').value;
+  const title = document.getElementById('bp-title').value.trim();
+  if (!title) { toast('শিরোনাম দিন', 'error'); return; }
+  const body = { title, category: document.getElementById('bp-category').value, author: document.getElementById('bp-author').value, image: document.getElementById('bp-image').value, readTime: document.getElementById('bp-read-time').value, excerpt: document.getElementById('bp-excerpt').value, content: document.getElementById('bp-content').value, featured: document.getElementById('bp-featured').checked, published: document.getElementById('bp-published').checked };
+  try { if (id) await api('PUT', '/api/admin/blog/' + id, body); else await api('POST', '/api/admin/blog', body); toast('✅ ব্লগ সংরক্ষিত হয়েছে'); closeModal('blog-post-modal'); loadBlogPosts(); } catch (e) { toast('সমস্যা: ' + e.message, 'error'); }
+}
+async function deleteBlogPost(id) { if (!confirm('ব্লগ পোস্টটি মুছে ফেলবেন?')) return; try { await api('DELETE', '/api/admin/blog/' + id); toast('✅ মুছে গেছে'); loadBlogPosts(); } catch (e) { toast('মুছতে পারেনি: ' + e.message, 'error'); } }
+
+// ────────────────────────────────────────────
+// CONTACT CONTENT
+// ────────────────────────────────────────────
+async function loadContactContent() {
+  try {
+    const d = await api('GET', '/api/admin/contact-content');
+    document.getElementById('contact-page-title').value = d.pageTitle || '';
+    document.getElementById('contact-page-subtitle').value = d.pageSubtitle || '';
+    document.getElementById('contact-label').value = d.label || '';
+    document.getElementById('contact-heading').value = d.heading || '';
+    document.getElementById('contact-form-title-admin').value = d.formTitle || '';
+    document.getElementById('contact-email-info').value = d.email || '';
+    document.getElementById('contact-phone-info').value = d.phone || '';
+    document.getElementById('contact-address-info').value = d.address || '';
+    document.getElementById('contact-hours-info').value = d.hours || '';
+  } catch (e) { toast('কনট্যাক্ট কনটেন্ট লোড হয়নি: ' + e.message, 'error'); }
+}
+async function saveContactContent() {
+  const body = { pageTitle: document.getElementById('contact-page-title').value, pageSubtitle: document.getElementById('contact-page-subtitle').value, label: document.getElementById('contact-label').value, heading: document.getElementById('contact-heading').value, formTitle: document.getElementById('contact-form-title-admin').value, email: document.getElementById('contact-email-info').value, phone: document.getElementById('contact-phone-info').value, address: document.getElementById('contact-address-info').value, hours: document.getElementById('contact-hours-info').value };
+  try { await api('POST', '/api/admin/contact-content', body); toast('✅ কনট্যাক্ট পেজ সংরক্ষিত হয়েছে'); } catch (e) { toast('সমস্যা: ' + e.message, 'error'); }
 }
 
 // ────────────────────────────────────────────

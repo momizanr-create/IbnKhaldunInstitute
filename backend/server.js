@@ -143,6 +143,32 @@ const noticeSchema = new mongoose.Schema({
 });
 const Notice = mongoose.model('Notice', noticeSchema);
 
+const blogPostSchema = new mongoose.Schema({
+  title:      { type: String, required: true },
+  slug:       { type: String, unique: true },
+  category:   String,
+  excerpt:    String,
+  content:    String,
+  author:     String,
+  image:      String,
+  readTime:   String,
+  featured:   { type: Boolean, default: false },
+  published:  { type: Boolean, default: true },
+  createdAt:  { type: Date, default: Date.now },
+  updatedAt:  { type: Date, default: Date.now },
+});
+const BlogPost = mongoose.model('BlogPost', blogPostSchema);
+
+const contactMessageSchema = new mongoose.Schema({
+  name:      String,
+  email:     String,
+  subject:   String,
+  message:   String,
+  status:    { type: String, default: 'new' },
+  createdAt: { type: Date, default: Date.now },
+});
+const ContactMessage = mongoose.model('ContactMessage', contactMessageSchema);
+
 const settingsSchema = new mongoose.Schema({
   key:       { type: String, unique: true },
   value:     mongoose.Schema.Types.Mixed,
@@ -617,6 +643,87 @@ app.get('/api/course-detail/:id', async (req, res) => {
     const s = await Settings.findOne({ key: 'course_detail_' + req.params.id });
     res.json(s ? s.value : {});
   } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ============================================================
+// BLOG POSTS
+// ============================================================
+function makeSlug(text) {
+  return String(text || '').toLowerCase().trim().replace(/s+/g, '-').replace(/[^w-]/g, '').replace(/-+/g, '-') || Date.now().toString(36);
+}
+
+app.get('/api/blog', async (req, res) => {
+  try { res.json(await BlogPost.find({ published: true }).sort({ featured: -1, createdAt: -1 })); }
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.get('/api/blog/:slug', async (req, res) => {
+  try {
+    const post = await BlogPost.findOne({ slug: req.params.slug, published: true });
+    if (!post) return res.status(404).json({ error: 'Not found' });
+    res.json(post);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.get('/api/admin/blog', authMiddleware, async (req, res) => {
+  try { res.json(await BlogPost.find().sort({ createdAt: -1 })); }
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/admin/blog', authMiddleware, async (req, res) => {
+  try {
+    const data = { ...req.body };
+    if (!data.title) return res.status(400).json({ error: 'শিরোনাম দিন' });
+    if (!data.slug) data.slug = makeSlug(data.title);
+    res.json(await BlogPost.create(data));
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+
+app.put('/api/admin/blog/:id', authMiddleware, async (req, res) => {
+  try {
+    const data = { ...req.body, updatedAt: new Date() };
+    if (!data.slug && data.title) data.slug = makeSlug(data.title);
+    res.json(await BlogPost.findByIdAndUpdate(req.params.id, data, { new: true }));
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+
+app.delete('/api/admin/blog/:id', authMiddleware, async (req, res) => {
+  try { await BlogPost.findByIdAndDelete(req.params.id); res.json({ message: 'Deleted' }); }
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ============================================================
+// CONTACT CONTENT + MESSAGES
+// ============================================================
+app.get('/api/contact-content', async (req, res) => {
+  try { const s = await Settings.findOne({ key: 'contact_content' }); res.json(s ? s.value : {}); }
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.get('/api/admin/contact-content', authMiddleware, async (req, res) => {
+  try { const s = await Settings.findOne({ key: 'contact_content' }); res.json(s ? s.value : {}); }
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/admin/contact-content', authMiddleware, async (req, res) => {
+  try {
+    await Settings.findOneAndUpdate({ key: 'contact_content' }, { key: 'contact_content', value: req.body, updatedAt: new Date() }, { upsert: true });
+    res.json({ message: 'Saved' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/contact-messages', async (req, res) => {
+  try {
+    const { name, email, subject, message } = req.body;
+    if (!name || !email || !message) return res.status(400).json({ error: 'নাম, ইমেইল ও বার্তা দিন' });
+    await ContactMessage.create({ name, email, subject, message });
+    res.json({ message: 'Message received' });
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+
+app.get('/api/admin/contact-messages', authMiddleware, async (req, res) => {
+  try { res.json(await ContactMessage.find().sort({ createdAt: -1 })); }
+  catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ============================================================
