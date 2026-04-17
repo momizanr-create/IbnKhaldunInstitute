@@ -399,7 +399,7 @@
     .featured-section-title { font-family: var(--font-heading); font-size: clamp(24px, 3vw, 32px); font-weight: 700; text-align: center; margin-bottom: 10px; color: var(--text-dark); }
 
     /* TOP SELLERS TABS */
-    .courses-tabs { display: flex; justify-content: center; gap: 0; margin-bottom: 40px; border-bottom: 2px solid var(--border); }
+    .featured-tabs, .category-filter-tabs { display: flex; justify-content: center; gap: 0; margin-bottom: 40px; border-bottom: 2px solid var(--border); }
     .courses-tab {
       padding: 12px 32px; font-family: var(--font-nav); font-size: 13px; font-weight: 700;
       letter-spacing: 1.5px; text-transform: uppercase; background: none; border: none;
@@ -884,7 +884,7 @@
     @media (max-width: 480px) {
       .dash-stats { grid-template-columns: 1fr; }
       .instructor-profile-stats { gap: 16px; }
-      .courses-tabs { gap: 0; }
+      .featured-tabs, .category-filter-tabs { gap: 0; }
       .courses-tab { padding: 10px 18px; font-size: 12px; }
       .detail-title { font-size: 22px; }
       .sidebar-price { font-size: 26px; }
@@ -1069,7 +1069,7 @@
 
     /* ── স্ক্রলযোগ্য ট্যাব মোবাইলে ── */
     @media (max-width: 600px) {
-      .courses-tabs {
+      .featured-tabs, .category-filter-tabs {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         justify-content: flex-start;
@@ -1077,7 +1077,7 @@
         -ms-overflow-style: none;
         padding-bottom: 0;
       }
-      .courses-tabs::-webkit-scrollbar { display: none; }
+      .featured-tabs::-webkit-scrollbar, .category-filter-tabs::-webkit-scrollbar { display: none; }
       .courses-tab { flex-shrink: 0; padding: 10px 20px; font-size: 11px; }
 
       .detail-tabs {
@@ -1386,7 +1386,7 @@
         <div class="featured-title-underline fade-in"></div>
 
         <!-- Tabs -->
-        <div class="courses-tabs fade-in">
+        <div class="featured-tabs fade-in">
           <button class="courses-tab active" onclick="switchCoursesTab(this,'top')">সেরা বিক্রেতা</button>
           <button class="courses-tab" onclick="switchCoursesTab(this,'new')">নতুন কোর্সসমূহ</button>
           <button class="courses-tab" onclick="switchCoursesTab(this,'free')">🆓 ফ্রি কোর্সসমূহ</button>
@@ -1449,7 +1449,7 @@
                 <span class="card-stars">★★★★★</span>
                 <span class="card-students">👥 ৫,৮০০</span>
               </div>
-              <div class="card-title">ইসলামিক প্রোডাক্টিভিটি: জীবন গোছানোর ইসলামিক p��দ্ধতি</div>
+              <div class="card-title">ইস  �ামিক প্রোডাক্টিভিটি: জীবন গোছানোর ইসলামিক পদ্ধতি</div>
               <div class="card-instructor">🎓 উস্তাদ রাশেদ</div>
             </div>
             <div class="card-footer-mobe">
@@ -1949,8 +1949,8 @@
       </div>
     </div>
     <div class="container">
-      <!-- কোর্স টাইপ ট্যাব — API থেকে ক্যাটাগরি লোড হবে -->
-      <div class="courses-tabs" style="margin:28px 0 0" id="courses-category-tabs">
+      <!-- ক্যাটাগরি ফিল্টার — API থেকে ক্যাটাগরি লোড হবে -->
+      <div class="category-filter-tabs" style="margin:28px 0 0" id="courses-category-tabs">
         <button class="courses-tab active" onclick="switchCategoryTab(this,'all')">সব কোর্স</button>
         <!-- JS দিয়ে API ক্যাটাগরি লোড হবে -->
       </div>
@@ -1964,11 +1964,6 @@
 
       <!-- কোর্স কাউন্ট ও গ্রিড -->
       <div id="courses-main-area">
-        <!-- কোর্স টাইপ ট্যাব (static tabs) -->
-        <div class="courses-tabs" style="margin:20px 0 0;border-top:1px solid var(--border);padding-top:16px" id="courses-type-tabs">
-          <button class="courses-tab active" data-type="all" onclick="switchCourseTypeTab(this,'all')">📚 সব</button>
-          <!-- JS দিয়ে API ট্যাব লোড হবে -->
-        </div>
         <div class="courses-filters" id="courses-filter-btns">
           <button class="filter-btn active" onclick="filterCourses(this,'all')">সব</button>
           <!-- API থেকে সাব ক্যাটাগরি ফিল্টার লোড হবে -->
@@ -2489,7 +2484,7 @@
         </div>
         <div id="auth-login">
           <div class="auth-form">
-            <div class="form-group"><label>ইমেইল ঠিকান<a�</label><input class="form-input" type="email" placeholder="আপনার ইমেইল" /></div>
+            <div class="form-group"><label>ইমেইল ঠিকানা</label><input class="form-input" type="email" placeholder="আপনার ইমেইল" /></div>
             <div class="form-group"><label>পাসওয়ার্ড</label><input class="form-input" type="password" placeholder="পাসওয়ার্ড দিন" /></div>
             <div class="form-options"><label style="color:#666"><input type="checkbox" style="accent-color:var(--primary)"> আমাকে মনে রাখুন</label><a href="#" onclick="showForgotPassword(); return false;" style="color:var(--primary)">পাসওয়ার্ড ভুলে গেছেন?</a></div>
             <button class="btn btn-primary btn-lg" style="width:100%" onclick="loginAction()">লগইন করুন →</button>
@@ -2789,13 +2784,12 @@
       </div>`;
     }
 
-    // কোর্স পেজে ক্যাটাগরি ট্যাব ও ট্যাব লোড
+    // কোর্স পেজে ক্যাটাগরি ও কোর্স লোড
     async function loadCoursesPage() {
       try {
-        var [cats, courses, tabs] = await Promise.all([
+        var [cats, courses] = await Promise.all([
           fetch(API_BASE + '/api/categories').then(r => r.json()),
           fetch(API_BASE + '/api/courses').then(r => r.json()),
-          fetch(API_BASE + '/api/course-tabs').then(r => r.json()),
         ]);
         _allCategoriesData = cats || [];
         _allCoursesData    = courses || [];
@@ -2808,16 +2802,6 @@
               `<button class="courses-tab" onclick="switchCategoryTab(this,'${c.slug||c.name}')">${c.icon||''} ${c.name}</button>`
             ).join('');
         }
-
-        // ── Course type tabs (from API course-tabs) ──
-        var typeTabsEl = document.getElementById('courses-type-tabs');
-        if (typeTabsEl && tabs && tabs.length) {
-          typeTabsEl.innerHTML = '<button class="courses-tab active" data-type="all" onclick="switchCourseTypeTab(this,\'all\')">📚 সব</button>' +
-            tabs.map(t =>
-              `<button class="courses-tab" data-type="${t.key}" onclick="switchCourseTypeTab(this,'${t.key}')">${t.icon||''} ${t.label}</button>`
-            ).join('');
-        }
-
         renderCoursesGrid();
       } catch(e) {
         var el = document.getElementById('courses-container');
@@ -2857,10 +2841,6 @@
           barEl.style.display = 'none';
         }
       }
-
-      document.querySelectorAll('#courses-type-tabs .courses-tab').forEach(t => {
-        t.classList.toggle('active', t.dataset.type === 'all');
-      });
       renderCoursesGrid();
     }
 
@@ -2870,14 +2850,6 @@
       _currentSubCatFilter = subCat;
       renderCoursesGrid();
     }
-
-    function switchCourseTypeTab(btn, type) {
-      document.querySelectorAll('#courses-type-tabs .courses-tab').forEach(t => t.classList.remove('active'));
-      btn.classList.add('active');
-      _currentTypeFilter = type;
-      renderCoursesGrid();
-    }
-
     function filterCourses(btn, cat) {
       // Legacy support — route to switchCategoryTab
       var tabEl = document.querySelector(`#courses-category-tabs .courses-tab[onclick*="'${cat}'"]`);
@@ -2893,8 +2865,7 @@
       var filtered = _allCoursesData.filter(function(c) {
         var catMatch  = courseBelongsToCategory(c, _currentCatFilter);
         var subMatch  = courseBelongsToSubCategory(c, _currentSubCatFilter);
-        var typeMatch = _currentCatFilter !== 'all' || _currentTypeFilter === 'all' || normalizeFilterValue(c.tabKey) === normalizeFilterValue(_currentTypeFilter) || normalizeFilterValue(c.type) === normalizeFilterValue(_currentTypeFilter);
-        return catMatch && subMatch && typeMatch;
+        return catMatch && subMatch;
       });
 
       var container = document.getElementById('courses-container');
@@ -2994,7 +2965,7 @@
       'islamic-family':      { title: 'ইসলামিক পারিবারিক জীবন: সুখী সংসার গড়ার পথ',       instructor: 'ড. ফারুক আহমেদ',   instructorId: 'james-ball',    price: '৳৯০০',   hours: '২০', emoji: '👨‍👩‍👧', gradient: 'linear-gradient(135deg,#0f3460,#533483)', img: 'https://images.unsplash.com/photo-1511895426328-dc8714191011?w=400&h=220&fit=crop',
         certDesc: ['has successfully completed the professional course on', 'demonstrating a comprehensive understanding of Islamic family values,', 'marital rights, parenting methods, and household harmony in Islam.'],
         desc: 'ইসলামের দৃষ্টিতে বিবাহ, দাম্পত্য জীবন, সন্তান লালন-পালন এবং পারিবারিক সম্পর্কের গভীর আলোচনা এই কোর্সে রয়েছে। কুরআন ও হাদিসের আলোকে সুখী ও শান্তিময় পরিবার গঠনের ব্যবহারিক নির্দেশনা পাবেন।<br><br>কোর্স শেষে আপনি ইসলামিক দৃষ্টিভঙ্গিতে পারিবারিক জীবনের প্রতিটি দিক সামলানোর আত্মবিশ্বাস অর্জন করবেন।',
-        learns: ['ইসলামে বিবাহের উদ্দেশ্য, শর্ত ও আদব', 'স্বামী-স্ত্রীর পারস্পরিক অধিকার ও দায়িত্ব', 'দাম্পত্য জীবনে ঝগড়া মেটানোর ইসলামিক পদ্ধতি', 'সন্তান লালন-পালনে ইসলামিক আদর্শ ও কৌশল', 'পিতামাতার প্:��তি দায়িত্ব ও আত্মীয়তার সম্পর্ক রক্ষা', 'পারিবারিক সংকট সমাধানে ইসলামিক দিকনির্দেশনা'] },
+        learns: ['ইসলামে বিবাহের উদ্দেশ্য, শর্ত ও আদব', 'স্বামী-স্ত্রীর পারস্পরিক অধিকার ও দায়িত্ব', 'দাম্পত্য জীবনে ঝগড়া মেটানোর ইসলামিক পদ্ধতি', 'সন্তান লালন-পালনে ইসলামিক আদর্শ ও কৌশল', 'পিতামাতার প্রতি দায়িত্ব ও আত্মীয়তার সম্পর্ক রক্ষা', 'পারিবারিক সংকট সমাধানে ইসলামিক দিকনির্দেশনা'] },
 
       'fiqhul-ibadat':       { title: 'ফিকহুল ইবাদাত: নামাজ, রোজা ও হজের বিধিবিধান',      instructor: 'মুফতি আমীর',       instructorId: 'james-ball',    price: '৳১,১০০', hours: '৪২', emoji: '⚖️', gradient: 'linear-gradient(135deg,#1d4350,#a43931)', img: 'https://images.unsplash.com/photo-1554232456-8727aae0cfa4?w=400&h=220&fit=crop',
         certDesc: ['has successfully completed the professional course on', 'demonstrating a comprehensive understanding of Islamic jurisprudence,', 'the rulings of Salah, Sawm, Zakat, and Hajj based on authentic sources.'],
@@ -3031,7 +3002,7 @@
         { id: 'qt4',  title: 'তাশদিদ ও সাকিন এর নিয়ম',          dur: '২১:১৫', videoId: 'WoZ7H3bGFiM', free: false },
         { id: 'qt5',  title: 'মদ্দ: টানার নিয়মাবলি',             dur: '৩০:০০', videoId: 'tIeHLnjs5U8', free: false },
         { id: 'qt6',  title: 'ওয়াকফ ও ইবতিদার নিয়ম',           dur: '২৮:৩০', videoId: 'OkmNXy7er84', free: false },
-        { id: 'qt7',  title: 'ইযহার: পরিষ্কার উচ্চারণ',          dur: '২২:০০', videoId: 'spUNpyF58BY', free: false },
+        { id: 'qt7',  title: 'ইযহার: পরিষ্কার উচ্চারণ',          dur: '২২:০���', videoId: 'spUNpyF58BY', free: false },
         { id: 'qt8',  title: 'ইদগাম: মিলিয়ে পড়ার নিয়ম',        dur: '২৬:২০', videoId: 'qFLhGq0060w', free: false },
         { id: 'qt9',  title: 'ইখফা: গোপন করার নিয়ম',             dur: '৩১:০০', videoId: 'X48VuDVv0do', free: false },
         { id: 'qt10', title: 'সূরা ফাতিহা বিশদ অনুশীলন',         dur: '৪৫:০০', videoId: 'Hc6J5rlzoec', free: false },
@@ -3227,7 +3198,7 @@
             '<div style="display:flex;gap:20px;font-size:13.5px;color:var(--text-mid)"><span>★ ' + instData.rating + ' রেটিং</span><span>👥 ' + instData.students + ' শিক্ষার্থী</span><span>📚 ' + instData.courses.length + 'টি কোর্স</span></div>' +
             '</div></div>' +
             '<p style="font-size:14.5px;color:var(--text-mid);line-height:1.75">' + instData.bio + '</p>' +
-            '<div style="margin-top:14px"><button class="btn btn-outline" style="font-size:12px;padding:8px 20px" onclick="openInstructorProfile(\'' + course.instructorId + '\')">👤 সম্পূর্="� প্রোফাইল দেখুন →</button></div>';
+            '<div style="margin-top:14px"><button class="btn btn-outline" style="font-size:12px;padding:8px 20px" onclick="openInstructorProfile(\'' + course.instructorId + '\')">👤 সম্পূর্ণ প্রোফাইল দেখুন →</button></div>';
         }
       }
 
@@ -3504,7 +3475,7 @@
       if (pass !== conf) { showToast('⚠️ পাসওয়ার্ড মিলছে না'); return; }
 
       var btn = document.querySelector('#auth-register .btn-primary');
-      if (btn) { btn.disabled = true; btn.textContent = 'তৈরmi� হচ্ছে...'; }
+      if (btn) { btn.disabled = true; btn.textContent = 'তৈরি হচ্ছে...'; }
 
       // API register
       fetch(API_BASE + '/api/user/register', {
@@ -4116,7 +4087,7 @@
         tagline: 'কুরআন ও তাজওয়িদ বিশেষজ্ঞ | তাফসির গবেষক',
         photo: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=160&h=160&fit=crop&crop=face',
         bio: 'শায়েখ আব্দুল্লাহ বাংলাদেশের অন্যতম বিশিষ্ট কুরআন বিশেষজ্ঞ। মদিনা বিশ্ববিদ্যালয় থেকে কুরআনিক সায়েন্সে উচ্চতর ডিগ্রি অর্জনের পর বিশ বছরেরও বেশি সময় ধরে তাজওয়িদ ও তাফসির বিষয়ে শিক্ষকতা করে আসছেন। তাঁর তত্ত্বাবধানে দশ হাজারেরও বেশি শিক্ষার্থী কুরআন শুদ্ধভাবে পড়তে শিখেছেন।',
-        about: 'শায়েখ আব্দুল্লাহর শিক্ষণ পদ্ধতি সরল, বৈজ্ঞানিক ও অpr�্যন্ত কার্যকর। তিনি বিশ্বাস করেন যে সঠিক পদ্ধতিতে অনুশীলনের মাধ্যমে যেকেউ শুদ্ধ তেলাওয়াত আয়ত্ত করতে পারেন। তাঁর অনলাইন কোর্সগুলো দেশের বাইরে থাকা বাংলাভাষী মুসলিমদের মধ্যেও ব্যাপক জনপ্রিয়তা লাভ করেছে। Ibn Khaldun Institute-এ তিনি Quran Tajweed ও Tafsir কোর্স পরিচালনা করেন।',
+        about: 'শায়েখ আব্দুল্লাহর শিক্ষণ পদ্ধতি সরল, বৈজ্ঞানিক ও অত্যন্ত কার্যকর। তিনি বিশ্বাস করেন যে সঠিক পদ্ধতিতে অনুশীলনের মাধ্যমে যেকেউ শুদ্ধ তেলাওয়াত আয়ত্ত করতে পারেন। তাঁর অনলাইন কোর্সগুলো দেশের বাইরে থাকা বাংলাভাষী মুসলিমদের মধ্যেও ব্যাপক জনপ্রিয়তা লাভ করেছে। Ibn Khaldun Institute-এ তিনি Quran Tajweed ও Tafsir কোর্স পরিচালনা করেন।',
         rating: '4.9', students: '১০,৫০০', reviews: '২.৪K',
         courses: ['quran-tajweed', 'tafsir-quran']
       },
@@ -4124,7 +4095,7 @@
         name: 'উস্তাদ ইউসুফ',
         tagline: 'সীরাত ও সুন্নাহ বিশেষজ্ঞ | ইসলামিক লাইফস্টাইল কোচ',
         photo: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=160&h=160&fit=crop&crop=face',
-        bio: 'উস্তাদ ইউসুফ সীরাতুন নবী ﷺ ও দৈনন্দিন সুন্নাহ চর্চার বিষয়ে বাংলাদেশের একজন শীর্ষস্থানীয় শিক্ষক। আল-আযহার বিশ্ববিদ্যালয় থেকে ইসলামিক স্টাডিজে স্নাতকোত্তর সম্পন্ন করে দেশে ফিরে ইসলামিক শিক্ষা প্রসারে কাজ করে যাচ্ছেন।',
+        bio: 'উস্তাদ ইউসুফ সীরাতুন নবী ﷺ ও দৈনন্দিন সুন্নাহ চর্চার বিষয়ে বাংলাদেশের একজন শীর্ষস্থানীয় শিক্ষক। আল-আযহার বিশ্ববিদ্যালয় থেকে ইসলামিক স্টাডিজে স্নাতকোত্তর সম্পন্ �� করে দেশে ফিরে ইসলামিক শিক্ষা প্রসারে কাজ করে যাচ্ছেন।',
         about: 'উস্তাদ ইউসুফ বিশ্বাস করেন, নবীজি ﷺ-এর জীবন থেকে শিক্ষা নিয়ে আধুনিক জীবনে প্রয়োগ করাই সত্যিকারের মুসলিম জীবনযাপন। তিনি সীরাহকে কেবল ইতিহাস নয়, জীবনের দিকনির্দেশনা হিসেবে উপস্থাপন করেন। পাঁচ হাজারেরও বেশি শিক্ষার্থী তাঁর কোর্সে অংশ নিয়ে জীবন বদলে দিয়েছেন।',
         rating: '4.9', students: '৫,৮০০', reviews: '১.৬K',
         courses: ['seerah-nabi', 'sunnah-life']
@@ -4633,7 +4604,7 @@
           if (ctaSection && ctaData.bgColor)  ctaSection.style.background = ctaData.bgColor;
         }
 
-        // ── FEATURED COURSES CONFIG (tabs/section title) ──
+        // ── FEATURED COURSES CONFIG (tabs/section title + hero scrolling cards) ──
         if (fcConfig && Object.keys(fcConfig).length > 0) {
           var fcTitleEl = document.querySelector('.courses-section-title, #courses-section-title');
           var fcSubEl   = document.querySelector('.courses-section-sub, #courses-section-sub');
@@ -4646,6 +4617,9 @@
             var key = tabKeys[i];
             if (key && fcConfig['tab_' + key]) el.textContent = fcConfig['tab_' + key];
           });
+          if (fcConfig.heroCards && fcConfig.heroCards.length) {
+            applyHeroCards(fcConfig.heroCards);
+          }
         }
 
         // ── COURSES (from MongoDB) ──
@@ -4707,6 +4681,19 @@
       banner.style.color = settings.topBannerColor || '#ffffff';
       banner.innerHTML = link ? '<a href="' + link + '">' + text + '</a>' : text;
     }
+    function openHeroCardCourse(courseId) {
+      var id = String(courseId || '');
+      if (!id) { navigate('courses'); return; }
+      var direct = COURSES[id];
+      if (direct) { openCourseDetail(id); return; }
+      var foundKey = Object.keys(COURSES || {}).find(function(key) {
+        var c = COURSES[key];
+        return c && (String(c._id || '') === id || String(c.id || '') === id || String(c.slug || '') === id);
+      });
+      if (foundKey) openCourseDetail(foundKey);
+      else navigate('courses');
+    }
+
     function applyHeroCards(cards) {
       var track = document.getElementById('heroTrack');
       if (!track || !Array.isArray(cards) || !cards.length) return;
@@ -4715,12 +4702,12 @@
       while (activeCards.length < 7) activeCards = activeCards.concat(activeCards).slice(0, 7);
       var render = function(c, i) {
         var label = c.label || c.title || '';
-        var rawLink = c.link || (c.courseId ? ('course:' + c.courseId) : '#courses');
+        var rawLink = c.link || '';
         var img = c.img || c.thumbnail || '';
         var bg = img ? "background-image:url('" + img + "');background-size:cover;background-position:center;" : '';
         var h = c.height || 250;
         var cls = 'dest-card dc-' + ((i % 7) + 1);
-        var onclick = rawLink.indexOf('course:') === 0 ? "openCourseDetail('" + rawLink.replace('course:', '') + "')" : "navigate('" + rawLink.replace('#','') + "')";
+        var onclick = c.courseId ? "openHeroCardCourse('" + c.courseId + "')" : (rawLink ? "navigate('" + rawLink.replace('#','') + "')" : "navigate('courses')");
         return '<div class="' + cls + '" style="width:150px;height:' + h + 'px;' + bg + '" onclick="' + onclick + '"><span class="dest-card-label">' + label + '</span></div>';
       };
       track.innerHTML = activeCards.map(render).join('') + activeCards.map(render).join('');
