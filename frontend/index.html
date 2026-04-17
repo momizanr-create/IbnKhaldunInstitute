@@ -1955,7 +1955,12 @@
         <!-- JS দিয়ে API ক্যাটাগরি লোড হবে -->
       </div>
 
-      
+      <!-- সাব ক্যাটাগরি ফিল্টার বার — ক্যাটাগরি ক্লিক করলে এখানে সাব ক্যাটাগরি দেখাবে -->
+      <div id="subcategory-filter-bar" style="display:none;padding:12px 0 0">
+        <div class="courses-filters" id="subcategory-filters" style="margin-bottom:0">
+          <!-- JS দিয়ে সাব ক্যাটাগরি বাটন আসবে -->
+        </div>
+      </div>
 
       <!-- কোর্স কাউন্ট ও গ্রিড -->
       <div id="courses-main-area">
@@ -3443,7 +3448,7 @@
           navigate('dashboard');
         }, 800);
       }).catch(function() {
-        if (btn) { btn.disabled = false; btn.textContent = 'লগইন করুন →'; }
+        if (btn) { btn.disabled = false; btn.textContent = 'লগইন oO�রুন →'; }
         // Fallback to localStorage
         var users = lsGet('registeredUsers', []);
         var user = users.find(function(u) { return u.email === email && u.pass === pass; });
