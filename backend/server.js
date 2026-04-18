@@ -121,7 +121,7 @@ const instructorSchema = new mongoose.Schema({
   courses:  { type: Number, default: 0 },
   rating:   { type: Number, default: 4.8 },
   social: { facebook: String, twitter: String, linkedin: String, youtube: String },
-  featured:  { type: Boolean, default: false },
+  featured: { type: Boolean, default: false },
   published: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now },
 });
@@ -228,12 +228,12 @@ const Category = mongoose.model('Category', categorySchema);
 
 // ── Course Tab Schema ──
 const courseTabSchema = new mongoose.Schema({
-  label:     { type: String, required: true },
-  key:       { type: String, required: true, unique: true },
-  icon:      { type: String, default: '' },
-  order:     { type: Number, default: 0 },
-  active:    { type: Boolean, default: true },
-  courseIds: { type: [String], default: [] },
+  label:  { type: String, required: true },
+  key:    { type: String, required: true, unique: true },
+  icon:   { type: String, default: '' },
+  order:  { type: Number, default: 0 },
+  active: { type: Boolean, default: true },
+  courseIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }],
   createdAt: { type: Date, default: Date.now },
 });
 const CourseTab = mongoose.model('CourseTab', courseTabSchema);
@@ -283,6 +283,17 @@ const accessRequestSchema = new mongoose.Schema({
 });
 const AccessRequest = mongoose.model('AccessRequest', accessRequestSchema);
 
+const notificationSchema = new mongoose.Schema({
+  type:     { type: String, required: true },
+  title:    { type: String, required: true },
+  message:  { type: String, default: '' },
+  refId:    String,
+  refModel: String,
+  read:     { type: Boolean, default: false },
+  createdAt:{ type: Date, default: Date.now },
+});
+const Notification = mongoose.model('Notification', notificationSchema);
+
 // ============================================================
 // AUTH MIDDLEWARE
 // ============================================================
@@ -294,6 +305,20 @@ function authMiddleware(req, res, next) {
     next();
   } catch {
     res.status(401).json({ error: 'Invalid or expired token' });
+  }
+}
+
+async function createNotification(type, title, message, refId, refModel) {
+  try {
+    await Notification.create({
+      type,
+      title,
+      message: message || '',
+      refId: refId ? String(refId) : '',
+      refModel: refModel || '',
+    });
+  } catch (e) {
+    console.warn('Notification create failed:', e.message);
   }
 }
 
@@ -459,6 +484,12 @@ app.get('/api/instructors', async (req, res) => {
   catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+app.get('/api/instructors/featured', async (req, res) => {
+  try {
+    res.json((await Instructor.find({ published: true, featured: true }).sort({ createdAt: -1 })).map(i => flattenInstructor(i.toObject())));
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 app.get('/api/admin/instructors', authMiddleware, async (req, res) => {
   try { res.json((await Instructor.find().sort({ createdAt: -1 })).map(i => flattenInstructor(i.toObject()))); }
   catch (e) { res.status(500).json({ error: e.message }); }
@@ -467,7 +498,7 @@ app.get('/api/admin/instructors', authMiddleware, async (req, res) => {
 function flattenInstructor(inst) {
   if (!inst) return inst;
   const s = inst.social || {};
-  return { ...inst, facebook: s.facebook || '', twitter: s.twitter || '', youtube: s.youtube || '', linkedin: s.linkedin || '', featured: inst.featured === true };
+  return { ...inst, facebook: s.facebook || '', twitter: s.twitter || '', youtube: s.youtube || '', linkedin: s.linkedin || '' };
 }
 
 function normInstructorData(data) {
@@ -480,8 +511,6 @@ function normInstructorData(data) {
     linkedin: data.linkedin || data['social.linkedin']  || '',
   };
   delete data.facebook; delete data.twitter; delete data.youtube; delete data.linkedin;
-  if (data.featured !== undefined) data.featured = data.featured === true || data.featured === 'true';
-  if (data.published !== undefined) data.published = data.published === true || data.published === 'true';
   return data;
 }
 
@@ -619,6 +648,13 @@ app.post('/api/enrollments', async (req, res) => {
   try {
     const e = new Enrollment(req.body);
     await e.save();
+    await createNotification(
+      'enrollment',
+      'নতুন কোর্স purchase/enrollment',
+      `${e.studentName || 'একজন শিক্ষার্থী'} ${e.courseTitle || 'একটি কোর্স'}-এর জন্য পেমেন্ট/এনরোলমেন্ট পাঠিয়েছেন।`,
+      e._id,
+      'Enrollment'
+    );
     res.json({ message: 'Enrollment submitted', id: e._id });
   } catch (e) { res.status(400).json({ error: e.message }); }
 });
@@ -760,7 +796,14 @@ app.post('/api/contact-messages', async (req, res) => {
   try {
     const { name, email, subject, message } = req.body;
     if (!name || !email || !message) return res.status(400).json({ error: 'নাম, ইমেইল ও বার্তা দিন' });
-    await ContactMessage.create({ name, email, subject, message });
+    const created = await ContactMessage.create({ name, email, subject, message });
+    await createNotification(
+      'contact',
+      'নতুন যোগাযোগ বার্তা',
+      `${name} (${email}) ${subject ? '— ' + subject : ''}`,
+      created._id,
+      'ContactMessage'
+    );
     res.json({ message: 'Message received' });
   } catch (e) { res.status(400).json({ error: e.message }); }
 });
@@ -778,6 +821,28 @@ app.delete('/api/admin/contact-messages/all', authMiddleware, async (req, res) =
 app.delete('/api/admin/contact-messages/:id', authMiddleware, async (req, res) => {
   try { await ContactMessage.findByIdAndDelete(req.params.id); res.json({ message: 'Deleted' }); }
   catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.get('/api/admin/notifications', authMiddleware, async (req, res) => {
+  try {
+    const list = await Notification.find().sort({ createdAt: -1 }).limit(50);
+    const unread = await Notification.countDocuments({ read: false });
+    res.json({ unread, notifications: list });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.put('/api/admin/notifications/:id/read', authMiddleware, async (req, res) => {
+  try {
+    const item = await Notification.findByIdAndUpdate(req.params.id, { read: true }, { new: true });
+    res.json(item || {});
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+
+app.put('/api/admin/notifications/read-all', authMiddleware, async (req, res) => {
+  try {
+    await Notification.updateMany({ read: false }, { read: true });
+    res.json({ message: 'All read' });
+  } catch (e) { res.status(400).json({ error: e.message }); }
 });
 
 // ============================================================
@@ -993,9 +1058,10 @@ app.post('/api/admin/featured-courses-config', authMiddleware, async (req, res) 
 // ============================================================
 app.get('/api/admin/stats', authMiddleware, async (req, res) => {
   try {
-    const [courses, instructors, testimonials, enrollments] = await Promise.all([
+    const [courses, instructors, testimonials, enrollments, unreadNotifications] = await Promise.all([
       Course.countDocuments(), Instructor.countDocuments(),
       Testimonial.countDocuments(), Enrollment.countDocuments(),
+      Notification.countDocuments({ read: false }),
     ]);
     const pendingEnrollments = await Enrollment.countDocuments({ status: 'pending' });
     const totalRevenue = await Enrollment.aggregate([
@@ -1003,7 +1069,7 @@ app.get('/api/admin/stats', authMiddleware, async (req, res) => {
       { $group: { _id: null, total: { $sum: '$amount' } } },
     ]);
     res.json({ courses, instructors, testimonials, enrollments,
-      pendingEnrollments, revenue: totalRevenue[0]?.total || 0 });
+      pendingEnrollments, unreadNotifications, revenue: totalRevenue[0]?.total || 0 });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -1259,6 +1325,13 @@ app.post('/api/access-request', userAuthMiddleware, async (req, res) => {
       courseId, courseTitle, courseSlug, thumbnail,
       price: price || 0,
     });
+    await createNotification(
+      'access_request',
+      'নতুন কোর্স purchase/access request',
+      `${req.user.name || 'একজন শিক্ষার্থী'} ${courseTitle || 'একটি কোর্স'}-এর জন্য পেমেন্ট তথ্য পাঠিয়েছেন।`,
+      req2._id,
+      'AccessRequest'
+    );
     res.json({ message: 'অ্যাক্সেস অনুরোধ পাঠানো হয়েছে', requestId: req2._id });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
