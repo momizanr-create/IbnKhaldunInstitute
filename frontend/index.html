@@ -2559,6 +2559,11 @@
     // NAVIGATION
     // ===========================
     function navigate(page) {
+      page = page || 'home';
+      var nextPage = document.getElementById('page-' + page);
+      if (!nextPage) page = 'home';
+      nextPage = document.getElementById('page-' + page);
+      if (!nextPage) return false;
       // Stop YouTube video when leaving detail page
       const prevActive = document.querySelector('.page.active');
       if (prevActive && prevActive.id === 'page-detail' && page !== 'detail') {
@@ -2572,7 +2577,7 @@
         } catch(e) {}
       }
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('page-' + page).classList.add('active');
+      nextPage.classList.add('active');
       document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
       const navEl = document.getElementById('nav-' + page);
       if (navEl) navEl.classList.add('active');
@@ -2585,7 +2590,8 @@
       try {
         const hashMap = { home: '', courses: 'courses', about: 'about', contact: 'contact', instructors: 'instructors' };
         if (hashMap[page] !== undefined) {
-          history.replaceState(null, '', hashMap[page] ? '#' + hashMap[page] : window.location.pathname);
+          var basePath = window.location.pathname || '/';
+          history.replaceState(null, '', hashMap[page] ? basePath + '#' + hashMap[page] : basePath);
         }
       } catch(e) {}
       // Show/hide footer — hide on auth page only
@@ -3858,7 +3864,7 @@
         name: 'উস্তাদ রাশেদ',
         tagline: 'ইসলামিক প্রোডাক্টিভিটি বিশেষজ্ঞ | মোটিভেশনাল স্পিকার',
         photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=160&h=160&fit=crop&crop=face',
-        bio: 'উস্তাদ রাশেদ ইসলামিক প্রোডাক্টিভিটি ও লাইফস্টাইল ম্যানেজমেন্টের ক্ষেত্রে বাংলাদেশের একজন পথিকৃৎ। কুরআন ও সুন্নাহর আলোকে সময় ব্যবস্থাপনা, লক্ষ্য নির্ধারণ ও সফলতার পথ বিষয়ে একাধিক বই লিখেছেন যা লক্ষাধিক পাঠক পড়েছেন।',
+        bio: 'উস্তাদ রাশেদ ইসলামিক প্রোডাক্টিভিটি ও লাইফস্টাইল ম্যানেজমেন্টের ক্ষেত্রে বাংলাদেশের একজন পথিকৃৎ। কুরআন ও সুন্নাহর <��লোকে সময় ব্যবস্থাপনা, লক্ষ্য নির্ধারণ ও সফলতার পথ বিষয়ে একাধিক বই লিখেছেন যা লক্ষাধিক পাঠক পড়েছেন।',
         about: 'উস্তাদ রাশেদের শিক্ষণ শৈলী প্র্যাকটিক্যাল ও অনুপ্রেরণামূলক। তিনি দেখান কীভাবে নবীজি ﷺ-এর জীবনপদ্ধতি অনুসরণ করে একজন মুসলিম দুনিয়া ও আখিরাত উভয় ক্ষেত্রে সফল হতে পারেন। তাঁর সেমিনার ও কোর্সে অংশ নিয়ে হাজারো তরুণ নতুনভাবে জীবন সাজিয়েছেন।',
         rating: '4.8', students: '৬,২০০', reviews: '১.৫K',
         courses: ['islamic-productivity', 'sunnah-life']
@@ -4702,9 +4708,17 @@
         tabMap[key] = featuredTabBaseId(key) + '-grid';
         tabCourses[key] = [];
       });
+      activeTabs.forEach(function(t) {
+        var ids = Array.isArray(t.courseIds) ? t.courseIds.map(function(id) { return String(id); }) : [];
+        if (!ids.length) return;
+        var key = String(t.key || '').toLowerCase();
+        tabCourses[key] = ids.map(function(id) {
+          return courses.find(function(c) { return String(c._id || '') === id || String(c.id || '') === id || String(c.slug || '') === id; });
+        }).filter(Boolean);
+      });
       courses.forEach(function(c) {
         var key = (c.tabKey || '').toLowerCase();
-        if (tabCourses[key]) tabCourses[key].push(c);
+        if (tabCourses[key] && !tabCourses[key].some(function(existing) { return String(existing._id || existing.slug || existing.id) === String(c._id || c.slug || c.id); })) tabCourses[key].push(c);
       });
       if (tabCourses.top && !tabCourses.top.length) tabCourses.top = courses.slice(0, 8);
       if (tabCourses.new && !tabCourses.new.length) tabCourses.new = courses.slice(0).reverse().slice(0, 8);
@@ -4785,13 +4799,15 @@
           '<span>📚 ' + (inst.courses||0) + '</span>' +
           '</div></div></div>';
       }).join('');
-      if (grid) grid.innerHTML = instructors.slice(0, 8).map(function(inst) {
+      var homeInstructors = instructors.filter(function(inst) { return inst.featured === true || inst.featured === 'true'; });
+      if (!homeInstructors.length) homeInstructors = instructors.slice(0, 8);
+      if (grid) grid.innerHTML = homeInstructors.slice(0, 8).map(function(inst) {
         var key = inst.slug || inst._id;
         var photo = inst.photo || 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=160&h=160&fit=crop&crop=face';
         var specs = (inst.specializations || []).slice(0, 2).join(' · ') || inst.title || '';
         return '<div class="instructor-card fade-in" onclick="openInstructorProfile(\'' + key + '\')" style="cursor:pointer">' +
           '<div class="instructor-photo-wrap"><img src="' + photo + '" alt="' + (inst.name||'') + '" class="instructor-photo" loading="lazy"/></div>' +
-          '<div class="instructor-info"><div class="instructor-name">' + (inst.name||'') + '</div><div class="instructor-title">' + (inst.title||specs) + '</div><div class="instructor-stats"><span>👥 ' + (inst.students||0) + '</span><span>★ ' + (inst.rating||4.8) + '</span><span>📚 ' + (inst.courses||0) + '</span></div></div></div>';
+          '<div class="instructor-info"><div class="instructor-name">' + (inst.name||'') + (inst.featured ? ' <span style="font-size:11px;color:var(--primary)">★</span>' : '') + '</div><div class="instructor-title">' + (inst.title||specs) + '</div><div class="instructor-stats"><span>👥 ' + (inst.students||0) + '</span><span>★ ' + (inst.rating||4.8) + '</span><span>📚 ' + (inst.courses||0) + '</span></div></div></div>';
       }).join('');
       if (pageGrid) pageGrid.innerHTML = html;
 
@@ -5029,6 +5045,8 @@
         if (hash && hashRoutes[hash]) {
           var el = document.getElementById('page-' + hashRoutes[hash]);
           if (el) navigate(hashRoutes[hash]);
+        } else if (!hash) {
+          navigate('home');
         }
       }
       routeFromHash();

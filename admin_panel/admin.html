@@ -168,6 +168,19 @@
       font-size: 13px; font-weight: 700; color: #111;
     }
     .topbar-uname { font-size: 13px; font-weight: 600; }
+    .notification-wrap { position: relative; }
+    .notification-btn { position: relative; background: var(--bg3); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius-sm); padding: 8px 10px; font-size: 15px; }
+    .notification-count { position: absolute; top: -7px; right: -7px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--red); color: #fff; display: none; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; }
+    .notification-dropdown { display: none; position: absolute; top: 42px; right: 0; width: min(360px, 88vw); max-height: 430px; overflow: auto; background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius); box-shadow: var(--shadow); z-index: 90; }
+    .notification-dropdown.open { display: block; }
+    .notification-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 700; }
+    .notification-item { padding: 12px 14px; border-bottom: 1px solid var(--border); cursor: pointer; background: rgba(255,255,255,0.015); }
+    .notification-item.unread { background: rgba(245,197,24,0.08); }
+    .notification-title { font-size: 13px; font-weight: 700; color: var(--text); }
+    .notification-msg { font-size: 12px; color: var(--text2); margin-top: 4px; line-height: 1.5; }
+    .course-pick-list { max-height: 230px; overflow: auto; border: 1px solid var(--border2); border-radius: var(--radius-sm); background: var(--bg3); padding: 8px; }
+    .course-pick-item { display: flex; gap: 8px; align-items: flex-start; padding: 8px; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .course-pick-item:last-child { border-bottom: 0; }
     .content { padding: 26px 28px; flex: 1; }
 
     /* ── PAGE HEADER ── */
@@ -474,6 +487,13 @@
           </div>
         </div>
         <div class="topbar-actions">
+          <div class="notification-wrap">
+            <button class="notification-btn" onclick="toggleNotifications()" title="নোটিফিকেশন">🔔<span class="notification-count" id="notification-count">0</span></button>
+            <div class="notification-dropdown" id="notification-dropdown">
+              <div class="notification-head"><span>নোটিফিকেশন</span><button class="btn btn-sm" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2)" onclick="markAllNotificationsRead()">সব read</button></div>
+              <div id="notification-list" class="loading">লোড হচ্ছে...</div>
+            </div>
+          </div>
           <a href="https://ibn-khaldun-institute-ucpf.vercel.app/" target="_blank" class="btn btn-sm" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2)">🌐 ওয়েবসাইট</a>
           <div class="topbar-user">
             <div class="topbar-avatar" id="topbar-avatar-letter">A</div>
@@ -1095,6 +1115,7 @@
                 <div class="card-header"><h3>📋 মূল তথ্য</h3></div>
                 <div class="card-body" style="padding:20px">
                   <div class="field"><label>YouTube প্রিভিউ ভিডিও ID</label><input id="cd-youtube-id" placeholder="LXb3EKWsInQ"/></div>
+                  <div class="field"><label>পূর্ণ YouTube URL থেকে ID বের করুন</label><div style="display:flex;gap:8px"><input id="cd-youtube-url" placeholder="https://www.youtube.com/watch?v=LXb3EKWsInQ"/><button class="btn btn-edit" type="button" onclick="extractPreviewYoutubeId()">ID বসান</button></div></div>
                   <div class="field"><label>কোর্সের বর্ণনা</label><textarea id="cd-description" style="min-height:120px" placeholder="বিস্তারিত বর্ণনা..."></textarea></div>
                   <div class="row2">
                     <div class="field"><label>মূল্য (৳)</label><input type="number" id="cd-price" placeholder="1200"/></div>
@@ -1278,7 +1299,7 @@
             <!-- Course Categories Column -->
             <div class="card">
               <div class="card-header">
-                <h3>📚 কোর্স বিভাগ কলাম</h3>
+                <h3>s��� কোর্স বিভাগ কলাম</h3>
                 <button class="btn btn-primary btn-sm" onclick="addFooterCategory()">+ বিভাগ যোগ</button>
               </div>
               <div class="card-body" style="padding:16px">
@@ -1527,7 +1548,7 @@
     <div class="modal-body">
       <input type="hidden" id="instructor-id"/>
       <div class="field"><label>নাম *</label><input id="i-name" placeholder="শিক্ষকের নাম"/></div>
-      <div class="field"><label>পদবী</label><input id="i-title" placeholder="যেমন: হাফেজ, মুফতি"/></div>
+      <div class="field"><label>পদবcl�</label><input id="i-title" placeholder="যেমন: হাফেজ, মুফতি"/></div>
       <div class="field"><label>বায়ো</label><textarea id="i-bio" placeholder="সংক্ষিপ্ত পরিচিতি..."></textarea></div>
       <div class="field">
         <label>ফটো</label>
@@ -1560,6 +1581,9 @@
       </div>
       <div class="field"><label>
         <input type="checkbox" id="i-published" checked style="width:auto;margin-right:6px"/>প্রকাশিত
+      </label></div>
+      <div class="field"><label>
+        <input type="checkbox" id="i-featured" style="width:auto;margin-right:6px"/>হোমপেজে ফিচার্ড শিক্ষক হিসেবে দেখান
       </label></div>
     </div>
     <div class="modal-footer">
@@ -1729,6 +1753,10 @@
         <div class="field"><label>Key (English, unique)</label><input id="tab-key" placeholder="top"/></div>
         <div class="field"><label>ক্রম সংখ্যা</label><input type="number" id="tab-order" placeholder="0"/></div>
       </div>
+      <div class="field">
+        <label>এই ট্যাবে দেখানোর কোর্স নির্বাচন করুন</label>
+        <div id="tab-course-picker" class="course-pick-list"><div class="loading">কোর্স লোড হচ্ছে...</div></div>
+      </div>
       <div class="field"><label><input type="checkbox" id="tab-active" checked style="width:auto;margin-right:6px"/>সক্রিয়</label></div>
     </div>
     <div class="modal-footer">
@@ -1840,24 +1868,61 @@ function setSeenIds(key, ids) { localStorage.setItem(key, JSON.stringify(ids || 
 async function pollAdminNotifications() {
   if (!getToken()) return;
   try {
-    const results = await Promise.all([api('GET', '/api/admin/access-requests?status=pending').catch(() => []), api('GET', '/api/admin/contact-messages').catch(() => [])]);
-    const reqIds = (results[0] || []).map(x => x._id).filter(Boolean);
-    const msgIds = (results[1] || []).map(x => x._id).filter(Boolean);
-    const newReq = reqIds.filter(id => !getSeenIds('admin_seen_access_request_ids').includes(id));
-    const newMsg = msgIds.filter(id => !getSeenIds('admin_seen_contact_message_ids').includes(id));
-    setSeenIds('admin_seen_access_request_ids', reqIds);
-    setSeenIds('admin_seen_contact_message_ids', msgIds);
-    if (adminNotifyPrimed && (newReq.length || newMsg.length)) {
+    const data = await api('GET', '/api/admin/notifications').catch(() => null);
+    if (!data) return;
+    renderAdminNotifications(data);
+    const ids = (data.notifications || []).filter(n => !n.read).map(n => n._id).filter(Boolean);
+    const prev = getSeenIds('admin_seen_notification_ids');
+    const fresh = ids.filter(id => !prev.includes(id));
+    setSeenIds('admin_seen_notification_ids', ids);
+    if (adminNotifyPrimed && fresh.length) {
       playAdminNotifySound();
-      const parts = [];
-      if (newReq.length) parts.push(newReq.length + 'টি নতুন পেমেন্ট/অ্যাক্সেস রিকোয়েস্ট');
-      if (newMsg.length) parts.push(newMsg.length + 'টি নতুন যোগাযোগ মেসেজ');
-      toast('🔔 ' + parts.join(' এবং '));
+      toast('🔔 ' + fresh.length + 'টি নতুন নোটিফিকেশন');
       if (document.getElementById('page-contact-content')?.classList.contains('active')) loadContactMessages();
       if (document.getElementById('page-access-requests')?.classList.contains('active')) loadAccessRequests();
+      if (document.getElementById('page-enrollments')?.classList.contains('active')) loadEnrollments();
     }
     adminNotifyPrimed = true;
   } catch(e) {}
+}
+function renderAdminNotifications(data) {
+  const count = document.getElementById('notification-count');
+  const list = document.getElementById('notification-list');
+  const unread = data?.unread || 0;
+  if (count) {
+    count.textContent = unread > 99 ? '99+' : unread;
+    count.style.display = unread ? 'flex' : 'none';
+  }
+  if (!list) return;
+  const items = data?.notifications || [];
+  list.innerHTML = items.length ? items.map(n => `
+    <div class="notification-item ${n.read ? '' : 'unread'}" onclick="markNotificationRead('${n._id}', '${n.type || ''}')">
+      <div class="notification-title">${escapeAdminHTML(n.title || 'নোটিফিকেশন')}</div>
+      <div class="notification-msg">${escapeAdminHTML(n.message || '')}</div>
+      <div class="notification-msg">${n.createdAt ? new Date(n.createdAt).toLocaleString('bn-BD') : ''}</div>
+    </div>
+  `).join('') : '<div style="padding:18px;text-align:center;color:var(--text2)">কোনো নোটিফিকেশন নেই</div>';
+}
+function toggleNotifications() {
+  const box = document.getElementById('notification-dropdown');
+  if (!box) return;
+  box.classList.toggle('open');
+  pollAdminNotifications();
+}
+async function markNotificationRead(id, type) {
+  try {
+    await api('PUT', '/api/admin/notifications/' + id + '/read');
+    if (type === 'contact') navTo('contact-content');
+    if (type === 'access_request') navTo('access-requests');
+    if (type === 'enrollment') navTo('enrollments');
+    pollAdminNotifications();
+  } catch(e) {}
+}
+async function markAllNotificationsRead() {
+  try {
+    await api('PUT', '/api/admin/notifications/read-all');
+    pollAdminNotifications();
+  } catch(e) { toast('নোটিফিকেশন আপডেট হয়নি', 'error'); }
 }
 function startAdminNotifications() {
   if (adminNotifyTimer) clearInterval(adminNotifyTimer);
@@ -2466,7 +2531,7 @@ async function loadInstructors() {
           <td><strong>${i.name}</strong></td>
           <td>${i.title || '—'}</td>
           <td>${i.students || 0}</td>
-          <td><span class="badge badge-${i.published ? 'green' : 'red'}">${i.published ? 'সক্রিয়' : 'নিষ্ক্রিয়'}</span></td>
+          <td><span class="badge badge-${i.published ? 'green' : 'red'}">${i.published ? 'সক্রিয়' : 'নিষ্ক্রিয়'}</span>${i.featured ? ' <span class="badge badge-yellow">Featured</span>' : ''}</td>
           <td style="display:flex;gap:6px">
             <button class="btn btn-edit btn-sm" onclick="editInstructor('${i._id}')">✏️</button>
             <button class="btn btn-danger btn-sm" onclick="deleteInstructor('${i._id}')">🗑️</button>
@@ -2487,6 +2552,7 @@ function openInstructorModal(inst = null) {
   document.getElementById('i-students').value     = inst?.students || '';
   document.getElementById('i-courses').value      = inst?.courses || '';
   document.getElementById('i-published').checked  = inst?.published !== false;
+  document.getElementById('i-featured').checked   = inst?.featured === true || inst?.featured === 'true';
   // Show/hide photo preview
   const prevImg = document.getElementById('instructor-photo-preview');
   if (prevImg) {
@@ -2519,6 +2585,7 @@ async function saveInstructor() {
     students: +document.getElementById('i-students').value || 0,
     courses: +document.getElementById('i-courses').value || 0,
     published: document.getElementById('i-published').checked,
+    featured: document.getElementById('i-featured').checked,
   };
 
   try {
@@ -3439,6 +3506,36 @@ async function populateCourseSelect() {
   } catch(e) { toast('কোর্স লোড হয়নি', 'error'); }
 }
 
+function extractYoutubeIdFromUrl(value) {
+  const text = String(value || '').trim();
+  if (!text) return '';
+  if (/^[a-zA-Z0-9_-]{11}$/.test(text)) return text;
+  try {
+    const url = new URL(text);
+    const host = url.hostname.replace(/^www\./, '');
+    if (host === 'youtu.be') return url.pathname.split('/').filter(Boolean)[0] || '';
+    if (host.includes('youtube.com')) {
+      const v = url.searchParams.get('v');
+      if (v) return v;
+      const parts = url.pathname.split('/').filter(Boolean);
+      const idx = parts.findIndex(p => ['embed', 'shorts', 'live'].includes(p));
+      if (idx >= 0 && parts[idx + 1]) return parts[idx + 1];
+    }
+  } catch(e) {
+    const match = text.match(/(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([a-zA-Z0-9_-]{11})/);
+    if (match) return match[1];
+  }
+  return '';
+}
+function extractPreviewYoutubeId() {
+  const urlInput = document.getElementById('cd-youtube-url');
+  const idInput = document.getElementById('cd-youtube-id');
+  const id = extractYoutubeIdFromUrl(urlInput ? urlInput.value : '');
+  if (!id) { toast('সঠিক YouTube URL দিন', 'error'); return; }
+  if (idInput) idInput.value = id;
+  toast('✅ YouTube ID বসানো হয়েছে');
+}
+
 let cdCurriculumData = [];
 let cdIncludesData = [];
 
@@ -3450,6 +3547,8 @@ async function loadCourseDetail(id) {
     const data = await api('GET', '/api/admin/course-detail/' + id);
     if (data) {
       document.getElementById('cd-youtube-id').value = data.youtubeId || '';
+      const urlInput = document.getElementById('cd-youtube-url');
+      if (urlInput) urlInput.value = '';
       document.getElementById('cd-description').value = data.description || '';
       document.getElementById('cd-price').value = data.price || '';
       document.getElementById('cd-old-price').value = data.oldPrice || '';
@@ -4076,15 +4175,20 @@ async function deleteCategory(id) {
 // ────────────────────────────────────────────
 // COURSE TABS
 // ────────────────────────────────────────────
+let _courseTabCourseCache = [];
 async function loadCourseTabs() {
   try {
-    const list = await api('GET', '/api/admin/course-tabs');
+    const [list, courses] = await Promise.all([
+      api('GET', '/api/admin/course-tabs'),
+      api('GET', '/api/admin/courses').catch(() => []),
+    ]);
+    _courseTabCourseCache = courses || [];
     document.getElementById('course-tabs-tbody').innerHTML = list.length
       ? list.map(t => `<tr>
           <td style="font-size:20px">${t.icon || ''}</td>
           <td><strong>${t.label}</strong></td>
           <td><code style="font-size:12px;color:var(--text2)">${t.key}</code></td>
-          <td>${t.order || 0}</td>
+          <td>${t.order || 0}<br><small style="color:var(--text2)">${(t.courseIds || []).length} কোর্স</small></td>
           <td><span class="badge badge-${t.active ? 'green' : 'red'}">${t.active ? 'সক্রিয়' : 'নিষ্ক্রিয়'}</span></td>
           <td style="display:flex;gap:6px">
             <button class="btn btn-edit btn-sm" onclick="editCourseTab('${t._id}')">✏️</button>
@@ -4095,7 +4199,23 @@ async function loadCourseTabs() {
   } catch(e) { toast('লোড হয়নি', 'error'); }
 }
 
-function openCourseTabModal(tab = null) {
+async function ensureCourseTabCourses() {
+  if (!_courseTabCourseCache.length) _courseTabCourseCache = await api('GET', '/api/admin/courses').catch(() => []);
+  return _courseTabCourseCache;
+}
+async function renderCourseTabPicker(selectedIds) {
+  const holder = document.getElementById('tab-course-picker');
+  if (!holder) return;
+  const courses = await ensureCourseTabCourses();
+  const selected = new Set((selectedIds || []).map(String));
+  holder.innerHTML = courses.length ? courses.map(c => `
+    <label class="course-pick-item">
+      <input type="checkbox" class="tab-course-checkbox" value="${c._id}" ${selected.has(String(c._id)) ? 'checked' : ''} style="width:auto;margin-top:3px"/>
+      <span><strong>${escapeAdminHTML(c.title || c._id)}</strong><br><small style="color:var(--text2)">${escapeAdminHTML(c.instructor || '')}</small></span>
+    </label>
+  `).join('') : '<div style="padding:16px;text-align:center;color:var(--text2)">আগে কোর্স যোগ করুন</div>';
+}
+async function openCourseTabModal(tab = null) {
   document.getElementById('course-tab-modal-title').textContent = tab ? 'ট্যাব এডিট' : 'নতুন কোর্স ট্যাব';
   document.getElementById('course-tab-id').value = tab?._id || '';
   document.getElementById('tab-icon').value      = tab?.icon || '';
@@ -4103,6 +4223,7 @@ function openCourseTabModal(tab = null) {
   document.getElementById('tab-key').value       = tab?.key || '';
   document.getElementById('tab-order').value     = tab?.order ?? 0;
   document.getElementById('tab-active').checked  = tab?.active !== false;
+  await renderCourseTabPicker(tab?.courseIds || []);
   openModal('course-tab-modal');
 }
 
@@ -4123,6 +4244,7 @@ async function saveCourseTab() {
     label, key, icon: document.getElementById('tab-icon').value || '',
     order: +document.getElementById('tab-order').value || 0,
     active: document.getElementById('tab-active').checked,
+    courseIds: Array.from(document.querySelectorAll('.tab-course-checkbox:checked')).map(x => x.value),
   };
   try {
     if (id) await api('PUT', '/api/admin/course-tabs/' + id, body);
@@ -4232,7 +4354,7 @@ async function saveFaqs() {
   } catch(e) { toast('FAQ সংরক্ষণ হয়নি: ' + e.message, 'error'); }
 }
 
-// ────────────────────────────────────────────
+// ─────────────}��──────────────────────────────
 // HERO COURSES (Scrolling destination cards)
 // ────────────────────────────────────────────
 let heroCoursesList = [];
