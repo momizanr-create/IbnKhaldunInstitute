@@ -437,6 +437,7 @@
         <div class="nav-item" onclick="navTo('notices')"><span class="icon">📢</span> নোটিশ</div>
         <div class="nav-item" onclick="navTo('blog-posts')"><span class="icon">📝</span> ব্লগ</div>
         <div class="nav-item" onclick="navTo('contact-content')"><span class="icon">📞</span> কনট্যাক্ট</div>
+        <div class="nav-item" onclick="navTo('contact-messages')"><span class="icon">✉️</span> বার্তাসমূহ <span id="unread-badge" style="display:none;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;margin-left:4px">0</span></div>
         <div class="nav-section">Content</div>
         <div class="nav-item" onclick="navTo('categories')"><span class="icon">🏷️</span> ক্যাটাগরি</div>
         <div class="nav-item" onclick="navTo('course-tabs')"><span class="icon">🧭</span> কোর্স ট্যাব</div>
@@ -473,6 +474,10 @@
         </div>
         <div class="topbar-actions">
           <a href="https://ibn-khaldun-institute-ucpf.vercel.app/" target="_blank" class="btn btn-sm" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2)">🌐 ওয়েবসাইট</a>
+          <button id="notif-bell" onclick="toggleNotifPanel()" style="position:relative;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 10px;cursor:pointer;font-size:16px;color:var(--text2)">
+            🔔
+            <span id="notif-count" style="display:none;position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:10px;font-weight:800;min-width:18px;height:18px;border-radius:9px;display:none;align-items:center;justify-content:center;padding:0 4px">0</span>
+          </button>
           <div class="topbar-user">
             <div class="topbar-avatar" id="topbar-avatar-letter">A</div>
             <span class="topbar-uname" id="topbar-uname-display">Admin</span>
@@ -632,6 +637,28 @@
             <div class="card-body">
               <table><thead><tr><th>শিরোনাম</th><th>ক্যাটাগরি</th><th>লেখক</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th></tr></thead>
               <tbody id="blog-posts-tbody"><tr><td colspan="5" class="loading">লোড হচ্ছে...</td></tr></tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── CONTACT MESSAGES ── -->
+        <div class="page" id="page-contact-messages">
+          <div class="page-header"><h2>✉️ যোগাযোগ বার্তাসমূহ</h2><p>ওয়েবসাইট থেকে আসা বার্তাসমূহ</p></div>
+          <div class="card">
+            <div class="card-header">
+              <h3>ইনবক্স</h3>
+              <div style="display:flex;gap:8px;align-items:center">
+                <span id="contact-msg-count" style="font-size:12px;color:var(--text2)"></span>
+                <button class="btn btn-sm" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2)" onclick="loadContactMessages()">🔄 রিফ্রেশ</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteAllContactMessages()">🗑️ সব মুছুন</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <table><thead><tr>
+                <th>নাম</th><th>ইমেইল</th><th>বিষয়</th><th>বার্তা</th><th>তারিখ</th><th>অ্যাকশন</th>
+              </tr></thead>
+              <tbody id="contact-messages-tbody"><tr><td colspan="6" class="loading">লোড হচ্ছে...</td></tr></tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -841,7 +868,7 @@
                 <label>পাসওয়ার্ড নিশ্চিত করুন</label>
                 <input type="password" id="confirm-pass" placeholder="পুনরায় লিখুন"/>
               </div>
-              <button class="btn btn-primary" onclick="changePassword()">পাসওয়ার্ড পরিবর্তন করুন</button>
+              <button class="btn btn-primary" onclick="changePassword()">পাসওয়ার্ড পরিবর্তন করু� �</button>
             </div>
           </div>
         </div>
@@ -1123,7 +1150,7 @@
           </div>
         </div>
 
-        <!-- ══════════════════════════════════════════════════
+        <!-- ══════���═══════════════════════════════════════════
              [৮] CTA সেকশন
         ══════════════════════════════════════════════════ -->
         <div class="page" id="page-cta-section">
@@ -1450,7 +1477,7 @@
         </div>
       </div>
       <div class="field">
-        <label>ইন্সট্রাক্টর * <small style="color:var(--text2)">(ইন্সট্রাক্টর না থাকলে কোর্স যোগ করা যাবে না)</small></label>
+        <label>ইন্সট্রাক্টর * <small style="color:var(--text2)">(ইন্সট্রাক্টর না থাকলে কোর্স যোগ di�রা যাবে না)</small></label>
         <select id="c-instructor">
           <option value="">-- ইন্সট্রাক্টর বাছাই করুন --</option>
         </select>
@@ -1554,6 +1581,12 @@
       <div class="row2">
         <div class="field"><label>শিক্ষার্থী</label><input type="number" id="i-students" placeholder="0"/></div>
         <div class="field"><label>কোর্স সংখ্যা</label><input type="number" id="i-courses" placeholder="0"/></div>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px">
+        <label style="font-size:12px;font-weight:600;color:var(--text3);letter-spacing:0.5px;display:block;margin-bottom:10px">📱 সোশ্যাল মিডিয়া লিংক (ঐচ্ছিক)</label>
+        <div class="field"><label>Facebook URL</label><input id="i-facebook" placeholder="https://facebook.com/username"/></div>
+        <div class="field"><label>Twitter / X URL</label><input id="i-twitter" placeholder="https://twitter.com/username"/></div>
+        <div class="field"><label>YouTube URL</label><input id="i-youtube" placeholder="https://youtube.com/@channel"/></div>
       </div>
       <div class="field"><label>
         <input type="checkbox" id="i-published" checked style="width:auto;margin-right:6px"/>প্রকাশিত
@@ -1774,6 +1807,20 @@
   </div>
 </div>
 
+<!-- Notification Panel -->
+<div id="notif-panel" style="display:none;position:fixed;top:70px;right:16px;width:360px;max-height:500px;overflow-y:auto;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);box-shadow:var(--shadow);z-index:200">
+  <div style="padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+    <h4 style="font-size:14px;font-weight:700">🔔 নোটিফিকেশন</h4>
+    <div style="display:flex;gap:8px">
+      <button onclick="markAllNotifsRead()" style="font-size:11px;color:var(--text2);background:none;border:none;cursor:pointer">সব পড়া হয়েছে</button>
+      <button onclick="toggleNotifPanel()" style="font-size:16px;background:none;border:none;color:var(--text2);cursor:pointer">✕</button>
+    </div>
+  </div>
+  <div id="notif-list" style="padding:8px 0">
+    <div style="padding:24px;text-align:center;color:var(--text2);font-size:13px">কোনো নোটিফিকেশন নেই</div>
+  </div>
+</div>
+
 <!-- Toast -->
 <div id="toast"></div>
 
@@ -1874,6 +1921,7 @@ function showApp(username) {
   document.getElementById('topbar-uname-display').textContent = username || 'Admin';
   document.getElementById('topbar-avatar-letter').textContent = (username || 'A')[0].toUpperCase();
   loadDashboard();
+  setTimeout(startNotifPolling, 3000);
 }
 
 function doLogout() {
@@ -1905,6 +1953,7 @@ const pageTitles = {
   'access-requests': 'অ্যাক্সেস রিকোয়েস্ট',
   users: 'ব্যবহারকারী',
   'blog-posts': 'ব্লগ', 'contact-content': 'কনট্যাক্ট',
+  'contact-messages': 'বার্তাসমূহ',
   faqs: 'FAQ',
 };
 
@@ -1925,12 +1974,191 @@ function navTo(page) {
     'course-tabs': loadCourseTabs, 'hero-courses': loadHeroCourses,
     'access-requests': loadAccessRequests, users: loadUsers,
     'blog-posts': loadBlogPosts, 'contact-content': loadContactContent,
+    'contact-messages': loadContactMessages,
     faqs: loadFaqs,
   };
   if (loaders[page]) loaders[page]();
 }
 
 // ───────────────────────────────────────────c��
+// NOTIFICATION SYSTEM (polling-based)
+// ────────────────────────────────────────────
+let _notifications = [];
+let _lastEnrollCount = 0;
+let _lastMsgCount = 0;
+let _notifPollingInterval = null;
+
+function playNotifSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.15);
+    gain.gain.setValueAtTime(0.4, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.4);
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.connect(gain2); gain2.connect(ctx.destination);
+    osc2.frequency.setValueAtTime(1100, ctx.currentTime + 0.2);
+    osc2.frequency.exponentialRampToValueAtTime(660, ctx.currentTime + 0.35);
+    gain2.gain.setValueAtTime(0.35, ctx.currentTime + 0.2);
+    gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.55);
+    osc2.start(ctx.currentTime + 0.2); osc2.stop(ctx.currentTime + 0.55);
+  } catch(e) {}
+}
+
+function addNotification(type, message, subtext) {
+  const n = { id: Date.now() + '_' + Math.random(), type, message, subtext: subtext || '', time: new Date(), read: false };
+  _notifications.unshift(n);
+  if (_notifications.length > 50) _notifications = _notifications.slice(0, 50);
+  renderNotifPanel();
+  updateNotifBadge();
+  playNotifSound();
+  toast((type === 'enrollment' ? '📋 ' : '✉️ ') + message);
+}
+
+function renderNotifPanel() {
+  const list = document.getElementById('notif-list');
+  if (!list) return;
+  if (!_notifications.length) {
+    list.innerHTML = '<div style="padding:24px;text-align:center;color:var(--text2);font-size:13px">কোনো নোটিফিকেশন নেই</div>';
+    return;
+  }
+  list.innerHTML = _notifications.slice(0, 30).map(n => {
+    const time = n.time instanceof Date ? n.time : new Date(n.time);
+    const timeStr = time.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' });
+    const icon = n.type === 'enrollment' ? '📋' : '✉️';
+    const bgStyle = n.read ? '' : 'background:rgba(245,197,24,0.06);';
+    const dotColor = n.type === 'enrollment' ? 'var(--green)' : 'var(--blue)';
+    return `<div onclick="markNotifRead('${n.id}')" style="${bgStyle}padding:13px 18px;border-bottom:1px solid var(--border);cursor:pointer">
+      <div style="display:flex;gap:10px;align-items:flex-start">
+        <div style="width:34px;height:34px;border-radius:10px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${icon}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:${n.read?'500':'700'};color:var(--text);line-height:1.3;margin-bottom:2px">${escapeAdminHTML(n.message)}</div>
+          ${n.subtext ? `<div style="font-size:12px;color:var(--text2)">${escapeAdminHTML(n.subtext)}</div>` : ''}
+          <div style="font-size:11px;color:var(--text2);margin-top:4px">${timeStr}</div>
+        </div>
+        ${!n.read ? `<div style="width:8px;height:8px;border-radius:50%;background:${dotColor};flex-shrink:0;margin-top:4px"></div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function updateNotifBadge() {
+  const unread = _notifications.filter(n => !n.read).length;
+  const badge = document.getElementById('notif-count');
+  const unreadBadge = document.getElementById('unread-badge');
+  if (badge) { if (unread > 0) { badge.style.display = 'flex'; badge.textContent = unread > 9 ? '9+' : unread; } else { badge.style.display = 'none'; } }
+  if (unreadBadge) { if (unread > 0) { unreadBadge.style.display = 'inline'; unreadBadge.textContent = unread > 9 ? '9+' : unread; } else { unreadBadge.style.display = 'none'; } }
+}
+
+function markNotifRead(id) {
+  const n = _notifications.find(x => String(x.id) === String(id));
+  if (n) n.read = true;
+  renderNotifPanel(); updateNotifBadge();
+}
+
+function markAllNotifsRead() {
+  _notifications.forEach(n => n.read = true);
+  renderNotifPanel(); updateNotifBadge();
+}
+
+function toggleNotifPanel() {
+  const panel = document.getElementById('notif-panel');
+  if (!panel) return;
+  const visible = panel.style.display !== 'none';
+  panel.style.display = visible ? 'none' : 'block';
+  if (!visible) renderNotifPanel();
+}
+
+document.addEventListener('click', function(e) {
+  const panel = document.getElementById('notif-panel');
+  const bell = document.getElementById('notif-bell');
+  if (panel && bell && !panel.contains(e.target) && !bell.contains(e.target)) panel.style.display = 'none';
+});
+
+async function pollNotifications() {
+  try {
+    const enrollments = await api('GET', '/api/admin/enrollments');
+    const newCount = enrollments.length;
+    if (_lastEnrollCount > 0 && newCount > _lastEnrollCount) {
+      const newest = enrollments[0];
+      addNotification('enrollment', 'নতুন এনরোলমেন্ট: ' + (newest.courseTitle || 'কোর্স'), (newest.studentName || '—') + ' · ৳' + (newest.amount || newest.price || 0));
+    }
+    _lastEnrollCount = newCount;
+  } catch(e) {}
+  try {
+    const msgs = await api('GET', '/api/admin/contact-messages');
+    const msgCount = msgs.length;
+    if (_lastMsgCount > 0 && msgCount > _lastMsgCount) {
+      const newest = msgs[0];
+      addNotification('message', 'নতুন বার্তা: ' + (newest.subject || 'যোগাযোগ'), (newest.name || '—') + ' · ' + (newest.email || ''));
+    }
+    _lastMsgCount = msgCount;
+  } catch(e) {}
+}
+
+function startNotifPolling() {
+  if (_notifPollingInterval) clearInterval(_notifPollingInterval);
+  api('GET', '/api/admin/enrollments').then(r => { _lastEnrollCount = r.length; }).catch(()=>{});
+  api('GET', '/api/admin/contact-messages').then(r => { _lastMsgCount = r.length; }).catch(()=>{});
+  _notifPollingInterval = setInterval(pollNotifications, 30000);
+}
+
+// ────────────────────────────────────────────
+// CONTACT MESSAGES
+// ────────────────────────────────────────────
+async function loadContactMessages() {
+  try {
+    const msgs = await api('GET', '/api/admin/contact-messages');
+    const count = document.getElementById('contact-msg-count');
+    if (count) count.textContent = msgs.length + ' টি বার্তা';
+    document.getElementById('contact-messages-tbody').innerHTML = msgs.length
+      ? msgs.map(m => `<tr>
+          <td><strong>${escapeAdminHTML(m.name || '—')}</strong></td>
+          <td style="font-size:12px">${escapeAdminHTML(m.email || '—')}</td>
+          <td style="font-size:12px">${escapeAdminHTML(m.subject || '—')}</td>
+          <td style="max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px" title="${escapeAdminHTML(m.message || '')}">${escapeAdminHTML((m.message || '').slice(0, 60))}${(m.message || '').length > 60 ? '…' : ''}</td>
+          <td style="font-size:12px;color:var(--text2);white-space:nowrap">${new Date(m.createdAt || Date.now()).toLocaleDateString('bn-BD')}</td>
+          <td style="display:flex;gap:6px">
+            <button class="btn btn-edit btn-sm" onclick="viewContactMessage('${m._id}')">👁️</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteContactMessage('${m._id}')">🗑️</button>
+          </td>
+        </tr>`).join('')
+      : '<tr><td colspan="6" style="text-align:center;color:var(--text2);padding:24px">কোনো বার্তা নেই</td></tr>';
+  } catch(e) {
+    document.getElementById('contact-messages-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text2);padding:24px">লোড হয়নি — সার্ভারে এই রাউট থাকলে কাজ করবে</td></tr>';
+  }
+}
+
+function viewContactMessage(id) {
+  api('GET', '/api/admin/contact-messages').then(list => {
+    const m = list.find(x => x._id === id);
+    if (!m) return;
+    alert(['নাম: ' + (m.name||'—'), 'ইমেইল: ' + (m.email||'—'), 'বিষয়: ' + (m.subject||'—'), '', 'বার্তা:', m.message||'—'].join('\n'));
+  }).catch(()=>{});
+}
+
+async function deleteContactMessage(id) {
+  if (!confirm('এই বার্তাটি মুছে ফেলবেন?')) return;
+  try {
+    await api('DELETE', '/api/admin/contact-messages/' + id);
+    toast('✅ মুছে গেছে'); loadContactMessages();
+  } catch(e) { toast('মুছতে পারেনি: ' + e.message, 'error'); }
+}
+
+async function deleteAllContactMessages() {
+  if (!confirm('সব বার্তা মুছে ফেলবেন?')) return;
+  try {
+    await api('DELETE', '/api/admin/contact-messages');
+    toast('✅ সব মুছে গেছে'); loadContactMessages();
+  } catch(e) { toast('মুছতে পারেনি: ' + e.message, 'error'); }
+}
+
+// ────────────────────────────────────────────
 // DASHBOARD
 // ────────────────────────────────────────────
 async function loadDashboard() {
@@ -2275,11 +2503,11 @@ async function openCourseModal(course = null) {
   document.getElementById('c-lessons').value    = course?.lessons || '';
   document.getElementById('c-short-desc').value = course?.shortDesc || '';
   document.getElementById('c-desc').value       = course?.description || '';
-  document.getElementById('c-thumbnail').value  = course?.thumbnail || '';
   document.getElementById('c-tags').value       = (course?.tags || []).join(', ');
   document.getElementById('c-featured').checked = course?.featured || false;
   document.getElementById('c-published').checked = course?.published !== false;
   clearThumb();
+  document.getElementById('c-thumbnail').value  = course?.thumbnail || '';
   if (course?.thumbnail) previewExistingThumb(course.thumbnail);
 
   // Load categories dynamically (with sub-categories)
@@ -2405,7 +2633,7 @@ async function deleteCourse(id) {
 
 // ────────────────────────────────────────────
 // INSTRUCTORS
-// ────────────────────────c��───────────────────
+// ─────���──────────────────c��───────────────────
 async function loadInstructors() {
   try {
     const list = await api('GET', '/api/admin/instructors');
@@ -2434,6 +2662,9 @@ function openInstructorModal(inst = null) {
   document.getElementById('i-spec').value         = (inst?.specializations || []).join(', ');
   document.getElementById('i-students').value     = inst?.students || '';
   document.getElementById('i-courses').value      = inst?.courses || '';
+  document.getElementById('i-facebook').value     = inst?.facebook || '';
+  document.getElementById('i-twitter').value      = inst?.twitter || '';
+  document.getElementById('i-youtube').value      = inst?.youtube || '';
   document.getElementById('i-published').checked  = inst?.published !== false;
   // Show/hide photo preview
   const prevImg = document.getElementById('instructor-photo-preview');
@@ -2466,6 +2697,9 @@ async function saveInstructor() {
     specializations: document.getElementById('i-spec').value.split(',').map(s => s.trim()).filter(Boolean),
     students: +document.getElementById('i-students').value || 0,
     courses: +document.getElementById('i-courses').value || 0,
+    facebook: document.getElementById('i-facebook').value.trim() || '',
+    twitter: document.getElementById('i-twitter').value.trim() || '',
+    youtube: document.getElementById('i-youtube').value.trim() || '',
     published: document.getElementById('i-published').checked,
   };
 
@@ -2561,7 +2795,7 @@ async function deleteTestimonial(id) {
 
 // ────────────────────────────────────────────
 // NOTICES
-// ────────────────────────────────────────────
+// ──────────────────────────���─────────────────
 async function loadNotices() {
   try {
     const list = await api('GET', '/api/admin/notices');
@@ -2831,7 +3065,7 @@ async function changePassword() {
 }
 
 
-// ────────────────────────────────────────────
+// ─────────────────────tE�──────────────────────
 // NEW SECTION PAGES — navTo registration
 // ────────────────────────────────────────────
 // Extend the existing navTo to handle new pages
@@ -4336,10 +4570,10 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
   const def={heroSections:{home:{title:'ইবনে খালদুন ইনস্টিটিউট',subtitle:'অনলাইনে নতুন দক্ষতা অর্জন করুন',backgroundImage:''},courses:{title:'সকল কোর্সসমূহ',subtitle:'এক অক্ষর লিখলেই কোর্স রিকমেন্ডেশন দেখুন',backgroundImage:''},about:{title:'আমাদের সম্পর্কে',subtitle:'আমাদের উদ্দেশ্য, কাজ ও শিক্ষা দর্শন',backgroundImage:''},contact:{title:'যোগাযোগ করুন',subtitle:'আমরা আপনার পাশে আছি',backgroundImage:''}},about:{content:'<p>ইবনে খালদুন ইনস্টিটিউট অনলাইন শিক্ষার একটি নির্ভরযোগ্য প্ল্যাটফর্ম।</p>'},contact:{email:'info@ibnkhaldun.edu.bd',phone:'+880 1700-000000',address:'ঢাকা, বাংলাদেশ',content:'যে কোনো প্রশ্নে আমাদের সাথে যোগাযোগ করুন।'},faqs:[{question:'কোর্স কীভাবে শুরু করব?',answer:'পছন্দের কোর্স নির্বাচন করে এনরোল করুন।'}],promo:{title:'জনপ্রিয় কোর্স',subtitle:'সেরা কোর্সগুলো এক জায়গায়',buttonText:'কোর্স দেখুন',buttonLink:'#courses'},navLinks:[{name:'হোম',link:'#home'},{name:'কোর্সসমূহ',link:'#courses'},{name:'আমাদের সম্পর্কে',link:'#about'},{name:'যোগাযোগ',link:'#contact'}],categories:[{name:'কুরআন',slug:'quran',link:'quran'},{name:'আরবি',slug:'arabic',link:'arabic'}],sidebarBody:[{title:'কোর্স সহায়তা',body:'প্রয়োজনে অ্যাডমিনের সাথে যোগাযোগ করুন।'}]};
   const pretty=v=>JSON.stringify(v||[],null,2), el=id=>document.getElementById(id), val=id=>el(id).value, set=(id,v)=>{if(el(id))el(id).value=v||''};
   function json(id){try{return JSON.parse(val(id)||'[]')}catch(e){throw new Error(id+' ফিল্ডে সঠিক JSON দিন')}}
-  function ensurePage(){if(el('page-full-content'))return;let nav=document.querySelector('.sidebar-nav');if(nav){let item=document.createElement('div');item.className='nav-item';item.setAttribute('onclick',"navTo('full-content')");item.innerHTML='<span class="icon">🧩</span> সম্পূর্ণ কনটেন্ট';nav.insertBefore(item,nav.children[3]||null)}let content=document.querySelector('.content');if(!content)return;let p=document.createElement('div');p.id='page-full-content';p.className='page';p.innerHTML='<div class="page-header"><h2>সম্পূর্ণ সাইট কনটেন্ট</h2><p>About, Contact, FAQ, Page Hero, Navigation, Category, Sidebar এবং Featured Promo আপডেট করুন</p></div><div class="card"><div class="card-header"><h3>Page Hero</h3><button class="btn btn-primary" onclick="saveFullContentBundle()">সব সেভ করুন</button></div><div class="card-body" style="padding:22px"><div id="fc-heroes"></div></div></div><div class="card"><div class="card-header"><h3>Content</h3></div><div class="card-body" style="padding:22px"><div class="field"><label>About Content HTML</label><textarea id="fc-about-content" style="min-height:130px"></textarea></div><div class="row2"><div class="field"><label>Contact Email</label><input id="fc-contact-email"></div><div class="field"><label>Contact Phone</label><input id="fc-contact-phone"></div></div><div class="field"><label>Contact Address</label><input id="fc-contact-address"></div><div class="field"><label>Contact Text</label><textarea id="fc-contact-content"></textarea></div><div class="row2"><div class="field"><label>Promo Title</label><input id="fc-promo-title"></div><div class="field"><label>Promo Subtitle</label><input id="fc-promo-subtitle"></div></div><div class="row2"><div class="field"><label>Promo Button</label><input id="fc-promo-button"></div><div class="field"><label>Promo Link</label><input id="fc-promo-link"></div></div></div></div><div class="card"><div class="card-header"><h3>JSON Lists</h3><button class="btn btn-success" onclick="loadFullContentBundle()">রিলোড</button></div><div class="card-body" style="padding:22px"><div class="field"><label>FAQ JSON</label><textarea id="fc-faqs" style="min-height:130px;font-family:monospace"></textarea></div><div class="field"><label>Navigation JSON</label><textarea id="fc-navlinks" style="min-height:130px;font-family:monospace"></textarea></div><div class="field"><label>Categories JSON</label><textarea id="fc-categories" style="min-height:130px;font-family:monospace"></textarea></div><div class="field"><label>Sidebar Body JSON</label><textarea id="fc-sidebar" style="min-height:130px;font-family:monospace"></textarea></div><button class="btn btn-primary" onclick="saveFullContentBundle()">সব সেভ করুন</button></div></div>';content.appendChild(p);let h=el('fc-heroes');h.innerHTML=['home','courses','about','contact'].map(k=>'<div class="card" style="padding:14px;margin-bottom:14px;background:var(--bg3)"><h4 style="margin-bottom:10px;color:var(--primary)">'+k.toUpperCase()+'</h4><div class="row2"><div class="field"><label>Title</label><input id="fc-'+k+'-title"></div><div class="field"><label>Subtitle</label><input id="fc-'+k+'-subtitle"></div></div><div class="field"><label>Background Image URL</label><input id="fc-'+k+'-bg"></div></div>').join('')}
-  function fill(b){b=Object.assign({},def,b||{});let hs=Object.assign({},def.heroSections,b.heroSections||{});['home','courses','about','contact'].forEach(k=>{set('fc-'+k+'-title',hs[k]?.title);set('fc-'+k+'-subtitle',hs[k]?.subtitle);set('fc-'+k+'-bg',hs[k]?.backgroundImage||hs[k]?.bgImage)});set('fc-about-content',b.about?.content);set('fc-contact-email',b.contact?.email);set('fc-contact-phone',b.contact?.phone);set('fc-contact-address',b.contact?.address);set('fc-contact-content',b.contact?.content);set('fc-promo-title',b.promo?.title);set('fc-promo-subtitle',b.promo?.subtitle);set('fc-promo-button',b.promo?.buttonText);set('fc-promo-link',b.promo?.buttonLink);set('fc-faqs',pretty(b.faqs));set('fc-navlinks',pretty(b.navLinks));set('fc-categories',pretty(b.categories));set('fc-sidebar',pretty(b.sidebarBody))}
+  function ensurePage(){if(el('page-full-content'))return;let nav=document.querySelector('.sidebar-nav');if(nav){let item=document.createElement('div');item.className='nav-item';item.setAttribute('onclick',"navTo('full-content')");item.innerHTML='<span class="icon">🧩</span> সম্পূর্ণ কনটেন্ট';nav.insertBefore(item,nav.children[3]||null)}let content=document.querySelector('.content');if(!content)return;let p=document.createElement('div');p.id='page-full-content';p.className='page';p.innerHTML='<div class="page-header"><h2>সম্পূর্ণ সাইট কনটেন্ট</h2><p>About, Contact, FAQ, Page Hero, Navigation, Category, Sidebar এবং Featured Promo আপডেট করুন</p></div><div class="card"><div class="card-header"><h3>Page Hero</h3><button class="btn btn-primary" onclick="saveFullContentBundle()">সব সেভ করুন</button></div><div class="card-body" style="padding:22px"><div id="fc-heroes"></div></div></div><div class="card"><div class="card-header"><h3>Content</h3></div><div class="card-body" style="padding:22px"><div class="field"><label>About Content HTML</label><textarea id="fc-about-content" style="min-height:130px"></textarea></div><div class="row2"><div class="field"><label>Contact Email</label><input id="fc-contact-email"></div><div class="field"><label>Contact Phone</label><input id="fc-contact-phone"></div></div><div class="field"><label>Contact Address</label><input id="fc-contact-address"></div><div class="field"><label>Contact Text</label><textarea id="fc-contact-content"></textarea></div><div class="row2"><div class="field"><label>Promo Title</label><input id="fc-promo-title"></div><div class="field"><label>Promo Subtitle</label><input id="fc-promo-subtitle"></div></div><div class="row2"><div class="field"><label>Promo Button</label><input id="fc-promo-button"></div><div class="field"><label>Promo Link</label><input id="fc-promo-link"></div></div></div></div><div class="card"><div class="card-header"><h3>JSON Lists</h3><button class="btn btn-success" onclick="loadFullContentBundle()">রিলোড</button></div><div class="card-body" style="padding:22px"><div class="field"><label>FAQ JSON</label><textarea id="fc-faqs" style="min-height:130px;font-family:monospace"></textarea></div><div class="field"><label>Navigation JSON</label><textarea id="fc-navlinks" style="min-height:130px;font-family:monospace"></textarea></div><div class="field"><label>Categories JSON</label><textarea id="fc-categories" style="min-height:130px;font-family:monospace"></textarea></div><div class="field"><label>Sidebar Body JSON</label><textarea id="fc-sidebar" style="min-height:130px;font-family:monospace"></textarea></div><button class="btn btn-primary" onclick="saveFullContentBundle()">সব সেভ করুন</button></div></div>';content.appendChild(p);let h=el('fc-heroes');h.innerHTML=['courses','about','contact'].map(k=>'<div class="card" style="padding:14px;margin-bottom:14px;background:var(--bg3)"><h4 style="margin-bottom:10px;color:var(--primary)">'+k.toUpperCase()+'</h4><div class="row2"><div class="field"><label>Title</label><input id="fc-'+k+'-title"></div><div class="field"><label>Subtitle</label><input id="fc-'+k+'-subtitle"></div></div><div class="field"><label>Background Image URL</label><input id="fc-'+k+'-bg"></div></div>').join('')}
+  function fill(b){b=Object.assign({},def,b||{});let hs=Object.assign({},def.heroSections,b.heroSections||{});['courses','about','contact'].forEach(k=>{set('fc-'+k+'-title',hs[k]?.title);set('fc-'+k+'-subtitle',hs[k]?.subtitle);set('fc-'+k+'-bg',hs[k]?.backgroundImage||hs[k]?.bgImage)});set('fc-about-content',b.about?.content);set('fc-contact-email',b.contact?.email);set('fc-contact-phone',b.contact?.phone);set('fc-contact-address',b.contact?.address);set('fc-contact-content',b.contact?.content);set('fc-promo-title',b.promo?.title);set('fc-promo-subtitle',b.promo?.subtitle);set('fc-promo-button',b.promo?.buttonText);set('fc-promo-link',b.promo?.buttonLink);set('fc-faqs',pretty(b.faqs));set('fc-navlinks',pretty(b.navLinks));set('fc-categories',pretty(b.categories));set('fc-sidebar',pretty(b.sidebarBody))}
   window.loadFullContentBundle=async function(){ensurePage();try{fill(await api('GET','/api/admin/content-bundle'))}catch(e){try{let s=await api('GET','/api/settings');fill(s.contentBundle||def)}catch(_){fill(def)}}};
-  window.saveFullContentBundle=async function(){try{let b={heroSections:{home:{title:val('fc-home-title'),subtitle:val('fc-home-subtitle'),backgroundImage:val('fc-home-bg')},courses:{title:val('fc-courses-title'),subtitle:val('fc-courses-subtitle'),backgroundImage:val('fc-courses-bg')},about:{title:val('fc-about-title'),subtitle:val('fc-about-subtitle'),backgroundImage:val('fc-about-bg')},contact:{title:val('fc-contact-title'),subtitle:val('fc-contact-subtitle'),backgroundImage:val('fc-contact-bg')}},about:{content:val('fc-about-content')},contact:{email:val('fc-contact-email'),phone:val('fc-contact-phone'),address:val('fc-contact-address'),content:val('fc-contact-content')},promo:{title:val('fc-promo-title'),subtitle:val('fc-promo-subtitle'),buttonText:val('fc-promo-button'),buttonLink:val('fc-promo-link')},faqs:json('fc-faqs'),navLinks:json('fc-navlinks'),categories:json('fc-categories'),sidebarBody:json('fc-sidebar')};await api('POST','/api/admin/content-bundle',b).catch(()=>api('POST','/api/admin/settings',{contentBundle:b}));toast('✅ সম্পূর্ণ কনটেন্ট সেভ হয়েছে')}catch(e){toast('সমস্যা: '+e.message,'error')}};
+  window.saveFullContentBundle=async function(){try{let b={heroSections:{courses:{title:val('fc-courses-title'),subtitle:val('fc-courses-subtitle'),backgroundImage:val('fc-courses-bg')},about:{title:val('fc-about-title'),subtitle:val('fc-about-subtitle'),backgroundImage:val('fc-about-bg')},contact:{title:val('fc-contact-title'),subtitle:val('fc-contact-subtitle'),backgroundImage:val('fc-contact-bg')}},about:{content:val('fc-about-content')},contact:{email:val('fc-contact-email'),phone:val('fc-contact-phone'),address:val('fc-contact-address'),content:val('fc-contact-content')},promo:{title:val('fc-promo-title'),subtitle:val('fc-promo-subtitle'),buttonText:val('fc-promo-button'),buttonLink:val('fc-promo-link')},faqs:json('fc-faqs'),navLinks:json('fc-navlinks'),categories:json('fc-categories'),sidebarBody:json('fc-sidebar')};await api('POST','/api/admin/content-bundle',b).catch(()=>api('POST','/api/admin/settings',{contentBundle:b}));toast('✅ সম্পূর্ণ কনটেন্ট সেভ হয়েছে')}catch(e){toast('সমস্যা: '+e.message,'error')}};
   const old=window.navTo;window.navTo=function(page){try{localStorage.setItem('activeAdminNav',page)}catch(e){}old(page);if(page==='full-content')loadFullContentBundle()};pageTitles['full-content']='সম্পূর্ণ কনটেন্ট';window.addEventListener('load',()=>{ensurePage();let a=localStorage.getItem('activeAdminNav');if(a&&a!=='dashboard')setTimeout(()=>navTo(a),250)})
 })();
 </script>

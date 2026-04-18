@@ -453,36 +453,51 @@ app.delete('/api/admin/courses/:id', authMiddleware, async (req, res) => {
 // INSTRUCTORS
 // ============================================================
 app.get('/api/instructors', async (req, res) => {
-  try { res.json(await Instructor.find({ published: true }).sort({ createdAt: -1 })); }
+  try { res.json((await Instructor.find({ published: true }).sort({ createdAt: -1 })).map(i => flattenInstructor(i.toObject()))); }
   catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.get('/api/admin/instructors', authMiddleware, async (req, res) => {
-  try { res.json(await Instructor.find().sort({ createdAt: -1 })); }
+  try { res.json((await Instructor.find().sort({ createdAt: -1 })).map(i => flattenInstructor(i.toObject()))); }
   catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+function flattenInstructor(inst) {
+  if (!inst) return inst;
+  const s = inst.social || {};
+  return { ...inst, facebook: s.facebook || '', twitter: s.twitter || '', youtube: s.youtube || '', linkedin: s.linkedin || '' };
+}
+
+function normInstructorData(data) {
+  if (data.specializations && typeof data.specializations === 'string')
+    data.specializations = data.specializations.split(',').map(s => s.trim());
+  data.social = {
+    facebook: data.facebook || data['social.facebook'] || '',
+    twitter:  data.twitter  || data['social.twitter']  || '',
+    youtube:  data.youtube  || data['social.youtube']  || '',
+    linkedin: data.linkedin || data['social.linkedin']  || '',
+  };
+  delete data.facebook; delete data.twitter; delete data.youtube; delete data.linkedin;
+  return data;
+}
+
 app.post('/api/admin/instructors', authMiddleware, upload.single('photo'), async (req, res) => {
   try {
-    const data = { ...req.body };
+    const data = normInstructorData({ ...req.body });
     if (req.file) data.photo = req.file.path;
-    if (data.specializations && typeof data.specializations === 'string')
-      data.specializations = data.specializations.split(',').map(s => s.trim());
-    if (!data.slug) data.slug = data.name.toLowerCase().replace(/\s+/g, '-');
+    if (!data.slug) data.slug = (data.name || 'instructor').toLowerCase().replace(/\s+/g, '-');
     const inst = new Instructor(data);
     await inst.save();
-    res.json(inst);
+    res.json(flattenInstructor(inst.toObject()));
   } catch (e) { res.status(400).json({ error: e.message }); }
 });
 
 app.put('/api/admin/instructors/:id', authMiddleware, upload.single('photo'), async (req, res) => {
   try {
-    const data = { ...req.body };
+    const data = normInstructorData({ ...req.body });
     if (req.file) data.photo = req.file.path;
-    if (data.specializations && typeof data.specializations === 'string')
-      data.specializations = data.specializations.split(',').map(s => s.trim());
     const inst = await Instructor.findByIdAndUpdate(req.params.id, data, { new: true });
-    res.json(inst);
+    res.json(flattenInstructor(inst.toObject()));
   } catch (e) { res.status(400).json({ error: e.message }); }
 });
 
@@ -748,6 +763,16 @@ app.post('/api/contact-messages', async (req, res) => {
 
 app.get('/api/admin/contact-messages', authMiddleware, async (req, res) => {
   try { res.json(await ContactMessage.find().sort({ createdAt: -1 })); }
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.delete('/api/admin/contact-messages/all', authMiddleware, async (req, res) => {
+  try { await ContactMessage.deleteMany({}); res.json({ message: 'All deleted' }); }
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.delete('/api/admin/contact-messages/:id', authMiddleware, async (req, res) => {
+  try { await ContactMessage.findByIdAndDelete(req.params.id); res.json({ message: 'Deleted' }); }
   catch (e) { res.status(500).json({ error: e.message }); }
 });
 

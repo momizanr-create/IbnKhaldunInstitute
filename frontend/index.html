@@ -2212,6 +2212,7 @@
             <h1 id="profile-name">Instructor Name</h1>
             <div class="instructor-profile-tagline" id="profile-tagline">ইসলামিক শিক্ষক</div>
             <p style="color:#aaa;font-size:14px;max-width:600px;line-height:1.7" id="profile-bio">পরিচিতি লোড হচ্ছে...</p>
+            <div id="profile-socials" class="instructor-socials" style="display:none;justify-content:flex-start;gap:8px;margin:10px 0"></div>
             <div class="instructor-profile-stats">
               <div class="instructor-profile-stat"><span id="profile-rating">৪.৯</span><p>রেটিং</p></div>
               <div class="instructor-profile-stat"><span id="profile-students">১২K+</span><p>শিক্ষার্থী</p></div>
@@ -2321,7 +2322,7 @@
               <span class="section-label">FAQ</span>
               <h2 class="section-title" style="font-size:clamp(24px,3vw,32px)">ইনস্টিটিউট সম্পর্কিত প্রশ্নোত্তর</h2>
               <div class="section-title-underline"></div>
-              <p class="section-sub">ইবনে খালদুন ইনস্টিটিউটের উদ্দেশ্য, শিক্ষা পদ্ধতি ও সার্টিফিকেট সম্পর্কে জানতে পড়ুন।</p>
+              <p class="section-sub">ইবনে খালদুন ইdq�স্টিটিউটের উদ্দেশ্য, শিক্ষা পদ্ধতি ও সার্টিফিকেট সম্পর্কে জানতে পড়ুন।</p>
             </div>
             <div class="faq-list" id="about-faq-list"></div>
           </div>
@@ -4106,6 +4107,20 @@
             });
           }
         }
+        // Social links for API instructor profile page
+        var socialEl = document.getElementById('profile-socials');
+        if (socialEl) {
+          var fb = apiInst.facebook || (apiInst.social && apiInst.social.facebook) || '';
+          var tw = apiInst.twitter  || (apiInst.social && apiInst.social.twitter)  || '';
+          var yt = apiInst.youtube  || (apiInst.social && apiInst.social.youtube)  || '';
+          var socLinks = [];
+          if (fb) socLinks.push('<a href="' + fb + '" target="_blank" rel="noopener" class="social-mini" style="background:#1877f2;color:#fff" title="Facebook">f</a>');
+          if (tw) socLinks.push('<a href="' + tw + '" target="_blank" rel="noopener" class="social-mini" style="background:#000;color:#fff" title="Twitter/X">𝕏</a>');
+          if (yt) socLinks.push('<a href="' + yt + '" target="_blank" rel="noopener" class="social-mini" style="background:#ff0000;color:#fff" title="YouTube">▶</a>');
+          socialEl.innerHTML = socLinks.join('');
+          socialEl.style.display = socLinks.length ? 'flex' : 'none';
+        }
+
         navigate('instructor');
         return;
       }
@@ -4964,10 +4979,15 @@
       var pageGrid = document.getElementById('page-instructors-grid');
       var targetGrids = [grid, pageGrid].filter(Boolean);
       if (!targetGrids.length || !instructors.length) return;
-      var html = instructors.map(function(inst) {
+      function buildInstructorCard(inst) {
         var key = inst.slug || inst._id;
         var photo = inst.photo || 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=160&h=160&fit=crop&crop=face';
         var specs = (inst.specializations || []).slice(0, 2).join(' · ') || inst.title || '';
+        var socialParts = [];
+        if (inst.facebook) socialParts.push('<a href="' + inst.facebook + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Facebook" style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#1877f2;color:#fff;font-size:12px;font-weight:700;text-decoration:none">f</a>');
+        if (inst.twitter) socialParts.push('<a href="' + inst.twitter + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Twitter/X" style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#000;color:#fff;font-size:11px;text-decoration:none">𝕏</a>');
+        if (inst.youtube) socialParts.push('<a href="' + inst.youtube + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="YouTube" style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#ff0000;color:#fff;font-size:10px;text-decoration:none">▶</a>');
+        var socialHtml = socialParts.length ? '<div style="display:flex;gap:5px;margin-top:8px;justify-content:center">' + socialParts.join('') + '</div>' : '';
         return '<div class="instructor-card fade-in" onclick="openInstructorProfile(\'' + key + '\')" style="cursor:pointer">' +
           '<div class="instructor-photo-wrap"><img src="' + photo + '" alt="' + (inst.name||'') + '" class="instructor-photo" loading="lazy"/></div>' +
           '<div class="instructor-info">' +
@@ -4977,16 +4997,10 @@
           '<span>👥 ' + (inst.students||0) + '</span>' +
           '<span>★ ' + (inst.rating||4.8) + '</span>' +
           '<span>📚 ' + (inst.courses||0) + '</span>' +
-          '</div></div></div>';
-      }).join('');
-      if (grid) grid.innerHTML = instructors.slice(0, 8).map(function(inst) {
-        var key = inst.slug || inst._id;
-        var photo = inst.photo || 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=160&h=160&fit=crop&crop=face';
-        var specs = (inst.specializations || []).slice(0, 2).join(' · ') || inst.title || '';
-        return '<div class="instructor-card fade-in" onclick="openInstructorProfile(\'' + key + '\')" style="cursor:pointer">' +
-          '<div class="instructor-photo-wrap"><img src="' + photo + '" alt="' + (inst.name||'') + '" class="instructor-photo" loading="lazy"/></div>' +
-          '<div class="instructor-info"><div class="instructor-name">' + (inst.name||'') + '</div><div class="instructor-title">' + (inst.title||specs) + '</div><div class="instructor-stats"><span>👥 ' + (inst.students||0) + '</span><span>★ ' + (inst.rating||4.8) + '</span><span>📚 ' + (inst.courses||0) + '</span></div></div></div>';
-      }).join('');
+          '</div>' + socialHtml + '</div></div>';
+      }
+      var html = instructors.map(buildInstructorCard).join('');
+      if (grid) grid.innerHTML = instructors.slice(0, 8).map(buildInstructorCard).join('');
       if (pageGrid) pageGrid.innerHTML = html;
 
       instructors.forEach(function(inst) {
@@ -4995,6 +5009,7 @@
         INSTRUCTORS[key] = {
           name: inst.name || '', tagline: inst.title || '', photo: inst.photo || '', bio: inst.bio || '', about: inst.bio || '',
           rating: String(inst.rating || 4.8), students: String(inst.students || 0), reviews: '0', courses: instCourses,
+          facebook: inst.facebook || '', twitter: inst.twitter || '', youtube: inst.youtube || '',
         };
       });
     }
