@@ -4520,7 +4520,7 @@
         // ── COURSES (from MongoDB) ──
         if (apiCourses && Array.isArray(apiCourses) && apiCourses.length > 0) {
           _allCoursesData = apiCourses;
-          renderAPICoursesOnHomepage(apiCourses);
+          renderAPICoursesOnHomepage(apiCourses, apiCourseTabs);
         } else {
           renderDefaultHomepageContent();
         }
@@ -4637,7 +4637,7 @@
     }
 
     // ── Render API courses on homepage ──    // ── Render API courses on homepage ──
-    function renderAPICoursesOnHomepage(courses) {
+    function renderAPICoursesOnHomepage(courses, passedTabs) {
       // API ডেটা দিয়ে COURSES object সম্পূর্ণ আপডেট করি
       // যাতে admin প্যানেল থেকে পরিবর্তন করলে frontend এ দেখা যায়
       courses.forEach(function(c) {
@@ -4699,8 +4699,8 @@
           '</div></div></div>';
       }
 
-      applyCourseTabs(window._featuredTabs || DEFAULT_COURSE_TABS);
-      var activeTabs = getActiveCourseTabs(window._featuredTabs || DEFAULT_COURSE_TABS);
+      applyCourseTabs(passedTabs || window._featuredTabs || DEFAULT_COURSE_TABS);
+      var activeTabs = getActiveCourseTabs(passedTabs || window._featuredTabs || DEFAULT_COURSE_TABS);
       var tabMap = {};
       var tabCourses = {};
       activeTabs.forEach(function(t) {
@@ -4874,7 +4874,7 @@
       if (!grid) return;
       var visible = (posts || []).filter(function(p) { return p && p.published !== false; });
       if (!visible.length) {
-        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px 0;color:var(--text-mid)">এখনো কোনো ব্লগ পোস্ট প্রকাশিত হয়নি।</div>';
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px 0;color:var(--text-mid)">এt��নো কোনো ব্লগ পোস্ট প্রকাশিত হয়নি।</div>';
         return;
       }
       grid.innerHTML = visible.map(function(p) {
