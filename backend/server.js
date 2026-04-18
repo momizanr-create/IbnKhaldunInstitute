@@ -236,6 +236,31 @@ const courseTabSchema = new mongoose.Schema({
 });
 const CourseTab = mongoose.model('CourseTab', courseTabSchema);
 
+const DEFAULT_COURSE_TABS = [
+  { label: 'সেরা বিক্রেতা', key: 'top', icon: '', order: 1, active: true },
+  { label: 'নতুন কোর্সসমূহ', key: 'new', icon: '', order: 2, active: true },
+  { label: 'ফ্রি কোর্সসমূহ', key: 'free', icon: '🆓', order: 3, active: true },
+  { label: 'জনপ্রিয় কোর্সসমূহ', key: 'popular', icon: '🔥', order: 4, active: true },
+  { label: 'বান্ডেল কোর্সসমূহ', key: 'bundle', icon: '📦', order: 5, active: true },
+];
+
+const DEFAULT_FAQS = {
+  home: {
+    items: [
+      { question: 'কোর্সে কীভাবে ভর্তি হব?', answer: 'পছন্দের কোর্স খুলে এনরোল বা অ্যাক্সেস রিকোয়েস্ট পাঠান। অনুমোদনের পর আপনার লার্নিং হাবে কোর্সটি দেখা যাবে।' },
+      { question: 'কোর্সগুলো কি মোবাইল থেকে করা যাবে?', answer: 'হ্যাঁ, মোবাইল, ট্যাব বা কম্পিউটার—যেকোনো ডিভাইস থেকে ক্লাস দেখা যাবে।' },
+      { question: 'কোর্স শেষ করলে সার্টিফিকেট পাব?', answer: 'নির্ধারিত লেসন সম্পন্ন করলে সার্টিফিকেট ডাউনলোড করার সুবিধা থাকবে।' },
+    ],
+  },
+  about: {
+    items: [
+      { question: 'ইবনে খালদুন ইনস্টিটিউটের লক্ষ্য কী?', answer: 'ইসলামিক মূল্যবোধের আলোকে মানসম্পন্ন অনলাইন শিক্ষা সহজলভ্য করা এবং জ্ঞান, আমল ও দক্ষতার সমন্বয়ে শিক্ষার্থী তৈরি করা।' },
+      { question: 'কারা এখানে ক্লাস নেন?', answer: 'বিষয়ভিত্তিক অভিজ্ঞ আলেম, শিক্ষক ও পেশাদার প্রশিক্ষকগণ এখানে কোর্স পরিচালনা করেন।' },
+      { question: 'শিক্ষা পদ্ধতি কেমন?', answer: 'ভিডিও লেসন, ধাপে ধাপে কারিকুলাম, প্র্যাকটিক্যাল নির্দেশনা এবং শেখার অগ্রগতি ট্র্যাক করার সুবিধা রয়েছে।' },
+    ],
+  },
+};
+
 // ── Course Access Request Schema ──
 const accessRequestSchema = new mongoose.Schema({
   userId:          { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -344,7 +369,7 @@ app.post('/api/admin/force-reset', async (req, res) => {
     await Admin.deleteMany({});
     await Admin.create({ username: username || 'admin', password: hashed });
     console.log('✅ Admin force reset done');
-    res.json({ message: 'Admin reset সফল হয়েছে' });
+    res.json({ message: 'Admin reset সফল হয=��েছে' });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -1119,11 +1144,18 @@ app.delete('/api/admin/categories/:id/subcategories/:subId', authMiddleware, asy
 // COURSE TABS
 // ============================================================
 app.get('/api/course-tabs', async (req, res) => {
-  try { res.json(await CourseTab.find({ active: true }).sort({ order: 1 })); }
+  try {
+    let tabs = await CourseTab.find({ active: true }).sort({ order: 1 });
+    res.json(tabs.length ? tabs : DEFAULT_COURSE_TABS);
+  }
   catch (e) { res.status(500).json({ error: e.message }); }
 });
 app.get('/api/admin/course-tabs', authMiddleware, async (req, res) => {
-  try { res.json(await CourseTab.find().sort({ order: 1 })); }
+  try {
+    let tabs = await CourseTab.find().sort({ order: 1 });
+    if (!tabs.length) tabs = await CourseTab.insertMany(DEFAULT_COURSE_TABS);
+    res.json(tabs);
+  }
   catch (e) { res.status(500).json({ error: e.message }); }
 });
 app.post('/api/admin/course-tabs', authMiddleware, async (req, res) => {
@@ -1141,6 +1173,37 @@ app.put('/api/admin/course-tabs/:id', authMiddleware, async (req, res) => {
 app.delete('/api/admin/course-tabs/:id', authMiddleware, async (req, res) => {
   try { await CourseTab.findByIdAndDelete(req.params.id); res.json({ message: 'Deleted' }); }
   catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.get('/api/faqs', async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'faqs' });
+    res.json(s ? s.value : DEFAULT_FAQS);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.get('/api/admin/faqs', authMiddleware, async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'faqs' });
+    res.json(s ? s.value : DEFAULT_FAQS);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.post('/api/admin/faqs', authMiddleware, async (req, res) => {
+  try {
+    const sanitize = section => ({
+      items: Array.isArray(section?.items)
+        ? section.items
+            .map(item => ({ question: String(item.question || '').trim(), answer: String(item.answer || '').trim() }))
+            .filter(item => item.question && item.answer)
+        : [],
+    });
+    const value = { home: sanitize(req.body.home), about: sanitize(req.body.about) };
+    await Settings.findOneAndUpdate(
+      { key: 'faqs' },
+      { key: 'faqs', value, updatedAt: new Date() },
+      { upsert: true }
+    );
+    res.json({ message: 'Saved', value });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ============================================================

@@ -439,7 +439,9 @@
         <div class="nav-item" onclick="navTo('contact-content')"><span class="icon">📞</span> কনট্যাক্ট</div>
         <div class="nav-section">Content</div>
         <div class="nav-item" onclick="navTo('categories')"><span class="icon">🏷️</span> ক্যাটাগরি</div>
+        <div class="nav-item" onclick="navTo('course-tabs')"><span class="icon">🧭</span> কোর্স ট্যাব</div>
         <div class="nav-item" onclick="navTo('hero-courses')"><span class="icon">🖼️</span> হিরো কার্ড</div>
+        <div class="nav-item" onclick="navTo('faqs')"><span class="icon">❓</span> FAQ</div>
         <div class="nav-section">Business</div>
         <div class="nav-item" onclick="navTo('enrollments')"><span class="icon">📋</span> এনরোলমেন্ট</div>
         <div class="nav-item" onclick="navTo('access-requests')"><span class="icon">🔐</span> অ্যাক্সেস রিকোয়েস্ট</div>
@@ -717,6 +719,25 @@
           </div>
         </div>
 
+        <div class="page" id="page-course-tabs">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-left">
+                <h3>🧭 হোম পেজ কোর্স ট্যাব</h3>
+                <span class="card-subtitle">হোম পেজের featured course tabs পরিবর্তন করুন</span>
+              </div>
+              <button class="btn btn-primary" onclick="openCourseTabModal()">+ নতুন ট্যাব</button>
+            </div>
+            <div class="card-body">
+              <table><thead><tr>
+                <th>আইকন</th><th>লেবেল</th><th>Key</th><th>ক্রম</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th>
+              </tr></thead>
+              <tbody id="course-tabs-tbody"><tr><td colspan="6" class="loading">লোড হচ্ছে...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
         <!-- ── HERO COURSES ── -->
         <div class="page" id="page-hero-courses">
           <div class="card">
@@ -729,6 +750,36 @@
             </div>
             <div class="card-body" id="hero-courses-list" style="padding:20px">
               <div class="loading">লোড হচ্ছে...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page" id="page-faqs">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-left">
+                <h3>❓ FAQ ম্যানেজার</h3>
+                <span class="card-subtitle">হোম পেজ ও About পেজের প্রশ্নোত্তর নিয়ন্ত্রণ করুন</span>
+              </div>
+              <button class="btn btn-primary" onclick="saveFaqs()">সংরক্ষণ করুন</button>
+            </div>
+            <div class="card-body" style="padding:22px">
+              <div class="row2">
+                <div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+                    <h3 style="font-size:15px">হোম পেজ FAQ</h3>
+                    <button class="btn btn-sm btn-edit" onclick="addFaqItem('home')">+ প্রশ্ন যোগ</button>
+                  </div>
+                  <div id="home-faq-admin-list"></div>
+                </div>
+                <div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+                    <h3 style="font-size:15px">About পেজ FAQ</h3>
+                    <button class="btn btn-sm btn-edit" onclick="addFaqItem('about')">+ প্রশ্ন যোগ</button>
+                  </div>
+                  <div id="about-faq-admin-list"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -908,7 +959,7 @@
              [৩] হিরো সেকশন
         ══════════════════════════════════════════════════ -->
         <div class="page" id="page-hero-section">
-          <div class="page-header"><h2>🖼️ হিরো সেকশন</h2><p>ওয়েবসাইটের প্রধান ব্যানার এলাকা সম্পাদনা</p></div>
+          <div class="page-header"><h2>🖼️ হিরো সেকশন</h2><p>ওt �়েবসাইটের প্রধান ব্যানার এলাকা সম্পাদনা</p></div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
             <!-- Left: Main Content -->
             <div class="card">
@@ -1179,7 +1230,7 @@
 
         <!-- ══════════════════════════════════════════════════
              [১০] ফুটার ম্যানেজার
-        ══════════════════════════════════════════════════ -->
+        ══════════════════════════════════ ��═══════════════ -->
         <div class="page" id="page-footer-mgr">
           <div class="page-header"><h2>🦶 ফুটার</h2><p>সাইটের নিচের অংশ সম্পাদনা করুন</p></div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
@@ -1854,6 +1905,7 @@ const pageTitles = {
   'access-requests': 'অ্যাক্সেস রিকোয়েস্ট',
   users: 'ব্যবহারকারী',
   'blog-posts': 'ব্লগ', 'contact-content': 'কনট্যাক্ট',
+  faqs: 'FAQ',
 };
 
 function navTo(page) {
@@ -1873,6 +1925,7 @@ function navTo(page) {
     'course-tabs': loadCourseTabs, 'hero-courses': loadHeroCourses,
     'access-requests': loadAccessRequests, users: loadUsers,
     'blog-posts': loadBlogPosts, 'contact-content': loadContactContent,
+    faqs: loadFaqs,
   };
   if (loaders[page]) loaders[page]();
 }
@@ -2290,7 +2343,7 @@ function loadSubCatOptions(catVal, selectedSub) {
     subSel.innerHTML = '<option value="">-- সাব ক্যাটাগরি (ঐচ্ছিক) --</option>' +
       activeSubs.map(s => `<option value="${s.slug||s.name}" ${selectedSub === (s.slug||s.name) ? 'selected' : ''}>${s.icon || ''} ${s.name}</option>`).join('');
   } else {
-    subSel.innerHTML = '<option value="">-- কোনো সাব ক্যাটাগরি নেই --</option>';
+    subSel.innerHTML = '<option value="">-- কোনো সাব ক্যাটাগরl�� নেই --</option>';
   }
 }
 
@@ -3979,6 +4032,96 @@ async function deleteCourseTab(id) {
     toast('✅ মুছে গেছে');
     loadCourseTabs();
   } catch(e) { toast('মুছতে পারেনি', 'error'); }
+}
+
+let _faqState = {
+  home: { items: [] },
+  about: { items: [] },
+};
+
+const DEFAULT_FAQS_ADMIN = {
+  home: {
+    items: [
+      { question: 'কোর্সে কীভাবে ভর্তি হব?', answer: 'পছন্দের কোর্স খুলে এনরোল বা অ্যাক্সেস রিকোয়েস্ট পাঠান। অনুমোদনের পর আপনার লার্নিং হাবে কোর্সটি দেখা যাবে।' },
+      { question: 'কোর্সগুলো কি মোবাইল থেকে করা যাবে?', answer: 'হ্যাঁ, মোবাইল, ট্যাব বা কম্পিউটার—যেকোনো ডিভাইস থেকে ক্লাস দেখা যাবে।' },
+      { question: 'কোর্স শেষ করলে সার্টিফিকেট পাব?', answer: 'নির্ধারিত লেসন সম্পন্ন করলে সার্টিফিকেট ডাউনলোড করার সুবিধা থাকবে।' },
+    ],
+  },
+  about: {
+    items: [
+      { question: 'ইবনে খালদুন ইনস্টিটিউটের লক্ষ্য কী?', answer: 'ইসলামিক মূল্যবোধের আলোকে মানসম্পন্ন অনলাইন শিক্ষা সহজলভ্য করা এবং জ্ঞান, আমল ও দক্ষতার সমন্বয়ে শিক্ষার্থী তৈরি করা।' },
+      { question: 'কারা এখানে ক্লাস নেন?', answer: 'বিষয়ভিত্তিক অভিজ্ঞ আলেম, শিক্ষক ও পেশাদার প্রশিক্ষকগণ এখানে কোর্স পরিচালনা করেন।' },
+      { question: 'শিক্ষা পদ্ধতি কেমন?', answer: 'ভিডিও লেসন, ধাপে ধাপে কারিকুলাম, প্র্যাকটিক্যাল নির্দেশনা এবং শেখার অগ্রগতি ট্র্যাক করার সুবিধা রয়েছে।' },
+    ],
+  },
+};
+
+function faqEscape(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function loadFaqs() {
+  try {
+    const data = await api('GET', '/api/admin/faqs');
+    _faqState = {
+      home: { items: (data.home && Array.isArray(data.home.items) ? data.home.items : DEFAULT_FAQS_ADMIN.home.items).slice() },
+      about: { items: (data.about && Array.isArray(data.about.items) ? data.about.items : DEFAULT_FAQS_ADMIN.about.items).slice() },
+    };
+    renderFaqAdmin('home');
+    renderFaqAdmin('about');
+  } catch(e) {
+    _faqState = JSON.parse(JSON.stringify(DEFAULT_FAQS_ADMIN));
+    renderFaqAdmin('home');
+    renderFaqAdmin('about');
+    toast('FAQ লোড হয়নি', 'error');
+  }
+}
+
+function renderFaqAdmin(section) {
+  const target = document.getElementById(section + '-faq-admin-list');
+  if (!target) return;
+  const items = _faqState[section].items || [];
+  if (!items.length) {
+    target.innerHTML = '<div class="loading" style="padding:28px">কোনো প্রশ্ন নেই</div>';
+    return;
+  }
+  target.innerHTML = items.map((item, idx) => `
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px">
+      <div class="field"><label>প্রশ্ন</label><input value="${faqEscape(item.question)}" oninput="updateFaqItem('${section}',${idx},'question',this.value)" placeholder="প্রশ্ন লিখুন"/></div>
+      <div class="field"><label>উত্তর</label><textarea oninput="updateFaqItem('${section}',${idx},'answer',this.value)" placeholder="উত্তর লিখুন">${faqEscape(item.answer)}</textarea></div>
+      <div style="display:flex;justify-content:flex-end">
+        <button class="btn btn-danger btn-sm" onclick="removeFaqItem('${section}',${idx})">মুছে ফেলুন</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addFaqItem(section) {
+  _faqState[section].items.push({ question: '', answer: '' });
+  renderFaqAdmin(section);
+}
+
+function updateFaqItem(section, idx, field, value) {
+  if (_faqState[section] && _faqState[section].items[idx]) _faqState[section].items[idx][field] = value;
+}
+
+function removeFaqItem(section, idx) {
+  _faqState[section].items.splice(idx, 1);
+  renderFaqAdmin(section);
+}
+
+async function saveFaqs() {
+  try {
+    const payload = {
+      home: { items: (_faqState.home.items || []).filter(item => item.question.trim() && item.answer.trim()) },
+      about: { items: (_faqState.about.items || []).filter(item => item.question.trim() && item.answer.trim()) },
+    };
+    await api('POST', '/api/admin/faqs', payload);
+    toast('✅ FAQ সংরক্ষণ হয়েছে');
+    _faqState = payload;
+    renderFaqAdmin('home');
+    renderFaqAdmin('about');
+  } catch(e) { toast('FAQ সংরক্ষণ হয়নি: ' + e.message, 'error'); }
 }
 
 // ────────────────────────────────────────────

@@ -197,6 +197,7 @@
     .hero {
       position: relative;
       min-height: calc(100vh - var(--header-h));
+      max-height: calc(100svh - var(--header-h));
       display: flex; align-items: stretch;
       overflow: hidden;
     }
@@ -333,6 +334,15 @@
       .hero-inner { justify-content: flex-start; }
       .hero-left { max-width: 100%; }
       .hero h1 { font-size: clamp(30px, 6vw, 44px); }
+    }
+    @media (min-width: 901px) {
+      .hero { height: calc(100svh - var(--header-h)); }
+      .hero-inner { padding-top: 28px; padding-bottom: 28px; gap: 24px; }
+      .hero h1 { font-size: clamp(31px, 3.25vw, 48px); margin-bottom: 14px; }
+      .hero-sub { margin-bottom: 20px; line-height: 1.6; }
+      .hero-slide-nav { margin-top: 24px; }
+      .hero-cards-outer { max-height: calc(100svh - var(--header-h) - 56px); }
+      .dest-card { max-height: calc(100svh - var(--header-h) - 112px); }
     }
     @media (max-width: 768px) {
       .hero-inner { padding: 48px 20px 36px; }
@@ -808,6 +818,17 @@
     /* TOAST */
     .toast { position: fixed; bottom: 28px; right: 28px; z-index: 999; background: #1a1a1a; color: #fff; border: 1px solid #333; border-left: 3px solid var(--primary); padding: 14px 20px; border-radius: var(--radius); font-family: var(--font-body); font-size: 14px; font-weight: 500; box-shadow: var(--shadow-lg); transform: translateY(80px) scale(0.95); opacity: 0; transition: all 0.35s cubic-bezier(0.4,0,0.2,1); display: flex; align-items: center; gap: 10px; }
     .toast.show { transform: translateY(0) scale(1); opacity: 1; }
+
+    .faq-section { padding: 76px 0; background: #fff; }
+    .faq-section.alt { background: #f7f7f7; }
+    .faq-wrap { max-width: 900px; margin: 0 auto; }
+    .faq-list { display: grid; gap: 14px; }
+    .faq-item { background: #fff; border: 1px solid var(--border); border-left: 4px solid var(--primary); border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden; }
+    .faq-question { width: 100%; background: transparent; border: none; padding: 18px 22px; display: flex; align-items: center; justify-content: space-between; gap: 16px; text-align: left; font-family: var(--font-heading); font-size: 16px; font-weight: 700; color: var(--text-dark); }
+    .faq-toggle { width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: rgba(245,197,24,0.16); color: var(--primary-dark); flex-shrink: 0; font-weight: 900; transition: transform var(--transition); }
+    .faq-answer { display: none; padding: 0 22px 20px; color: var(--text-mid); line-height: 1.8; font-size: 14.5px; }
+    .faq-item.open .faq-answer { display: block; }
+    .faq-item.open .faq-toggle { transform: rotate(45deg); }
 
     /* RESPONSIVE */
     @media (max-width: 1100px) {
@@ -1322,7 +1343,7 @@
   <!-- HEADER -->
   <header id="main-header">
     <nav class="nav-inner">
-      <a class="logo logo-img-wrap" href="#" onclick="navigate('home')" title="লোগো পরিবর্তন করতে Right-click করুন">
+      <a class="logo logo-img-wrap" href="#" onclick="return navigateHomeTop()" title="লোগো পরিবর্তন করতে Right-click করুন">
         <img
           id="logo-main-img"
           src="images/ইবনে খলদুন.png"
@@ -1338,7 +1359,7 @@
           style="display:none" onchange="handleLogoUpload(event)" />
       </a>
       <ul class="nav-links">
-        <li><a href="#" onclick="navigate('home')" id="nav-home" class="active">হোম</a></li>
+        <li><a href="#" onclick="return navigateHomeTop()" id="nav-home" class="active">হোম</a></li>
         <li><a href="#" onclick="navigate('courses')" id="nav-courses">ক্যাটাগরি</a></li>
         <li><a href="#" onclick="navigate('instructors')" id="nav-instructors">ইন্সট্রাক্টর</a></li>
         <li><a href="#" onclick="navigate('blog')" id="nav-blog">ব্লগ</a></li>
@@ -1357,7 +1378,7 @@
 
   <!-- Mobile Nav -->
   <div class="mobile-nav" id="mobile-nav">
-    <a href="#" onclick="navigate('home'); toggleMobileNav()">🏠 হোম</a>
+    <a href="#" onclick="navigateHomeTop(); toggleMobileNav(); return false;">🏠 হোম</a>
     <a href="#" onclick="navigate('courses'); toggleMobileNav()">📚 ক্যাটাগরি</a>
     <a href="#" onclick="navigate('instructors'); toggleMobileNav()">👨‍🏫 ইন্সট্রাক্টর</a>
     <a href="#" onclick="navigate('blog'); toggleMobileNav()">📝 ব্লগ</a>
@@ -1513,7 +1534,7 @@
         <div class="featured-title-underline fade-in"></div>
 
         <!-- Tabs -->
-        <div class="featured-tabs fade-in">
+        <div class="featured-tabs fade-in" id="featured-tabs">
           <button class="courses-tab active" onclick="switchCoursesTab(this,'top')">সেরা বিক্রেতা</button>
           <button class="courses-tab" onclick="switchCoursesTab(this,'new')">নতুন কোর্সসমূহ</button>
           <button class="courses-tab" onclick="switchCoursesTab(this,'free')">🆓 ফ্রি কোর্সসমূহ</button>
@@ -1521,32 +1542,48 @@
           <button class="courses-tab" onclick="switchCoursesTab(this,'bundle')">📦 বান্ডেল কোর্সসমূহ</button>
         </div>
 
-        <div id="top-sellers-grid" class="courses-grid fade-in">
-          <div style="grid-column:1/-1;text-align:center;padding:40px 0;color:var(--text-mid)">কোর্স লোড হচ্ছে...</div>
-        </div>
-        <div id="top-sellers-btn" style="text-align:center">
-          <button class="browse-more-btn" onclick="navigate('courses')">আরও সেরা কোর্স দেখুন</button>
-        </div>
+        <div id="featured-course-grids">
+          <div id="top-sellers-grid" class="courses-grid fade-in">
+            <div style="grid-column:1/-1;text-align:center;padding:40px 0;color:var(--text-mid)">কোর্স লোড হচ্ছে...</div>
+          </div>
+          <div id="top-sellers-btn" style="text-align:center">
+            <button class="browse-more-btn" onclick="navigate('courses')">আরও সেরা কোর্স দেখুন</button>
+          </div>
 
-        <div id="new-courses-grid" class="courses-grid fade-in" style="display:none"></div>
-        <div id="new-courses-btn" style="text-align:center;display:none">
-          <button class="browse-more-btn" onclick="navigate('courses')">আরও নতুন কোর্স দেখুন</button>
-        </div>
+          <div id="new-courses-grid" class="courses-grid fade-in" style="display:none"></div>
+          <div id="new-courses-btn" style="text-align:center;display:none">
+            <button class="browse-more-btn" onclick="navigate('courses')">আরও নতুন কোর্স দেখুন</button>
+          </div>
 
-        <div id="free-courses-grid" class="courses-grid fade-in" style="display:none"></div>
-        <div id="free-courses-btn" style="text-align:center;display:none">
-          <button class="browse-more-btn" onclick="navigate('courses')">আরও ফ্রি কোর্স দেখুন</button>
-        </div>
+          <div id="free-courses-grid" class="courses-grid fade-in" style="display:none"></div>
+          <div id="free-courses-btn" style="text-align:center;display:none">
+            <button class="browse-more-btn" onclick="navigate('courses')">আরও ফ্রি কোর্স দেখুন</button>
+          </div>
 
-        <div id="popular-courses-grid" class="courses-grid fade-in" style="display:none"></div>
-        <div id="popular-courses-btn" style="text-align:center;display:none">
-          <button class="browse-more-btn" onclick="navigate('courses')">আরও জনপ্রিয় কোর্স দেখুন</button>
-        </div>
+          <div id="popular-courses-grid" class="courses-grid fade-in" style="display:none"></div>
+          <div id="popular-courses-btn" style="text-align:center;display:none">
+            <button class="browse-more-btn" onclick="navigate('courses')">আরও জনপ্রিয় কোর্স দেখুন</button>
+          </div>
 
-        <div id="bundle-courses-grid" class="courses-grid fade-in" style="display:none"></div>
-        <div id="bundle-courses-btn" style="text-align:center;display:none">
-          <button class="browse-more-btn" onclick="navigate('courses')">আরও বান্ডেল কোর্স দেখুন</button>
+          <div id="bundle-courses-grid" class="courses-grid fade-in" style="display:none"></div>
+          <div id="bundle-courses-btn" style="text-align:center;display:none">
+            <button class="browse-more-btn" onclick="navigate('courses')">আরও বান্ডেল কোর্স দেখুন</button>
+          </div>
         </div>
+    </section>
+
+    <section class="faq-section alt" id="home-faq-section">
+      <div class="container">
+        <div class="section-head center">
+          <span class="section-label">FAQ</span>
+          <h2 class="section-title">কোর্স সম্পর্কিত প্রশ্নোত্তর</h2>
+          <div class="section-title-underline"></div>
+          <p class="section-sub">কোর্সে ভর্তি, পেমেন্ট ও শেখার পদ্ধতি নিয়ে সাধারণ প্রশ্নের উত্তর।</p>
+        </div>
+        <div class="faq-wrap">
+          <div class="faq-list" id="home-faq-list"></div>
+        </div>
+      </div>
     </section>
 
     <!-- TOP INSTRUCTORS SECTION -->
@@ -2279,6 +2316,15 @@
             <div class="dash-stat-card"><div class="dash-stat-num">120+</div><div class="dash-stat-label">কোর্স</div></div>
             <div class="dash-stat-card"><div class="dash-stat-num">30+</div><div class="dash-stat-label">বিশেষজ্ঞ শিক্ষক</div></div>
           </div>
+          <div class="faq-wrap" style="margin-top:54px">
+            <div class="section-head center" style="margin-bottom:28px">
+              <span class="section-label">FAQ</span>
+              <h2 class="section-title" style="font-size:clamp(24px,3vw,32px)">ইনস্টিটিউট সম্পর্কিত প্রশ্নোত্তর</h2>
+              <div class="section-title-underline"></div>
+              <p class="section-sub">ইবনে খালদুন ইনস্টিটিউটের উদ্দেশ্য, শিক্ষা পদ্ধতি ও সার্টিফিকেট সম্পর্কে জানতে পড়ুন।</p>
+            </div>
+            <div class="faq-list" id="about-faq-list"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -2561,6 +2607,12 @@
       return false;
     }
 
+    function navigateHomeTop() {
+      navigate('home');
+      setTimeout(function() { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 30);
+      return false;
+    }
+
     window.addEventListener('scroll', () => {
       document.getElementById('main-header').classList.toggle('scrolled', window.scrollY > 10);
     });
@@ -2572,8 +2624,8 @@
     function switchCoursesTab(btn, id) {
       document.querySelectorAll('.section-featured-courses .courses-tab').forEach(t => t.classList.remove('active'));
       btn.classList.add('active');
-      var grids = ['top-sellers','new-courses','free-courses','popular-courses','bundle-courses'];
-      var map = { 'top':'top-sellers', 'new':'new-courses', 'free':'free-courses', 'popular':'popular-courses', 'bundle':'bundle-courses' };
+      var grids = Object.values(window._featuredTabMap || { 'top':'top-sellers', 'new':'new-courses', 'free':'free-courses', 'popular':'popular-courses', 'bundle':'bundle-courses' });
+      var map = window._featuredTabMap || { 'top':'top-sellers', 'new':'new-courses', 'free':'free-courses', 'popular':'popular-courses', 'bundle':'bundle-courses' };
       grids.forEach(function(g) {
         var active = (map[id] === g);
         var gridEl = document.getElementById(g + '-grid');
@@ -2757,7 +2809,7 @@
       }
 
       container.innerHTML = filtered.map(buildCourseCard).join('');
-      if (countEl) countEl.textContent = filtered.length + 'টি কোর্স দেখানো হচ্ছে';
+      if (countEl) countEl.textContent = filtered.length + 'টি কোর্স দেখা���ো হচ্ছে';
 
       // Also populate type-specific containers
       var tabContainers = { free: 'free-courses-container', popular: 'popular-courses-container', bundle: 'bundle-courses-container' };
@@ -2832,7 +2884,7 @@
 
       'islamic-productivity':{ title: 'ইসলামিক প্রোডাক্টিভিটি: জীবন গোছানোর ইসলামিক পদ্ধতি', instructor: 'উস্তাদ রাশেদ', instructorId: 'jason-fox',  price: '৳৮০০',   hours: '২৪', emoji: '⚡', gradient: 'linear-gradient(135deg,#f7971e,#ffd200)', img: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=400&h=220&fit=crop',
         certDesc: ['has successfully completed the professional course on', 'demonstrating a comprehensive understanding of Islamic time management,', 'goal setting, and productivity methods based on Quranic principles.'],
-        desc: 'কুরআন ও সুন্নাহর আলোকে সময় ব্যবস্থাপনা, লক্ষ্য নির্ধারণ এবং উৎপাদনশীল জীবনযাপনের বৈজ্ঞানিক পদ্ধতি শিখুন। দুনিয়া ও আখিরাত উভয় ক্ষেত্রে সফল হওয়ার ইসলামিক রোডম্যাপ এই কোর্সে উপস্থাপন করা হয়েছে।<br><br>কোর্স শেষে আপনি নিজের জীবনকে ইসলামিক নীতিতে সাজাতে এবং প্রতিটি দিনকে অর্থবহ করে তুলতে পারবেন।',
+        desc: 'কুরআন ও সুন্নাহর আলোকে সময় ব্যবস্থাপনা, লক্ষ্য নির্ধারণ এ���ং উৎপাদনশীল জীবনযাপনের বৈজ্ঞানিক পদ্ধতি শিখুন। দুনিয়া ও আখিরাত উভয় ক্ষেত্রে সফল হওয়ার ইসলামিক রোডম্যাপ এই কোর্সে উপস্থাপন করা হয়েছে।<br><br>কোর্স শেষে আপনি নিজের জীবনকে ইসলামিক নীতিতে সাজাতে এবং প্রতিটি দিনকে অর্থবহ করে তুলতে পারবেন।',
         learns: ['ইসলামের দৃষ্টিতে সময়ের গুরুত্ব ও সদ্ব্যবহার', 'কুরআন-সুন্নাহভিত্তিক লক্ষ্য নির্ধারণ ও পরিকল্পনা পদ্ধতি', 'ফজর থেকে রাত — নবীজির দৈনন্দিন রুটিন অনুসরণ', 'মনোযোগ ধরে রাখা ও বিক্ষিপ্ততা দূর করার ইসলামিক কৌশল', 'দুনিয়ার কাজ ও ইবাদাতের মাঝে সঠিক ভারসাম্য তৈরি', 'তাওয়াক্কুল ও পরিশ্রম: ইসলামিক সাফল্যের মূলনীতি'] },
 
       'sunnah-life':         { title: 'সুন্নাহর আলোয় জীবন: দৈনন্দিন ইসলামিক লাইফস্টাইল', instructor: 'উস্তাদ ইউসুফ',     instructorId: 'izzy-gesell',   price: '৳১,০০০', hours: '৩০', emoji: '☪️', gradient: 'linear-gradient(135deg,#134e5e,#71b280)', img: 'https://images.unsplash.com/photo-1585036156171-384164a8c675?w=400&h=220&fit=crop',
@@ -2848,7 +2900,7 @@
       'fiqhul-ibadat':       { title: 'ফিকহুল ইবাদাত: নামাজ, রোজা ও হজের বিধিবিধান',      instructor: 'মুফতি আমীর',       instructorId: 'james-ball',    price: '৳১,১০০', hours: '৪২', emoji: '⚖️', gradient: 'linear-gradient(135deg,#1d4350,#a43931)', img: 'https://images.unsplash.com/photo-1554232456-8727aae0cfa4?w=400&h=220&fit=crop',
         certDesc: ['has successfully completed the professional course on', 'demonstrating a comprehensive understanding of Islamic jurisprudence,', 'the rulings of Salah, Sawm, Zakat, and Hajj based on authentic sources.'],
         desc: 'নামাজ, রোজা, যাকাত ও হজের সঠিক বিধিবিধান কুরআন ও হাদিসের আলোকে বিস্তারিতভাবে এই কোর্সে উপস্থাপন করা হয়েছে। ইবাদাতের মাসআলা-মাসায়েল থেকে শুরু করে সাধারণ ভুলগুলো সংশোধন পর্যন্ত সব বিষয় আলোচনা করা হবে।<br><br>কোর্স শেষে আপনি ইসলামের পাঁচটি মূল স্তম্ভের ইবাদাত সঠিকভাবে আদায় করতে পারবেন এবং সংশ্লিষ্ট ফিকহি মাসআলাগুলো সম্পর্কে স্পষ্ট ধারণা পাবেন।',
-        learns: ['নামাজের ফরজ, ওয়াজিব ও সুন্নাহ এবং সহিহ আদায়ের পদ্ধতি', 'রোজার বিধান: নিয়ত, ইফতার, সেহরি ও রোজা ভঙ্গের কারণসমূহ', 'যাকাতের হিসাব, নিসাব ও বিতরণের সঠিক পদ্ধতি', 'হজের ফরজ, ওয়াজিব ও সুন্নাহ এবং হজের বিস্তারিত মানাসিক', 'ওযু ও গোসলের বিধান এবং তাহারাতের মাসআলা', 'ইবাদাতে সাধারণ ভুল ও সেগুলোর সংশোধন পদ্ধতি'] },
+        learns: ['নামাজের ফরজ, ওয়াজিব ও সুন্নাহ এবং সহিহ আদায়ের পদ্ধতি', 'রোজার বিধান: নিয়ত, ইফতার, সেহরি ও রোজা ভঙ্গের কারণসমূহ', 'যাকাতের হিসাব, নিসাব ও বিতরণের সঠিক পদ্ধতি', 'হজের ফরজ, ওয়াজিব ও সুন্নাহ এবং হজের বিস্তারিe � মানাসিক', 'ওযু ও গোসলের বিধান এবং তাহারাতের মাসআলা', 'ইবাদাতে সাধারণ ভুল ও সেগুলোর সংশোধন পদ্ধতি'] },
 
       'tafsir-quran':        { title: 'তাফসিরুল কুরআন: কুরআনের গভীর অর্থ ও ব্যাখ্যা',     instructor: 'শায়েখ আব্দুল্লাহ', instructorId: 'james-wickett', price: '৳১,৩০০', hours: '৫০', emoji: '📜', gradient: 'linear-gradient(135deg,#4b134f,#c94b4b)', img: 'https://images.unsplash.com/photo-1585036156171-384164a8c675?w=400&h=220&fit=crop',
         certDesc: ['has successfully completed the professional course on', 'demonstrating a comprehensive understanding of Quranic exegesis,', 'the deep meanings of the Quran, and classical Tafsir methodologies.'],
@@ -3973,7 +4025,7 @@
         name: 'উস্তাদ ইউসুফ',
         tagline: 'সীরাত ও সুন্নাহ বিশেষজ্ঞ | ইসলামিক লাইফস্টাইল কোচ',
         photo: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=160&h=160&fit=crop&crop=face',
-        bio: 'উস্তাদ ইউসুফ সীরাতুন নবী ﷺ ও দৈনন্দিন সুন্নাহ চর্চার বিষয়ে বাংলাদেশের একজন শীর্ষস্থানীয় শিক্ষক। আল-আযহার বিশ্ববিদ্যালয় থেকে ইসলামিক স্টাডিজে স্নাতকোত্তর সম্পন্ �� করে দেশে ফিরে ইসলামিক শিক্ষা প্রসারে কাজ করে যাচ্ছেন।',
+        bio: 'উস্তাদ ইউসুফ সীরাতুন নবী ﷺ ও দৈনন্দ;��ন সুন্নাহ চর্চার বিষয়ে বাংলাদেশের একজন শীর্ষস্থানীয় শিক্ষক। আল-আযহার বিশ্ববিদ্যালয় থেকে ইসলামিক স্টাডিজে স্নাতকোত্তর সম্পন্ �� করে দেশে ফিরে ইসলামিক শিক্ষা প্রসারে কাজ করে যাচ্ছেন।',
         about: 'উস্তাদ ইউসুফ বিশ্বাস করেন, নবীজি ﷺ-এর জীবন থেকে শিক্ষা নিয়ে আধুনিক জীবনে প্রয়োগ করাই সত্যিকারের মুসলিম জীবনযাপন। তিনি সীরাহকে কেবল ইতিহাস নয়, জীবনের দিকনির্দেশনা হিসেবে উপস্থাপন করেন। পাঁচ হাজারেরও বেশি শিক্ষার্থী তাঁর কোর্সে অংশ নিয়ে জীবন বদলে দিয়েছেন।',
         rating: '4.9', students: '৫,৮০০', reviews: '১.৬K',
         courses: ['seerah-nabi', 'sunnah-life']
@@ -4383,6 +4435,104 @@
     // ===========================
     var API_BASE = 'https://ibnkhalduninstitute.onrender.com';
 
+    var DEFAULT_COURSE_TABS = [
+      { key: 'top', label: 'সেরা বিক্রেতা', icon: '', active: true, order: 1 },
+      { key: 'new', label: 'নতুন কোর্সসমূহ', icon: '', active: true, order: 2 },
+      { key: 'free', label: 'ফ্রি কোর্সসমূহ', icon: '🆓', active: true, order: 3 },
+      { key: 'popular', label: 'জনপ্রিয় কোর্সসমূহ', icon: '🔥', active: true, order: 4 },
+      { key: 'bundle', label: 'বান্ডেল কোর্সসমূহ', icon: '📦', active: true, order: 5 }
+    ];
+    var DEFAULT_HOME_FAQS = [
+      { question: 'কোর্সে কীভাবে ভর্তি হব?', answer: 'পছন্দের কোর্স খুলে এনরোল বা অ্যাক্সেস রিকোয়েস্ট পাঠান। অনুমোদনের পর আপনার লার্নিং হাবে কোর্সটি দেখা যাবে।' },
+      { question: 'কোর্সগুলো কি মোবাইল থেকে করা যাবে?', answer: 'হ্যাঁ, মোবাইল, ট্যাব বা কম্পিউটার—যেকোনো ডিভাইস থেকে ক্লাস দেখা যাবে।' },
+      { question: 'কোর্স শেষ করলে সার্টিফিকেট পাব?', answer: 'নির্ধারিত লেসন সম্পন্ন করলে সার্টিফিকেট ডাউনলোড করার সুবিধা থাকবে।' }
+    ];
+    var DEFAULT_ABOUT_FAQS = [
+      { question: 'ইবনে খালদুন ইনস্টিটিউটের লক্ষ্য কী?', answer: 'ইসলামিক মূল্যবোধের আলোকে মানসম্পন্ন অনলাইন শিক্ষা সহজলভ্য করা এবং জ্ঞান, আমল ও দক্ষতার সমন্বয়ে শিক্ষার্থী তৈরি করা।' },
+      { question: 'কারা এখানে ক্লাস নেন?', answer: 'বিষয়ভিত্তিক অভিজ্ঞ আলেম, শিক্ষক ও পেশাদার প্রশিক্ষকগণ এখানে কোর্স পরিচালনা করেন।' },
+      { question: 'শিক্ষা পদ্ধতি কেমন?', answer: 'ভিডিও লেসন, ধাপে ধাপে কারিকুলাম, প্র্যাকটিক্যাল নির্দেশনা এবং শেখার অগ্রগতি ট্র্যাক করার সুবিধা রয়েছে।' }
+    ];
+
+    function escapeAttr(str) {
+      return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    function featuredTabBaseId(key) {
+      var fixed = { top: 'top-sellers', new: 'new-courses', free: 'free-courses', popular: 'popular-courses', bundle: 'bundle-courses' };
+      return fixed[key] || String(key || 'tab').toLowerCase().replace(/[^a-z0-9_-]+/g, '-') + '-courses';
+    }
+
+    function getActiveCourseTabs(tabs) {
+      var list = Array.isArray(tabs) && tabs.length ? tabs : DEFAULT_COURSE_TABS;
+      return list.filter(function(t) { return t && t.active !== false && t.key; }).sort(function(a,b) { return (a.order || 0) - (b.order || 0); });
+    }
+
+    function applyCourseTabs(tabs) {
+      var activeTabs = getActiveCourseTabs(tabs);
+      if (!activeTabs.length) activeTabs = DEFAULT_COURSE_TABS;
+      var tabsEl = document.getElementById('featured-tabs');
+      var gridsWrap = document.getElementById('featured-course-grids');
+      var map = {};
+      activeTabs.forEach(function(t, idx) {
+        var key = String(t.key || '').toLowerCase();
+        var baseId = featuredTabBaseId(key);
+        map[key] = baseId;
+        if (gridsWrap && !document.getElementById(baseId + '-grid')) {
+          var grid = document.createElement('div');
+          grid.id = baseId + '-grid';
+          grid.className = 'courses-grid fade-in';
+          grid.style.display = idx === 0 ? '' : 'none';
+          gridsWrap.appendChild(grid);
+          var btn = document.createElement('div');
+          btn.id = baseId + '-btn';
+          btn.style.textAlign = 'center';
+          btn.style.display = idx === 0 ? '' : 'none';
+          btn.innerHTML = '<button class="browse-more-btn" onclick="navigate(\'courses\')">আরও কোর্স দেখুন</button>';
+          gridsWrap.appendChild(btn);
+        }
+      });
+      window._featuredTabMap = map;
+      window._featuredTabs = activeTabs;
+      if (tabsEl) {
+        tabsEl.innerHTML = activeTabs.map(function(t, idx) {
+          var key = String(t.key || '').toLowerCase();
+          var label = (t.icon ? t.icon + ' ' : '') + (t.label || key);
+          return '<button class="courses-tab' + (idx === 0 ? ' active' : '') + '" onclick="switchCoursesTab(this,\'' + escapeAttr(key) + '\')">' + label + '</button>';
+        }).join('');
+      }
+      activeTabs.forEach(function(t, idx) {
+        var baseId = map[String(t.key).toLowerCase()];
+        var gridEl = document.getElementById(baseId + '-grid');
+        var btnEl = document.getElementById(baseId + '-btn');
+        if (gridEl) gridEl.style.display = idx === 0 ? '' : 'none';
+        if (btnEl) btnEl.style.display = idx === 0 ? '' : 'none';
+      });
+    }
+
+    function renderFAQList(targetId, items) {
+      var target = document.getElementById(targetId);
+      if (!target) return;
+      var faqs = (Array.isArray(items) ? items : []).filter(function(item) { return item && item.question && item.answer; });
+      if (!faqs.length) {
+        target.innerHTML = '<div style="text-align:center;padding:28px;color:var(--text-mid);background:#fff;border:1px solid var(--border);border-radius:var(--radius)">প্রশ্নোত্তর শিগগিরই যুক্ত হবে।</div>';
+        return;
+      }
+      target.innerHTML = faqs.map(function(item, idx) {
+        return '<div class="faq-item' + (idx === 0 ? ' open' : '') + '"><button class="faq-question" onclick="toggleFAQ(this)"><span>' + escapeHtml(String(item.question)) + '</span><span class="faq-toggle">+</span></button><div class="faq-answer">' + escapeHtml(String(item.answer)) + '</div></div>';
+      }).join('');
+    }
+
+    function toggleFAQ(btn) {
+      var item = btn && btn.closest ? btn.closest('.faq-item') : null;
+      if (item) item.classList.toggle('open');
+    }
+
+    function applyFAQContent(data) {
+      data = data || {};
+      renderFAQList('home-faq-list', data.home && Array.isArray(data.home.items) ? data.home.items : DEFAULT_HOME_FAQS);
+      renderFAQList('about-faq-list', data.about && Array.isArray(data.about.items) ? data.about.items : DEFAULT_ABOUT_FAQS);
+    }
+
     // ===========================
     // LOAD SITE DATA FROM API
     // ===========================
@@ -4404,6 +4554,8 @@
           fetch(API_BASE + '/api/notices').then(r => r.json()),
           fetch(API_BASE + '/api/blog').then(r => r.json()),
           fetch(API_BASE + '/api/contact-content').then(r => r.json()),
+          fetch(API_BASE + '/api/course-tabs').then(r => r.json()),
+          fetch(API_BASE + '/api/faqs').then(r => r.json()),
         ]);
 
         var siteSettings    = results[0].status === 'fulfilled' ? results[0].value : null;
@@ -4420,6 +4572,8 @@
         var apiNotices      = results[11].status === 'fulfilled' ? results[11].value : null;
         var apiBlogPosts    = results[12].status === 'fulfilled' ? results[12].value : null;
         var contactData     = results[13].status === 'fulfilled' ? results[13].value : null;
+        var apiCourseTabs   = results[14].status === 'fulfilled' ? results[14].value : null;
+        var faqData         = results[15].status === 'fulfilled' ? results[15].value : null;
 
         // ── THEME / CSS Variables ──
         if (themeSettings && themeSettings.vars) {
@@ -4548,11 +4702,15 @@
             applyHeroCards(fcConfig.heroCards);
           }
         }
+        applyCourseTabs(apiCourseTabs);
+        applyFAQContent(faqData);
 
         // ── COURSES (from MongoDB) ──
         if (apiCourses && Array.isArray(apiCourses) && apiCourses.length > 0) {
           _allCoursesData = apiCourses;
           renderAPICoursesOnHomepage(apiCourses);
+        } else {
+          renderDefaultHomepageContent();
         }
 
         // ── TESTIMONIALS (from MongoDB) ──
@@ -4570,6 +4728,8 @@
         // ── INSTRUCTORS (from MongoDB) ──
         if (apiInstructors && Array.isArray(apiInstructors) && apiInstructors.length > 0) {
           renderAPIInstructors(apiInstructors);
+        } else {
+          renderDefaultInstructors();
         }
 
         // ── ABOUT PAGE — dynamic stats ──
@@ -4609,6 +4769,10 @@
 
       } catch(err) {
         console.warn('API data load failed, using defaults:', err.message);
+        renderDefaultHomepageContent();
+        renderDefaultInstructors();
+        applyCourseTabs(DEFAULT_COURSE_TABS);
+        applyFAQContent({});
       }
     }
 
@@ -4723,30 +4887,28 @@
           '</div></div></div>';
       }
 
-      // Fill grids by tabKey — courses with matching tabKey go in their tab
-      var tabMap = { top: 'top-sellers-grid', new: 'new-courses-grid', free: 'free-courses-grid', popular: 'popular-courses-grid', bundle: 'bundle-courses-grid' };
-      var tabCourses = { top: [], new: [], free: [], popular: [], bundle: [] };
+      applyCourseTabs(window._featuredTabs || DEFAULT_COURSE_TABS);
+      var activeTabs = getActiveCourseTabs(window._featuredTabs || DEFAULT_COURSE_TABS);
+      var tabMap = {};
+      var tabCourses = {};
+      activeTabs.forEach(function(t) {
+        var key = String(t.key || '').toLowerCase();
+        tabMap[key] = featuredTabBaseId(key) + '-grid';
+        tabCourses[key] = [];
+      });
       courses.forEach(function(c) {
         var key = (c.tabKey || '').toLowerCase();
         if (tabCourses[key]) tabCourses[key].push(c);
       });
-      // Fallback: if no tabKey-based courses, use defaults
-      var topCourses = tabCourses.top.length ? tabCourses.top : courses.slice(0, 8);
-      var newCourses = tabCourses.new.length ? tabCourses.new : courses.slice(0).reverse().slice(0, 8);
-      var freeCourses = tabCourses.free.length ? tabCourses.free : courses.filter(function(c) { return !c.price || c.price === 0 || c.price === '0'; });
-      var popCourses = tabCourses.popular.length ? tabCourses.popular : courses.slice().sort(function(a,b){ return (b.students||0)-(a.students||0); }).slice(0, 8);
-      var bundleCourses = tabCourses.bundle.length ? tabCourses.bundle : [];
-
-      var topGrid = document.getElementById('top-sellers-grid');
-      if (topGrid) topGrid.innerHTML = topCourses.length ? topCourses.map(makeCourseCard).join('') : '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#999">এই ট্যাবে কোনো কোর্স নেই</div>';
-      var newGrid = document.getElementById('new-courses-grid');
-      if (newGrid) newGrid.innerHTML = newCourses.length ? newCourses.map(makeCourseCard).join('') : '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#999">এই ট্যাবে কোনো কোর্স নেই</div>';
-      var freeGrid = document.getElementById('free-courses-grid');
-      if (freeGrid) freeGrid.innerHTML = freeCourses.length ? freeCourses.map(makeCourseCard).join('') : '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#999">এই ট্যাবে কোনো ফ্রি কোর্স নেই</div>';
-      var popGrid = document.getElementById('popular-courses-grid');
-      if (popGrid) popGrid.innerHTML = popCourses.length ? popCourses.map(makeCourseCard).join('') : '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#999">এই ট্যাবে কোনো কোর্স নেই</div>';
-      var bundleGrid = document.getElementById('bundle-courses-grid');
-      if (bundleGrid) bundleGrid.innerHTML = bundleCourses.length ? bundleCourses.map(makeCourseCard).join('') : '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#999">এই ট্যাবে কোনো বান্ডেল কোর্স নেই</div>';
+      if (tabCourses.top && !tabCourses.top.length) tabCourses.top = courses.slice(0, 8);
+      if (tabCourses.new && !tabCourses.new.length) tabCourses.new = courses.slice(0).reverse().slice(0, 8);
+      if (tabCourses.free && !tabCourses.free.length) tabCourses.free = courses.filter(function(c) { return !c.price || c.price === 0 || c.price === '0'; });
+      if (tabCourses.popular && !tabCourses.popular.length) tabCourses.popular = courses.slice().sort(function(a,b){ return (b.students||0)-(a.students||0); }).slice(0, 8);
+      Object.keys(tabCourses).forEach(function(key) {
+        var grid = document.getElementById(tabMap[key]);
+        var list = tabCourses[key] || [];
+        if (grid) grid.innerHTML = list.length ? list.slice(0, 8).map(makeCourseCard).join('') : '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#999">এই ট্যাবে কোনো কোর্স নেই</div>';
+      });
       // Courses page grid
       var coursesContainer = document.getElementById('courses-container');
       if (coursesContainer && courses.length) {
@@ -4835,6 +4997,55 @@
           rating: String(inst.rating || 4.8), students: String(inst.students || 0), reviews: '0', courses: instCourses,
         };
       });
+    }
+
+    function renderDefaultHomepageContent() {
+      var defaults = Object.keys(COURSES || {}).map(function(key) {
+        var c = COURSES[key] || {};
+        return {
+          _id: c._id || key,
+          slug: c.slug || c.id || key,
+          title: c.title || '',
+          category: c.category || '',
+          instructor: c.instructor || '',
+          thumbnail: c.thumbnail || c.img || '',
+          price: String(c.price || '').replace(/[^\d.]/g, '') || 0,
+          originalPrice: String(c.originalPrice || '').replace(/[^\d.]/g, ''),
+          discount: c.discount || '',
+          duration: c.duration || (c.hours ? c.hours + ' ঘণ্টা' : ''),
+          students: c.students || 0,
+          rating: c.rating || 4.8,
+          tabKey: c.tabKey || ''
+        };
+      }).filter(function(c) { return c.title; });
+      if (defaults.length) renderAPICoursesOnHomepage(defaults);
+      else {
+        ['top-sellers-grid','new-courses-grid','free-courses-grid','popular-courses-grid','bundle-courses-grid'].forEach(function(id) {
+          var el = document.getElementById(id);
+          if (el) el.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-mid)">কোর্স শিগগিরই যুক্ত হবে।</div>';
+        });
+      }
+    }
+
+    function renderDefaultInstructors() {
+      var list = Object.keys(INSTRUCTORS || {}).map(function(key) {
+        var inst = INSTRUCTORS[key] || {};
+        return {
+          _id: key,
+          slug: key,
+          name: inst.name || '',
+          title: inst.tagline || '',
+          photo: inst.photo || '',
+          students: inst.students || '',
+          rating: inst.rating || '4.8',
+          courses: inst.courses ? inst.courses.length : 0
+        };
+      }).filter(function(inst) { return inst.name; });
+      if (list.length) renderAPIInstructors(list);
+      else {
+        var grid = document.getElementById('instructors-grid');
+        if (grid) grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-mid)">ইন্সট্রাক্টর শিগগিরই যুক্ত হবে।</div>';
+      }
     }
 
     // ── Render API notices ──
@@ -5006,6 +5217,11 @@
         document.body.appendChild(popup);
       }, d.delay || 1200);
     }
+
+    applyCourseTabs(DEFAULT_COURSE_TABS);
+    applyFAQContent({});
+    renderDefaultHomepageContent();
+    renderDefaultInstructors();
 
     // ── Init: load API data then check popup ──
     loadSiteDataFromAPI().then(function() {
