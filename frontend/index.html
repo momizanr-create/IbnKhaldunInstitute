@@ -4284,10 +4284,12 @@
       if (!activeTabs.length) activeTabs = DEFAULT_COURSE_TABS;
       var tabsEl = document.getElementById('featured-tabs');
       var gridsWrap = document.getElementById('featured-course-grids');
+      if (gridsWrap) { Array.from(gridsWrap.children).forEach(function(c) { c.style.display = 'none'; }); }
       var map = {};
+      var _fixedKeys = { top: 'top-sellers', new: 'new-courses', free: 'free-courses', popular: 'popular-courses', bundle: 'bundle-courses' };
       activeTabs.forEach(function(t, idx) {
         var key = String(t.key || '').toLowerCase();
-        var baseId = featuredTabBaseId(key);
+        var baseId = _fixedKeys[key] || ('tab-course-' + idx);
         map[key] = baseId;
         if (gridsWrap && !document.getElementById(baseId + '-grid')) {
           var grid = document.createElement('div');
@@ -4705,7 +4707,7 @@
       var tabCourses = {};
       activeTabs.forEach(function(t) {
         var key = String(t.key || '').toLowerCase();
-        tabMap[key] = featuredTabBaseId(key) + '-grid';
+        tabMap[key] = (window._featuredTabMap && window._featuredTabMap[key] ? window._featuredTabMap[key] : featuredTabBaseId(key)) + '-grid';
         tabCourses[key] = [];
       });
       activeTabs.forEach(function(t) {
@@ -4874,7 +4876,7 @@
       if (!grid) return;
       var visible = (posts || []).filter(function(p) { return p && p.published !== false; });
       if (!visible.length) {
-        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px 0;color:var(--text-mid)">এt��নো কোনো ব্লগ পোস্ট প্রকাশিত হয়নি।</div>';
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px 0;color:var(--text-mid)">এখনো কোনো ব্লগ পোস্ট প্রকাশিত হয়নি।</div>';
         return;
       }
       grid.innerHTML = visible.map(function(p) {
