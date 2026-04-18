@@ -4294,7 +4294,7 @@
         if (gridsWrap && !document.getElementById(baseId + '-grid')) {
           var grid = document.createElement('div');
           grid.id = baseId + '-grid';
-          grid.className = 'courses-grid fade-in';
+          grid.className = 'courses-grid';
           grid.style.display = idx === 0 ? '' : 'none';
           gridsWrap.appendChild(grid);
           var btn = document.createElement('div');
@@ -4679,7 +4679,7 @@
         var key = c.slug || c._id;
         var thumb = c.thumbnail || 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&q=80';
         var discount = c.originalPrice && c.price ? Math.round((1 - c.price / c.originalPrice) * 100) : (c.discount || 0);
-        return '<div class="course-card fade-in" onclick="openCourseDetail(\'' + key + '\')" style="cursor:pointer">' +
+        return '<div class="course-card" onclick="openCourseDetail(\'' + key + '\')" style="cursor:pointer">' +
           '<div class="course-thumb"><img src="' + thumb + '" alt="' + (c.title||'') + '" loading="lazy"/>' +
           '<div class="thumb-overlay"><span class="play-btn">▶</span></div>' +
           (discount > 0 ? '<span style="position:absolute;top:10px;left:10px;background:var(--primary);color:#1a1a1a;font-size:10px;font-weight:800;padding:3px 9px;border-radius:3px;font-family:var(--font-nav);letter-spacing:1px">' + discount + '% ছাড়</span>' : '') +
@@ -4736,6 +4736,11 @@
       if (coursesContainer && courses.length) {
         coursesContainer.innerHTML = courses.map(makeCourseCard).join('');
       }
+      // Make newly added elements visible (runFadeIn may have already run before API data loaded)
+      setTimeout(function() {
+        var gw = document.getElementById('featured-course-grids');
+        if (gw) gw.querySelectorAll('.fade-in').forEach(function(el) { el.classList.add('visible'); });
+      }, 80);
     }
 
     // ── Render API testimonials ──
@@ -5100,7 +5105,7 @@
         var targetPage = internalPageFromLink(href);
         var anchor = document.createElement('a');
         anchor.href = href;
-        anchor.textContent = item.name || item.label || 'লিংক';
+        anchor.textContent = item.name || item.label || 'লি ��ক';
         if (targetPage) {
           anchor.id = 'nav-' + targetPage;
           anchor.addEventListener('click', function(event) {
