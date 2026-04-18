@@ -1586,17 +1586,6 @@
       </div>
     </section>
 
-    <!-- TOP INSTRUCTORS SECTION -->
-    <section class="section-instructors">
-      <div class="container">
-        <h2 class="instructors-title fade-in">শীর্ষ ইন্সট্রাক্টরগণ</h2>
-        <div class="instructors-underline fade-in"></div>
-        <div class="instructors-grid fade-in" id="instructors-grid">
-          <div style="grid-column:1/-1;text-align:center;padding:40px 0;color:var(--text-mid)">ইন্সট্রাক্টর লোড হচ্ছে...</div>
-        </div>
-      </div>
-    </section>
-
     <!-- Why Choose Us -->
     <section class="section section-alt">
       <div class="container">
@@ -2212,7 +2201,6 @@
             <h1 id="profile-name">Instructor Name</h1>
             <div class="instructor-profile-tagline" id="profile-tagline">ইসলামিক শিক্ষক</div>
             <p style="color:#aaa;font-size:14px;max-width:600px;line-height:1.7" id="profile-bio">পরিচিতি লোড হচ্ছে...</p>
-            <div id="profile-socials" class="instructor-socials" style="display:none;justify-content:flex-start;gap:8px;margin:10px 0"></div>
             <div class="instructor-profile-stats">
               <div class="instructor-profile-stat"><span id="profile-rating">৪.৯</span><p>রেটিং</p></div>
               <div class="instructor-profile-stat"><span id="profile-students">১২K+</span><p>শিক্ষার্থী</p></div>
@@ -2322,7 +2310,7 @@
               <span class="section-label">FAQ</span>
               <h2 class="section-title" style="font-size:clamp(24px,3vw,32px)">ইনস্টিটিউট সম্পর্কিত প্রশ্নোত্তর</h2>
               <div class="section-title-underline"></div>
-              <p class="section-sub">ইবনে খালদুন ইdq�স্টিটিউটের উদ্দেশ্য, শিক্ষা পদ্ধতি ও সার্টিফিকেট সম্পর্কে জানতে পড়ুন।</p>
+              <p class="section-sub">ইবনে খালদুন ইনস্টিটিউটের উদ্দেশ্য, শিক্ষা পদ্ধতি ও সার্টিফিকেট সম্পর্কে জানতে পড়ুন।</p>
             </div>
             <div class="faq-list" id="about-faq-list"></div>
           </div>
@@ -2810,7 +2798,7 @@
       }
 
       container.innerHTML = filtered.map(buildCourseCard).join('');
-      if (countEl) countEl.textContent = filtered.length + 'টি কোর্স দেখা���ো হচ্ছে';
+      if (countEl) countEl.textContent = filtered.length + 'টি কোর্স দেখানো হচ্ছে';
 
       // Also populate type-specific containers
       var tabContainers = { free: 'free-courses-container', popular: 'popular-courses-container', bundle: 'bundle-courses-container' };
@@ -2869,177 +2857,7 @@
       });
     }
 
-    // ===========================
-    // COURSE DATA
-    // ===========================
-    var COURSES = {
-      'quran-tajweed':       { title: 'Quran Tajweed: সহিহ তেলাওয়াতের সম্পূর্ণ গাইড',      instructor: 'শায়েখ আব্দুল্লাহ', instructorId: 'aaron-dolberg',     price: '৳১,২০০', hours: '৩৬', emoji: '📖', gradient: 'linear-gradient(135deg,#1a1a2e,#16213e)', img: 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&h=220&fit=crop',
-        certDesc: ['has successfully completed the professional course on', 'demonstrating a comprehensive understanding of Tajweed rules,', 'Quranic recitation, and the proper pronunciation of Arabic letters.'],
-        desc: 'এই কোর্সটি আপনাকে একদম শুরু থেকে কুরআনের শুদ্ধ তেলাওয়াত শেখাবে। মাখারিজুল হুরুফ থেকে শুরু করে মদ্ ��, গুন্নাহ, নুন সাকিন ও তানওয়ীনের প্রতিটি বিধান সহজ ও বৈজ্ঞানিক পদ্ধতিতে ব্যাখ্যা করা হয়েছে।<br><br>কোর্স শেষে আপনি সহিহভাবে কুরআন তেলাওয়াত করতে পারবেন এবং তাজওয়িদের মূল নিয়মগুলো আত্মস্থ করতে পারবেন।',
-        learns: ['মাখারিজুল হুরুফ: আরবি হরফের সঠিক উচ্চারণস্থান চেনা', 'নুন সাকিন ও তানওয়ীনের চারটি বিধান: ইযহার, ইদগাম, ইখফা, ইকলাব', 'মদ্দ: বিভিন্ন প্রকার টানার নিয়ম ও পরিমাণ', 'ওয়াকফ ও ইবতিদা: থামার ও শুরুর নিয়ম', 'সূরা ফাতিহা ও ছোট সূরাগুলোর বিশদ অনুশীলন', 'সহিহ তেলাওয়াতের জন্য নিয়মিত অনুশীলনের পদ্ধতি'] },
-
-      'seerah-nabi':         { title: 'সীরাতুন নবী ﷺ: নবীজির জীবনের পূর্ণাঙ্গ ইতিহাস',    instructor: 'উস্তাদ ইউসুফ',      instructorId: 'izzy-gesell',   price: '৳১,৫০০', hours: '৪৮', emoji: '🕌', gradient: 'linear-gradient(135deg,#2d1b69,#11998e)', img: 'https://images.unsplash.com/photo-1564769625905-50e93615e769?w=400&h=220&fit=crop',
-        certDesc: ['has successfully completed the professional course on', 'demonstrating a comprehensive understanding of the life of Prophet Muhammad ﷺ,', 'Islamic history, and the lessons from the Prophetic biography.'],
-        desc: 'রাসূলুল্লাহ ﷺ-এর জন্ম থেকে ইন্তেকাল পর্যন্ত পুরো জীবনকাল এই কোর্সে বিস্তারিতভাবে আলোচনা করা হয়েছে। মক্কি জীবন, হিজরত, মদিনার সমাজ গঠন, গাযওয়াত এবং ইসলামের বিজয়ের গল্প একসাথে পাবেন।<br><br>এই কোর্সটি আপনাকে নবীজি ﷺ-এর জীবন থেকে শিক্ষা নিয়ে আধুনিক জীবনে প্রয়োগ করার অনুপ্রেরণা দেবে।',
-        learns: ['নবীজি ﷺ-এর জন্ম ও শৈশবকালীন জীবন', 'মক্কায় ইসলামের দাওয়াত ও প্রথম মুসলিমদের কষ্টসহিষ্ণুতা', 'হিজরতের ঘটনাপ্রবাহ ও মদিনায় ইসলামি রাষ্ট্র d,�ঠন', 'বদর, উহুদ ও খন্দকসহ প্রধান গাযওয়াতের বিবরণ', 'মক্কা বিজয় ও ইসলামের বিস্তারের ইতিহাস', 'বিদায় হজের ভাষণ ও নবীজি ﷺ-এর চিরবিদায়'] },
-
-      'islamic-productivity':{ title: 'ইসলামিক প্রোডাক্টিভিটি: জীবন গোছানোর ইসলামিক পদ্ধতি', instructor: 'উস্তাদ রাশেদ', instructorId: 'jason-fox',  price: '৳৮০০',   hours: '২৪', emoji: '⚡', gradient: 'linear-gradient(135deg,#f7971e,#ffd200)', img: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=400&h=220&fit=crop',
-        certDesc: ['has successfully completed the professional course on', 'demonstrating a comprehensive understanding of Islamic time management,', 'goal setting, and productivity methods based on Quranic principles.'],
-        desc: 'কুরআন ও সুন্নাহর আলোকে সময় ব্যবস্থাপনা, লক্ষ্য নির্ধারণ এ���ং উৎপাদনশীল জীবনযাপনের বৈজ্ঞানিক পদ্ধতি শিখুন। দুনিয়া ও আখিরাত উভয় ক্ষেত্রে সফল হওয়ার ইসলামিক রোডম্যাপ এই কোর্সে উপস্থাপন করা হয়েছে।<br><br>কোর্স শেষে আপনি নিজের জীবনকে ইসলামিক নীতিতে সাজাতে এবং প্রতিটি দিনকে অর্থবহ করে তুলতে পারবেন।',
-        learns: ['ইসলামের দৃষ্টিতে সময়ের গুরুত্ব ও সদ্ব্যবহার', 'কুরআন-সুন্নাহভিত্তিক লক্ষ্য নির্ধারণ ও পরিকল্পনা পদ্ধতি', 'ফজর থেকে রাত — নবীজির দৈনন্দিন রুটিন অনুসরণ', 'মনোযোগ ধরে রাখা ও বিক্ষিপ্ততা দূর করার ইসলামিক কৌশল', 'দুনিয়ার কাজ ও ইবাদাতের মাঝে সঠিক ভারসাম্য তৈরি', 'তাওয়াক্কুল ও পরিশ্রম: ইসলামিক সাফল্যের মূলনীতি'] },
-
-      'sunnah-life':         { title: 'সুন্নাহর আলোয় জীবন: দৈনন্দিন ইসলামিক লাইফস্টাইল', instructor: 'উস্তাদ ইউসুফ',     instructorId: 'izzy-gesell',   price: '৳১,০০০', hours: '৩০', emoji: '☪️', gradient: 'linear-gradient(135deg,#134e5e,#71b280)', img: 'https://images.unsplash.com/photo-1585036156171-384164a8c675?w=400&h=220&fit=crop',
-        certDesc: ['has successfully completed the professional course on', 'demonstrating a comprehensive understanding of the Sunnah lifestyle,', 'daily Islamic practices, and the teachings of the Prophet ﷺ.'],
-        desc: 'ঘুম থেকে ওঠা থেকে রাতে শোওয়া পর্যন্ত নবীজির ﷺ সুন্নাহ মেনে জীবন গড়ার সহজ ও কার্যকর পদ্ধতি এই কোর্সে শেখানো হয়েছে। খাওয়া, পোশাক, পরিষ্কার-পরিচ্ছন্নতা থেকে শুরু করে পারিবারিক ও সামাজিক আচরণ — সবকিছুতে সুন্নাহর প্রয়োগ দেখানো হবে।<br><br>এই কোর্সটি আপনাকে ইসলামিক লাইফস্টাইলকে আধুনিক জীবনে স্বাভাবিকভাবে অন্তর্ভুক্ত করতে সাহায্য করবে।',
-        learns: ['সকাল ও রাতের সুন্নাহ আমল এবং দোয়া', 'খাওয়া-দাওয়ায় সুন্নাহর আদব ও স্বাস্থ্যকর অভ্যাস', 'পোশাক-পরিচ্ছদে ইসলামিক শালীনতা ও সুন্নাহ', 'পরিষ্কার-পরিচ্ছন্নতা: ইসলামের দৃষ্টিতে ব্যক্তিগত স্বাস্থ্যবিধি', 'পারিবারিক জীবনে নবীজির ﷺ আদর্শ অনুসরণ', 'সুন্নাহর আলোকে সম্পর্ক ও সামাজিকতা'] },
-
-      'islamic-family':      { title: 'ইসলামিক পারিবারিক জীবন: সুখী সংসার গড়ার পথ',       instructor: 'ড. ফারুক আহমেদ',   instructorId: 'james-ball',    price: '৳৯০০',   hours: '২০', emoji: '👨‍👩‍👧', gradient: 'linear-gradient(135deg,#0f3460,#533483)', img: 'https://images.unsplash.com/photo-1511895426328-dc8714191011?w=400&h=220&fit=crop',
-        certDesc: ['has successfully completed the professional course on', 'demonstrating a comprehensive understanding of Islamic family values,', 'marital rights, parenting methods, and household harmony in Islam.'],
-        desc: 'ইসলামের দৃষ্টিতে বিবাহ, দাম্পত্য জীবন, সন্তান লালন-পালন এবং পারিবারিক সম্পর্কের গভীর আলোচনা এই কোর্সে রয়েছে। কুরআন ও হাদিসের আলোকে সুখী ও শান্তিময় পরিবার গঠনের ব্যবহারিক নির্দেশনা পাবেন।<br><br>কোর্স শেষে আপনি ইসলামিক দৃষ্টিভঙ্গিতে পারিবারিক জীবনের প্রতিটি দিক সামলানোর আত্মবিশ্বাস অর্জন করবেন।',
-        learns: ['ইসলামে বিবাহের উদ্দেশ্য, শর্ত ও আদব', 'স্বামী-স্ত্রীর পারস্পরিক অধিকার ও দায়িত্ব', 'দাম্পত্য জীবনে ঝগড়া মেটানোর ইসলামিক পদ্ধতি', 'সন্তান লালন-পালনে ইসলামিক আদর্শ ও কৌশল', 'পিতামাতার প্রতি দায়িত্ব ও আত্মীয়তার সম্পর্ক রক্ষা', 'পারিবারিক সংকট সমাধানে ইসলামিক দিকনির্দেশনা'] },
-
-      'fiqhul-ibadat':       { title: 'ফিকহুল ইবাদাত: নামাজ, রোজা ও হজের বিধিবিধান',      instructor: 'মুফতি আমীর',       instructorId: 'james-ball',    price: '৳১,১০০', hours: '৪২', emoji: '⚖️', gradient: 'linear-gradient(135deg,#1d4350,#a43931)', img: 'https://images.unsplash.com/photo-1554232456-8727aae0cfa4?w=400&h=220&fit=crop',
-        certDesc: ['has successfully completed the professional course on', 'demonstrating a comprehensive understanding of Islamic jurisprudence,', 'the rulings of Salah, Sawm, Zakat, and Hajj based on authentic sources.'],
-        desc: 'নামাজ, রোজা, যাকাত ও হজের সঠিক বিধিবিধান কুরআন ও হাদিসের আলোকে বিস্তারিতভাবে এই কোর্সে উপস্থাপন করা হয়েছে। ইবাদাতের মাসআলা-মাসায়েল থেকে শুরু করে সাধারণ ভুলগুলো সংশোধন পর্যন্ত সব বিষয় আলোচনা করা হবে।<br><br>কোর্স শেষে আপনি ইসলামের পাঁচটি মূল স্তম্ভের ইবাদাত সঠিকভাবে আদায় করতে পারবেন এবং সংশ্লিষ্ট ফিকহি মাসআলাগুলো সম্পর্কে স্পষ্ট ধারণা পাবেন।',
-        learns: ['নামাজের ফরজ, ওয়াজিব ও সুন্নাহ এবং সহিহ আদায়ের পদ্ধতি', 'রোজার বিধান: নিয়ত, ইফতার, সেহরি ও রোজা ভঙ্গের কারণসমূহ', 'যাকাতের হিসাব, নিসাব ও বিতরণের সঠিক পদ্ধতি', 'হজের ফরজ, ওয়াজিব ও সুন্নাহ এবং হজের বিস্তারিe � মানাসিক', 'ওযু ও গোসলের বিধান এবং তাহারাতের মাসআলা', 'ইবাদাতে সাধারণ ভুল ও সেগুলোর সংশোধন পদ্ধতি'] },
-
-      'tafsir-quran':        { title: 'তাফসিরুল কুরআন: কুরআনের গভীর অর্থ ও ব্যাখ্যা',     instructor: 'শায়েখ আব্দুল্লাহ', instructorId: 'james-wickett', price: '৳১,৩০০', hours: '৫০', emoji: '📜', gradient: 'linear-gradient(135deg,#4b134f,#c94b4b)', img: 'https://images.unsplash.com/photo-1585036156171-384164a8c675?w=400&h=220&fit=crop',
-        certDesc: ['has successfully completed the professional course on', 'demonstrating a comprehensive understanding of Quranic exegesis,', 'the deep meanings of the Quran, and classical Tafsir methodologies.'],
-        desc: 'কুরআনের আয়াতসমূহের গভীর অর্থ, পটভূমি (শানে নুযুল) এবং ক্লাসিকাল তাফসির পদ্ধতিতে ব্যাখ্যা-বিশ্লেষণ এই কোর্সের মূল বিষয়। ইবনে কাসির, তাবারি ও আধুনিক তাফসিরগ্রন্থের আলোকে কুরআনকে সহজে বোঝার পথ দেখানো হবে।<br><br>কোর্স শেষে আপনি কুরআনের প্রধান সূরাগুলোর তাফসির বুঝতে ও অন্যদের বোঝাতে সক্ষম হবেন।',
-        learns: ['তাফসিরের পরিচয়: প্রকারভেদ ও পদ্ধতিসমূহ', 'শানে নুযুল: আয়াত নাযিলের প্রেক্ষাপট ও গুরুত্ব', 'সূরা ফাতিহার বিস্তারিত তাফসির ও শিক্ষণীয় দিক', 'আয়াতুল কুরসি ও সূরা বাকারার মূল আয়াতসমূহের ব্যাখ্যা', 'ক্লাসিকাল তাফসির: ইবনে কাসির ও তাবারির পদ্ধতি', 'কুরআনের থিমভিত্তিক অধ্যয়ন ও জীবনে প্রয়োগ'] },
-
-      'islamic-history':     { title: 'ইসলামি সভ্যতার ইতিহাস: খলিফাদের স্বর্ণযুগ',        instructor: 'উস্তাদ কামাল',     instructorId: 'james-wickett', price: '৳১,৪০০', hours: '৪৫', emoji: '🏛️', gradient: 'linear-gradient(135deg,#373b44,#4286f4)', img: 'https://images.unsplash.com/photo-1564769625905-50e93615e769?w=400&h=220&fit=crop',
-        certDesc: ['has successfully completed the professional course on', 'demonstrating a comprehensive understanding of Islamic civilization,', 'the Caliphate periods, and the golden age of Muslim scholarship.'],
-        desc: 'খুলাফায়ে রাশেদিন থেকে আব্বাসি ও উমাইয়া খিলাফত পর্যন্ত ইসলামি সভ্যতার গৌরবময় ইতিহাস এই কোর্সে উপস্থাপন করা হয়েছে। মুসলিম বিজ্ঞানী, দার্শনিক ও শাসকদের অবদান এবং সেই যুগ থেকে বর্তমান প্রজন্মের জন্য শিক্ষাগ্রহণের পথ দেখানো হবে।<br><br>কোর্স শেষে আপনি ইসলামি সভ্যতার উত্থান-পতনের ইতিহাস সম্পর্কে সুস্পষ্ট ও সামগ্রিক ধারণা অর্জন করবেন।',
-        learns: ['খুলাফায়ে রাশেদিনের শাসনকাল ও ইসলামি রাষ্ট্র পরিচালনা', 'উমাইয়া খিলাফত: বিস্তার ও রাজনৈতিক পরিবর্তন', 'আব্বাসি যুগ: জ্ঞান-বিজ্ঞানের স্বর্ণযুগ ও বায়তুল হিকমাহ', 'মুসলিম বিজ্ঞানী: ইবনে সিনা, আল-খোয়ারিযমি ও আল-বিরুনির অবদান', 'ক্রুসেড, মোঙ্গল আক্রমণ ও ইসলামি বিশ্বের পুনর্জাগরণ', 'ইতিহাস থেকে শিক্ষা: আধুনিক মুসলিমদের জন্য প্রাসঙ্গিকতা'] },
-    };    ;
-
-    // Lessons data for each course: only first lesson is free/unlocked
-    var COURSE_LESSONS = {
-      // V1–V20: verified embeddable YouTube IDs (Big Buck Bunny & other Creative Commons / education demos)
-      // All IDs below are confirmed embeddable public videos.
-      'default': [
-        { id: 'l1', title: 'পরিচিতি ও মূল বিষয়বস্তু',        dur: '১২:৩০', videoId: 'LXb3EKWsInQ', free: true  },
-        { id: 'l2', title: 'মূল তত্ত্ব ও ধারণাসমূহ',          dur: '১৮:৪৫', videoId: 'YE7VzlLtp-4', free: true  },
-        { id: 'l3', title: 'গভীর বিশ্লেষণ ও প্রয়োগ',          dur: '২৪:০০', videoId: 'aircAruvnKk', free: false },
-        { id: 'l4', title: 'উন্নত কৌশলসমূহ',                   dur: '২১:১৫', videoId: 'WoZ7H3bGFiM', free: false },
-        { id: 'l5', title: 'ব্যবহারিক অনুশীলন',               dur: '৩০:০০', videoId: 'tIeHLnjs5U8', free: false },
-        { id: 'l6', title: 'চূড়ান্ত পর্যালোচনা ও মূল্যায়ন', dur: '২৮:৩০', videoId: 'OkmNXy7er84', free: false },
-      ],
-      'quran-tajweed': [
-        { id: 'qt1',  title: 'কুরআন পরিচিতি ও গুরুত্ব',          dur: '১২:৩০', videoId: 'LXb3EKWsInQ', free: true  },
-        { id: 'qt2',  title: 'আরবি হরফ ও উচ্চারণ',               dur: '১৮:৪৫', videoId: 'YE7VzlLtp-4', free: true  },
-        { id: 'qt3',  title: 'মাখারিজুল হুরুফ: উচ্চারণস্থান',    dur: '২৪:০০', videoId: 'aircAruvnKk', free: false },
-        { id: 'qt4',  title: 'তাশদিদ ও সাকিন এর নিয়ম',          dur: '২১:১৫', videoId: 'WoZ7H3bGFiM', free: false },
-        { id: 'qt5',  title: 'মদ্দ: টানার নিয়মাবলি',             dur: '৩০:০০', videoId: 'tIeHLnjs5U8', free: false },
-        { id: 'qt6',  title: 'ওয়াকফ ও ইবতিদার নিয়ম',           dur: '২৮:৩০', videoId: 'OkmNXy7er84', free: false },
-        { id: 'qt7',  title: 'ইযহার: পরিষ্কার উচ্চারণ',          dur: '২২:০���', videoId: 'spUNpyF58BY', free: false },
-        { id: 'qt8',  title: 'ইদগাম: মিলিয়ে পড়ার নিয়ম',        dur: '২৬:২০', videoId: 'qFLhGq0060w', free: false },
-        { id: 'qt9',  title: 'ইখফা: গোপন করার নিয়ম',             dur: '৩১:০০', videoId: 'X48VuDVv0do', free: false },
-        { id: 'qt10', title: 'সূরা ফাতিহা বিশদ অনুশীলন',         dur: '৪৫:০০', videoId: 'Hc6J5rlzoec', free: false },
-      ],
-      'seerah-nabi': [
-        { id: 'sn1', title: 'নবীজির ﷺ জন্ম ও প্রাথমিক জীবন', dur: '১৫:০০', videoId: 'LXb3EKWsInQ', free: true  },
-        { id: 'sn2', title: 'নবুওয়াতের সূচনা',                dur: '২২:৩০', videoId: 'YE7VzlLtp-4', free: true  },
-        { id: 'sn3', title: 'মক্কার কঠিন সময়',                dur: '১৯:৪৫', videoId: 'aircAruvnKk', free: false },
-        { id: 'sn4', title: 'হিজরত ও মদিনায় আগমন',           dur: '২৭:০০', videoId: 'bJAJjujoMMI', free: false },
-        { id: 'sn5', title: 'বদর ও উহুদের যুদ্ধ',             dur: '৩৫:১৫', videoId: 'tIeHLnjs5U8', free: false },
-        { id: 'sn6', title: 'মক্কা বিজয় ও শেষ জীবন',         dur: '৪০:০০', videoId: 'OkmNXy7er84', free: false },
-      ],
-      'islamic-productivity': [
-        { id: 'ip1', title: 'ইসলামিক সময় ব্যবস্থাপনা',      dur: '১৪:০০', videoId: 'LXb3EKWsInQ', free: true  },
-        { id: 'ip2', title: 'নিয়্যত ও লক্ষ্য নির্ধারণ',     dur: '১৮:০০', videoId: 'YE7VzlLtp-4', free: true  },
-        { id: 'ip3', title: 'দৈনন্দিন রুটিন তৈরি',           dur: '২৩:৩০', videoId: 'aircAruvnKk', free: false },
-        { id: 'ip4', title: 'মনোযোগ ও একাগ্রতা বৃদ্ধি',     dur: '২০:০০', videoId: 'WoZ7H3bGFiM', free: false },
-        { id: 'ip5', title: 'প্রোক্রাস্টিনেশন থেকে মুক্তি', dur: '২৫:৪৫', videoId: 'tIeHLnjs5U8', free: false },
-      ],
-      'sunnah-life': [
-        { id: 'sl1', title: 'সুন্নাহর আলোয় সকাল শুরু',        dur: '১২:০০', videoId: 'LXb3EKWsInQ', free: true  },
-        { id: 'sl2', title: 'খাদ্যাভ্যাস ও সুন্নাহ',          dur: '১৬:৩০', videoId: 'YE7VzlLtp-4', free: true  },
-        { id: 'sl3', title: 'ঘুমের আদব ও দুআ',                dur: '১৪:৪৫', videoId: 'aircAruvnKk', free: false },
-        { id: 'sl4', title: 'পোশাক ও পরিচ্ছন্নতার সুন্নাহ',  dur: '১৮:২০', videoId: 'WoZ7H3bGFiM', free: false },
-        { id: 'sl5', title: 'সামাজিক আচরণে সুন্নাহ',          dur: '২২:০০', videoId: 'tIeHLnjs5U8', free: false },
-      ],
-      'islamic-family': [
-        { id: 'if1', title: 'ইসলামিক বিবাহের মূল্যবোধ',           dur: '১৬:০০', videoId: 'LXb3EKWsInQ', free: true  },
-        { id: 'if2', title: 'স্বামী-স্ত্রীর অধিকার ও দায়িত্ব',   dur: '২৪:৩০', videoId: 'YE7VzlLtp-4', free: true  },
-        { id: 'if3', title: 'সন্তান লালন-পালনের ইসলামিক পদ্ধতি', dur: '২৮:০০', videoId: 'aircAruvnKk', free: false },
-        { id: 'if4', title: 'পারিবারিক দ্বন্দ্ব নিরসন',           dur: '২০:১৫', videoId: 'WoZ7H3bGFiM', free: false },
-        { id: 'if5', title: 'বয়স্ক পিতামাতার সেবা',               dur: '১৯:৪৫', videoId: 'tIeHLnjs5U8', free: false },
-      ],
-      'fiqhul-ibadat': [
-        { id: 'fi1', title: 'নামাজের ফরজ ও ওয়াজিব',        dur: '২০:০০', videoId: 'LXb3EKWsInQ', free: true  },
-        { id: 'fi2', title: 'রোজার বিধিবিধান',              dur: '২৫:৩০', videoId: 'YE7VzlLtp-4', free: true  },
-        { id: 'fi3', title: 'যাকাতের হিসাব ও নিসাব',        dur: '২২:০০', videoId: 'aircAruvnKk', free: false },
-        { id: 'fi4', title: 'হজের ফরজ ও সুন্নাহ',           dur: '৩৫:১৫', videoId: 'WoZ7H3bGFiM', free: false },
-        { id: 'fi5', title: 'পবিত্রতার বিস্তারিত বিধান',   dur: '২৭:৪৫', videoId: 'tIeHLnjs5U8', free: false },
-      ],
-      'tafsir-quran': [
-        { id: 'tq1', title: 'তাফসির কী ও কেন শিখবেন',          dur: '১৩:৩০', videoId: 'LXb3EKWsInQ', free: true  },
-        { id: 'tq2', title: 'সূরা ফাতিহার গভীর তাফসির',         dur: '৩২:০০', videoId: 'YE7VzlLtp-4', free: true  },
-        { id: 'tq3', title: 'আয়াতুল কুরসির ব্যাখ্যা',          dur: '২৮:৪৫', videoId: 'aircAruvnKk', free: false },
-        { id: 'tq4', title: 'সূরা ইয়াসিনের তাফসির',             dur: '৪৫:০০', videoId: 'WoZ7H3bGFiM', free: false },
-        { id: 'tq5', title: 'সূরা মূলকের তাফসির',               dur: '৩৮:২০', videoId: 'tIeHLnjs5U8', free: false },
-      ],
-      'islamic-history': [
-        { id: 'ih1', title: 'ইসলামের উদয় ও বিস্তার',       dur: '১৮:০০', videoId: 'LXb3EKWsInQ', free: true  },
-        { id: 'ih2', title: 'খোলাফায়ে রাশেদীনের যুগ',     dur: '৩৫:৩০', videoId: 'YE7VzlLtp-4', free: true  },
-        { id: 'ih3', title: 'উমাইয়া খেলাফত',              dur: '২৮:০০', videoId: 'aircAruvnKk', free: false },
-        { id: 'ih4', title: 'আব্বাসীয় স্বর্ণযুগ',          dur: '৩২:৪৫', videoId: 'WoZ7H3bGFiM', free: false },
-        { id: 'ih5', title: 'উসমানী সাম্রাজ্য ও পতন',      dur: '৪০:০০', videoId: 'tIeHLnjs5U8', free: false },
-      ],
-    };
-
-    // ===========================
-    // USER STATE (localStorage)
-    // ===========================
-    var isLoggedIn = false;
-    var currentUser = null;
-    var currentCourseId = 'quran-tajweed';
-    var currentLessonId = null; // currently playing lesson id
-
-    // ===========================
-    // AUTO-RESTORE SESSION
-    // ===========================
-    function restoreSession() {
-      // প্রথমে API token দিয়ে চেক
-      var token = lsGet('userToken', null);
-      if (token) {
-        fetch(API_BASE + '/api/user/me', {
-          headers: { 'Authorization': 'Bearer ' + token }
-        }).then(function(r) { return r.json(); }).then(function(user) {
-          if (user && user.name) {
-            currentUser = user;
-            isLoggedIn = true;
-            setLoginState(true);
-            renderDashboard();
-          } else {
-            // Token expired, clear
-            lsSet('userToken', null);
-            lsSet('currentUserEmail', null);
-          }
-        }).catch(function() {
-          // Fallback to localStorage user
-          var saved = lsGet('currentUserEmail', null);
-          if (!saved) return;
-          var users = lsGet('registeredUsers', []);
-          var user = users.find(function(u) { return u.email === saved; });
-          if (user) { currentUser = user; isLoggedIn = true; setLoginState(true); renderDashboard(); }
-        });
-        return;
-      }
-      // Legacy localStorage session
-      var saved = lsGet('currentUserEmail', null);
-      if (!saved) return;
-      var users = lsGet('registeredUsers', []);
-      var user = users.find(function(u) { return u.email === saved; });
-      if (user) {
-        currentUser = user;
-        isLoggedIn = true;
-        setLoginState(true);
-        renderDashboard();
-      }
-    }
+    var COURSES = {};
 
     // ===========================
     // OPEN COURSE DETAIL
@@ -3207,70 +3025,60 @@
       }
     }
 
-    function renderCurriculum(courseId) {
-      // API curriculum থেকে flat lessons তৈরি করি, না থাকলে hardcoded ব্যবহার করি
+    function getFlattenedCourseLessons(courseId) {
       var apiCourse = COURSES[courseId];
       var apiCurriculum = apiCourse && apiCourse._curriculum && apiCourse._curriculum.length > 0
         ? apiCourse._curriculum : null;
+      if (!apiCurriculum) return [];
+      var flat = [];
+      apiCurriculum.forEach(function(section, si) {
+        (section.lessons || []).forEach(function(ls, li) {
+          flat.push({ id: courseId + '-s' + si + '-l' + li, title: ls.title || '', dur: ls.duration || '', videoId: ls.videoId || '', free: ls.isFree || false });
+        });
+      });
+      return flat;
+    }
 
+    function renderCurriculum(courseId) {
+      var apiCourse = COURSES[courseId];
+      var apiCurriculum = apiCourse && apiCourse._curriculum && apiCourse._curriculum.length > 0
+        ? apiCourse._curriculum : null;
       var enrolled = isLoggedIn && isEnrolled(courseId);
       var container = document.querySelector('#tab-curriculum .curriculum-section');
       if (!container) return;
-
-      var html;
-
+      var html = '';
       if (apiCurriculum) {
-        // API curriculum: সেকশন ভিত্তিক দেখাই
         var totalLessons = apiCurriculum.reduce(function(t, s) { return t + (s.lessons||[]).length; }, 0);
         html = '<h3>কোর্স কারিকুলাম <span style="font-size:14px;font-weight:400;color:var(--text-mid)">• ' + totalLessons + ' লেসন</span></h3>';
         apiCurriculum.forEach(function(section, si) {
           var sLessons = section.lessons || [];
           html += '<div class="lesson-group">';
-          html += '<div class="lesson-group-title">' + (section.sectionTitle || 'সেকশন ' + (si+1)) +
-            ' <span>' + sLessons.length + ' লেসন</span></div>';
+          html += '<div class="lesson-group-title">' + (section.sectionTitle || 'সেকশন ' + (si+1)) + ' <span>' + sLessons.length + ' লেসন</span></div>';
           html += '<div class="lesson-list">';
           sLessons.forEach(function(ls, li) {
-            var lessonObj = {
-              id: courseId + '-s' + si + '-l' + li,
-              title: ls.title || '',
-              dur: ls.duration || '',
-              videoId: ls.videoId || '',
-              free: ls.isFree || false,
-            };
-            html += buildLessonItemHTML(lessonObj, courseId, enrolled);
+            html += buildLessonItemHTML({ id: courseId + '-s' + si + '-l' + li, title: ls.title || '', dur: ls.duration || '', videoId: ls.videoId || '', free: ls.isFree || false }, courseId, enrolled);
           });
           html += '</div></div>';
         });
       } else {
-        // Hardcoded fallback
-        var lessons = COURSE_LESSONS[courseId] || COURSE_LESSONS['default'];
-        html = '<h3>কোর্স কারিকুলাম <span style="font-size:14px;font-weight:400;color:var(--text-mid)">• ' + lessons.length + ' লেসন</span></h3>';
-        html += '<div class="lesson-group"><div class="lesson-group-title">কোর্সের সকল লেসন <span>' + lessons.length + ' লেসন</span></div><div class="lesson-list">';
-        lessons.forEach(function(lesson) {
-          html += buildLessonItemHTML(lesson, courseId, enrolled);
-        });
-        html += '</div></div>';
+        html = '<h3>কোর্স কারিকুলাম <span style="font-size:14px;font-weight:400;color:var(--text-mid)">• ০ লেসন</span></h3>' +
+          '<div class="lesson-group"><div class="lesson-group-title">কোর্সের সকল লেসন <span>০ লেসন</span></div><div class="lesson-list"><div style="padding:22px;color:var(--text-mid);text-align:center">এই কোর্সের লেসন শিগগিরই যুক্ত হবে।</div></div></div>';
       }
-
       container.innerHTML = html;
-
-      // ── প্রথম ভিডিও ডিফল্ট সিলেক্ট ও অটো প্লে ──
       setTimeout(function() {
         var firstLesson = container.querySelector('.lesson-item.lesson-clickable.curriculum-lesson-row');
         if (firstLesson) {
           firstLesson.classList.add('lesson-active');
           firstLesson.style.background = 'rgba(245,197,24,0.08)';
           firstLesson.style.borderLeft = '3px solid var(--primary)';
-          // If no video currently playing, click the first one
           var nowPlaying = document.getElementById('now-playing-label');
-          if (!nowPlaying || nowPlaying.classList.contains('hidden')) {
-            firstLesson.click();
-          }
+          if (!nowPlaying || nowPlaying.classList.contains('hidden')) firstLesson.click();
         }
       }, 150);
     }
 
     // ===========================
+    // VIDEO PROGRESS TRACKING (API + localStorage)
     // VIDEO PROGRESS TRACKING (API + localStorage)
     // ===========================
     function getProgressKey(courseId, lessonId) {
@@ -3306,7 +3114,6 @@
 
     // Overall course progress: API data অথবা localStorage থেকে
     function getOverallCourseProgress(courseId) {
-      // প্রথমে API enrolled data চেক করি
       var token = lsGet('userToken', null);
       if (token && currentUser && currentUser.enrolledCourses) {
         var enr = currentUser.enrolledCourses.find(function(e) {
@@ -3314,9 +3121,8 @@
         });
         if (enr && enr.progress !== undefined) return enr.progress;
       }
-      // Fallback to localStorage
-      var lessons = COURSE_LESSONS[courseId] || COURSE_LESSONS['default'];
-      if (!lessons || !lessons.length) return 0;
+      var lessons = getFlattenedCourseLessons(courseId);
+      if (!lessons.length) return 0;
       var total = lessons.reduce(function(sum, l) { return sum + getCourseProgress(courseId, l.id); }, 0);
       return Math.round(total / lessons.length);
     }
@@ -3517,10 +3323,8 @@
 
     function continueLearning(cid) {
       openCourseDetail(cid);
-      // After navigation, auto-play the last incomplete lesson
       setTimeout(function() {
-        var lessons = COURSE_LESSONS[cid] || COURSE_LESSONS['default'];
-        // Find first lesson not 100% complete
+        var lessons = getFlattenedCourseLessons(cid);
         var target = lessons.find(l => getCourseProgress(cid, l.id) < 100) || lessons[0];
         if (target) {
           playLessonVideoById(target.id, target.title, target.dur, target.videoId, cid);
@@ -3530,6 +3334,7 @@
     }
 
     // ===========================
+    // LESSON ACCESS CONTROL
     // LESSON ACCESS CONTROL
     // ===========================
     function isEnrolled(courseId) {
@@ -4026,7 +3831,7 @@
         name: 'উস্তাদ ইউসুফ',
         tagline: 'সীরাত ও সুন্নাহ বিশেষজ্ঞ | ইসলামিক লাইফস্টাইল কোচ',
         photo: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=160&h=160&fit=crop&crop=face',
-        bio: 'উস্তাদ ইউসুফ সীরাতুন নবী ﷺ ও দৈনন্দ;��ন সুন্নাহ চর্চার বিষয়ে বাংলাদেশের একজন শীর্ষস্থানীয় শিক্ষক। আল-আযহার বিশ্ববিদ্যালয় থেকে ইসলামিক স্টাডিজে স্নাতকোত্তর সম্পন্ �� করে দেশে ফিরে ইসলামিক শিক্ষা প্রসারে কাজ করে যাচ্ছেন।',
+        bio: 'উস্তাদ ইউসুফ সীরাতুন নবী ﷺ ও দৈনন্দিন সুন্নাহ চর্চার বিষয়ে বাংলাদেশের একজন শীর্ষস্থানীয় শিক্ষক। আল-আযহার বিশ্ববিদ্যালয় থেকে ইসলামিক স্টাডিজে স্নাতকোত্তর সম্পন্ �� করে দেশে ফিরে ইসলামিক শিক্ষা প্রসারে কাজ করে যাচ্ছেন।',
         about: 'উস্তাদ ইউসুফ বিশ্বাস করেন, নবীজি ﷺ-এর জীবন থেকে শিক্ষা নিয়ে আধুনিক জীবনে প্রয়োগ করাই সত্যিকারের মুসলিম জীবনযাপন। তিনি সীরাহকে কেবল ইতিহাস নয়, জীবনের দিকনির্দেশনা হিসেবে উপস্থাপন করেন। পাঁচ হাজারেরও বেশি শিক্ষার্থী তাঁর কোর্সে অংশ নিয়ে জীবন বদলে দিয়েছেন।',
         rating: '4.9', students: '৫,৮০০', reviews: '১.৬K',
         courses: ['seerah-nabi', 'sunnah-life']
@@ -4107,20 +3912,6 @@
             });
           }
         }
-        // Social links for API instructor profile page
-        var socialEl = document.getElementById('profile-socials');
-        if (socialEl) {
-          var fb = apiInst.facebook || (apiInst.social && apiInst.social.facebook) || '';
-          var tw = apiInst.twitter  || (apiInst.social && apiInst.social.twitter)  || '';
-          var yt = apiInst.youtube  || (apiInst.social && apiInst.social.youtube)  || '';
-          var socLinks = [];
-          if (fb) socLinks.push('<a href="' + fb + '" target="_blank" rel="noopener" class="social-mini" style="background:#1877f2;color:#fff" title="Facebook">f</a>');
-          if (tw) socLinks.push('<a href="' + tw + '" target="_blank" rel="noopener" class="social-mini" style="background:#000;color:#fff" title="Twitter/X">𝕏</a>');
-          if (yt) socLinks.push('<a href="' + yt + '" target="_blank" rel="noopener" class="social-mini" style="background:#ff0000;color:#fff" title="YouTube">▶</a>');
-          socialEl.innerHTML = socLinks.join('');
-          socialEl.style.display = socLinks.length ? 'flex' : 'none';
-        }
-
         navigate('instructor');
         return;
       }
@@ -4979,15 +4770,10 @@
       var pageGrid = document.getElementById('page-instructors-grid');
       var targetGrids = [grid, pageGrid].filter(Boolean);
       if (!targetGrids.length || !instructors.length) return;
-      function buildInstructorCard(inst) {
+      var html = instructors.map(function(inst) {
         var key = inst.slug || inst._id;
         var photo = inst.photo || 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=160&h=160&fit=crop&crop=face';
         var specs = (inst.specializations || []).slice(0, 2).join(' · ') || inst.title || '';
-        var socialParts = [];
-        if (inst.facebook) socialParts.push('<a href="' + inst.facebook + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Facebook" style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#1877f2;color:#fff;font-size:12px;font-weight:700;text-decoration:none">f</a>');
-        if (inst.twitter) socialParts.push('<a href="' + inst.twitter + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Twitter/X" style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#000;color:#fff;font-size:11px;text-decoration:none">𝕏</a>');
-        if (inst.youtube) socialParts.push('<a href="' + inst.youtube + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="YouTube" style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#ff0000;color:#fff;font-size:10px;text-decoration:none">▶</a>');
-        var socialHtml = socialParts.length ? '<div style="display:flex;gap:5px;margin-top:8px;justify-content:center">' + socialParts.join('') + '</div>' : '';
         return '<div class="instructor-card fade-in" onclick="openInstructorProfile(\'' + key + '\')" style="cursor:pointer">' +
           '<div class="instructor-photo-wrap"><img src="' + photo + '" alt="' + (inst.name||'') + '" class="instructor-photo" loading="lazy"/></div>' +
           '<div class="instructor-info">' +
@@ -4997,10 +4783,16 @@
           '<span>👥 ' + (inst.students||0) + '</span>' +
           '<span>★ ' + (inst.rating||4.8) + '</span>' +
           '<span>📚 ' + (inst.courses||0) + '</span>' +
-          '</div>' + socialHtml + '</div></div>';
-      }
-      var html = instructors.map(buildInstructorCard).join('');
-      if (grid) grid.innerHTML = instructors.slice(0, 8).map(buildInstructorCard).join('');
+          '</div></div></div>';
+      }).join('');
+      if (grid) grid.innerHTML = instructors.slice(0, 8).map(function(inst) {
+        var key = inst.slug || inst._id;
+        var photo = inst.photo || 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=160&h=160&fit=crop&crop=face';
+        var specs = (inst.specializations || []).slice(0, 2).join(' · ') || inst.title || '';
+        return '<div class="instructor-card fade-in" onclick="openInstructorProfile(\'' + key + '\')" style="cursor:pointer">' +
+          '<div class="instructor-photo-wrap"><img src="' + photo + '" alt="' + (inst.name||'') + '" class="instructor-photo" loading="lazy"/></div>' +
+          '<div class="instructor-info"><div class="instructor-name">' + (inst.name||'') + '</div><div class="instructor-title">' + (inst.title||specs) + '</div><div class="instructor-stats"><span>👥 ' + (inst.students||0) + '</span><span>★ ' + (inst.rating||4.8) + '</span><span>📚 ' + (inst.courses||0) + '</span></div></div></div>';
+      }).join('');
       if (pageGrid) pageGrid.innerHTML = html;
 
       instructors.forEach(function(inst) {
@@ -5009,7 +4801,6 @@
         INSTRUCTORS[key] = {
           name: inst.name || '', tagline: inst.title || '', photo: inst.photo || '', bio: inst.bio || '', about: inst.bio || '',
           rating: String(inst.rating || 4.8), students: String(inst.students || 0), reviews: '0', courses: instCourses,
-          facebook: inst.facebook || '', twitter: inst.twitter || '', youtube: inst.youtube || '',
         };
       });
     }
@@ -5043,26 +4834,11 @@
     }
 
     function renderDefaultInstructors() {
-      var list = Object.keys(INSTRUCTORS || {}).map(function(key) {
-        var inst = INSTRUCTORS[key] || {};
-        return {
-          _id: key,
-          slug: key,
-          name: inst.name || '',
-          title: inst.tagline || '',
-          photo: inst.photo || '',
-          students: inst.students || '',
-          rating: inst.rating || '4.8',
-          courses: inst.courses ? inst.courses.length : 0
-        };
-      }).filter(function(inst) { return inst.name; });
-      if (list.length) renderAPIInstructors(list);
-      else {
-        var grid = document.getElementById('instructors-grid');
-        if (grid) grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-mid)">ইন্সট্রাক্টর শিগগিরই যুক্ত হবে।</div>';
-      }
+      var pageGrid = document.getElementById('page-instructors-grid');
+      if (pageGrid) pageGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-mid)">ইন্সট্রাক্টর শিগগিরই যুক্ত হবে।</div>';
     }
 
+    // ── Render API notices ──
     // ── Render API notices ──
     function renderAPINotices(notices) {
       var container = document.getElementById('notices-container');
