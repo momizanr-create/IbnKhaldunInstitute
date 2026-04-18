@@ -2934,7 +2934,29 @@
       }
 
       currentCourseId = courseId;
-      if (!course) { navigate('detail'); return; }
+      if (!course) {
+        // API এখনো লোড হয়নি — লোড হওয়ার জন্য অপেক্ষা করে পুনরায় চেষ্টা করি
+        var titleEl2 = document.querySelector('.detail-title');
+        if (titleEl2) titleEl2.textContent = 'কোর্স লোড হচ্ছে...';
+        navigate('detail');
+        var retryCount = 0;
+        var retryTimer = setInterval(function() {
+          retryCount++;
+          var c2 = COURSES[courseId];
+          if (!c2 && window._allCoursesData && window._allCoursesData.length) {
+            var found = window._allCoursesData.find(function(c) {
+              return String(c.slug || '') === String(courseId) || String(c._id || '') === String(courseId);
+            });
+            if (found) { openCourseDetail(found.slug || found._id); clearInterval(retryTimer); return; }
+          }
+          if (c2) { openCourseDetail(courseId); clearInterval(retryTimer); return; }
+          if (retryCount >= 10) {
+            clearInterval(retryTimer);
+            showToast('⚠️ কোর্স লোড হয়নি, পুনরায় চেষ্টা করুন।');
+          }
+        }, 500);
+        return;
+      }
       var titleEl = document.querySelector('.detail-title');
       if (titleEl) titleEl.textContent = course.title;
       var bcEl = document.querySelector('.detail-breadcrumb span[style*="primary"]');
@@ -5433,12 +5455,18 @@
             sessionStorage.setItem('ik_scroll_' + (window.currentPage || 'home'), String(window.scrollY || 0));
             localStorage.setItem('ik_active_nav', page);
           } catch(e) {}
+          // currentPage ট্র্যাক করা
+          window.currentPage = page;
           originalNavigate(page);
           setActivePublicNav(page);
           setTimeout(function() {
             var savedScroll = sessionStorage.getItem('ik_scroll_' + page);
             if (savedScroll) window.scrollTo(0, parseInt(savedScroll, 10) || 0);
-            applyManagedContent(managedBundle);
+            // 'detail' পেজে applyManagedContent চালালে openCourseDetail-এর
+            // DOM আপডেট মুছে যেতে পারে, তাই detail পেজ বাদ দিই
+            if (page !== 'detail') {
+              applyManagedContent(managedBundle);
+            }
           }, 80);
           return false;
         };
