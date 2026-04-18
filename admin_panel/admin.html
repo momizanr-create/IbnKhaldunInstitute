@@ -1299,7 +1299,7 @@
             <!-- Course Categories Column -->
             <div class="card">
               <div class="card-header">
-                <h3>📚 কোর্স বিভাগ কলাম</h3>
+                <h3>s��� কোর্স বিভাগ কলাম</h3>
                 <button class="btn btn-primary btn-sm" onclick="addFooterCategory()">+ বিভাগ যোগ</button>
               </div>
               <div class="card-body" style="padding:16px">
@@ -1548,7 +1548,7 @@
     <div class="modal-body">
       <input type="hidden" id="instructor-id"/>
       <div class="field"><label>নাম *</label><input id="i-name" placeholder="শিক্ষকের নাম"/></div>
-      <div class="field"><label>পদবী</label><input id="i-title" placeholder="যেমন: হাফেজ, মুফতি"/></div>
+      <div class="field"><label>পদবcl�</label><input id="i-title" placeholder="যেমন: হাফেজ, মুফতি"/></div>
       <div class="field"><label>বায়ো</label><textarea id="i-bio" placeholder="সংক্ষিপ্ত পরিচিতি..."></textarea></div>
       <div class="field">
         <label>ফটো</label>
@@ -4354,7 +4354,7 @@ async function saveFaqs() {
   } catch(e) { toast('FAQ সংরক্ষণ হয়নি: ' + e.message, 'error'); }
 }
 
-// ────────────────────────────────────────────
+// ─────────────}��──────────────────────────────
 // HERO COURSES (Scrolling destination cards)
 // ────────────────────────────────────────────
 let heroCoursesList = [];
@@ -4572,6 +4572,6 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
   window.saveFullContentBundle=async function(){try{let b={heroSections:{courses:{title:val('fc-courses-title'),subtitle:val('fc-courses-subtitle'),backgroundImage:val('fc-courses-bg')},about:{title:val('fc-about-title'),subtitle:val('fc-about-subtitle'),backgroundImage:val('fc-about-bg')},contact:{title:val('fc-contact-title'),subtitle:val('fc-contact-subtitle'),backgroundImage:val('fc-contact-bg')}},about:{content:val('fc-about-content')},contact:{email:val('fc-contact-email'),phone:val('fc-contact-phone'),address:val('fc-contact-address'),content:val('fc-contact-content')},promo:{title:val('fc-promo-title'),subtitle:val('fc-promo-subtitle'),buttonText:val('fc-promo-button'),buttonLink:val('fc-promo-link')},faqs:json('fc-faqs'),navLinks:json('fc-navlinks'),categories:json('fc-categories'),sidebarBody:json('fc-sidebar')};await api('POST','/api/admin/content-bundle',b).catch(()=>api('POST','/api/admin/settings',{contentBundle:b}));toast('✅ সম্পূর্ণ কনটেন্ট সেভ হয়েছে')}catch(e){toast('সমস্যা: '+e.message,'error')}};
   const old=window.navTo;window.navTo=function(page){try{localStorage.setItem('activeAdminNav',page)}catch(e){}old(page);if(page==='full-content')loadFullContentBundle()};pageTitles['full-content']='সম্পূর্ণ কনটেন্ট';window.addEventListener('load',()=>{ensurePage();let a=localStorage.getItem('activeAdminNav');if(a&&a!=='dashboard')setTimeout(()=>navTo(a),250)})
 })();
-</script>
+</script>   
 </body>
 </html>
