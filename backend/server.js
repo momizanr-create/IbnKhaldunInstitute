@@ -121,6 +121,7 @@ const instructorSchema = new mongoose.Schema({
   courses:  { type: Number, default: 0 },
   rating:   { type: Number, default: 4.8 },
   social: { facebook: String, twitter: String, linkedin: String, youtube: String },
+  featured:  { type: Boolean, default: false },
   published: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now },
 });
@@ -227,11 +228,12 @@ const Category = mongoose.model('Category', categorySchema);
 
 // ── Course Tab Schema ──
 const courseTabSchema = new mongoose.Schema({
-  label:  { type: String, required: true },
-  key:    { type: String, required: true, unique: true },
-  icon:   { type: String, default: '' },
-  order:  { type: Number, default: 0 },
-  active: { type: Boolean, default: true },
+  label:     { type: String, required: true },
+  key:       { type: String, required: true, unique: true },
+  icon:      { type: String, default: '' },
+  order:     { type: Number, default: 0 },
+  active:    { type: Boolean, default: true },
+  courseIds: { type: [String], default: [] },
   createdAt: { type: Date, default: Date.now },
 });
 const CourseTab = mongoose.model('CourseTab', courseTabSchema);
@@ -465,7 +467,7 @@ app.get('/api/admin/instructors', authMiddleware, async (req, res) => {
 function flattenInstructor(inst) {
   if (!inst) return inst;
   const s = inst.social || {};
-  return { ...inst, facebook: s.facebook || '', twitter: s.twitter || '', youtube: s.youtube || '', linkedin: s.linkedin || '' };
+  return { ...inst, facebook: s.facebook || '', twitter: s.twitter || '', youtube: s.youtube || '', linkedin: s.linkedin || '', featured: inst.featured === true };
 }
 
 function normInstructorData(data) {
@@ -478,6 +480,8 @@ function normInstructorData(data) {
     linkedin: data.linkedin || data['social.linkedin']  || '',
   };
   delete data.facebook; delete data.twitter; delete data.youtube; delete data.linkedin;
+  if (data.featured !== undefined) data.featured = data.featured === true || data.featured === 'true';
+  if (data.published !== undefined) data.published = data.published === true || data.published === 'true';
   return data;
 }
 
