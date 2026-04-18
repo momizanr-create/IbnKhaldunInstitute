@@ -373,8 +373,6 @@
   #thumb-drop-zone:hover { border-color: var(--primary) !important; background: rgba(245,197,24,0.06) !important; }
   #thumb-drop-zone.drag-over { border-color: var(--primary) !important; background: rgba(245,197,24,0.1) !important; border-style: solid !important; }
   #thumb-drop-zone.has-image { border-color: #22c55e !important; }
-  .mini-drop-zone { border:1.5px dashed var(--border2); border-radius:10px; padding:12px; text-align:center; color:var(--text2); background:var(--bg3); cursor:pointer; transition:all .2s; font-size:12px; margin-top:8px; }
-  .mini-drop-zone:hover, .mini-drop-zone.drag-over { border-color:var(--primary); background:rgba(245,197,24,0.08); color:var(--text); }
   </style>
 </head>
 <body>
@@ -657,7 +655,6 @@
             </div></div>
           </div>
           <div style="margin-top:16px;display:flex;gap:10px"><button class="btn btn-primary" onclick="saveContactContent()">💾 সংরক্ষণ করুন</button><button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="loadContactContent()">🔄 রিলোড</button></div>
-          <div class="card" style="margin-top:20px"><div class="card-header"><div class="card-header-left"><h3>📨 যোগাযোগ মেসেজ</h3><span class="card-subtitle">ওয়েবসাইটের যোগাযোগ ফর্ম থেকে আসা মেসেজ</span></div><button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="loadContactMessages()">রিফ্রেশ</button></div><div class="card-body"><table><thead><tr><th>নাম</th><th>ইমেইল</th><th>বিষয়</th><th>মেসেজ</th><th>তারিখ</th></tr></thead><tbody id="contact-messages-tbody"><tr><td colspan="5" class="loading">লোড হচ্ছে...</td></tr></tbody></table></div></div>
         </div>
 
         <!-- ── ENROLLMENTS ── -->
@@ -860,7 +857,7 @@
             <div class="card">
               <div class="card-header"><h3>📋 মূল তথ্য</h3></div>
               <div class="card-body" style="padding:20px">
-                <div class="field"><label>সাইটের টাইটেল</label><input id="ss-title" placeholder="ইবনে খালদুন ইনস���টিটিউট"/></div>
+                <div class="field"><label>সাইটের টাইটেল</label><input id="ss-title" placeholder="ইবনে খালদুন ইনস্টিটিউট"/></div>
                 <div class="field"><label>ট্যাগলাইন</label><input id="ss-tagline" placeholder="অনলাইনে নতুন দক্ষতা অর্জন করুন"/></div>
                 <div class="field"><label>ফেভিকন URL</label><input id="ss-favicon" placeholder="https://..."/></div>
                 <div class="field"><label>হেডার হাইট (px)</label><input id="ss-header-h" placeholder="70" type="number"/></div>
@@ -904,9 +901,9 @@
               <div class="card-header"><h3>🖼️ লোগো আপলোড</h3></div>
               <div class="card-body" style="padding:20px">
                 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
-                  <div class="field"><label>হেডার লোগো URL</label><input id="ss-logo-header" placeholder="https://..."/><div class="mini-drop-zone" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleSimpleImageDrop(event,'ss-logo-header')" onclick="pickSimpleImage('ss-logo-header')">ছবি টেনে আনুন / আপলোড করুন</div></div>
-                  <div class="field"><label>ফুটার লোগো URL</label><input id="ss-logo-footer" placeholder="https://..."/><div class="mini-drop-zone" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleSimpleImageDrop(event,'ss-logo-footer')" onclick="pickSimpleImage('ss-logo-footer')">ছবি টেনে আনুন / আপলোড করুন</div></div>
-                  <div class="field"><label>ফেভিকন URL</label><input id="ss-favicon2" placeholder="https://..."/><div class="mini-drop-zone" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleSimpleImageDrop(event,'ss-favicon2')" onclick="pickSimpleImage('ss-favicon2')">ছবি টেনে আনুন / আপলোড করুন</div></div>
+                  <div class="field"><label>হেডার লোগো URL</label><input id="ss-logo-header" placeholder="https://..."/></div>
+                  <div class="field"><label>ফুটার লোগো URL</label><input id="ss-logo-footer" placeholder="https://..."/></div>
+                  <div class="field"><label>ফেভিকন URL</label><input id="ss-favicon2" placeholder="https://..."/></div>
                 </div>
                 <div id="ss-logo-preview" style="display:flex;gap:16px;margin-top:12px;align-items:center">
                   <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;min-width:120px">
@@ -962,7 +959,7 @@
              [৩] হিরো সেকশন
         ══════════════════════════════════════════════════ -->
         <div class="page" id="page-hero-section">
-          <div class="page-header"><h2>🖼️ হিরো সেকশন</h2><p>ওয়েবসাইটের প্রধান ব্যানার এলাকা সম্পাদনা</p></div>
+          <div class="page-header"><h2>🖼️ হিরো সেকশন</h2><p>ওt �়েবসাইটের প্রধান ব্যানার এলাকা সম্পাদনা</p></div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
             <!-- Left: Main Content -->
             <div class="card">
@@ -1210,7 +1207,7 @@
             <div class="card">
               <div class="card-header"><h3>📦 হাইলাইট কোর্স</h3></div>
               <div class="card-body" style="padding:20px">
-                <div class="field"><label>কোর্সের নাম</label><input id="popup-course-name" placeholder="কুরv��ন তাজওয়িদ সম্পূর্ণ কোর্স"/></div>
+                <div class="field"><label>কোর্সের নাম</label><input id="popup-course-name" placeholder="কুরআন তাজওয়িদ সম্পূর্ণ কোর্স"/></div>
                 <div class="field"><label>কোর্স ছবি URL</label><input id="popup-course-img" placeholder="https://..."/></div>
                 <div class="row2">
                   <div class="field"><label>মূল্য (৳)</label><input type="number" id="popup-price" placeholder="1200"/></div>
@@ -1233,7 +1230,7 @@
 
         <!-- ══════════════════════════════════════════════════
              [১০] ফুটার ম্যানেজার
-        ══════════════════════════════════════════════════ -->
+        ══════════════════════════════════ ��═══════════════ -->
         <div class="page" id="page-footer-mgr">
           <div class="page-header"><h2>🦶 ফুটার</h2><p>সাইটের নিচের অংশ সম্পাদনা করুন</p></div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
@@ -1818,53 +1815,6 @@ function toast(msg, type = 'success') {
   setTimeout(() => { t.className = ''; }, 3000);
 }
 
-let adminNotifyTimer = null;
-let adminNotifyPrimed = false;
-function playAdminNotifySound() {
-  try {
-    const Ctx = window.AudioContext || window.webkitAudioContext;
-    if (!Ctx) return;
-    const ctx = new Ctx();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.frequency.value = 880;
-    gain.gain.setValueAtTime(0.001, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
-    osc.connect(gain); gain.connect(ctx.destination);
-    osc.start(); osc.stop(ctx.currentTime + 0.38);
-  } catch(e) {}
-}
-function getSeenIds(key) { try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) { return []; } }
-function setSeenIds(key, ids) { localStorage.setItem(key, JSON.stringify(ids || [])); }
-async function pollAdminNotifications() {
-  if (!getToken()) return;
-  try {
-    const results = await Promise.all([api('GET', '/api/admin/access-requests?status=pending').catch(() => []), api('GET', '/api/admin/contact-messages').catch(() => [])]);
-    const reqIds = (results[0] || []).map(x => x._id).filter(Boolean);
-    const msgIds = (results[1] || []).map(x => x._id).filter(Boolean);
-    const newReq = reqIds.filter(id => !getSeenIds('admin_seen_access_request_ids').includes(id));
-    const newMsg = msgIds.filter(id => !getSeenIds('admin_seen_contact_message_ids').includes(id));
-    setSeenIds('admin_seen_access_request_ids', reqIds);
-    setSeenIds('admin_seen_contact_message_ids', msgIds);
-    if (adminNotifyPrimed && (newReq.length || newMsg.length)) {
-      playAdminNotifySound();
-      const parts = [];
-      if (newReq.length) parts.push(newReq.length + 'টি নতুন পেমেন্ট/অ্যাক্সেস রিকোয়েস্ট');
-      if (newMsg.length) parts.push(newMsg.length + 'টি নতুন যোগাযোগ মেসেজ');
-      toast('🔔 ' + parts.join(' এবং '));
-      if (document.getElementById('page-contact-content')?.classList.contains('active')) loadContactMessages();
-      if (document.getElementById('page-access-requests')?.classList.contains('active')) loadAccessRequests();
-    }
-    adminNotifyPrimed = true;
-  } catch(e) {}
-}
-function startAdminNotifications() {
-  if (adminNotifyTimer) clearInterval(adminNotifyTimer);
-  pollAdminNotifications();
-  adminNotifyTimer = setInterval(pollAdminNotifications, 30000);
-}
-
 // ── Modal ──
 function openModal(id)  { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
@@ -1924,11 +1874,9 @@ function showApp(username) {
   document.getElementById('topbar-uname-display').textContent = username || 'Admin';
   document.getElementById('topbar-avatar-letter').textContent = (username || 'A')[0].toUpperCase();
   loadDashboard();
-  startAdminNotifications();
 }
 
 function doLogout() {
-  if (adminNotifyTimer) clearInterval(adminNotifyTimer);
   clearAuth();
   location.reload();
 }
@@ -2395,7 +2343,7 @@ function loadSubCatOptions(catVal, selectedSub) {
     subSel.innerHTML = '<option value="">-- সাব ক্যাটাগরি (ঐচ্ছিক) --</option>' +
       activeSubs.map(s => `<option value="${s.slug||s.name}" ${selectedSub === (s.slug||s.name) ? 'selected' : ''}>${s.icon || ''} ${s.name}</option>`).join('');
   } else {
-    subSel.innerHTML = '<option value="">-- কোনো সাব ক্যাটাগরি নেই --</option>';
+    subSel.innerHTML = '<option value="">-- কোনো সাব ক্যাটাগরl�� নেই --</option>';
   }
 }
 
@@ -2809,18 +2757,7 @@ async function loadContactContent() {
     document.getElementById('contact-phone-info').value = d.phone || '';
     document.getElementById('contact-address-info').value = d.address || '';
     document.getElementById('contact-hours-info').value = d.hours || '';
-    loadContactMessages();
   } catch (e) { toast('কনট্যাক্ট কনটেন্ট লোড হয়নি: ' + e.message, 'error'); }
-}
-async function loadContactMessages() {
-  const body = document.getElementById('contact-messages-tbody');
-  if (!body) return;
-  try {
-    const list = await api('GET', '/api/admin/contact-messages');
-    body.innerHTML = list.length ? list.map(m => '<tr><td><strong>' + escapeAdminHTML(m.name || '—') + '</strong></td><td>' + escapeAdminHTML(m.email || '—') + '</td><td>' + escapeAdminHTML(m.subject || '—') + '</td><td style="max-width:340px;white-space:normal;line-height:1.5">' + escapeAdminHTML(m.message || '') + '</td><td>' + (m.createdAt ? new Date(m.createdAt).toLocaleString('bn-BD') : '—') + '</td></tr>').join('') : '<tr><td colspan="5" style="text-align:center;color:var(--text2);padding:24px">এখনো কোনো মেসেজ নেই</td></tr>';
-  } catch(e) {
-    body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--red);padding:24px">মেসেজ লোড হয়নি</td></tr>';
-  }
 }
 async function saveContactContent() {
   const body = { pageTitle: document.getElementById('contact-page-title').value, pageSubtitle: document.getElementById('contact-page-subtitle').value, label: document.getElementById('contact-label').value, heading: document.getElementById('contact-heading').value, formTitle: document.getElementById('contact-form-title-admin').value, email: document.getElementById('contact-email-info').value, phone: document.getElementById('contact-phone-info').value, address: document.getElementById('contact-address-info').value, hours: document.getElementById('contact-hours-info').value };
@@ -3016,43 +2953,6 @@ function updateLogoPreview() {
   else { fImg.style.display='none'; document.getElementById('ss-footer-logo-placeholder').style.display='block'; }
 }
 
-async function uploadImageToInput(inputId, file, done) {
-  if (!file || !file.type.startsWith('image/')) { toast('শুধু ছবি ফাইল আপলোড করা যাবে', 'error'); return; }
-  if (file.size > 10 * 1024 * 1024) { toast('ছবির আকার ১০MB এর বেশি হওয়া যাবে না', 'error'); return; }
-  try {
-    const formData = new FormData(); formData.append('file', file);
-    const res = await fetch(API + '/api/admin/upload', { method:'POST', headers:{ Authorization:'Bearer ' + getToken() }, body:formData });
-    if (!res.ok) throw new Error('Upload failed');
-    const data = await res.json();
-    const input = document.getElementById(inputId);
-    if (input) input.value = data.url;
-    if (typeof done === 'function') done(data.url);
-    updateLogoPreview();
-    toast('✅ ছবি আপলোড হয়েছে');
-  } catch(e) { toast('আপলোড ব্যর্থ: ' + e.message, 'error'); }
-}
-function pickSimpleImage(inputId) { const picker = document.createElement('input'); picker.type = 'file'; picker.accept = 'image/*'; picker.onchange = () => uploadImageToInput(inputId, picker.files[0]); picker.click(); }
-function handleSimpleImageDrop(e, inputId) { e.preventDefault(); e.currentTarget.classList.remove('drag-over'); uploadImageToInput(inputId, e.dataTransfer.files[0]); }
-function pickFullContentBg(k) { const picker = document.createElement('input'); picker.type = 'file'; picker.accept = 'image/*'; picker.onchange = () => uploadImageToInput('fc-' + k + '-bg', picker.files[0]); picker.click(); }
-function uploadFullContentBgDrop(e, k) { e.preventDefault(); e.currentTarget.classList.remove('drag-over'); uploadImageToInput('fc-' + k + '-bg', e.dataTransfer.files[0]); }
-function enhanceFullContentImageDrops() {
-  ['courses','about','contact'].forEach(k => {
-    const input = document.getElementById('fc-' + k + '-bg');
-
-    if (input && !document.getElementById('fc-' + k + '-bg-drop')) {
-      input.insertAdjacentHTML('afterend', `
-        <div id="fc-${k}-bg-drop"
-          class="mini-drop-zone"
-          ondragover="event.preventDefault();this.classList.add('drag-over')"
-          ondragleave="this.classList.remove('drag-over')"
-          ondrop="uploadFullContentBgDrop(event, '${k}')"
-          onclick="pickFullContentBg('${k}')">
-          ছবি টেনে আনুন / আপলোড করুন
-        </div>
-      `);
-    }
-  });
-}
 // Sync color picker <-> text input
 ['ss-primary','ss-green','ss-primarydark'].forEach(id => {
   document.addEventListener('DOMContentLoaded', () => {
@@ -3264,47 +3164,16 @@ async function loadHeroSection() {
 function renderHeroCards() {
   const list = document.getElementById('hero-cards-list');
   if (!list) return;
-
-  list.innerHTML = heroCardsData.map((c, i) => {
-    const label = escapeAdminHTML(c.label || '');
-    const link = escapeAdminHTML(c.link || '');
-    const img = escapeAdminHTML(c.img || '');
-
-    return `
-      <div style="display:grid;grid-template-columns:auto 1fr 1fr 1.2fr auto;gap:8px;margin-bottom:10px;align-items:center">
-        
-        <span style="color:var(--text2);font-size:13px;min-width:22px;text-align:center">${i + 1}</span>
-
-        <input value="${label}" placeholder="QURAN"
-          oninput="heroCardsData[${i}].label=this.value"
-          style="padding:8px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"/>
-
-        <input value="${link}" placeholder="লিঙ্ক (যেমন: #quran)"
-          oninput="heroCardsData[${i}].link=this.value"
-          style="padding:8px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"/>
-
-        <div>
-          <input id="hero-card-img-${i}" value="${img}" placeholder="ছবির URL"
-            oninput="heroCardsData[${i}].img=this.value"
-            style="width:100%;padding:8px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"/>
-
-          <div class="mini-drop-zone"
-            style="padding:8px"
-            ondragover="event.preventDefault();this.classList.add('drag-over')"
-            ondragleave="this.classList.remove('drag-over')"
-            ondrop="handleHeroCardImageDrop(event, ${i})"
-            onclick="pickHeroCardImage(${i})">
-            ছবি আপলোড
-          </div>
-        </div>
-
-        <button class="btn btn-danger btn-sm" onclick="removeHeroCard(${i})">🗑️</button>
-      </div>
-    `;
-  }).join('');
-}function pickHeroCardImage(i) { const picker = document.createElement('input'); picker.type = 'file'; picker.accept = 'image/*'; picker.onchange = () => uploadHeroCardImage(i, picker.files[0]); picker.click(); }
-function handleHeroCardImageDrop(e, i) { e.preventDefault(); e.currentTarget.classList.remove('drag-over'); uploadHeroCardImage(i, e.dataTransfer.files[0]); }
-function uploadHeroCardImage(i, file) { uploadImageToInput('hero-card-img-' + i, file, url => { heroCardsData[i].img = url; renderHeroCards(); }); }
+  list.innerHTML = heroCardsData.map((c, i) => `
+    <div style="display:grid;grid-template-columns:auto 1fr 1fr auto;gap:8px;margin-bottom:8px;align-items:center">
+      <span style="color:var(--text2);font-size:13px;min-width:22px;text-align:center">${i+1}</span>
+      <input value="${c.label}" placeholder="QURAN" oninput="heroCardsData[${i}].label=this.value"
+        style="padding:8px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"/>
+      <input value="${c.link || ''}" placeholder="লিঙ্ক (যেমন: #quran)" oninput="heroCardsData[${i}].link=this.value"
+        style="padding:8px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none"/>
+      <button class="btn btn-danger btn-sm" onclick="removeHeroCard(${i})">🗑️</button>
+    </div>`).join('');
+}
 
 function addHeroCard() { heroCardsData.push({label:'NEW',link:'#',img:''}); renderHeroCards(); }
 function removeHeroCard(i) { heroCardsData.splice(i,1); renderHeroCards(); }
@@ -4467,10 +4336,10 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
   const def={heroSections:{home:{title:'ইবনে খালদুন ইনস্টিটিউট',subtitle:'অনলাইনে নতুন দক্ষতা অর্জন করুন',backgroundImage:''},courses:{title:'সকল কোর্সসমূহ',subtitle:'এক অক্ষর লিখলেই কোর্স রিকমেন্ডেশন দেখুন',backgroundImage:''},about:{title:'আমাদের সম্পর্কে',subtitle:'আমাদের উদ্দেশ্য, কাজ ও শিক্ষা দর্শন',backgroundImage:''},contact:{title:'যোগাযোগ করুন',subtitle:'আমরা আপনার পাশে আছি',backgroundImage:''}},about:{content:'<p>ইবনে খালদুন ইনস্টিটিউট অনলাইন শিক্ষার একটি নির্ভরযোগ্য প্ল্যাটফর্ম।</p>'},contact:{email:'info@ibnkhaldun.edu.bd',phone:'+880 1700-000000',address:'ঢাকা, বাংলাদেশ',content:'যে কোনো প্রশ্নে আমাদের সাথে যোগাযোগ করুন।'},faqs:[{question:'কোর্স কীভাবে শুরু করব?',answer:'পছন্দের কোর্স নির্বাচন করে এনরোল করুন।'}],promo:{title:'জনপ্রিয় কোর্স',subtitle:'সেরা কোর্সগুলো এক জায়গায়',buttonText:'কোর্স দেখুন',buttonLink:'#courses'},navLinks:[{name:'হোম',link:'#home'},{name:'কোর্সসমূহ',link:'#courses'},{name:'আমাদের সম্পর্কে',link:'#about'},{name:'যোগাযোগ',link:'#contact'}],categories:[{name:'কুরআন',slug:'quran',link:'quran'},{name:'আরবি',slug:'arabic',link:'arabic'}],sidebarBody:[{title:'কোর্স সহায়তা',body:'প্রয়োজনে অ্যাডমিনের সাথে যোগাযোগ করুন।'}]};
   const pretty=v=>JSON.stringify(v||[],null,2), el=id=>document.getElementById(id), val=id=>el(id).value, set=(id,v)=>{if(el(id))el(id).value=v||''};
   function json(id){try{return JSON.parse(val(id)||'[]')}catch(e){throw new Error(id+' ফিল্ডে সঠিক JSON দিন')}}
-  function ensurePage(){if(el('page-full-content'))return;let nav=document.querySelector('.sidebar-nav');if(nav){let item=document.createElement('div');item.className='nav-item';item.setAttribute('onclick',"navTo('full-content')");item.innerHTML='<span class="icon">🧩</span> সম্পূর্ণ কনটেন্ট';nav.insertBefore(item,nav.children[3]||null)}let content=document.querySelector('.content');if(!content)return;let p=document.createElement('div');p.id='page-full-content';p.className='page';p.innerHTML='<div class="page-header"><h2>সম্পূর্ণ সাইট কনটেন্ট</h2><p>About, Contact, FAQ, Page Hero, Navigation, Category, Sidebar এবং Featured Promo আপডেট করুন</p></div><div class="card"><div class="card-header"><h3>Page Hero</h3><button class="btn btn-primary" onclick="saveFullContentBundle()">সব সেভ করুন</button></div><div class="card-body" style="padding:22px"><div id="fc-heroes"></div></div></div><div class="card"><div class="card-header"><h3>Content</h3></div><div class="card-body" style="padding:22px"><div class="field"><label>About Content HTML</label><textarea id="fc-about-content" style="min-height:130px"></textarea></div><div class="row2"><div class="field"><label>Contact Email</label><input id="fc-contact-email"></div><div class="field"><label>Contact Phone</label><input id="fc-contact-phone"></div></div><div class="field"><label>Contact Address</label><input id="fc-contact-address"></div><div class="field"><label>Contact Text</label><textarea id="fc-contact-content"></textarea></div><div class="row2"><div class="field"><label>Promo Title</label><input id="fc-promo-title"></div><div class="field"><label>Promo Subtitle</label><input id="fc-promo-subtitle"></div></div><div class="row2"><div class="field"><label>Promo Button</label><input id="fc-promo-button"></div><div class="field"><label>Promo Link</label><input id="fc-promo-link"></div></div></div></div><div class="card"><div class="card-header"><h3>JSON Lists</h3><button class="btn btn-success" onclick="loadFullContentBundle()">রিলোড</button></div><div class="card-body" style="padding:22px"><div class="field"><label>FAQ JSON</label><textarea id="fc-faqs" style="min-height:130px;font-family:monospace"></textarea></div><div class="field"><label>Navigation JSON</label><textarea id="fc-navlinks" style="min-height:130px;font-family:monospace"></textarea></div><div class="field"><label>Categories JSON</label><textarea id="fc-categories" style="min-height:130px;font-family:monospace"></textarea></div><div class="field"><label>Sidebar Body JSON</label><textarea id="fc-sidebar" style="min-height:130px;font-family:monospace"></textarea></div><button class="btn btn-primary" onclick="saveFullContentBundle()">সব সেভ করুন</button></div></div>';content.appendChild(p);let h=el('fc-heroes');h.innerHTML=['courses','about','contact'].map(k=>'<div class="card" style="padding:14px;margin-bottom:14px;background:var(--bg3)"><h4 style="margin-bottom:10px;color:var(--primary)">'+k.toUpperCase()+'</h4><div class="row2"><div class="field"><label>Title</label><input id="fc-'+k+'-title"></div><div class="field"><label>Subtitle</label><input id="fc-'+k+'-subtitle"></div></div><div class="field"><label>Background Image URL</label><input id="fc-'+k+'-bg"></div></div>').join('')}
-  function fill(b){b=Object.assign({},def,b||{});let hs=Object.assign({},def.heroSections,b.heroSections||{});['courses','about','contact'].forEach(k=>{set('fc-'+k+'-title',hs[k]?.title);set('fc-'+k+'-subtitle',hs[k]?.subtitle);set('fc-'+k+'-bg',hs[k]?.backgroundImage||hs[k]?.bgImage)});set('fc-about-content',b.about?.content);set('fc-contact-email',b.contact?.email);set('fc-contact-phone',b.contact?.phone);set('fc-contact-address',b.contact?.address);set('fc-contact-content',b.contact?.content);set('fc-promo-title',b.promo?.title);set('fc-promo-subtitle',b.promo?.subtitle);set('fc-promo-button',b.promo?.buttonText);set('fc-promo-link',b.promo?.buttonLink);set('fc-faqs',pretty(b.faqs));set('fc-navlinks',pretty(b.navLinks));set('fc-categories',pretty(b.categories));set('fc-sidebar',pretty(b.sidebarBody))}
-  window.loadFullContentBundle=async function(){ensurePage();enhanceFullContentImageDrops();try{fill(await api('GET','/api/admin/content-bundle'))}catch(e){try{let s=await api('GET','/api/settings');fill(s.contentBundle||def)}catch(_){fill(def)}}};
-  window.saveFullContentBundle=async function(){try{let b={heroSections:{courses:{title:val('fc-courses-title'),subtitle:val('fc-courses-subtitle'),backgroundImage:val('fc-courses-bg')},about:{title:val('fc-about-title'),subtitle:val('fc-about-subtitle'),backgroundImage:val('fc-about-bg')},contact:{title:val('fc-contact-title'),subtitle:val('fc-contact-subtitle'),backgroundImage:val('fc-contact-bg')}},about:{content:val('fc-about-content')},contact:{email:val('fc-contact-email'),phone:val('fc-contact-phone'),address:val('fc-contact-address'),content:val('fc-contact-content')},promo:{title:val('fc-promo-title'),subtitle:val('fc-promo-subtitle'),buttonText:val('fc-promo-button'),buttonLink:val('fc-promo-link')},faqs:json('fc-faqs'),navLinks:json('fc-navlinks'),categories:json('fc-categories'),sidebarBody:json('fc-sidebar')};await api('POST','/api/admin/content-bundle',b).catch(()=>api('POST','/api/admin/settings',{contentBundle:b}));toast('✅ সম্পূর্ণ কনটেন্ট সেভ হয়েছে')}catch(e){toast('সমস্যা: '+e.message,'error')}};
+  function ensurePage(){if(el('page-full-content'))return;let nav=document.querySelector('.sidebar-nav');if(nav){let item=document.createElement('div');item.className='nav-item';item.setAttribute('onclick',"navTo('full-content')");item.innerHTML='<span class="icon">🧩</span> সম্পূর্ণ কনটেন্ট';nav.insertBefore(item,nav.children[3]||null)}let content=document.querySelector('.content');if(!content)return;let p=document.createElement('div');p.id='page-full-content';p.className='page';p.innerHTML='<div class="page-header"><h2>সম্পূর্ণ সাইট কনটেন্ট</h2><p>About, Contact, FAQ, Page Hero, Navigation, Category, Sidebar এবং Featured Promo আপডেট করুন</p></div><div class="card"><div class="card-header"><h3>Page Hero</h3><button class="btn btn-primary" onclick="saveFullContentBundle()">সব সেভ করুন</button></div><div class="card-body" style="padding:22px"><div id="fc-heroes"></div></div></div><div class="card"><div class="card-header"><h3>Content</h3></div><div class="card-body" style="padding:22px"><div class="field"><label>About Content HTML</label><textarea id="fc-about-content" style="min-height:130px"></textarea></div><div class="row2"><div class="field"><label>Contact Email</label><input id="fc-contact-email"></div><div class="field"><label>Contact Phone</label><input id="fc-contact-phone"></div></div><div class="field"><label>Contact Address</label><input id="fc-contact-address"></div><div class="field"><label>Contact Text</label><textarea id="fc-contact-content"></textarea></div><div class="row2"><div class="field"><label>Promo Title</label><input id="fc-promo-title"></div><div class="field"><label>Promo Subtitle</label><input id="fc-promo-subtitle"></div></div><div class="row2"><div class="field"><label>Promo Button</label><input id="fc-promo-button"></div><div class="field"><label>Promo Link</label><input id="fc-promo-link"></div></div></div></div><div class="card"><div class="card-header"><h3>JSON Lists</h3><button class="btn btn-success" onclick="loadFullContentBundle()">রিলোড</button></div><div class="card-body" style="padding:22px"><div class="field"><label>FAQ JSON</label><textarea id="fc-faqs" style="min-height:130px;font-family:monospace"></textarea></div><div class="field"><label>Navigation JSON</label><textarea id="fc-navlinks" style="min-height:130px;font-family:monospace"></textarea></div><div class="field"><label>Categories JSON</label><textarea id="fc-categories" style="min-height:130px;font-family:monospace"></textarea></div><div class="field"><label>Sidebar Body JSON</label><textarea id="fc-sidebar" style="min-height:130px;font-family:monospace"></textarea></div><button class="btn btn-primary" onclick="saveFullContentBundle()">সব সেভ করুন</button></div></div>';content.appendChild(p);let h=el('fc-heroes');h.innerHTML=['home','courses','about','contact'].map(k=>'<div class="card" style="padding:14px;margin-bottom:14px;background:var(--bg3)"><h4 style="margin-bottom:10px;color:var(--primary)">'+k.toUpperCase()+'</h4><div class="row2"><div class="field"><label>Title</label><input id="fc-'+k+'-title"></div><div class="field"><label>Subtitle</label><input id="fc-'+k+'-subtitle"></div></div><div class="field"><label>Background Image URL</label><input id="fc-'+k+'-bg"></div></div>').join('')}
+  function fill(b){b=Object.assign({},def,b||{});let hs=Object.assign({},def.heroSections,b.heroSections||{});['home','courses','about','contact'].forEach(k=>{set('fc-'+k+'-title',hs[k]?.title);set('fc-'+k+'-subtitle',hs[k]?.subtitle);set('fc-'+k+'-bg',hs[k]?.backgroundImage||hs[k]?.bgImage)});set('fc-about-content',b.about?.content);set('fc-contact-email',b.contact?.email);set('fc-contact-phone',b.contact?.phone);set('fc-contact-address',b.contact?.address);set('fc-contact-content',b.contact?.content);set('fc-promo-title',b.promo?.title);set('fc-promo-subtitle',b.promo?.subtitle);set('fc-promo-button',b.promo?.buttonText);set('fc-promo-link',b.promo?.buttonLink);set('fc-faqs',pretty(b.faqs));set('fc-navlinks',pretty(b.navLinks));set('fc-categories',pretty(b.categories));set('fc-sidebar',pretty(b.sidebarBody))}
+  window.loadFullContentBundle=async function(){ensurePage();try{fill(await api('GET','/api/admin/content-bundle'))}catch(e){try{let s=await api('GET','/api/settings');fill(s.contentBundle||def)}catch(_){fill(def)}}};
+  window.saveFullContentBundle=async function(){try{let b={heroSections:{home:{title:val('fc-home-title'),subtitle:val('fc-home-subtitle'),backgroundImage:val('fc-home-bg')},courses:{title:val('fc-courses-title'),subtitle:val('fc-courses-subtitle'),backgroundImage:val('fc-courses-bg')},about:{title:val('fc-about-title'),subtitle:val('fc-about-subtitle'),backgroundImage:val('fc-about-bg')},contact:{title:val('fc-contact-title'),subtitle:val('fc-contact-subtitle'),backgroundImage:val('fc-contact-bg')}},about:{content:val('fc-about-content')},contact:{email:val('fc-contact-email'),phone:val('fc-contact-phone'),address:val('fc-contact-address'),content:val('fc-contact-content')},promo:{title:val('fc-promo-title'),subtitle:val('fc-promo-subtitle'),buttonText:val('fc-promo-button'),buttonLink:val('fc-promo-link')},faqs:json('fc-faqs'),navLinks:json('fc-navlinks'),categories:json('fc-categories'),sidebarBody:json('fc-sidebar')};await api('POST','/api/admin/content-bundle',b).catch(()=>api('POST','/api/admin/settings',{contentBundle:b}));toast('✅ সম্পূর্ণ কনটেন্ট সেভ হয়েছে')}catch(e){toast('সমস্যা: '+e.message,'error')}};
   const old=window.navTo;window.navTo=function(page){try{localStorage.setItem('activeAdminNav',page)}catch(e){}old(page);if(page==='full-content')loadFullContentBundle()};pageTitles['full-content']='সম্পূর্ণ কনটেন্ট';window.addEventListener('load',()=>{ensurePage();let a=localStorage.getItem('activeAdminNav');if(a&&a!=='dashboard')setTimeout(()=>navTo(a),250)})
 })();
 </script>
