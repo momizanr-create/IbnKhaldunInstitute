@@ -693,7 +693,7 @@ app.get('/api/course-detail/:id', async (req, res) => {
 // BLOG POSTS
 // ============================================================
 function makeSlug(text) {
-  return String(text || '').toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w-]/g, '').replace(/-+/g, '-') || Date.now().toString(36);
+  return String(text || '').toLowerCase().trim().replace(/s+/g, '-').replace(/[^w-]/g, '').replace(/-+/g, '-') || Date.now().toString(36);
 }
 
 app.get('/api/blog', async (req, res) => {

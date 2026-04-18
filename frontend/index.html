@@ -2880,83 +2880,10 @@
     };
 
     function openCourseDetail(courseId) {
-      currentLessonId = null;
-
-      // ── কোর্স খোঁজার ধাপ: slug বা _id যেকোনো একটি দিয়ে মেলানো ──
-      var course = COURSES[courseId];
-
-      // COURSES এ সরাসরি না পেলে _id বা slug দিয়ে COURSES এ খুঁজি
-      if (!course) {
-        var foundKey = Object.keys(COURSES || {}).find(function(key) {
-          var c = COURSES[key];
-          return c && (String(c._id || '') === String(courseId) || String(c.slug || '') === String(courseId) || String(c.id || '') === String(courseId));
-        });
-        if (foundKey) { courseId = foundKey; course = COURSES[foundKey]; }
-      }
-
-      // এখনো না পেলে _allCoursesData থেকে খুঁজি এবং COURSES এ নিবন্ধন করি
-      if (!course && window._allCoursesData && window._allCoursesData.length) {
-        var apiCourse = window._allCoursesData.find(function(c) {
-          return String(c.slug || '') === String(courseId) || String(c._id || '') === String(courseId);
-        });
-        if (apiCourse) {
-          var key = apiCourse.slug || apiCourse._id;
-          COURSES[key] = {
-            id: key, _id: apiCourse._id,
-            title: apiCourse.title || '',
-            category: apiCourse.category || '',
-            instructor: apiCourse.instructor || '',
-            price: '৳' + (apiCourse.price || 0),
-            originalPrice: apiCourse.originalPrice ? '৳' + apiCourse.originalPrice : '',
-            discount: apiCourse.discount ? apiCourse.discount + '% ছাড়' : '',
-            description: apiCourse.description || apiCourse.shortDesc || '',
-            shortDesc: apiCourse.shortDesc || '',
-            thumbnail: apiCourse.thumbnail || '',
-            img: apiCourse.thumbnail || '',
-            duration: apiCourse.duration || '',
-            lessons: apiCourse.lessons || 0,
-            students: apiCourse.students || 0,
-            rating: apiCourse.rating || 4.5,
-            level: apiCourse.level || 'সকলের জন্য',
-            language: apiCourse.language || 'বাংলা',
-            tags: apiCourse.tags || [],
-            emoji: '📚',
-            gradient: 'linear-gradient(135deg,#1a1a2e,#16213e)',
-            learns: [],
-            certDesc: [],
-            featured: apiCourse.featured || false,
-            _curriculum: apiCourse.curriculum || [],
-            instructorId: apiCourse.instructorId || '',
-          };
-          courseId = key;
-          course = COURSES[key];
-        }
-      }
-
       currentCourseId = courseId;
-      if (!course) {
-        // API এখনো লোড হয়নি — লোড হওয়ার জন্য অপেক্ষা করে পুনরায় চেষ্টা করি
-        var titleEl2 = document.querySelector('.detail-title');
-        if (titleEl2) titleEl2.textContent = 'কোর্স লোড হচ্ছে...';
-        navigate('detail');
-        var retryCount = 0;
-        var retryTimer = setInterval(function() {
-          retryCount++;
-          var c2 = COURSES[courseId];
-          if (!c2 && window._allCoursesData && window._allCoursesData.length) {
-            var found = window._allCoursesData.find(function(c) {
-              return String(c.slug || '') === String(courseId) || String(c._id || '') === String(courseId);
-            });
-            if (found) { openCourseDetail(found.slug || found._id); clearInterval(retryTimer); return; }
-          }
-          if (c2) { openCourseDetail(courseId); clearInterval(retryTimer); return; }
-          if (retryCount >= 10) {
-            clearInterval(retryTimer);
-            showToast('⚠️ কোর্স লোড হয়নি, পুনরায় চেষ্টা করুন।');
-          }
-        }, 500);
-        return;
-      }
+      currentLessonId = null;
+      var course = COURSES[courseId];
+      if (!course) { navigate('detail'); return; }
       var titleEl = document.querySelector('.detail-title');
       if (titleEl) titleEl.textContent = course.title;
       var bcEl = document.querySelector('.detail-breadcrumb span[style*="primary"]');
@@ -4357,17 +4284,15 @@
       if (!activeTabs.length) activeTabs = DEFAULT_COURSE_TABS;
       var tabsEl = document.getElementById('featured-tabs');
       var gridsWrap = document.getElementById('featured-course-grids');
-      if (gridsWrap) { Array.from(gridsWrap.children).forEach(function(c) { c.style.display = 'none'; }); }
       var map = {};
-      var _fixedKeys = { top: 'top-sellers', new: 'new-courses', free: 'free-courses', popular: 'popular-courses', bundle: 'bundle-courses' };
       activeTabs.forEach(function(t, idx) {
         var key = String(t.key || '').toLowerCase();
-        var baseId = _fixedKeys[key] || ('tab-course-' + idx);
+        var baseId = featuredTabBaseId(key);
         map[key] = baseId;
         if (gridsWrap && !document.getElementById(baseId + '-grid')) {
           var grid = document.createElement('div');
           grid.id = baseId + '-grid';
-          grid.className = 'courses-grid';
+          grid.className = 'courses-grid fade-in';
           grid.style.display = idx === 0 ? '' : 'none';
           gridsWrap.appendChild(grid);
           var btn = document.createElement('div');
@@ -4595,7 +4520,7 @@
         // ── COURSES (from MongoDB) ──
         if (apiCourses && Array.isArray(apiCourses) && apiCourses.length > 0) {
           _allCoursesData = apiCourses;
-          renderAPICoursesOnHomepage(apiCourses, apiCourseTabs);
+          renderAPICoursesOnHomepage(apiCourses);
         } else {
           renderDefaultHomepageContent();
         }
@@ -4712,7 +4637,7 @@
     }
 
     // ── Render API courses on homepage ──    // ── Render API courses on homepage ──
-    function renderAPICoursesOnHomepage(courses, passedTabs) {
+    function renderAPICoursesOnHomepage(courses) {
       // API ডেটা দিয়ে COURSES object সম্পূর্ণ আপডেট করি
       // যাতে admin প্যানেল থেকে পরিবর্তন করলে frontend এ দেখা যায়
       courses.forEach(function(c) {
@@ -4749,10 +4674,10 @@
 
       // Build course card HTML
       function makeCourseCard(c) {
-        var key = c.slug || c._id || '';
+        var key = c.slug || c._id;
         var thumb = c.thumbnail || 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&q=80';
         var discount = c.originalPrice && c.price ? Math.round((1 - c.price / c.originalPrice) * 100) : (c.discount || 0);
-        return '<div class="course-card" data-course-id="' + escapeHtml(key) + '" onclick="openCourseDetail(\'' + escapeHtml(key) + '\')" style="cursor:pointer">' +
+        return '<div class="course-card fade-in" onclick="openCourseDetail(\'' + key + '\')" style="cursor:pointer">' +
           '<div class="course-thumb"><img src="' + thumb + '" alt="' + (c.title||'') + '" loading="lazy"/>' +
           '<div class="thumb-overlay"><span class="play-btn">▶</span></div>' +
           (discount > 0 ? '<span style="position:absolute;top:10px;left:10px;background:var(--primary);color:#1a1a1a;font-size:10px;font-weight:800;padding:3px 9px;border-radius:3px;font-family:var(--font-nav);letter-spacing:1px">' + discount + '% ছাড়</span>' : '') +
@@ -4774,13 +4699,13 @@
           '</div></div></div>';
       }
 
-      applyCourseTabs(passedTabs || window._featuredTabs || DEFAULT_COURSE_TABS);
-      var activeTabs = getActiveCourseTabs(passedTabs || window._featuredTabs || DEFAULT_COURSE_TABS);
+      applyCourseTabs(window._featuredTabs || DEFAULT_COURSE_TABS);
+      var activeTabs = getActiveCourseTabs(window._featuredTabs || DEFAULT_COURSE_TABS);
       var tabMap = {};
       var tabCourses = {};
       activeTabs.forEach(function(t) {
         var key = String(t.key || '').toLowerCase();
-        tabMap[key] = (window._featuredTabMap && window._featuredTabMap[key] ? window._featuredTabMap[key] : featuredTabBaseId(key)) + '-grid';
+        tabMap[key] = featuredTabBaseId(key) + '-grid';
         tabCourses[key] = [];
       });
       activeTabs.forEach(function(t) {
@@ -4804,19 +4729,11 @@
         var list = tabCourses[key] || [];
         if (grid) grid.innerHTML = list.length ? list.slice(0, 8).map(makeCourseCard).join('') : '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#999">এই ট্যাবে কোনো কোর্স নেই</div>';
       });
-      // Courses page grid — courses page active থাকলে renderCoursesGrid() ব্যবহার করি
+      // Courses page grid
       var coursesContainer = document.getElementById('courses-container');
-      var coursesPageActive = document.getElementById('page-courses') && document.getElementById('page-courses').classList.contains('active');
-      if (coursesContainer && courses.length && !coursesPageActive) {
+      if (coursesContainer && courses.length) {
         coursesContainer.innerHTML = courses.map(makeCourseCard).join('');
-      } else if (coursesPageActive && courses.length) {
-        if (typeof renderCoursesGrid === 'function') renderCoursesGrid();
       }
-      // Make newly added elements visible (runFadeIn may have already run before API data loaded)
-      setTimeout(function() {
-        var gw = document.getElementById('featured-course-grids');
-        if (gw) gw.querySelectorAll('.fade-in').forEach(function(el) { el.classList.add('visible'); });
-      }, 80);
     }
 
     // ── Render API testimonials ──
@@ -5181,7 +5098,7 @@
         var targetPage = internalPageFromLink(href);
         var anchor = document.createElement('a');
         anchor.href = href;
-        anchor.textContent = item.name || item.label || 'লি ��ক';
+        anchor.textContent = item.name || item.label || 'লিংক';
         if (targetPage) {
           anchor.id = 'nav-' + targetPage;
           anchor.addEventListener('click', function(event) {
@@ -5458,18 +5375,12 @@
             sessionStorage.setItem('ik_scroll_' + (window.currentPage || 'home'), String(window.scrollY || 0));
             localStorage.setItem('ik_active_nav', page);
           } catch(e) {}
-          // currentPage ট্র্যাক করা
-          window.currentPage = page;
           originalNavigate(page);
           setActivePublicNav(page);
           setTimeout(function() {
             var savedScroll = sessionStorage.getItem('ik_scroll_' + page);
             if (savedScroll) window.scrollTo(0, parseInt(savedScroll, 10) || 0);
-            // 'detail' পেজে applyManagedContent চালালে openCourseDetail-এর
-            // DOM আপডেট মুছে যেতে পারে, তাই detail পেজ বাদ দিই
-            if (page !== 'detail') {
-              applyManagedContent(managedBundle);
-            }
+            applyManagedContent(managedBundle);
           }, 80);
           return false;
         };
@@ -5479,18 +5390,6 @@
         setTimeout(function() { applyManagedContent(bundle); }, 160);
       });
     })();
-    
-    // Event delegation for course cards
-    document.addEventListener('click', function(e) {
-      var courseCard = e.target.closest('.course-card[data-course-id]');
-      if (courseCard) {
-        var courseId = courseCard.getAttribute('data-course-id');
-        if (courseId) {
-          openCourseDetail(courseId);
-        }
-      }
-    });
-    
     restoreSession();
     runFadeIn();
 
