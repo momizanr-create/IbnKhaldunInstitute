@@ -2663,6 +2663,7 @@
 
     // ─── ক্যাটাগরি ট্যাব + সাব ক্যাটাগরি ফিল্টার ───
     var _allCoursesData = [];
+    window._allCoursesData = _allCoursesData; // window scope-এ expose — openCourseDetail এ access পাবে
     var _allCategoriesData = [];
     var _currentCatFilter = 'all';
     var _currentSubCatFilter = 'all';
@@ -2715,6 +2716,7 @@
         }
         _allCategoriesData = cats || [];
         _allCoursesData    = courses || [];
+        window._allCoursesData = _allCoursesData; // sync করা
 
         // ── Category tabs (top row) ──
         var catTabsEl = document.getElementById('courses-category-tabs');
@@ -3036,7 +3038,7 @@
       navigate('detail');
     }
 
-    // window scope-এ expose করা — inline onclick এবং event delegation উভয়ের জন্য
+    // window scope-এ expose — IIFE-এর ভেতর থেকেও এবং inline onclick থেকেও কাজ করবে
     window.openCourseDetail = openCourseDetail;
 
     function updateSidebarImage() {
@@ -4598,6 +4600,7 @@
         // ── COURSES (from MongoDB) ──
         if (apiCourses && Array.isArray(apiCourses) && apiCourses.length > 0) {
           _allCoursesData = apiCourses;
+          window._allCoursesData = apiCourses; // openCourseDetail এ window._allCoursesData access পাবে
           renderAPICoursesOnHomepage(apiCourses, apiCourseTabs);
         } else {
           renderDefaultHomepageContent();
@@ -4755,7 +4758,7 @@
         var key = c.slug || c._id || '';
         var thumb = c.thumbnail || 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&q=80';
         var discount = c.originalPrice && c.price ? Math.round((1 - c.price / c.originalPrice) * 100) : (c.discount || 0);
-        return '<div class="course-card" data-course-id="' + escapeHtml(key) + '" style="cursor:pointer" onclick="openCourseDetail(\'' + escapeHtml(key) + '\')">' +
+        return '<div class="course-card" data-course-id="' + escapeHtml(key) + '" style="cursor:pointer" onclick="window.openCourseDetail && window.openCourseDetail(\'' + key.replace(/\\/g,'\\\\').replace(/'/g,"\\'") + '\')">' +
           '<div class="course-thumb"><img src="' + thumb + '" alt="' + (c.title||'') + '" loading="lazy"/>' +
           '<div class="thumb-overlay"><span class="play-btn">▶</span></div>' +
           (discount > 0 ? '<span style="position:absolute;top:10px;left:10px;background:var(--primary);color:#1a1a1a;font-size:10px;font-weight:800;padding:3px 9px;border-radius:3px;font-family:var(--font-nav);letter-spacing:1px">' + discount + '% ছাড়</span>' : '') +
@@ -5486,7 +5489,12 @@
       if (courseCard) {
         var courseId = courseCard.getAttribute('data-course-id');
         if (courseId) {
-          openCourseDetail(courseId);
+          // window.openCourseDetail ব্যবহার করি — IIFE scope সমস্যা এড়াতে
+          if (typeof window.openCourseDetail === 'function') {
+            window.openCourseDetail(courseId);
+          } else if (typeof openCourseDetail === 'function') {
+            openCourseDetail(courseId);
+          }
         }
       }
     });
