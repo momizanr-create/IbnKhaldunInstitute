@@ -2880,9 +2880,60 @@
     };
 
     function openCourseDetail(courseId) {
-      currentCourseId = courseId;
       currentLessonId = null;
+
+      // ── কোর্স খোঁজার ধাপ: slug বা _id যেকোনো একটি দিয়ে মেলানো ──
       var course = COURSES[courseId];
+
+      // COURSES এ সরাসরি না পেলে _id বা slug দিয়ে COURSES এ খুঁজি
+      if (!course) {
+        var foundKey = Object.keys(COURSES || {}).find(function(key) {
+          var c = COURSES[key];
+          return c && (String(c._id || '') === String(courseId) || String(c.slug || '') === String(courseId) || String(c.id || '') === String(courseId));
+        });
+        if (foundKey) { courseId = foundKey; course = COURSES[foundKey]; }
+      }
+
+      // এখনো না পেলে _allCoursesData থেকে খুঁজি এবং COURSES এ নিবন্ধন করি
+      if (!course && window._allCoursesData && window._allCoursesData.length) {
+        var apiCourse = window._allCoursesData.find(function(c) {
+          return String(c.slug || '') === String(courseId) || String(c._id || '') === String(courseId);
+        });
+        if (apiCourse) {
+          var key = apiCourse.slug || apiCourse._id;
+          COURSES[key] = {
+            id: key, _id: apiCourse._id,
+            title: apiCourse.title || '',
+            category: apiCourse.category || '',
+            instructor: apiCourse.instructor || '',
+            price: '৳' + (apiCourse.price || 0),
+            originalPrice: apiCourse.originalPrice ? '৳' + apiCourse.originalPrice : '',
+            discount: apiCourse.discount ? apiCourse.discount + '% ছাড়' : '',
+            description: apiCourse.description || apiCourse.shortDesc || '',
+            shortDesc: apiCourse.shortDesc || '',
+            thumbnail: apiCourse.thumbnail || '',
+            img: apiCourse.thumbnail || '',
+            duration: apiCourse.duration || '',
+            lessons: apiCourse.lessons || 0,
+            students: apiCourse.students || 0,
+            rating: apiCourse.rating || 4.5,
+            level: apiCourse.level || 'সকলের জন্য',
+            language: apiCourse.language || 'বাংলা',
+            tags: apiCourse.tags || [],
+            emoji: '📚',
+            gradient: 'linear-gradient(135deg,#1a1a2e,#16213e)',
+            learns: [],
+            certDesc: [],
+            featured: apiCourse.featured || false,
+            _curriculum: apiCourse.curriculum || [],
+            instructorId: apiCourse.instructorId || '',
+          };
+          courseId = key;
+          course = COURSES[key];
+        }
+      }
+
+      currentCourseId = courseId;
       if (!course) { navigate('detail'); return; }
       var titleEl = document.querySelector('.detail-title');
       if (titleEl) titleEl.textContent = course.title;
