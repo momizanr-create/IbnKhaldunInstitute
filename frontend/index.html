@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- ✅ পুরনো link-based reset token rescue script সরানো হয়েছে — এখন OTP-based system -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ইবনে খালদুন ইনস্টিটিউট – অনলাইনে নতুন দক্ষতা অর্জন করুন</title>
@@ -4344,205 +4345,479 @@
     }
 
     // ===========================
-    // FORGOT PASSWORD
+    // FORGOT PASSWORD — OTP-based (৩ ধাপ)
+    // ধাপ ১: ইমেইল → OTP পাঠানো
+    // ধাপ ২: ৪ ডিজিট OTP যাচাই
+    // ধাপ ৩: নতুন পাসওয়ার্ড সেট
     // ===========================
-    // ── Forgot Password Modal ──
-   function showForgotPassword() {
-  var existing = document.getElementById('forgot-modal');
-  if (existing) {
-    existing.classList.remove('hidden');
-    var emailEl = document.getElementById('forgot-email');
-    var msgEl   = document.getElementById('forgot-msg');
-    if (emailEl) emailEl.value = '';
-    if (msgEl) { msgEl.style.display = 'none'; msgEl.textContent = ''; }
-    return;
-  }
 
-  var modal = document.createElement('div');
-  modal.id = 'forgot-modal';
-  modal.className = 'modal-overlay';
+    // পুরনো link-based system সম্পূর্ণ সরানো হয়েছে
+    // পুরনো checkPasswordResetToken, showResetLoadingModal ইত্যাদি আর নেই
 
-  modal.innerHTML =
-    `<div class="modal-box" style="max-width:420px">
-      <button class="modal-close" onclick="document.getElementById('forgot-modal').classList.add('hidden')">✕</button>
-      
-      <div style="text-align:center;margin-bottom:20px">
-        <div style="width:56px;height:56px;background:var(--primary-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:26px">🔑</div>
-        <h3 style="margin:0 0 6px;font-family:var(--font-heading);font-size:20px">পাসওয়ার্ড ভুলে গেছেন?</h3>
-        <p style="color:var(--text-mid);font-size:13px;margin:0">আপনার নিবন্ধিত ইমেইল দিন, আমরা রিসেট লিংক পাঠাবো</p>
-      </div>
+    function checkPasswordResetToken() {
+      // পুরনো token-based link — আর কাজ করে না, URL clean করো
+      try {
+        if (sessionStorage.getItem('ik_reset_token') || sessionStorage.getItem('ik_reset_email')) {
+          sessionStorage.removeItem('ik_reset_token');
+          sessionStorage.removeItem('ik_reset_email');
+          showForgotPassword(); // OTP সিস্টেমে নিয়ে যাও
+        }
+        var qs = window.location.search + window.location.hash;
+        if (qs && (qs.indexOf('reset_token') !== -1 || qs.indexOf('reset-password') !== -1)) {
+          window.history.replaceState({}, '', window.location.pathname);
+          showToast('⚠️ পুরনো রিসেট লিংক আর কাজ করে না। OTP দিয়ে পাসওয়ার্ড রিসেট করুন।');
+          showForgotPassword();
+        }
+      } catch(_) {}
+    }
 
-      <div class="auth-form">
-        <div class="form-group">
-          <label>ইমেইল ঠিকানা</label>
-          <input class="form-input" type="email" id="forgot-email" placeholder="আপনার ইমেইল লিখুন" />
-        </div>
+    // ── Forgot Password Modal (ধাপ ১: ইমেইল দাও) ──
+    function showForgotPassword() {
+      // পুরনো সব modal সরাও
+      ['forgot-modal','otp-verify-modal','new-pass-modal'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.remove();
+      });
 
-        <div id="forgot-msg" style="display:none;padding:10px 14px;border-radius:4px;font-size:13px;font-weight:600;margin-bottom:10px"></div>
+      var modal = document.createElement('div');
+      modal.id = 'forgot-modal';
+      modal.className = 'modal-overlay';
+      modal.innerHTML = `
+        <div class="modal-box" style="max-width:420px">
+          <button class="modal-close" onclick="document.getElementById('forgot-modal').remove()">✕</button>
 
-        <button id="forgot-submit-btn" class="btn btn-primary btn-lg" style="width:100%" onclick="submitForgotPassword()">📧 রিসেট লিংক পাঠান →</button>
-      </div>
-    </div>`;
+          <div style="text-align:center;margin-bottom:22px">
+            <div style="width:60px;height:60px;background:var(--primary-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:28px">🔑</div>
+            <h3 style="margin:0 0 6px;font-family:var(--font-heading);font-size:20px">পাসওয়ার্ড ভুলে গেছেন?</h3>
+            <p style="color:var(--text-mid);font-size:13px;margin:0">আপনার নিবন্ধিত ইমেইলে ৪ ডিজিটের OTP পাঠানো হবে</p>
+          </div>
 
-  modal.addEventListener('click', function(e) {
-    if (e.target === modal) modal.classList.add('hidden');
-  });
+          <!-- Step indicator -->
+          <div style="display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:22px">
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--primary);color:#1a1a1a;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center">১</div>
+            <div style="flex:1;height:2px;background:var(--border);max-width:48px"></div>
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--border);color:#999;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center">২</div>
+            <div style="flex:1;height:2px;background:var(--border);max-width:48px"></div>
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--border);color:#999;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center">৩</div>
+          </div>
+          <p style="text-align:center;font-size:11px;color:var(--text-light);margin:-14px 0 18px;letter-spacing:0.3px">ইমেইল → OTP যাচাই → নতুন পাসওয়ার্ড</p>
 
-  document.body.appendChild(modal);
-}
-    function submitForgotPassword() {
-      var email  = (document.getElementById('forgot-email') || {}).value || '';
-      email = email.trim();
+          <div class="auth-form">
+            <div class="form-group">
+              <label>ইমেইল ঠিকানা</label>
+              <input class="form-input" type="email" id="forgot-email" placeholder="আপনার নিবন্ধিত ইমেইল লিখুন"
+                onkeydown="if(event.key==='Enter')submitForgotOtp()" />
+            </div>
+            <div id="forgot-msg" style="display:none;padding:10px 14px;border-radius:4px;font-size:13px;font-weight:600;margin-bottom:10px"></div>
+            <button id="forgot-submit-btn" class="btn btn-primary btn-lg" style="width:100%;margin-top:4px" onclick="submitForgotOtp()">
+              📨 OTP পাঠান →
+            </button>
+          </div>
+
+          <p style="text-align:center;margin-top:16px;font-size:12px;color:#555">
+            মনে পড়ে গেছে? <a href="#" onclick="document.getElementById('forgot-modal').remove();navigate('auth');return false;"
+              style="color:var(--primary);font-weight:700">লগইন করুন</a>
+          </p>
+        </div>`;
+
+      modal.addEventListener('click', function(e) { if (e.target === modal) modal.remove(); });
+      document.body.appendChild(modal);
+      setTimeout(function() { var el = document.getElementById('forgot-email'); if (el) el.focus(); }, 100);
+    }
+
+    // ── ধাপ ১: OTP পাঠানো ──
+    function submitForgotOtp() {
+      var email = ((document.getElementById('forgot-email') || {}).value || '').trim();
       if (!email || !email.includes('@')) { showToast('⚠️ সঠিক ইমেইল দিন'); return; }
 
       var btn   = document.getElementById('forgot-submit-btn');
       var msgEl = document.getElementById('forgot-msg');
       if (btn) { btn.disabled = true; btn.textContent = '⏳ পাঠানো হচ্ছে...'; }
-      if (msgEl) { msgEl.style.display = 'none'; }
+      if (msgEl) msgEl.style.display = 'none';
 
-      fetch(API_BASE + '/api/user/forgot-password', {
+      fetch(API_BASE + '/api/user/send-reset-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email })
       }).then(function(r) { return r.json(); }).then(function(data) {
-        if (btn) { btn.disabled = false; btn.textContent = '📧 রিসেট লিংক পাঠান →'; }
+        if (btn) { btn.disabled = false; btn.textContent = '📨 OTP পাঠান →'; }
         if (data.error) {
-          if (msgEl) { msgEl.style.display = 'block'; msgEl.style.background = '#ffeaea'; msgEl.style.color = '#c0392b'; msgEl.textContent = '❌ ' + data.error; }
+          if (msgEl) { msgEl.style.display='block'; msgEl.style.background='#ffeaea'; msgEl.style.color='#c0392b'; msgEl.textContent='❌ '+data.error; }
           showToast('❌ ' + data.error);
           return;
         }
-        if (msgEl) {
-          msgEl.style.display = 'block';
-          msgEl.style.background = '#f0faf4';
-          msgEl.style.color = '#066144';
-          msgEl.textContent = '✅ রিসেট লিংক ' + email + '-এ পাঠানো হয়েছে! ইনবক্স চেক করুন।';
-        }
-        showToast('📧 রিসেট লিংক পাঠানো হয়েছে!');
-        if (btn) { btn.disabled = true; btn.style.background = '#ccc'; btn.textContent = '✅ পাঠানো হয়েছে'; }
+        showToast('📨 OTP পাঠানো হয়েছে! ইনবক্স চেক করুন।');
+        // ধাপ ২ তে যাও
+        showOtpVerifyStep(email);
       }).catch(function() {
-        if (btn) { btn.disabled = false; btn.textContent = '📧 রিসেট লিংক পাঠান →'; }
+        if (btn) { btn.disabled = false; btn.textContent = '📨 OTP পাঠান →'; }
         showToast('❌ সার্ভারে সমস্যা হয়েছে');
       });
     }
 
-    // ── Password Reset Page (URL token থেকে) ──
-    function checkPasswordResetToken() {
-      // search 한 및 hash 어는 모두 토큰 확인 한다
-      var searchStr = window.location.search || '';
-      var hashStr   = window.location.hash   || '';
-      var hashQuery = hashStr.indexOf('?') !== -1 ? hashStr.slice(hashStr.indexOf('?')) : '';
-      var combined  = searchStr || hashQuery;
-      var params = new URLSearchParams(combined);
-      var token  = params.get('reset_token');
-      var email  = params.get('email');
-      if (!token || !email) return;
-
-      // Token verify করি
-      fetch(API_BASE + '/api/user/verify-reset-token?token=' + encodeURIComponent(token) + '&email=' + encodeURIComponent(email))
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-          if (!data.valid) {
-            showToast('❌ ' + (data.error || 'রিসেট লিংকটি অবৈধ বা মেয়াদ শেষ'));
-            return;
-          }
-          // Valid token — নতুন পাসওয়ার্ড modal দেখাই
-          showResetPasswordModal(token, email, data.name);
-          // URL clean করি (token URL-এ দৃশ্যমান না থাকুক)
-          window.history.replaceState({}, document.title, window.location.pathname);
-        }).catch(function() {
-          showToast('❌ Token যাচাই করতে সমস্যা হয়েছে');
-        });
-    }
-
-    function showResetPasswordModal(token, email, userName) {
-      var existing = document.getElementById('reset-pass-modal');
-      if (existing) existing.remove();
+    // ── ধাপ ২: OTP যাচাই Modal ──
+    function showOtpVerifyStep(email) {
+      ['forgot-modal','otp-verify-modal','new-pass-modal'].forEach(function(id) {
+        var el = document.getElementById(id); if (el) el.remove();
+      });
 
       var modal = document.createElement('div');
-      modal.id = 'reset-pass-modal';
+      modal.id = 'otp-verify-modal';
       modal.className = 'modal-overlay';
-      modal.style.zIndex = '9999';
-      modal.dataset.resetToken = token;
-      modal.dataset.resetEmail = email;
-      modal.innerHTML =
-        '<div class="modal-box" style="max-width:420px">' +
-          '<div style="text-align:center;margin-bottom:20px">' +
-            '<div style="width:56px;height:56px;background:var(--primary-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:26px">🔐</div>' +
-            '<h3 style="margin:0 0 6px;font-family:var(--font-heading);font-size:20px">নতুন পাসওয়ার্ড সেট করুন</h3>' +
-            '<p style="color:var(--text-mid);font-size:13px;margin:0">স্বাগতম, <strong>' + (userName || '') + '</strong>! নতুন পাসওয়ার্ড লিখুন</p>' +
-          '</div>' +
-          '<div class="auth-form">' +
-            '<div class="form-group">' +
-              '<label>নতুন পাসওয়ার্ড</label>' +
-              '<input class="form-input" type="password" id="new-pass-input" placeholder="কমপক্ষে ৬ অক্ষর" />' +
-            '</div>' +
-            '<div class="form-group">' +
-              '<label>পাসওয়ার্ড নিশ্চিত করুন</label>' +
-              '<input class="form-input" type="password" id="new-pass-confirm" placeholder="আবার লিখুন" />' +
-            '</div>' +
-            '<div id="reset-pass-msg" style="display:none;padding:10px 14px;border-radius:4px;font-size:13px;font-weight:600;margin-bottom:10px"></div>' +
-            '<button id="reset-pass-btn" class="btn btn-primary btn-lg" style="width:100%" onclick="submitNewPassword()">✅ পাসওয়ার্ড পরিবর্তন করুন →</button>' +
-          '</div>' +
-        '</div>';
+      modal.innerHTML = `
+        <div class="modal-box" style="max-width:420px">
+          <button class="modal-close" onclick="document.getElementById('otp-verify-modal').remove();showForgotPassword()">✕</button>
+
+          <div style="text-align:center;margin-bottom:22px">
+            <div style="width:60px;height:60px;background:rgba(6,97,68,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:28px">📨</div>
+            <h3 style="margin:0 0 6px;font-family:var(--font-heading);font-size:20px">OTP যাচাই করুন</h3>
+            <p style="color:var(--text-mid);font-size:13px;margin:0"><strong>${email}</strong>-এ ৪ ডিজিটের কোড পাঠানো হয়েছে</p>
+          </div>
+
+          <!-- Step indicator -->
+          <div style="display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:22px">
+            <div style="width:28px;height:28px;border-radius:50%;background:#066144;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center">✓</div>
+            <div style="flex:1;height:2px;background:var(--primary);max-width:48px"></div>
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--primary);color:#1a1a1a;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center">২</div>
+            <div style="flex:1;height:2px;background:var(--border);max-width:48px"></div>
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--border);color:#999;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center">৩</div>
+          </div>
+
+          <div class="auth-form">
+            <!-- ৪টি আলাদা OTP বক্স -->
+            <div style="display:flex;gap:12px;justify-content:center;margin-bottom:20px" id="otp-boxes-wrap">
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-digit-box" id="otp-d1"
+                style="width:64px;height:64px;text-align:center;font-size:28px;font-weight:900;border:2px solid var(--border);border-radius:8px;background:#f9f9f9;font-family:var(--font-heading);color:var(--text-dark);outline:none;transition:border-color 0.2s"
+                oninput="otpBoxInput(this,'otp-d2')" onkeydown="otpBoxKeydown(event,this,'','otp-d2')" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-digit-box" id="otp-d2"
+                style="width:64px;height:64px;text-align:center;font-size:28px;font-weight:900;border:2px solid var(--border);border-radius:8px;background:#f9f9f9;font-family:var(--font-heading);color:var(--text-dark);outline:none;transition:border-color 0.2s"
+                oninput="otpBoxInput(this,'otp-d3')" onkeydown="otpBoxKeydown(event,this,'otp-d1','otp-d3')" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-digit-box" id="otp-d3"
+                style="width:64px;height:64px;text-align:center;font-size:28px;font-weight:900;border:2px solid var(--border);border-radius:8px;background:#f9f9f9;font-family:var(--font-heading);color:var(--text-dark);outline:none;transition:border-color 0.2s"
+                oninput="otpBoxInput(this,'otp-d4')" onkeydown="otpBoxKeydown(event,this,'otp-d2','otp-d4')" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+              <input type="text" inputmode="numeric" maxlength="1" class="otp-digit-box" id="otp-d4"
+                style="width:64px;height:64px;text-align:center;font-size:28px;font-weight:900;border:2px solid var(--border);border-radius:8px;background:#f9f9f9;font-family:var(--font-heading);color:var(--text-dark);outline:none;transition:border-color 0.2s"
+                oninput="otpBoxInput(this,'')" onkeydown="otpBoxKeydown(event,this,'otp-d3','')" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+            </div>
+
+            <!-- Timer -->
+            <div style="text-align:center;margin-bottom:14px">
+              <span id="otp-timer" style="font-size:13px;color:var(--text-mid);font-weight:600"></span>
+              <span id="otp-resend-wrap" style="display:none;font-size:13px">
+                কোড আসেনি?
+                <a href="#" onclick="resendResetOtp('${email}');return false;" style="color:var(--primary);font-weight:700">আবার পাঠান</a>
+              </span>
+            </div>
+
+            <div id="otp-msg" style="display:none;padding:10px 14px;border-radius:4px;font-size:13px;font-weight:600;margin-bottom:10px"></div>
+
+            <button id="otp-verify-btn" class="btn btn-primary btn-lg" style="width:100%;margin-top:4px" onclick="submitOtpVerify('${email}')">
+              ✅ OTP যাচাই করুন →
+            </button>
+          </div>
+
+          <p style="text-align:center;margin-top:12px;font-size:12px;color:#888">
+            <a href="#" onclick="document.getElementById('otp-verify-modal').remove();showForgotPassword();return false;"
+              style="color:#888">← ইমেইল পরিবর্তন করুন</a>
+          </p>
+        </div>`;
+
+      modal.addEventListener('click', function(e) { if (e.target === modal) { modal.remove(); showForgotPassword(); } });
       document.body.appendChild(modal);
+      setTimeout(function() { var el = document.getElementById('otp-d1'); if (el) el.focus(); }, 100);
+      startOtpTimer(600); // ১০ মিনিট
     }
 
-    function submitNewPassword() {
-      var modal   = document.getElementById('reset-pass-modal');
-      var token   = modal ? modal.dataset.resetToken  : '';
-      var email   = modal ? modal.dataset.resetEmail  : '';
-      var pass    = (document.getElementById('new-pass-input')   || {}).value || '';
-      var confirm = (document.getElementById('new-pass-confirm') || {}).value || '';
-      var btn     = document.getElementById('reset-pass-btn');
-      var msgEl   = document.getElementById('reset-pass-msg');
+    // OTP box navigation helpers
+    function otpBoxInput(el, nextId) {
+      el.value = el.value.replace(/[^0-9]/g, '').slice(-1);
+      if (el.value && nextId) { var next = document.getElementById(nextId); if (next) next.focus(); }
+      // সব ৪টা পূর্ণ হলে auto-submit check
+      var all = ['otp-d1','otp-d2','otp-d3','otp-d4'].map(function(id) { var e = document.getElementById(id); return e ? e.value : ''; });
+      if (all.every(function(v) { return v.length === 1; })) {
+        // email খুঁজে নাও modal থেকে
+        var btn = document.getElementById('otp-verify-btn');
+        if (btn && !btn.disabled) {
+          setTimeout(function() { btn.click(); }, 120);
+        }
+      }
+    }
+    function otpBoxKeydown(e, el, prevId, nextId) {
+      if (e.key === 'Backspace' && !el.value && prevId) {
+        var prev = document.getElementById(prevId); if (prev) { prev.value = ''; prev.focus(); }
+      }
+      if (e.key === 'ArrowLeft' && prevId) { var prev2 = document.getElementById(prevId); if (prev2) prev2.focus(); }
+      if (e.key === 'ArrowRight' && nextId) { var next3 = document.getElementById(nextId); if (next3) next3.focus(); }
+    }
 
-      if (pass.length < 6) { showToast('⚠️ পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে'); return; }
-      if (pass !== confirm) { showToast('⚠️ পাসওয়ার্ড মিলছে না'); return; }
+    // OTP countdown timer
+    var _otpTimerInterval = null;
+    function startOtpTimer(seconds) {
+      if (_otpTimerInterval) clearInterval(_otpTimerInterval);
+      var remaining = seconds;
+      var timerEl = document.getElementById('otp-timer');
+      var resendEl = document.getElementById('otp-resend-wrap');
+      function update() {
+        timerEl = document.getElementById('otp-timer');
+        resendEl = document.getElementById('otp-resend-wrap');
+        if (!timerEl) { clearInterval(_otpTimerInterval); return; }
+        if (remaining <= 0) {
+          clearInterval(_otpTimerInterval);
+          timerEl.style.display = 'none';
+          if (resendEl) resendEl.style.display = 'inline';
+          return;
+        }
+        var m = Math.floor(remaining / 60);
+        var s = remaining % 60;
+        timerEl.textContent = '⏱ ' + m + ':' + (s < 10 ? '0' : '') + s + ' পরে মেয়াদ শেষ';
+        timerEl.style.display = 'inline';
+        if (resendEl) resendEl.style.display = 'none';
+        remaining--;
+      }
+      update();
+      _otpTimerInterval = setInterval(update, 1000);
+    }
 
-      if (btn) { btn.disabled = true; btn.textContent = '⏳ পরিবর্তন হচ্ছে...'; }
+    function resendResetOtp(email) {
+      fetch(API_BASE + '/api/user/send-reset-otp', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email })
+      }).then(function(r) { return r.json(); }).then(function(data) {
+        if (data.error) { showToast('❌ ' + data.error); return; }
+        showToast('📨 নতুন OTP পাঠানো হয়েছে!');
+        ['otp-d1','otp-d2','otp-d3','otp-d4'].forEach(function(id) { var e=document.getElementById(id); if(e) e.value=''; });
+        startOtpTimer(600);
+        setTimeout(function() { var el = document.getElementById('otp-d1'); if (el) el.focus(); }, 100);
+      }).catch(function() { showToast('❌ সার্ভারে সমস্যা হয়েছে'); });
+    }
 
-      fetch(API_BASE + '/api/user/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: token, email: email, password: pass })
+    // ── ধাপ ২: OTP যাচাই submit ──
+    function submitOtpVerify(email) {
+      var digits = ['otp-d1','otp-d2','otp-d3','otp-d4'].map(function(id) {
+        var e = document.getElementById(id); return e ? e.value : '';
+      });
+      var otp = digits.join('');
+      if (otp.length < 4 || !/^\d{4}$/.test(otp)) {
+        showToast('⚠️ ৪ ডিজিটের OTP কোড দিন');
+        // shake animation
+        var wrap = document.getElementById('otp-boxes-wrap');
+        if (wrap) { wrap.style.animation='none'; setTimeout(function(){wrap.style.animation='shake 0.4s';},10); }
+        return;
+      }
+
+      var btn   = document.getElementById('otp-verify-btn');
+      var msgEl = document.getElementById('otp-msg');
+      if (btn) { btn.disabled = true; btn.textContent = '⏳ যাচাই হচ্ছে...'; }
+      if (msgEl) msgEl.style.display = 'none';
+
+      fetch(API_BASE + '/api/user/verify-reset-otp', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, otp: otp })
       }).then(function(r) { return r.json(); }).then(function(data) {
         if (data.error) {
-          if (btn) { btn.disabled = false; btn.textContent = '✅ পাসওয়ার্ড পরিবর্তন করুন →'; }
-          if (msgEl) { msgEl.style.display = 'block'; msgEl.style.background = '#ffeaea'; msgEl.style.color = '#c0392b'; msgEl.textContent = '❌ ' + data.error; }
+          if (btn) { btn.disabled = false; btn.textContent = '✅ OTP যাচাই করুন →'; }
+          if (msgEl) { msgEl.style.display='block'; msgEl.style.background='#ffeaea'; msgEl.style.color='#c0392b'; msgEl.textContent='❌ '+data.error; }
+          // বক্সগুলো লাল করো
+          ['otp-d1','otp-d2','otp-d3','otp-d4'].forEach(function(id) {
+            var e = document.getElementById(id);
+            if (e) { e.style.borderColor='#e53935'; e.style.background='#fff5f5'; }
+          });
+          setTimeout(function() {
+            ['otp-d1','otp-d2','otp-d3','otp-d4'].forEach(function(id) {
+              var e=document.getElementById(id); if(e){e.style.borderColor='';e.style.background='';}
+            });
+          }, 2000);
           showToast('❌ ' + data.error);
           return;
         }
-        // সফল — auto login করি
-        if (msgEl) { msgEl.style.display = 'block'; msgEl.style.background = '#f0faf4'; msgEl.style.color = '#066144'; msgEl.textContent = '🎉 পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে!'; }
-        showToast('🎉 পাসওয়ার্ড পরিবর্তন সফল! লগইন হচ্ছে...');
+        // ✅ OTP সঠিক — সবুজ করো এবং ধাপ ৩ তে যাও
+        ['otp-d1','otp-d2','otp-d3','otp-d4'].forEach(function(id) {
+          var e = document.getElementById(id);
+          if (e) { e.style.borderColor='#066144'; e.style.background='#f0faf4'; }
+        });
+        showToast('✅ OTP সঠিক! নতুন পাসওয়ার্ড দিন।');
+        setTimeout(function() { showNewPasswordStep(email, otp); }, 400);
+      }).catch(function() {
+        if (btn) { btn.disabled = false; btn.textContent = '✅ OTP যাচাই করুন →'; }
+        showToast('❌ সার্ভারে সমস্যা হয়েছে');
+      });
+    }
 
-        // Auto login
+    // ── ধাপ ৩: নতুন পাসওয়ার্ড সেট Modal ──
+    function showNewPasswordStep(email, otp) {
+      ['forgot-modal','otp-verify-modal','new-pass-modal'].forEach(function(id) {
+        var el = document.getElementById(id); if (el) el.remove();
+      });
+
+      var modal = document.createElement('div');
+      modal.id = 'new-pass-modal';
+      modal.className = 'modal-overlay';
+      modal.dataset.email = email;
+      modal.dataset.otp   = otp;
+      modal.innerHTML = `
+        <div class="modal-box" style="max-width:420px">
+          <button class="modal-close" onclick="document.getElementById('new-pass-modal').remove()">✕</button>
+
+          <div style="text-align:center;margin-bottom:22px">
+            <div style="width:60px;height:60px;background:rgba(6,97,68,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:28px">🔒</div>
+            <h3 style="margin:0 0 6px;font-family:var(--font-heading);font-size:20px">নতুন পাসওয়ার্ড সেট করুন</h3>
+            <p style="color:var(--text-mid);font-size:13px;margin:0">শক্তিশালী পাসওয়ার্ড ব্যবহার করুন</p>
+          </div>
+
+          <!-- Step indicator -->
+          <div style="display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:22px">
+            <div style="width:28px;height:28px;border-radius:50%;background:#066144;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center">✓</div>
+            <div style="flex:1;height:2px;background:#066144;max-width:48px"></div>
+            <div style="width:28px;height:28px;border-radius:50%;background:#066144;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center">✓</div>
+            <div style="flex:1;height:2px;background:var(--primary);max-width:48px"></div>
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--primary);color:#1a1a1a;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center">৩</div>
+          </div>
+
+          <div class="auth-form">
+            <!-- নতুন পাসওয়ার্ড -->
+            <div class="form-group">
+              <label>নতুন পাসওয়ার্ড <span style="color:#999;font-size:11px">(কমপক্ষে ৬ অক্ষর)</span></label>
+              <div style="position:relative">
+                <input class="form-input" type="password" id="np-pass1" placeholder="নতুন পাসওয়ার্ড লিখুন"
+                  style="padding-right:48px" oninput="newPassStrength(this.value)" onkeydown="if(event.key==='Enter')document.getElementById('np-pass2').focus()" />
+                <button type="button" onclick="togglePassVis2('np-pass1',this)"
+                  style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:17px;color:#666;padding:4px;line-height:1">👁</button>
+              </div>
+              <!-- strength bar -->
+              <div style="height:4px;background:#e8e8e8;border-radius:4px;margin-top:6px;overflow:hidden">
+                <div id="np-strength-fill" style="height:100%;width:0%;transition:width 0.3s,background 0.3s;border-radius:4px;background:#e0e0e0"></div>
+              </div>
+              <div id="np-strength-label" style="font-size:11px;color:#666;margin-top:3px;text-align:right;min-height:14px;font-family:var(--font-nav)"></div>
+            </div>
+
+            <!-- পাসওয়ার্ড নিশ্চিত -->
+            <div class="form-group">
+              <label>পাসওয়ার্ড নিশ্চিত করুন</label>
+              <div style="position:relative">
+                <input class="form-input" type="password" id="np-pass2" placeholder="একই পাসওয়ার্ড আবার লিখুন"
+                  style="padding-right:48px" onkeydown="if(event.key==='Enter')submitNewPasswordOtp()" />
+                <button type="button" onclick="togglePassVis2('np-pass2',this)"
+                  style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:17px;color:#666;padding:4px;line-height:1">👁</button>
+              </div>
+            </div>
+
+            <div id="np-msg" style="display:none;padding:10px 14px;border-radius:4px;font-size:13px;font-weight:600;margin-bottom:10px"></div>
+
+            <button id="np-submit-btn" class="btn btn-primary btn-lg" style="width:100%;margin-top:4px" onclick="submitNewPasswordOtp()">
+              🔑 পাসওয়ার্ড সেট করুন ও লগইন করুন →
+            </button>
+          </div>
+        </div>`;
+
+      modal.addEventListener('click', function(e) { if (e.target === modal) modal.remove(); });
+      document.body.appendChild(modal);
+      setTimeout(function() { var el = document.getElementById('np-pass1'); if (el) el.focus(); }, 100);
+    }
+
+    function togglePassVis2(inputId, btn) {
+      var inp = document.getElementById(inputId);
+      if (!inp) return;
+      if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+      else { inp.type = 'password'; btn.textContent = '👁'; }
+    }
+
+    function newPassStrength(val) {
+      var fill  = document.getElementById('np-strength-fill');
+      var label = document.getElementById('np-strength-label');
+      if (!fill || !label) return;
+      var score = 0;
+      if (val.length >= 6)  score++;
+      if (val.length >= 10) score++;
+      if (/[A-Z]/.test(val)) score++;
+      if (/[0-9]/.test(val)) score++;
+      if (/[^A-Za-z0-9]/.test(val)) score++;
+      var map = [
+        { pct: '0%',   bg: '#e0e0e0', txt: '' },
+        { pct: '25%',  bg: '#e53935', txt: '😟 দুর্বল' },
+        { pct: '50%',  bg: '#ff9800', txt: '🙂 মাঝারি' },
+        { pct: '75%',  bg: '#43a047', txt: '💪 ভালো' },
+        { pct: '100%', bg: '#1b5e20', txt: '🔒 শক্তিশালী' },
+      ];
+      var s = map[Math.min(score, 4)];
+      fill.style.width = s.pct; fill.style.background = s.bg;
+      label.textContent = s.txt;
+    }
+
+    // ── ধাপ ৩: নতুন পাসওয়ার্ড submit ──
+    function submitNewPasswordOtp() {
+      var modal = document.getElementById('new-pass-modal');
+      var email = modal ? modal.dataset.email : '';
+      var otp   = modal ? modal.dataset.otp   : '';
+      var pass  = ((document.getElementById('np-pass1') || {}).value || '');
+      var conf  = ((document.getElementById('np-pass2') || {}).value || '');
+      var btn   = document.getElementById('np-submit-btn');
+      var msgEl = document.getElementById('np-msg');
+
+      if (!pass || pass.length < 6) {
+        showToast('⚠️ পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে');
+        var inp = document.getElementById('np-pass1');
+        if (inp) { inp.style.borderColor='#e53935'; inp.focus(); setTimeout(function(){inp.style.borderColor='';},2000); }
+        return;
+      }
+      if (pass !== conf) {
+        showToast('⚠️ পাসওয়ার্ড দুটি মিলছে না');
+        var inp2 = document.getElementById('np-pass2');
+        if (inp2) { inp2.style.borderColor='#e53935'; inp2.focus(); setTimeout(function(){inp2.style.borderColor='';},2000); }
+        return;
+      }
+      if (!email || !otp) { showToast('❌ সেশন মেয়াদ শেষ। আবার চেষ্টা করুন।'); modal.remove(); showForgotPassword(); return; }
+
+      if (btn) { btn.disabled = true; btn.textContent = '⏳ পরিবর্তন হচ্ছে...'; }
+      if (msgEl) msgEl.style.display = 'none';
+
+      fetch(API_BASE + '/api/user/reset-password-otp', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, otp: otp, password: pass })
+      }).then(function(r) { return r.json(); }).then(function(data) {
+        if (data.error) {
+          if (btn) { btn.disabled = false; btn.textContent = '🔑 পাসওয়ার্ড সেট করুন ও লগইন করুন →'; }
+          if (msgEl) { msgEl.style.display='block'; msgEl.style.background='#ffeaea'; msgEl.style.color='#c0392b'; msgEl.textContent='❌ '+data.error; }
+          showToast('❌ ' + data.error);
+          return;
+        }
+        // ✅ সফল
+        if (msgEl) { msgEl.style.display='block'; msgEl.style.background='#f0faf4'; msgEl.style.color='#066144'; msgEl.textContent='🎉 পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে! লগইন হচ্ছে...'; }
+        if (btn) { btn.textContent='✅ সফল! ড্যাশবোর্ডে যাচ্ছেন...'; btn.style.background='#066144'; btn.style.color='#fff'; }
+        showToast('🎉 পাসওয়ার্ড পরিবর্তন সফল!');
+
         if (data.token && data.user) {
           currentUser = data.user;
           lsSet('userToken', data.token);
           lsSet('currentUser', data.user);
           lsSet('currentUserEmail', data.user.email);
           setTimeout(function() {
-            var modal = document.getElementById('reset-pass-modal');
-            if (modal) modal.remove();
+            if (modal && modal.parentNode) modal.remove();
             setLoginState(true);
-            updateLessonAccess();
-            renderDashboard();
+            if (typeof updateLessonAccess === 'function') updateLessonAccess();
+            if (typeof renderDashboard === 'function') renderDashboard();
             navigate('dashboard');
-          }, 1200);
+          }, 1000);
         } else {
           setTimeout(function() {
-            var modal = document.getElementById('reset-pass-modal');
-            if (modal) modal.remove();
+            if (modal && modal.parentNode) modal.remove();
             navigate('auth');
-          }, 1500);
+          }, 1200);
         }
       }).catch(function() {
-        if (btn) { btn.disabled = false; btn.textContent = '✅ পাসওয়ার্ড পরিবর্তন করুন →'; }
+        if (btn) { btn.disabled = false; btn.textContent = '🔑 পাসওয়ার্ড সেট করুন ও লগইন করুন →'; }
         showToast('❌ সার্ভারে সমস্যা হয়েছে');
       });
     }
 
+    // shake CSS (OTP error animation)
+    (function() {
+      if (!document.getElementById('otp-shake-style')) {
+        var s = document.createElement('style');
+        s.id = 'otp-shake-style';
+        s.textContent = '@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}';
+        document.head.appendChild(s);
+      }
+    })();
     async function submitContactForm() {
       var name    = document.getElementById('contact-name')    ? document.getElementById('contact-name').value.trim()    : '';
       var email   = document.getElementById('contact-email')   ? document.getElementById('contact-email').value.trim()   : '';
@@ -5968,8 +6243,8 @@
     
     restoreSession();
     runFadeIn();
-    // পাসওয়ার্ড রিসেট লিংক চেক করি (URL-এ reset_token থাকলে)
-    setTimeout(function() { checkPasswordResetToken(); }, 600);
+    // পুরনো link-based reset token cleanup + redirect to OTP system
+    checkPasswordResetToken();
 
 
 

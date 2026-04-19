@@ -190,6 +190,19 @@ const settingsSchema = new mongoose.Schema({
 });
 const Settings = mongoose.model('Settings', settingsSchema);
 
+// ── OTP Store (MongoDB-based — server restart/sleep proof) ──
+// Render.com free tier sleeps → in-memory Map হারিয়ে যায়
+// MongoDB তে রাখলে সেই সমস্যা থাকে না
+const otpStoreSchema = new mongoose.Schema({
+  email:     { type: String, required: true, lowercase: true },
+  otpType:   { type: String, required: true }, // 'register' | 'reset'
+  otp:       { type: String, required: true },
+  expiresAt: { type: Date,   required: true },
+  createdAt: { type: Date,   default: Date.now, expires: 600 }, // TTL: 10min auto-delete
+});
+otpStoreSchema.index({ email: 1, otpType: 1 }, { unique: true });
+const OtpStore = mongoose.model('OtpStore', otpStoreSchema);
+
 const enrollmentSchema = new mongoose.Schema({
   studentName: String, studentEmail: String, studentPhone: String,
   courseId:      { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
@@ -208,6 +221,10 @@ const userSchema = new mongoose.Schema({
   avatar:    { type: String, default: '' },
   resetToken:       { type: String, default: null },
   resetTokenExpiry: { type: Date,   default: null },
+  // ── OTP (MongoDB-based, server restart-proof) ──
+  otpCode:          { type: String, default: null },
+  otpExpiry:        { type: Date,   default: null },
+  otpType:          { type: String, default: null }, // 'register' | 'reset'
   enrolledCourses: [{
     courseId:   { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
     courseSlug: String,
@@ -346,6 +363,8 @@ app.get('/admin', (req, res) => {
 app.get('/admin.html', (req, res) => {
   res.redirect('/admin');
 });
+
+// ── /reset-password route সরানো হয়েছে — এখন OTP-based system ব্যবহৃত হচ্ছে ──
 
 // ============================================================
 // AUTH ROUTES
@@ -1033,165 +1052,93 @@ app.post('/api/admin/upload', authMiddleware, upload.single('file'), async (req,
 // USER AUTH (Student Accounts)
 // ============================================================
 // ============================================================
-// PASSWORD RESET — ভুলে যাওয়া পাসওয়ার্ড রিসেট
+// PASSWORD RESET — OTP-ভিত্তিক (৪ ডিজিট) সিস্টেম
+// পুরনো link-based system সম্পূর্ণ সরানো হয়েছে
+// নতুন flow: ইমেইল দাও → OTP পাও → OTP যাচাই → নতুন পাসওয়ার্ড সেট
 // ============================================================
 
-// ধাপ ১: Reset লিংক পাঠানো
-app.post('/api/user/forgot-password', async (req, res) => {
-  try {
-    const { email } = req.body;
-    if (!email || !email.includes('@'))
-      return res.status(400).json({ error: 'সঠিক ইমেইল দিন' });
+// [REMOVED] /api/user/forgot-password   — পুরনো link-based, আর নেই
+// [REMOVED] /api/user/verify-reset-token — পুরনো token verify, আর নেই
+// [REMOVED] /api/user/reset-password     — পুরনো token-based reset, আর নেই
 
-    const user = await User.findOne({ email: email.toLowerCase() });
-    // Security: এই ইমেইলে account না থাকলেও same message দিই (brute force রোধ)
-    if (!user) {
-      return res.json({ message: 'রিসেট লিংক পাঠানো হয়েছে (যদি অ্যাকাউন্ট থাকে)' });
-    }
-
-    // Secure random token তৈরি
-    const crypto = require('crypto');
-    const resetToken = crypto.randomBytes(32).toString('hex');
-    const resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000); // ১ ঘণ্টা
-
-    user.resetToken = resetToken;
-    user.resetTokenExpiry = resetTokenExpiry;
-    await user.save();
-
-    const FRONTEND = process.env.FRONTEND_URL || 'https://ibnkhalduninstitute.online';
-    const resetLink = `${FRONTEND}/?reset_token=${resetToken}&email=${encodeURIComponent(email.toLowerCase())}`;
-
-    await mailTransporter.sendMail({
-      from: '"ইবনে খালদুন ইনস্টিটিউট" <momizanr@gmail.com>',
-      to: email,
-      subject: 'পাসওয়ার্ড রিসেট করুন — ইবনে খালদুন ইনস্টিটিউট',
-      html: `
-        <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:520px;margin:0 auto;background:#fff;border:1px solid #e8e8e8;border-radius:10px;overflow:hidden">
-          <div style="background:#066144;padding:24px 30px">
-            <h2 style="color:#F5C518;margin:0;font-size:20px">ইবনে খালদুন ইনস্টিটিউট</h2>
-            <p style="color:rgba(255,255,255,0.8);margin:6px 0 0;font-size:13px">পাসওয়ার্ড রিসেট অনুরোধ</p>
-          </div>
-          <div style="padding:30px">
-            <p style="color:#333;font-size:16px;margin-top:0">আসসালামু আলাইকুম, <strong>${user.name}</strong>!</p>
-            <p style="color:#555;font-size:14px">আমরা আপনার অ্যাকাউন্টের পাসওয়ার্ড রিসেট করার একটি অনুরোধ পেয়েছি।</p>
-            <div style="text-align:center;margin:32px 0">
-              <a href="${resetLink}"
-                style="display:inline-block;background:#F5C518;color:#1a1a1a;font-size:15px;font-weight:700;padding:14px 36px;border-radius:6px;text-decoration:none;letter-spacing:0.5px">
-                🔑 নতুন পাসওয়ার্ড সেট করুন
-              </a>
-            </div>
-            <p style="color:#888;font-size:12px;text-align:center">এই লিংকটি <strong>১ ঘণ্টা</strong> পর মেয়াদোত্তীর্ণ হয়ে যাবে।</p>
-            <p style="color:#888;font-size:12px;text-align:center">আপনি যদি এই অনুরোধ না করে থাকেন, তাহলে এই ইমেইলটি উপেক্ষা করুন।</p>
-            <hr style="border:none;border-top:1px solid #eee;margin:20px 0">
-            <p style="color:#aaa;font-size:11px;text-align:center;word-break:break-all">লিংক কাজ না করলে এটি কপি করুন:<br><a href="${resetLink}" style="color:#066144">${resetLink}</a></p>
-          </div>
-          <div style="background:#f5f5f5;padding:14px 30px;text-align:center">
-            <p style="color:#aaa;font-size:11px;margin:0">© ইবনে খালদুন ইনস্টিটিউট — ibnkhalduninstitute.online</p>
-          </div>
-        </div>
-      `,
-    });
-
-    res.json({ message: 'পাসওয়ার্ড রিসেট লিংক আপনার ইমেইলে পাঠানো হয়েছে' });
-  } catch (e) {
-    console.error('Forgot password error:', e.message);
-    res.status(500).json({ error: 'ইমেইল পাঠাতে সমস্যা হয়েছে: ' + e.message });
-  }
+// ── নতুন ডামি route: পুরনো link ক্লিক করলে সুন্দর বার্তা দেখাবে ──
+app.post('/api/user/forgot-password', (req, res) => {
+  res.status(410).json({ error: 'এই পদ্ধতি আর কাজ করে না। অনুগ্রহ করে OTP দিয়ে পাসওয়ার্ড রিসেট করুন।' });
+});
+app.get('/api/user/verify-reset-token', (req, res) => {
+  res.status(410).json({ valid: false, error: 'এই পদ্ধতি আর কাজ করে না। OTP দিয়ে পাসওয়ার্ড রিসেট করুন।' });
 });
 
-// ধাপ ২: Token যাচাই
-app.get('/api/user/verify-reset-token', async (req, res) => {
-  try {
-    const { token, email } = req.query;
-    if (!token || !email)
-      return res.status(400).json({ valid: false, error: 'Token বা ইমেইল নেই' });
-
-    const user = await User.findOne({
-      email: email.toLowerCase(),
-      resetToken: token,
-      resetTokenExpiry: { $gt: new Date() },
-    });
-
-    if (!user) return res.json({ valid: false, error: 'লিংকটি অবৈধ বা মেয়াদ শেষ হয়ে গেছে' });
-    res.json({ valid: true, name: user.name });
-  } catch (e) { res.status(500).json({ valid: false, error: e.message }); }
-});
-
-// ধাপ ৩: নতুন পাসওয়ার্ড সেট করা
+// পুরনো token-based reset — এখন শুধু error দেবে
 app.post('/api/user/reset-password', async (req, res) => {
-  try {
-    const { token, email, password } = req.body;
-    if (!token || !email || !password)
-      return res.status(400).json({ error: 'সব তথ্য দিন' });
-    if (password.length < 6)
-      return res.status(400).json({ error: 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে' });
-
-    const user = await User.findOne({
-      email: email.toLowerCase(),
-      resetToken: token,
-      resetTokenExpiry: { $gt: new Date() },
-    });
-
-    if (!user) return res.status(400).json({ error: 'লিংকটি অবৈধ বা মেয়াদ শেষ হয়ে গেছে। আবার চেষ্টা করুন।' });
-
-    user.password = await bcrypt.hash(password, 10);
-    user.resetToken = null;
-    user.resetTokenExpiry = null;
-    await user.save();
-
-    // Success notification email
+  // যদি OTP দিয়ে এসেছে (otp field আছে), reset-password-otp এ forward করি
+  const { otp, email, password } = req.body;
+  if (otp && email && password) {
+    // redirect to OTP handler logic inline
     try {
-      await mailTransporter.sendMail({
-        from: '"ইবনে খালদুন ইনস্টিটিউট" <momizanr@gmail.com>',
-        to: email,
-        subject: '✅ পাসওয়ার্ড পরিবর্তন সফল — ইবনে খালদুন ইনস্টিটিউট',
-        html: `
-          <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:480px;margin:0 auto;background:#fff;border:1px solid #e8e8e8;border-radius:10px;overflow:hidden">
-            <div style="background:#066144;padding:20px 28px">
-              <h2 style="color:#F5C518;margin:0;font-size:18px">ইবনে খালদুন ইনস্টিটিউট</h2>
-            </div>
-            <div style="padding:28px">
-              <p style="color:#333;font-size:15px;margin-top:0">আসসালামু আলাইকুম, <strong>${user.name}</strong>!</p>
-              <div style="background:#f0faf4;border-left:4px solid #066144;padding:12px 16px;border-radius:0 6px 6px 0;margin:16px 0">
-                <p style="margin:0;color:#066144;font-weight:700">✅ আপনার পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে।</p>
-              </div>
-              <p style="color:#888;font-size:13px">এই পরিবর্তন আপনি করেননি মনে হলে অবিলম্বে আমাদের সাথে যোগাযোগ করুন।</p>
-            </div>
-            <div style="background:#f5f5f5;padding:12px 28px;text-align:center">
-              <p style="color:#aaa;font-size:11px;margin:0">© ইবনে খালদুন ইনস্টিটিউট</p>
-            </div>
-          </div>
-        `,
-      });
-    } catch(_) {}
+      if (password.length < 6)
+        return res.status(400).json({ error: 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে' });
+      const result = await verifyOtp(email, 'reset', otp);
+      if (!result.ok) return res.status(400).json({ error: result.error });
+      const user = await User.findOne({ email: email.toLowerCase() });
+      if (!user) return res.status(400).json({ error: 'অ্যাকাউন্ট পাওয়া যায়নি' });
+      user.password = await bcrypt.hash(password, 10);
+      user.resetToken = null;
+      user.resetTokenExpiry = null;
+      await user.save();
+      await OtpStore.deleteOne({ email: email.toLowerCase(), otpType: 'reset' });
+      const token = jwt.sign({ id: user._id, email: user.email, name: user.name }, JWT_SECRET, { expiresIn: '30d' });
+      return res.json({ message: 'পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে', token, user: { id: user._id, name: user.name, email: user.email, enrolledCourses: user.enrolledCourses } });
+    } catch (e) { return res.status(500).json({ error: e.message }); }
+  }
+  // পুরনো token-based call
+  return res.status(410).json({ error: 'এই পদ্ধতি আর কাজ করে না। OTP দিয়ে পাসওয়ার্ড রিসেট করুন।' });
 
-    const jwtToken = jwt.sign({ id: user._id, email: user.email, name: user.name }, JWT_SECRET, { expiresIn: '30d' });
-    res.json({ message: 'পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে', token: jwtToken, user: { id: user._id, name: user.name, email: user.email, enrolledCourses: user.enrolledCourses } });
-  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ============================================================
-// OTP — ইমেইল যাচাই
+// OTP — ইমেইল যাচাই (MongoDB-based — Render cold start proof)
 // ============================================================
 
-// OTP পাঠানো
+// ── Helper: OTP তৈরি ও MongoDB তে save ──
+async function saveOtp(email, type) {
+  const otp = String(Math.floor(1000 + Math.random() * 9000));
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // ১০ মিনিট
+  await OtpStore.findOneAndUpdate(
+    { email: email.toLowerCase(), otpType: type },
+    { otp, expiresAt, createdAt: new Date() },
+    { upsert: true, new: true }
+  );
+  return otp;
+}
+
+// ── Helper: OTP যাচাই ──
+async function verifyOtp(email, type, inputOtp) {
+  const record = await OtpStore.findOne({ email: email.toLowerCase(), otpType: type });
+  if (!record) return { ok: false, error: 'OTP পাওয়া যায়নি। আবার OTP নিন' };
+  if (new Date() > record.expiresAt) {
+    await OtpStore.deleteOne({ email: email.toLowerCase(), otpType: type });
+    return { ok: false, error: 'OTP মেয়াদ শেষ হয়ে গেছে। আবার OTP নিন' };
+  }
+  if (record.otp !== String(inputOtp).trim()) {
+    return { ok: false, error: 'OTP সঠিক নয়। আবার চেষ্টা করুন' };
+  }
+  return { ok: true };
+}
+
+// ── রেজিস্ট্রেশন OTP পাঠানো ──
 app.post('/api/user/send-otp', async (req, res) => {
   try {
     const { email } = req.body;
     if (!email || !email.includes('@'))
       return res.status(400).json({ error: 'সঠিক ইমেইল দিন' });
 
-    // ইতিমধ্যে রেজিস্টার হয়েছে কিনা চেক
     const exists = await User.findOne({ email: email.toLowerCase() });
     if (exists)
       return res.status(400).json({ error: 'এই ইমেইলে ইতিমধ্যে অ্যাকাউন্ট আছে' });
 
-    // ৪ সংখ্যার OTP তৈরি
-    const otp = String(Math.floor(1000 + Math.random() * 9000));
-    const expiresAt = Date.now() + 10 * 60 * 1000; // ১০ মিনিট
-    otpStore.set(email.toLowerCase(), { otp, expiresAt });
+    const otp = await saveOtp(email, 'register');
 
-    // Gmail দিয়ে পাঠানো
     await mailTransporter.sendMail({
       from: `"ইবনে খালদুন ইনস্টিটিউট" <momizanr@gmail.com>`,
       to: email,
@@ -1218,30 +1165,156 @@ app.post('/api/user/send-otp', async (req, res) => {
 
     res.json({ message: 'OTP পাঠানো হয়েছে' });
   } catch (e) {
-    console.error('OTP send error:', e.message);
+    console.error('[send-otp] error:', e.message);
     res.status(500).json({ error: 'OTP পাঠাতে সমস্যা হয়েছে: ' + e.message });
   }
 });
 
-// OTP যাচাই
+// ── রেজিস্ট্রেশন OTP যাচাই ──
 app.post('/api/user/verify-otp', async (req, res) => {
   try {
     const { email, otp } = req.body;
     if (!email || !otp)
       return res.status(400).json({ error: 'ইমেইল ও OTP দিন' });
 
-    const stored = otpStore.get(email.toLowerCase());
-    if (!stored)
-      return res.status(400).json({ error: 'OTP পাওয়া যায়নি। আবার পাঠান' });
-    if (Date.now() > stored.expiresAt)
-      return res.status(400).json({ error: 'OTP মেয়াদ শেষ। আবার পাঠান' });
-    if (stored.otp !== String(otp).trim())
-      return res.status(400).json({ error: 'OTP সঠিক নয়' });
+    const result = await verifyOtp(email, 'register', otp);
+    if (!result.ok) return res.status(400).json({ error: result.error });
 
     // Verified — OTP মুছে দাও
-    otpStore.delete(email.toLowerCase());
+    await OtpStore.deleteOne({ email: email.toLowerCase(), otpType: 'register' });
     res.json({ verified: true, message: 'ইমেইল যাচাই সফল' });
   } catch (e) {
+    console.error('[verify-otp] error:', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ── পাসওয়ার্ড রিসেট: শুধু OTP যাচাই (delete করে না — step 3 এ পাসওয়ার্ড দেওয়ার সুযোগ রাখে) ──
+app.post('/api/user/verify-reset-otp', async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp)
+      return res.status(400).json({ error: 'ইমেইল ও OTP দিন' });
+
+    const result = await verifyOtp(email, 'reset', otp);
+    if (!result.ok) return res.status(400).json({ error: result.error });
+
+    // ✅ OTP সঠিক — কিন্তু এখন delete করব না, reset-password-otp তে final check হবে
+    res.json({ verified: true, message: 'OTP যাচাই সফল' });
+  } catch (e) {
+    console.error('[verify-reset-otp] error:', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+
+app.post('/api/user/send-reset-otp', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email || !email.includes('@'))
+      return res.status(400).json({ error: 'সঠিক ইমেইল দিন' });
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user)
+      return res.status(400).json({ error: 'এই ইমেইলে কোনো অ্যাকাউন্ট নেই' });
+
+    const otp = await saveOtp(email, 'reset');
+
+    await mailTransporter.sendMail({
+      from: `"ইবনে খালদুন ইনস্টিটিউট" <momizanr@gmail.com>`,
+      to: email,
+      subject: 'পাসওয়ার্ড রিসেট OTP — ইবনে খালদুন ইনস্টিটিউট',
+      html: `
+        <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:480px;margin:0 auto;background:#fff;border:1px solid #e8e8e8;border-radius:10px;overflow:hidden">
+          <div style="background:#066144;padding:24px 30px">
+            <h2 style="color:#F5C518;margin:0;font-size:20px">ইবনে খালদুন ইনস্টিটিউট</h2>
+            <p style="color:rgba(255,255,255,0.8);margin:6px 0 0;font-size:13px">পাসওয়ার্ড রিসেট অনুরোধ</p>
+          </div>
+          <div style="padding:30px">
+            <p style="color:#333;font-size:15px;margin-top:0">আসসালামু আলাইকুম, <strong>${user.name}</strong>!</p>
+            <p style="color:#555;font-size:14px">পাসওয়ার্ড রিসেট করতে নিচের <strong>৪ সংখ্যার OTP কোড</strong> ব্যবহার করুন:</p>
+            <div style="text-align:center;margin:28px 0">
+              <span style="display:inline-block;background:#F5C518;color:#1a1a1a;font-size:38px;font-weight:900;letter-spacing:12px;padding:16px 32px;border-radius:8px;border:2px solid #d4a90e">${otp}</span>
+            </div>
+            <p style="color:#888;font-size:12px;text-align:center">এই কোডটি <strong>১০ মিনিট</strong> পর্যন্ত কার্যকর থাকবে।</p>
+            <p style="color:#888;font-size:12px;text-align:center">আপনি যদি এই অনুরোধ না করে থাকেন, তাহলে এই ইমেইলটি উপেক্ষা করুন।</p>
+          </div>
+          <div style="background:#f5f5f5;padding:14px 30px;text-align:center">
+            <p style="color:#aaa;font-size:11px;margin:0">© ইবনে খালদুন ইনস্টিটিউট — ibnkhalduninstitute.online</p>
+          </div>
+        </div>
+      `,
+    });
+
+    res.json({ message: 'OTP পাঠানো হয়েছে' });
+  } catch (e) {
+    console.error('[send-reset-otp] error:', e.message);
+    res.status(500).json({ error: 'OTP পাঠাতে সমস্যা হয়েছে: ' + e.message });
+  }
+});
+
+// ── পাসওয়ার্ড রিসেট: OTP যাচাই + নতুন পাসওয়ার্ড সেট ──
+app.post('/api/user/reset-password-otp', async (req, res) => {
+  try {
+    const { email, otp, password } = req.body;
+    if (!email || !otp || !password)
+      return res.status(400).json({ error: 'ইমেইল, OTP ও নতুন পাসওয়ার্ড দিন' });
+    if (password.length < 6)
+      return res.status(400).json({ error: 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে' });
+
+    // MongoDB থেকে OTP যাচাই
+    const result = await verifyOtp(email, 'reset', otp);
+    if (!result.ok) return res.status(400).json({ error: result.error });
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user)
+      return res.status(400).json({ error: 'অ্যাকাউন্ট পাওয়া যায়নি' });
+
+    user.password = await bcrypt.hash(password, 10);
+    user.resetToken = null;
+    user.resetTokenExpiry = null;
+    await user.save();
+
+    // OTP মুছে দাও
+    await OtpStore.deleteOne({ email: email.toLowerCase(), otpType: 'reset' });
+
+    const token = jwt.sign(
+      { id: user._id, email: user.email, name: user.name },
+      JWT_SECRET,
+      { expiresIn: '30d' }
+    );
+
+    // Success notification email (background)
+    mailTransporter.sendMail({
+      from: '"ইবনে খালদুন ইনস্টিটিউট" <momizanr@gmail.com>',
+      to: email,
+      subject: '✅ পাসওয়ার্ড পরিবর্তন সফল — ইবনে খালদুন ইনস্টিটিউট',
+      html: `
+        <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:480px;margin:0 auto;background:#fff;border:1px solid #e8e8e8;border-radius:10px;overflow:hidden">
+          <div style="background:#066144;padding:20px 28px">
+            <h2 style="color:#F5C518;margin:0;font-size:18px">ইবনে খালদুন ইনস্টিটিউট</h2>
+          </div>
+          <div style="padding:28px">
+            <p style="color:#333;font-size:15px;margin-top:0">আসসালামু আলাইকুম, <strong>${user.name}</strong>!</p>
+            <div style="background:#f0faf4;border-left:4px solid #066144;padding:12px 16px;border-radius:0 6px 6px 0;margin:16px 0">
+              <p style="margin:0;color:#066144;font-weight:700">✅ আপনার পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে।</p>
+            </div>
+            <p style="color:#888;font-size:13px">এই পরিবর্তন আপনি করেননি মনে হলে অবিলম্বে আমাদের সাথে যোগাযোগ করুন।</p>
+          </div>
+          <div style="background:#f5f5f5;padding:12px 28px;text-align:center">
+            <p style="color:#aaa;font-size:11px;margin:0">© ইবনে খালদুন ইনস্টিটিউট</p>
+          </div>
+        </div>
+      `,
+    }).catch(err => console.error('[reset-password-otp] email notify error:', err.message));
+
+    res.json({
+      message: 'পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে',
+      token,
+      user: { id: user._id, name: user.name, email: user.email, enrolledCourses: user.enrolledCourses }
+    });
+  } catch (e) {
+    console.error('[reset-password-otp] error:', e.message);
     res.status(500).json({ error: e.message });
   }
 });
