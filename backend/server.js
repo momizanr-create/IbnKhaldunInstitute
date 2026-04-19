@@ -639,6 +639,14 @@ app.post('/api/admin/settings', authMiddleware, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// Individual key GET (SEO ডেটার জন্য)
+app.get('/api/admin/settings/:key', authMiddleware, async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: req.params.key });
+    res.json(s ? { key: s.key, value: s.value } : { key: req.params.key, value: null });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 app.post('/api/admin/settings/upload', authMiddleware, upload.single('file'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No file' });
@@ -845,6 +853,14 @@ app.post('/api/admin/site-settings', authMiddleware, async (req, res) => {
       { key: 'site_settings', value: req.body, updatedAt: new Date() },
       { upsert: true }
     );
+    // WhatsApp নম্বর আলাদাভাবেও সেভ করি (index.html পড়ার জন্য)
+    if (req.body.whatsappNumber) {
+      await Settings.findOneAndUpdate(
+        { key: 'whatsappNumber' },
+        { key: 'whatsappNumber', value: req.body.whatsappNumber, updatedAt: new Date() },
+        { upsert: true }
+      );
+    }
     res.json({ message: 'Saved' });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -1801,30 +1817,215 @@ async function ensureDefaultContent() {
       console.log('📚 Creating default courses...');
       
       const defaultCourses = [
-        // ইসলামিক স্টাডিজ
-        { title: 'কোরআন শিক্ষা - বেসিক', slug: 'quran-basic', category: 'ইসলামিক স্টাডিজ', instructor: 'মাওলানা আব্দুর রহমান', price: 1500, originalPrice: 2000, discount: 25, description: 'শুরু থেকে কোরআন পড়া শিখুন সঠিক তাজবীদসহ', shortDesc: 'কোরআন পড়া শিখুন সঠিক তাজবীদসহ', thumbnail: '', duration: '৩ মাস', lessons: 24, students: 156, rating: 4.8, level: 'শুরুর স্তর', featured: true },
-        { title: 'হাদিস অধ্যয়ন', slug: 'hadith-study', category: 'ইসলামিক স্টাডিজ', instructor: 'শায়খ মুহাম্মদ ইসমাইল', price: 2000, originalPrice: 2500, discount: 20, description: 'সহীহ হাদিসের মূলনীতি ও ব্যাখ্যা শিখুন', shortDesc: 'সহীহ হাদিসের মূলনীতি শিখুন', thumbnail: '', duration: '৪ মাস', lessons: 32, students: 98, rating: 4.9, level: 'মধ্যম স্তর', featured: true },
-        { title: 'ইসলামিক ফিকাহ', slug: 'islamic-fiqh', category: 'ইসলামিক স্টাডিজ', instructor: 'মুফতি তাহের আলী', price: 1800, originalPrice: 2200, discount: 18, description: 'দৈনন্দিন জীবনের ইসলামী বিধান শিখুন', shortDesc: 'দৈনন্দিন ইসলামী বিধান', thumbnail: '', duration: '৩ মাস', lessons: 28, students: 134, rating: 4.7, level: 'সকলের জন্য' },
-        
+        // কুরআন শিক্ষা
+        {
+          title: 'কুরআন তাজবীদ সম্পূর্ণ কোর্স', slug: 'quran-tajweed', category: 'কুরআন শিক্ষা',
+          instructor: 'মাওলানা আব্দুর রহমান', price: 1500, originalPrice: 2000, discount: 25,
+          description: 'শুরু থেকে সঠিক তাজবীদসহ কুরআন পড়া শিখুন। মাখরাজ, সিফাত, মাদ্দ সহ সকল মূলনীতি বিস্তারিতভাবে শেখানো হবে। শিক্ষার্থীরা পবিত্র কুরআন শুদ্ধভাবে তেলাওয়াত করতে সক্ষম হবেন।',
+          shortDesc: 'সঠিক তাজবীদ সহ কুরআন পড়া শিখুন — মাখরাজ, সিফাত ও মাদ্দ সহ',
+          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৩ মাস', lessons: 24,
+          students: 856, rating: 4.9, level: 'শুরুর স্তর', featured: true,
+          tags: ['কুরআন', 'তাজবীদ', 'ইসলাম'],
+          curriculum: [
+            { sectionTitle: 'পরিচিতি ও মাখরাজ', lessons: [
+              { title: 'কোর্স পরিচিতি', duration: '৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'আরবি হরফ পরিচয়', duration: '১৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'মাখরাজ — মুখের অঙ্গ থেকে উচ্চারণ', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            ]},
+            { sectionTitle: 'তাজবীদের মূলনীতি', lessons: [
+              { title: 'নুন সাকিন ও তানবীন', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'মাদ্দ ও কসর', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'ওয়াকফ ও ইবতিদা', duration: '১৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            ]},
+          ],
+        },
+        {
+          title: 'কুরআন হিফজ প্রোগ্রাম', slug: 'quran-hifz', category: 'কুরআন শিক্ষা',
+          instructor: 'মাওলানা আব্দুর রহমান', price: 2500, originalPrice: 3000, discount: 17,
+          description: 'পদ্ধতিগতভাবে পবিত্র কুরআন হিফজ করুন। প্রতিদিনের পরিকল্পনা, মুরাজা পদ্ধতি এবং দোহরানোর কৌশল শিখুন।',
+          shortDesc: 'পদ্ধতিগতভাবে কুরআন হিফজ করুন — পরিকল্পনা ও কৌশলসহ',
+          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '১২ মাস', lessons: 48,
+          students: 345, rating: 4.8, level: 'সকলের জন্য', featured: true,
+          tags: ['কুরআন', 'হিফজ', 'মুখস্থ'],
+          curriculum: [
+            { sectionTitle: 'হিফজের প্রস্তুতি', lessons: [
+              { title: 'হিফজ পদ্ধতির পরিচয়', duration: '১০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'দৈনিক পরিকল্পনা তৈরি', duration: '১৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+            ]},
+            { sectionTitle: 'আমপারা থেকে শুরু', lessons: [
+              { title: 'সূরা আন-নাস', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'সূরা আল-ফালাক', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'সূরা আল-ইখলাস', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            ]},
+          ],
+        },
+        // হাদিস শিক্ষা
+        {
+          title: 'হাদিস অধ্যয়ন — সহীহ বুখারি পরিচিতি', slug: 'hadith-bukhari', category: 'হাদিস শিক্ষা',
+          instructor: 'শায়খ মুহাম্মদ ইসমাইল', price: 2000, originalPrice: 2500, discount: 20,
+          description: 'সহীহ বুখারির নির্বাচিত হাদিস, সনদ ও মতন বিশ্লেষণ। হাদিসের পরিভাষা এবং উসুলুল হাদিস শিখুন বিস্তারিতভাবে।',
+          shortDesc: 'সহীহ বুখারির হাদিস, সনদ বিশ্লেষণ ও উসুলুল হাদিস',
+          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৪ মাস', lessons: 32,
+          students: 498, rating: 4.9, level: 'মধ্যম স্তর', featured: true,
+          tags: ['হাদিস', 'বুখারি', 'সনদ'],
+          curriculum: [
+            { sectionTitle: 'হাদিস বিজ্ঞানের পরিচয়', lessons: [
+              { title: 'হাদিস কী ও কেন', duration: '১২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'সহীহ, হাসান, দঈফ হাদিস', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'সনদ ও মতন পরিচিতি', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            ]},
+            { sectionTitle: 'সহীহ বুখারির নির্বাচিত হাদিস', lessons: [
+              { title: 'নিয়তের হাদিস ব্যাখ্যা', duration: '৩০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'ঈমানের হাদিস', duration: '২৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            ]},
+          ],
+        },
+        // ইসলামিক ফিকাহ
+        {
+          title: 'ইসলামিক ফিকাহ — দৈনন্দিন বিধান', slug: 'islamic-fiqh-daily', category: 'ইসলামিক ফিকাহ',
+          instructor: 'মুফতি তাহের আলী', price: 1800, originalPrice: 2200, discount: 18,
+          description: 'নামাজ, রোজা, যাকাত, হজ্বসহ দৈনন্দিন জীবনের সকল ইসলামী বিধান বিস্তারিতভাবে শিখুন। হালাল-হারাম, লেনদেন ও পারিবারিক বিধান অন্তর্ভুক্ত।',
+          shortDesc: 'নামাজ, রোজা, যাকাত, হজ্ব — দৈনন্দিন ইসলামী বিধান',
+          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৩ মাস', lessons: 28,
+          students: 634, rating: 4.7, level: 'সকলের জন্য', featured: false,
+          tags: ['ফিকাহ', 'নামাজ', 'রোজা', 'যাকাত'],
+          curriculum: [
+            { sectionTitle: 'ইবাদত — নামাজ', lessons: [
+              { title: 'ওযু ও পাকপবিত্রতার বিধান', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'নামাজের ফরজ ও ওয়াজিব', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'জামাআত ও জুমআর নামাজ', duration: '২২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            ]},
+            { sectionTitle: 'রোজা ও যাকাতের বিধান', lessons: [
+              { title: 'রমজানের রোজার মাসআলা', duration: '২৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'যাকাতের নিসাব ও হিসাব', duration: '২৪ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            ]},
+          ],
+        },
         // আরবি ভাষা
-        { title: 'আরবি ভাষা - প্রথম স্তর', slug: 'arabic-level1', category: 'আরবি ভাষা', instructor: 'উস্তাদ ফারুক আহমেদ', price: 2500, originalPrice: 3000, discount: 17, description: 'শূন্য থেকে আরবি ভাষা শিখুন', shortDesc: 'শূন্য থেকে আরবি শিখুন', thumbnail: '', duration: '৬ মাস', lessons: 48, students: 245, rating: 4.9, level: 'শুরুর স্তর', featured: true },
-        { title: 'আরবি ব্যাকরণ - নাহু', slug: 'arabic-grammar-nahw', category: 'আরবি ভাষা', instructor: 'উস্তাদ ফারুক আহমেদ', price: 2200, originalPrice: 2800, discount: 21, description: 'আরবি ব্যাকরণের মূলনীতি শিখুন', shortDesc: 'আরবি ব্যাকরণ শিখুন', thumbnail: '', duration: '৪ মাস', lessons: 36, students: 187, rating: 4.8, level: 'মধ্যম স্তর' },
-        { title: 'কথোপকথন আরবি', slug: 'spoken-arabic', category: 'আরবি ভাষা', instructor: 'ড. আয়েশা খাতুন', price: 3000, originalPrice: 3500, discount: 14, description: 'দৈনন্দিন কথোপকথন আরবি শিখুন', shortDesc: 'কথোপকথন আরবি', thumbnail: '', duration: '৫ মাস', lessons: 40, students: 312, rating: 4.9, level: 'সকলের জন্য', featured: true },
-        
-        // ওয়েব ডেভেলপমেন্ট
-        { title: 'HTML & CSS মাস্টারক্লাস', slug: 'html-css-masterclass', category: 'ওয়েব ডেভেলপমেন্ট', instructor: 'রাফি করিম', price: 1200, originalPrice: 1500, discount: 20, description: 'ওয়েব ডিজাইনের ভিত্তি শিখুন', shortDesc: 'HTML CSS শিখুন', thumbnail: '', duration: '২ মাস', lessons: 20, students: 523, rating: 4.7, level: 'শুরুর স্তর', featured: true },
-        { title: 'JavaScript সম্পূর্ণ কোর্স', slug: 'javascript-complete', category: 'ওয়েব ডেভেলপমেন্ট', instructor: 'রাফি করিম', price: 2500, originalPrice: 3200, discount: 22, description: 'জাভাস্ক্রিপ্ট শূন্য থেকে এক্সপার্ট লেভেল', shortDesc: 'JavaScript শিখুন', thumbnail: '', duration: '৫ মাস', lessons: 45, students: 678, rating: 4.9, level: 'সকলের জন্য' },
-        { title: 'React.js ডেভেলপমেন্ট', slug: 'reactjs-development', category: 'ওয়েব ডেভেলপমেন্ট', instructor: 'তানিয়া আক্তার', price: 3500, originalPrice: 4500, discount: 22, description: 'আধুনিক ওয়েব অ্যাপ তৈরি করুন React দিয়ে', shortDesc: 'React.js শিখুন', thumbnail: '', duration: '৪ মাস', lessons: 38, students: 456, rating: 4.8, level: 'উচ্চ স্তর', featured: true },
-        
-        // গ্রাফিক ডিজাইন
-        { title: 'Adobe Photoshop প্রো', slug: 'photoshop-pro', category: 'গ্রাফিক ডিজাইন', instructor: 'সাদিয়া রহমান', price: 1800, originalPrice: 2300, discount: 22, description: 'ফটোশপ দিয়ে প্রফেশনাল ডিজাইন শিখুন', shortDesc: 'Photoshop শিখুন', thumbnail: '', duration: '৩ মাস', lessons: 30, students: 389, rating: 4.7, level: 'শুরুর স্তর' },
-        { title: 'Illustrator মাস্টারি', slug: 'illustrator-mastery', category: 'গ্রাফিক ডিজাইন', instructor: 'সাদিয়া রহমান', price: 2000, originalPrice: 2600, discount: 23, description: 'ভেক্টর ডিজাইন শিখুন Illustrator দিয়ে', shortDesc: 'Illustrator শিখুন', thumbnail: '', duration: '৩ মাস', lessons: 28, students: 267, rating: 4.8, level: 'মধ্যম স্তর', featured: true },
-        { title: 'লোগো ডিজাইন কোর্স', slug: 'logo-design-course', category: 'গ্রাফিক ডিজাইন', instructor: 'কামাল হোসেন', price: 1500, originalPrice: 2000, discount: 25, description: 'প্রফেশনাল লোগো ডিজাইন শিখুন', shortDesc: 'লোগো ডিজাইন', thumbnail: '', duration: '২ মাস', lessons: 16, students: 412, rating: 4.6, level: 'সকলের জন্য' },
-        
-        // ডিজিটাল মার্কেটিং
-        { title: 'Facebook Marketing', slug: 'facebook-marketing', category: 'ডিজিটাল মার্কেটিং', instructor: 'নাদিয়া সুলতানা', price: 2200, originalPrice: 2800, discount: 21, description: 'ফেসবুক মার্কেটিং এ দক্ষ হন', shortDesc: 'Facebook Marketing', thumbnail: '', duration: '২ মাস', lessons: 22, students: 534, rating: 4.8, level: 'সকলের জন্য', featured: true },
-        { title: 'SEO সম্পূর্ণ গাইড', slug: 'seo-complete-guide', category: 'ডিজিটাল মার্কেটিং', instructor: 'নাদিয়া সুলতানা', price: 2500, originalPrice: 3200, discount: 22, description: 'সার্চ ইঞ্জিন অপটিমাইজেশন শিখুন', shortDesc: 'SEO শিখুন', thumbnail: '', duration: '৩ মাস', lessons: 26, students: 398, rating: 4.9, level: 'মধ্যম স্তর' },
-        { title: 'Email Marketing Pro', slug: 'email-marketing-pro', category: 'ডিজিটাল মার্কেটিং', instructor: 'আরিফ হাসান', price: 1800, originalPrice: 2400, discount: 25, description: 'ইমেইল মার্কেটিং মাস্টার করুন', shortDesc: 'Email Marketing', thumbnail: '', duration: '২ মাস', lessons: 18, students: 276, rating: 4.7, level: 'সকলের জন্য' },
+        {
+          title: 'আরবি ভাষা — শূন্য থেকে শুরু', slug: 'arabic-beginner', category: 'আরবি ভাষা',
+          instructor: 'উস্তাদ ফারুক আহমেদ', price: 2500, originalPrice: 3000, discount: 17,
+          description: 'একদম শূন্য থেকে আরবি ভাষা শিখুন। আরবি হরফ, হরকত, শব্দভান্ডার, বাক্য গঠন এবং সহজ কথোপকথন শেখানো হবে।',
+          shortDesc: 'শূন্য থেকে আরবি শিখুন — হরফ, হরকত, শব্দ ও বাক্য গঠন',
+          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৬ মাস', lessons: 48,
+          students: 945, rating: 4.9, level: 'শুরুর স্তর', featured: true,
+          tags: ['আরবি', 'ভাষা', 'শিক্ষা'],
+          curriculum: [
+            { sectionTitle: 'আরবি হরফ ও হরকত', lessons: [
+              { title: 'আরবি হরফ পরিচয় (আলিফ-ইয়া)', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'ফাতহা, কাসরা, দাম্মা', duration: '১৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'সুকুন, শাদ্দা ও তানবীন', duration: '১৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            ]},
+            { sectionTitle: 'শব্দভান্ডার ও বাক্য', lessons: [
+              { title: 'দৈনন্দিন শব্দ ১০০টি', duration: '৩০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'সহজ বাক্য গঠন', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            ]},
+          ],
+        },
+        {
+          title: 'আরবি নাহু — ব্যাকরণ মাস্টারক্লাস', slug: 'arabic-nahw', category: 'আরবি ভাষা',
+          instructor: 'উস্তাদ ফারুক আহমেদ', price: 2200, originalPrice: 2800, discount: 21,
+          description: 'আরবি ব্যাকরণের মূলনীতি — ইসম, ফেল, হরফ, ই\'রাব, জুমলা ইসমিয়া ও জুমলা ফে\'লিয়া বিস্তারিত শিখুন।',
+          shortDesc: 'আরবি ইসম, ফেল, হরফ ও ই\'রাব — নাহু ব্যাকরণ',
+          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৪ মাস', lessons: 36,
+          students: 587, rating: 4.8, level: 'মধ্যম স্তর', featured: false,
+          tags: ['আরবি', 'নাহু', 'ব্যাকরণ'],
+          curriculum: [
+            { sectionTitle: 'নাহু পরিচয়', lessons: [
+              { title: 'কালাম ও তার প্রকারভেদ', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'ইসম পরিচয় ও প্রকার', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'ফে\'ল পরিচয় ও প্রকার', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            ]},
+            { sectionTitle: 'ই\'রাব — শেষ হরকত', lessons: [
+              { title: 'রফা, নাসব, জর্র, জযম', duration: '৩০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'জুমলা ইসমিয়া — মুবতাদা ও খবর', duration: '২৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            ]},
+          ],
+        },
+        // আকিদা
+        {
+          title: 'ইসলামী আকিদা — বিশ্বাসের মূলনীতি', slug: 'islamic-aqidah', category: 'আকিদা ও বিশ্বাস',
+          instructor: 'শায়খ মুহাম্মদ ইসমাইল', price: 1600, originalPrice: 2000, discount: 20,
+          description: 'ইসলামের মূল বিশ্বাস — তাওহীদ, রিসালাত, আখিরাত, ফেরেশতা ও তাকদীর বিষয়ে বিস্তারিত জানুন। আহলে সুন্নাহ ওয়াল জামাআতের আকিদা।',
+          shortDesc: 'তাওহীদ, রিসালাত, আখিরাত — ইসলামী আকিদার মূলনীতি',
+          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৩ মাস', lessons: 24,
+          students: 423, rating: 4.8, level: 'সকলের জন্য', featured: true,
+          tags: ['আকিদা', 'তাওহীদ', 'ইসলাম'],
+          curriculum: [
+            { sectionTitle: 'তাওহীদ — আল্লাহর একত্ব', lessons: [
+              { title: 'তাওহীদের পরিচয় ও প্রকার', duration: '২২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'তাওহীদুর রুবুবিয়্যাহ', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'তাওহীদুল উলুহিয়্যাহ', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            ]},
+            { sectionTitle: 'রিসালাত ও আখিরাত', lessons: [
+              { title: 'নবী-রাসুলগণের প্রতি ঈমান', duration: '২৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'পরকাল ও কিয়ামতের আলামত', duration: '৩০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            ]},
+          ],
+        },
+        // সীরাতুন নবী
+        {
+          title: 'সীরাতুন নবী ﷺ — জীবনী কোর্স', slug: 'seerah-prophet', category: 'সীরাহ ও ইতিহাস',
+          instructor: 'মাওলানা আব্দুর রহমান', price: 1800, originalPrice: 2300, discount: 22,
+          description: 'রাসুলুল্লাহ ﷺ এর পূর্ণাঙ্গ জীবনী — জন্ম থেকে ওফাত পর্যন্ত। মক্কি জীবন, হিজরত, মদনি জীবন ও যুদ্ধাভিযান।',
+          shortDesc: 'রাসুলুল্লাহ ﷺ এর পূর্ণাঙ্গ জীবনী — মক্কা থেকে মদীনা',
+          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৫ মাস', lessons: 40,
+          students: 712, rating: 4.9, level: 'সকলের জন্য', featured: true,
+          tags: ['সীরাহ', 'নবী জীবনী', 'ইসলামী ইতিহাস'],
+          curriculum: [
+            { sectionTitle: 'মক্কি জীবন', lessons: [
+              { title: 'প্রাক-ইসলামী আরবের অবস্থা', duration: '১৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'জন্ম ও শৈশব', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'নবুওয়াত লাভ ও প্রথম ওহী', duration: '২৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            ]},
+            { sectionTitle: 'হিজরত ও মদনি জীবন', lessons: [
+              { title: 'মদীনায় হিজরত', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'বদর ও উহুদের যুদ্ধ', duration: '৩৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'মক্কা বিজয়', duration: '৩০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            ]},
+          ],
+        },
+        // তাফসীর
+        {
+          title: 'তাফসীর কোর্স — কুরআনের ব্যাখ্যা', slug: 'tafseer-quran', category: 'তাফসীর',
+          instructor: 'মুফতি তাহের আলী', price: 2200, originalPrice: 2800, discount: 21,
+          description: 'বিভিন্ন তাফসীর গ্রন্থের সাহায্যে কুরআনের বাছাই করা সূরা ও আয়াতের বিস্তারিত ব্যাখ্যা। তাফসীর ইবন কাসীর, তাফসীর জালালাইন রেফারেন্স।',
+          shortDesc: 'কুরআনের বাছাই সূরাগুলোর তাফসীর — আরবি ও বাংলায়',
+          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৪ মাস', lessons: 30,
+          students: 389, rating: 4.7, level: 'মধ্যম স্তর', featured: false,
+          tags: ['তাফসীর', 'কুরআন', 'ইলম'],
+          curriculum: [
+            { sectionTitle: 'তাফসীর শাস্ত্রের পরিচয়', lessons: [
+              { title: 'তাফসীর কী ও তার প্রকার', duration: '১৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'তাফসীর বিল মাসুর ও তাফসীর বির রায়', duration: '২২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            ]},
+            { sectionTitle: 'নির্বাচিত সূরার তাফসীর', lessons: [
+              { title: 'সূরা আল-ফাতিহার তাফসীর', duration: '৪০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'সূরা আল-বাকারার প্রথম রুকু', duration: '৪৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            ]},
+          ],
+        },
+        // দুআ ও যিকর
+        {
+          title: 'দুআ ও যিকর — দৈনন্দিন আমল', slug: 'dua-dhikr-daily', category: 'দুআ ও যিকর',
+          instructor: 'শায়খ মুহাম্মদ ইসমাইল', price: 1200, originalPrice: 1500, discount: 20,
+          description: 'সকাল-সন্ধ্যার দুআ, নামাজের পরের যিকর, ঘুমের আগে-পরের দুআ ও বিভিন্ন সময়ের আমল শিখুন সঠিক উচ্চারণ ও অর্থসহ।',
+          shortDesc: 'সকাল-সন্ধ্যার দুআ, যিকর ও দৈনন্দিন আমল — উচ্চারণ ও অর্থসহ',
+          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '২ মাস', lessons: 20,
+          students: 1234, rating: 4.9, level: 'সকলের জন্য', featured: true,
+          tags: ['দুআ', 'যিকর', 'আমল'],
+          curriculum: [
+            { sectionTitle: 'সকাল ও সন্ধ্যার আযকার', lessons: [
+              { title: 'সকালের ৫টি গুরুত্বপূর্ণ দুআ', duration: '১৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'সন্ধ্যার আযকার', duration: '১৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'ঘুমের আগে ও পরের দুআ', duration: '১৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            ]},
+            { sectionTitle: 'নামাজের পরের যিকর', lessons: [
+              { title: 'তাসবিহ — সুবহানাল্লাহ ৩৩ বার', duration: '১২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'আয়াতুল কুরসি ও এর ফযিলত', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            ]},
+          ],
+        },
       ];
       
       await Course.insertMany(defaultCourses);
@@ -1838,12 +2039,12 @@ async function ensureDefaultContent() {
         { 
           name: 'মাওলানা আব্দুর রহমান', 
           slug: 'mawlana-abdur-rahman', 
-          title: 'কোরআন ও তাফসীর বিশেষজ্ঞ', 
-          bio: 'আল-আযহার বিশ্ববিদ্যালয় থেকে ইসলামিক স্টাডিজে মাস্টার্স। ২০+ বছরের শিক্ষকতার অভিজ্ঞতা।', 
+          title: 'কুরআন, তাজবীদ ও সীরাহ বিশেষজ্ঞ', 
+          bio: 'আল-আযহার বিশ্ববিদ্যালয় থেকে ইসলামিক স্টাডিজে মাস্টার্স। ২০+ বছরের শিক্ষকতার অভিজ্ঞতা। কুরআন তাজবীদ ও সীরাতুন নবী বিষয়ে বিশেষজ্ঞ।', 
           photo: '', 
-          specializations: ['কোরআন', 'তাফসীর', 'তাজবীদ'], 
-          students: 1250, 
-          courses: 8, 
+          specializations: ['কুরআন', 'তাজবীদ', 'সীরাহ', 'হিফজ'], 
+          students: 2250, 
+          courses: 10, 
           rating: 4.9,
           social: { facebook: '', youtube: '', twitter: '', linkedin: '' },
           featured: true 
@@ -1851,12 +2052,12 @@ async function ensureDefaultContent() {
         { 
           name: 'শায়খ মুহাম্মদ ইসমাইল', 
           slug: 'shaykh-muhammad-ismail', 
-          title: 'হাদিস ও ফিকাহ শিক্ষক', 
-          bio: 'মদীনা ইসলামিক বিশ্ববিদ্যালয় থেকে হাদিস বিভাগে পিএইচডি। ১৫ বছরের গবেষণা অভিজ্ঞতা।', 
+          title: 'হাদিস, আকিদা ও দুআ বিশেষজ্ঞ', 
+          bio: 'মদীনা ইসলামিক বিশ্ববিদ্যালয় থেকে হাদিস বিভাগে পিএইচডি। ১৫ বছরের গবেষণা ও শিক্ষকতার অভিজ্ঞতা। আহলে সুন্নাহ আকিদার উপর বিশেষ কোর্স।', 
           photo: '', 
-          specializations: ['হাদিস', 'ফিকাহ', 'উসুল'], 
-          students: 980, 
-          courses: 6, 
+          specializations: ['হাদিস', 'আকিদা', 'দুআ ও যিকর', 'উসুল'], 
+          students: 1980, 
+          courses: 8, 
           rating: 4.8,
           social: { facebook: '', youtube: '', twitter: '', linkedin: '' },
           featured: true 
@@ -1864,41 +2065,41 @@ async function ensureDefaultContent() {
         { 
           name: 'উস্তাদ ফারুক আহমেদ', 
           slug: 'ustad-faruq-ahmed', 
-          title: 'আরবি ভাষা বিশেষজ্ঞ', 
-          bio: 'কায়রো বিশ্ববিদ্যালয় থেকে আরবি সাহিত্যে মাস্টার্স। আরবিতে ১২ বছরের শিক্ষকতা।', 
+          title: 'আরবি ভাষা ও নাহু বিশেষজ্ঞ', 
+          bio: 'কায়রো বিশ্ববিদ্যালয় থেকে আরবি সাহিত্যে মাস্টার্স। ১২ বছরের আরবি শিক্ষকতার অভিজ্ঞতা। নাহু, সরফ ও আরবি কথোপকথনে বিশেষজ্ঞ।', 
           photo: '', 
-          specializations: ['আরবি ভাষা', 'নাহু', 'সরফ'], 
-          students: 1540, 
-          courses: 10, 
-          rating: 4.9,
-          social: { facebook: '', youtube: '', twitter: '', linkedin: '' },
-          featured: true 
-        },
-        { 
-          name: 'রাফি করিম', 
-          slug: 'rafi-karim', 
-          title: 'সিনিয়র ওয়েব ডেভেলপার', 
-          bio: 'ফুল স্ট্যাক ডেভেলপার, ১০+ বছরের ইন্ডাস্ট্রি অভিজ্ঞতা। বাংলাদেশের টপ আইটি কোম্পানিতে কাজ করেছেন।', 
-          photo: '', 
-          specializations: ['JavaScript', 'React', 'Node.js'], 
-          students: 2340, 
+          specializations: ['আরবি ভাষা', 'নাহু', 'সরফ', 'কথোপকথন'], 
+          students: 1840, 
           courses: 12, 
           rating: 4.9,
           social: { facebook: '', youtube: '', twitter: '', linkedin: '' },
           featured: true 
         },
         { 
-          name: 'সাদিয়া রহমান', 
-          slug: 'sadia-rahman', 
-          title: 'সিনিয়র গ্রাফিক ডিজাইনার', 
-          bio: 'আন্তর্জাতিক ব্র্যান্ডের সাথে কাজের অভিজ্ঞতা। Adobe Certified Professional। ৮ বছরের ডিজাইন ক্যারিয়ার।', 
+          name: 'মুফতি তাহের আলী', 
+          slug: 'mufti-taher-ali', 
+          title: 'ফিকাহ ও তাফসীর বিশেষজ্ঞ', 
+          bio: 'দেওবন্দ থেকে দাওরায়ে হাদিস সম্পন্ন। ফিকাহ ও তাফসীরে বিশেষজ্ঞ। ১৮ বছরের মাদরাসা ও অনলাইন শিক্ষকতার অভিজ্ঞতা।', 
           photo: '', 
-          specializations: ['Photoshop', 'Illustrator', 'UI/UX'], 
-          students: 1876, 
+          specializations: ['ফিকাহ', 'তাফসীর', 'হালাল-হারাম', 'পারিবারিক বিধান'], 
+          students: 1560, 
           courses: 9, 
           rating: 4.8,
           social: { facebook: '', youtube: '', twitter: '', linkedin: '' },
           featured: true 
+        },
+        { 
+          name: 'ড. আয়েশা বেগম', 
+          slug: 'dr-ayesha-begum', 
+          title: 'মহিলাদের ফিকাহ ও ইসলামিক শিক্ষা বিশেষজ্ঞ', 
+          bio: 'ইসলামিক বিশ্ববিদ্যালয় থেকে পিএইচডি। মহিলাদের জন্য বিশেষ ইসলামিক শিক্ষা কোর্স পরিচালনায় অগ্রণী। ১০ বছরের অভিজ্ঞতা।', 
+          photo: '', 
+          specializations: ['মহিলা ফিকাহ', 'পারিবারিক বিধান', 'কুরআন শিক্ষা'], 
+          students: 980, 
+          courses: 6, 
+          rating: 4.7,
+          social: { facebook: '', youtube: '', twitter: '', linkedin: '' },
+          featured: false 
         },
       ];
       

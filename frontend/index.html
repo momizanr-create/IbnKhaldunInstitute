@@ -6378,17 +6378,32 @@
 
     // ── WhatsApp Number Management ──
     function loadWhatsAppNumber() {
+      // প্রথমে dedicated whatsapp endpoint চেক করি
       fetch('/api/public/settings/whatsapp')
         .then(r => r.json())
         .then(data => {
-          if (data && data.number) {
-            const btn = document.getElementById('whatsapp-float-btn');
-            if (btn) {
-              btn.href = 'https://wa.me/' + data.number.replace(/[^0-9]/g, '');
-            }
+          const number = data && data.number ? data.number : null;
+          if (number && number !== '+8801700000000') {
+            applyWhatsAppNumber(number);
+          } else {
+            // Fallback: site-settings থেকে পড়ি
+            return fetch('/api/site-settings')
+              .then(r => r.json())
+              .then(d => {
+                if (d && d.whatsappNumber) applyWhatsAppNumber(d.whatsappNumber);
+              });
           }
         })
         .catch(err => console.log('WhatsApp number load failed:', err));
+    }
+    function applyWhatsAppNumber(number) {
+      const cleaned = number.replace(/[^0-9]/g, '');
+      const btn = document.getElementById('whatsapp-float-btn');
+      if (btn) btn.href = 'https://wa.me/' + cleaned;
+      // Contact page WhatsApp link আপডেট
+      document.querySelectorAll('a[href*="wa.me"]').forEach(a => {
+        a.href = 'https://wa.me/' + cleaned;
+      });
     }
     loadWhatsAppNumber();
 
