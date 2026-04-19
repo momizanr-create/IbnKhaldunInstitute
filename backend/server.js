@@ -206,6 +206,8 @@ const userSchema = new mongoose.Schema({
   email:     { type: String, unique: true, required: true, lowercase: true },
   password:  { type: String, required: true },
   avatar:    { type: String, default: '' },
+  resetToken:       { type: String, default: null },
+  resetTokenExpiry: { type: Date,   default: null },
   enrolledCourses: [{
     courseId:   { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
     courseSlug: String,
@@ -1030,6 +1032,144 @@ app.post('/api/admin/upload', authMiddleware, upload.single('file'), async (req,
 // ============================================================
 // USER AUTH (Student Accounts)
 // ============================================================
+// ============================================================
+// PASSWORD RESET — ভুলে যাওয়া পাসওয়ার্ড রিসেট
+// ============================================================
+
+// ধাপ ১: Reset লিংক পাঠানো
+app.post('/api/user/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email || !email.includes('@'))
+      return res.status(400).json({ error: 'সঠিক ইমেইল দিন' });
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    // Security: এই ইমেইলে account না থাকলেও same message দিই (brute force রোধ)
+    if (!user) {
+      return res.json({ message: 'রিসেট লিংক পাঠানো হয়েছে (যদি অ্যাকাউন্ট থাকে)' });
+    }
+
+    // Secure random token তৈরি
+    const crypto = require('crypto');
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000); // ১ ঘণ্টা
+
+    user.resetToken = resetToken;
+    user.resetTokenExpiry = resetTokenExpiry;
+    await user.save();
+
+    const FRONTEND = process.env.FRONTEND_URL || 'https://ibnkhalduninstitute.online';
+    const resetLink = `${FRONTEND}/?reset_token=${resetToken}&email=${encodeURIComponent(email.toLowerCase())}`;
+
+    await mailTransporter.sendMail({
+      from: '"ইবনে খালদুন ইনস্টিটিউট" <momizanr@gmail.com>',
+      to: email,
+      subject: 'পাসওয়ার্ড রিসেট করুন — ইবনে খালদুন ইনস্টিটিউট',
+      html: `
+        <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:520px;margin:0 auto;background:#fff;border:1px solid #e8e8e8;border-radius:10px;overflow:hidden">
+          <div style="background:#066144;padding:24px 30px">
+            <h2 style="color:#F5C518;margin:0;font-size:20px">ইবনে খালদুন ইনস্টিটিউট</h2>
+            <p style="color:rgba(255,255,255,0.8);margin:6px 0 0;font-size:13px">পাসওয়ার্ড রিসেট অনুরোধ</p>
+          </div>
+          <div style="padding:30px">
+            <p style="color:#333;font-size:16px;margin-top:0">আসসালামু আলাইকুম, <strong>${user.name}</strong>!</p>
+            <p style="color:#555;font-size:14px">আমরা আপনার অ্যাকাউন্টের পাসওয়ার্ড রিসেট করার একটি অনুরোধ পেয়েছি।</p>
+            <div style="text-align:center;margin:32px 0">
+              <a href="${resetLink}"
+                style="display:inline-block;background:#F5C518;color:#1a1a1a;font-size:15px;font-weight:700;padding:14px 36px;border-radius:6px;text-decoration:none;letter-spacing:0.5px">
+                🔑 নতুন পাসওয়ার্ড সেট করুন
+              </a>
+            </div>
+            <p style="color:#888;font-size:12px;text-align:center">এই লিংকটি <strong>১ ঘণ্টা</strong> পর মেয়াদোত্তীর্ণ হয়ে যাবে।</p>
+            <p style="color:#888;font-size:12px;text-align:center">আপনি যদি এই অনুরোধ না করে থাকেন, তাহলে এই ইমেইলটি উপেক্ষা করুন।</p>
+            <hr style="border:none;border-top:1px solid #eee;margin:20px 0">
+            <p style="color:#aaa;font-size:11px;text-align:center;word-break:break-all">লিংক কাজ না করলে এটি কপি করুন:<br><a href="${resetLink}" style="color:#066144">${resetLink}</a></p>
+          </div>
+          <div style="background:#f5f5f5;padding:14px 30px;text-align:center">
+            <p style="color:#aaa;font-size:11px;margin:0">© ইবনে খালদুন ইনস্টিটিউট — ibnkhalduninstitute.online</p>
+          </div>
+        </div>
+      `,
+    });
+
+    res.json({ message: 'পাসওয়ার্ড রিসেট লিংক আপনার ইমেইলে পাঠানো হয়েছে' });
+  } catch (e) {
+    console.error('Forgot password error:', e.message);
+    res.status(500).json({ error: 'ইমেইল পাঠাতে সমস্যা হয়েছে: ' + e.message });
+  }
+});
+
+// ধাপ ২: Token যাচাই
+app.get('/api/user/verify-reset-token', async (req, res) => {
+  try {
+    const { token, email } = req.query;
+    if (!token || !email)
+      return res.status(400).json({ valid: false, error: 'Token বা ইমেইল নেই' });
+
+    const user = await User.findOne({
+      email: email.toLowerCase(),
+      resetToken: token,
+      resetTokenExpiry: { $gt: new Date() },
+    });
+
+    if (!user) return res.json({ valid: false, error: 'লিংকটি অবৈধ বা মেয়াদ শেষ হয়ে গেছে' });
+    res.json({ valid: true, name: user.name });
+  } catch (e) { res.status(500).json({ valid: false, error: e.message }); }
+});
+
+// ধাপ ৩: নতুন পাসওয়ার্ড সেট করা
+app.post('/api/user/reset-password', async (req, res) => {
+  try {
+    const { token, email, password } = req.body;
+    if (!token || !email || !password)
+      return res.status(400).json({ error: 'সব তথ্য দিন' });
+    if (password.length < 6)
+      return res.status(400).json({ error: 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে' });
+
+    const user = await User.findOne({
+      email: email.toLowerCase(),
+      resetToken: token,
+      resetTokenExpiry: { $gt: new Date() },
+    });
+
+    if (!user) return res.status(400).json({ error: 'লিংকটি অবৈধ বা মেয়াদ শেষ হয়ে গেছে। আবার চেষ্টা করুন।' });
+
+    user.password = await bcrypt.hash(password, 10);
+    user.resetToken = null;
+    user.resetTokenExpiry = null;
+    await user.save();
+
+    // Success notification email
+    try {
+      await mailTransporter.sendMail({
+        from: '"ইবনে খালদুন ইনস্টিটিউট" <momizanr@gmail.com>',
+        to: email,
+        subject: '✅ পাসওয়ার্ড পরিবর্তন সফল — ইবনে খালদুন ইনস্টিটিউট',
+        html: `
+          <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:480px;margin:0 auto;background:#fff;border:1px solid #e8e8e8;border-radius:10px;overflow:hidden">
+            <div style="background:#066144;padding:20px 28px">
+              <h2 style="color:#F5C518;margin:0;font-size:18px">ইবনে খালদুন ইনস্টিটিউট</h2>
+            </div>
+            <div style="padding:28px">
+              <p style="color:#333;font-size:15px;margin-top:0">আসসালামু আলাইকুম, <strong>${user.name}</strong>!</p>
+              <div style="background:#f0faf4;border-left:4px solid #066144;padding:12px 16px;border-radius:0 6px 6px 0;margin:16px 0">
+                <p style="margin:0;color:#066144;font-weight:700">✅ আপনার পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে।</p>
+              </div>
+              <p style="color:#888;font-size:13px">এই পরিবর্তন আপনি করেননি মনে হলে অবিলম্বে আমাদের সাথে যোগাযোগ করুন।</p>
+            </div>
+            <div style="background:#f5f5f5;padding:12px 28px;text-align:center">
+              <p style="color:#aaa;font-size:11px;margin:0">© ইবনে খালদুন ইনস্টিটিউট</p>
+            </div>
+          </div>
+        `,
+      });
+    } catch(_) {}
+
+    const jwtToken = jwt.sign({ id: user._id, email: user.email, name: user.name }, JWT_SECRET, { expiresIn: '30d' });
+    res.json({ message: 'পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে', token: jwtToken, user: { id: user._id, name: user.name, email: user.email, enrolledCourses: user.enrolledCourses } });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 // ============================================================
 // OTP — ইমেইল যাচাই
 // ============================================================

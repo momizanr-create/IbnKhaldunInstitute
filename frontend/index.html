@@ -2598,60 +2598,65 @@
     var currentUser     = null;
     var currentCourseId = null;
     var currentLessonId = null;
+    // OTP global state
+    var _otpEmailVerified  = false;
+    var _otpTimerInterval  = null;
 
     // ===========================
     // RESTORE SESSION
     // ===========================
     function restoreSession() {
       try {
-        var token = localStorage.getItem('"userToken"') || localStorage.getItem('userToken');
-        // lsSet stores JSON.stringify, so key value might be quoted — handle both
-        if (!token || token === 'null') {
-          // try via lsGet
-          token = lsGet('userToken', null);
-        }
-        if (!token) { isLoggedIn = false; currentUser = null; return; }
+        // lsGet JSON.stringify করে store করে, তাই সরাসরি lsGet ব্যবহার করি
+        var token = lsGet('userToken', null);
+        if (!token || token === 'null') { isLoggedIn = false; currentUser = null; return; }
 
-        // প্রথমে localStorage থেকে cached user দেখাই (fast render)
+        // ── ধাপ ১: localStorage থেকে cached user তাৎক্ষণিক দেখাই ──
         var cachedUser = lsGet('currentUser', null);
         if (cachedUser && cachedUser.email) {
           currentUser = cachedUser;
           isLoggedIn  = true;
           setLoginState(true);
           renderDashboard();
+          updateLessonAccess();
         }
 
-        // তারপর API থেকে fresh data আনি (token valid কিনা চেক + latest enrolled courses)
-        fetch(API_BASE + '/api/user/me', {
+        // ── ধাপ ২: API থেকে fresh data যাচাই (background-এ) ──
+        var API = (typeof API_BASE !== 'undefined') ? API_BASE : 'https://ibnkhalduninstitute.onrender.com';
+        fetch(API + '/api/user/me', {
           headers: { 'Authorization': 'Bearer ' + token }
         }).then(function(r) {
-          if (r.status === 401) {
-            // token invalid/expired — logout
+          if (r.status === 401 || r.status === 403) {
+            // Token মেয়াদ শেষ বা invalid — শুধু তখনই logout করি
             currentUser = null; isLoggedIn = false;
-            lsSet('userToken', null); lsSet('currentUser', null);
+            lsSet('userToken', null);
+            lsSet('currentUser', null);
             setLoginState(false);
             return null;
           }
           return r.json();
         }).then(function(data) {
           if (!data || data.error) return;
+          // Fresh data দিয়ে cache আপডেট করি
           currentUser = data;
           isLoggedIn  = true;
-          lsSet('currentUser', data); // cache আপডেট
+          lsSet('currentUser', data);
           setLoginState(true);
           updateLessonAccess();
           renderDashboard();
         }).catch(function() {
-          // network error — keep cached session
-          if (cachedUser) {
-            currentUser = cachedUser; isLoggedIn = true;
-            setLoginState(true); renderDashboard();
+          // Network error (offline/server down) — cached session বজায় থাকে, logout হয় না
+          if (cachedUser && cachedUser.email) {
+            currentUser = cachedUser;
+            isLoggedIn  = true;
+            setLoginState(true);
+            renderDashboard();
           }
         });
 
       } catch(e) {
-        isLoggedIn  = false;
-        currentUser = null;
+        // critical error — silent fail, don't logout
+        console.warn('restoreSession error:', e);
       }
     }
 
@@ -3434,9 +3439,6 @@
     }
 
     // ── OTP সিস্টেম ──
-    var _otpEmailVerified = false;
-    var _otpTimerInterval = null;
-
     function sendRegisterOTP() {
       var email = (document.getElementById('reg-email') || {}).value;
       if (!email) email = '';
@@ -4343,32 +4345,196 @@
     // ===========================
     // FORGOT PASSWORD
     // ===========================
-    function showForgotPassword() {
-      const existing = document.getElementById('forgot-modal');
-      if (existing) { existing.classList.remove('hidden'); return; }
-      const modal = document.createElement('div');
-      modal.id = 'forgot-modal';
+    // ── Forgot Password Modal ──
+   function showForgotPassword() {
+  var existing = document.getElementById('forgot-modal');
+  if (existing) {
+    existing.classList.remove('hidden');
+    var emailEl = document.getElementById('forgot-email');
+    var msgEl   = document.getElementById('forgot-msg');
+    if (emailEl) emailEl.value = '';
+    if (msgEl) { msgEl.style.display = 'none'; msgEl.textContent = ''; }
+    return;
+  }
+
+  var modal = document.createElement('div');
+  modal.id = 'forgot-modal';
+  modal.className = 'modal-overlay';
+
+  modal.innerHTML =
+    `<div class="modal-box" style="max-width:420px">
+      <button class="modal-close" onclick="document.getElementById('forgot-modal').classList.add('hidden')">✕</button>
+      
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="width:56px;height:56px;background:var(--primary-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:26px">🔑</div>
+        <h3 style="margin:0 0 6px;font-family:var(--font-heading);font-size:20px">পাসওয়ার্ড ভুলে গেছেন?</h3>
+        <p style="color:var(--text-mid);font-size:13px;margin:0">আপনার নিবন্ধিত ইমেইল দিন, আমরা রিসেট লিংক পাঠাবো</p>
+      </div>
+
+      <div class="auth-form">
+        <div class="form-group">
+          <label>ইমেইল ঠিকানা</label>
+          <input class="form-input" type="email" id="forgot-email" placeholder="আপনার ইমেইল লিখুন" />
+        </div>
+
+        <div id="forgot-msg" style="display:none;padding:10px 14px;border-radius:4px;font-size:13px;font-weight:600;margin-bottom:10px"></div>
+
+        <button id="forgot-submit-btn" class="btn btn-primary btn-lg" style="width:100%" onclick="submitForgotPassword()">📧 রিসেট লিংক পাঠান →</button>
+      </div>
+    </div>`;
+
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) modal.classList.add('hidden');
+  });
+
+  document.body.appendChild(modal);
+}
+    function submitForgotPassword() {
+      var email  = (document.getElementById('forgot-email') || {}).value || '';
+      email = email.trim();
+      if (!email || !email.includes('@')) { showToast('⚠️ সঠিক ইমেইল দিন'); return; }
+
+      var btn   = document.getElementById('forgot-submit-btn');
+      var msgEl = document.getElementById('forgot-msg');
+      if (btn) { btn.disabled = true; btn.textContent = '⏳ পাঠানো হচ্ছে...'; }
+      if (msgEl) { msgEl.style.display = 'none'; }
+
+      fetch(API_BASE + '/api/user/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email })
+      }).then(function(r) { return r.json(); }).then(function(data) {
+        if (btn) { btn.disabled = false; btn.textContent = '📧 রিসেট লিংক পাঠান →'; }
+        if (data.error) {
+          if (msgEl) { msgEl.style.display = 'block'; msgEl.style.background = '#ffeaea'; msgEl.style.color = '#c0392b'; msgEl.textContent = '❌ ' + data.error; }
+          showToast('❌ ' + data.error);
+          return;
+        }
+        if (msgEl) {
+          msgEl.style.display = 'block';
+          msgEl.style.background = '#f0faf4';
+          msgEl.style.color = '#066144';
+          msgEl.textContent = '✅ রিসেট লিংক ' + email + '-এ পাঠানো হয়েছে! ইনবক্স চেক করুন।';
+        }
+        showToast('📧 রিসেট লিংক পাঠানো হয়েছে!');
+        if (btn) { btn.disabled = true; btn.style.background = '#ccc'; btn.textContent = '✅ পাঠানো হয়েছে'; }
+      }).catch(function() {
+        if (btn) { btn.disabled = false; btn.textContent = '📧 রিসেট লিংক পাঠান →'; }
+        showToast('❌ সার্ভারে সমস্যা হয়েছে');
+      });
+    }
+
+    // ── Password Reset Page (URL token থেকে) ──
+    function checkPasswordResetToken() {
+      var params = new URLSearchParams(window.location.search);
+      var token  = params.get('reset_token');
+      var email  = params.get('email');
+      if (!token || !email) return;
+
+      // Token verify করি
+      fetch(API_BASE + '/api/user/verify-reset-token?token=' + encodeURIComponent(token) + '&email=' + encodeURIComponent(email))
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (!data.valid) {
+            showToast('❌ ' + (data.error || 'রিসেট লিংকটি অবৈধ বা মেয়াদ শেষ'));
+            return;
+          }
+          // Valid token — নতুন পাসওয়ার্ড modal দেখাই
+          showResetPasswordModal(token, email, data.name);
+          // URL clean করি (token URL-এ দৃশ্যমান না থাকুক)
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }).catch(function() {
+          showToast('❌ Token যাচাই করতে সমস্যা হয়েছে');
+        });
+    }
+
+    function showResetPasswordModal(token, email, userName) {
+      var existing = document.getElementById('reset-pass-modal');
+      if (existing) existing.remove();
+
+      var modal = document.createElement('div');
+      modal.id = 'reset-pass-modal';
       modal.className = 'modal-overlay';
-      modal.innerHTML = `
-        <div class="modal-box">
-          <button class="modal-close" onclick="document.getElementById('forgot-modal').classList.add('hidden')">✕</button>
-          <h3>পাসওয়ার্ড রিসেট করুন</h3>
-          <p>আপনার ইমেইল ঠিকানা দিন এবং আমরা পাসওয়ার্ড রিসেট লিংক পাঠাবো।</p>
-          <div class="auth-form">
-            <div class="form-group"><label>ইমেইল ঠিকানা</label>
-              <input class="form-input" type="email" id="forgot-email" placeholder="আপনার ইমেইল" />
-            </div>
-            <button class="btn btn-primary btn-lg" style="width:100%" onclick="submitForgotPassword()">রিসেট লিংক পাঠান →</button>
-          </div>
-        </div>`;
-      modal.addEventListener('click', function(e) { if (e.target === modal) modal.classList.add('hidden'); });
+      modal.style.zIndex = '9999';
+      modal.dataset.resetToken = token;
+      modal.dataset.resetEmail = email;
+      modal.innerHTML =
+        '<div class="modal-box" style="max-width:420px">' +
+          '<div style="text-align:center;margin-bottom:20px">' +
+            '<div style="width:56px;height:56px;background:var(--primary-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:26px">🔐</div>' +
+            '<h3 style="margin:0 0 6px;font-family:var(--font-heading);font-size:20px">নতুন পাসওয়ার্ড সেট করুন</h3>' +
+            '<p style="color:var(--text-mid);font-size:13px;margin:0">স্বাগতম, <strong>' + (userName || '') + '</strong>! নতুন পাসওয়ার্ড লিখুন</p>' +
+          '</div>' +
+          '<div class="auth-form">' +
+            '<div class="form-group">' +
+              '<label>নতুন পাসওয়ার্ড</label>' +
+              '<input class="form-input" type="password" id="new-pass-input" placeholder="কমপক্ষে ৬ অক্ষর" />' +
+            '</div>' +
+            '<div class="form-group">' +
+              '<label>পাসওয়ার্ড নিশ্চিত করুন</label>' +
+              '<input class="form-input" type="password" id="new-pass-confirm" placeholder="আবার লিখুন" />' +
+            '</div>' +
+            '<div id="reset-pass-msg" style="display:none;padding:10px 14px;border-radius:4px;font-size:13px;font-weight:600;margin-bottom:10px"></div>' +
+            '<button id="reset-pass-btn" class="btn btn-primary btn-lg" style="width:100%" onclick="submitNewPassword()">✅ পাসওয়ার্ড পরিবর্তন করুন →</button>' +
+          '</div>' +
+        '</div>';
       document.body.appendChild(modal);
     }
-    function submitForgotPassword() {
-      const email = document.getElementById('forgot-email').value.trim();
-      if (!email || !email.includes('@')) { showToast('⚠️ সঠিক ইমেইল দিন'); return; }
-      document.getElementById('forgot-modal').classList.add('hidden');
-      showToast('📧 পাসওয়ার্ড রিসেট লিংক পাঠানো হয়েছে ' + email + ' এ');
+
+    function submitNewPassword() {
+      var modal   = document.getElementById('reset-pass-modal');
+      var token   = modal ? modal.dataset.resetToken  : '';
+      var email   = modal ? modal.dataset.resetEmail  : '';
+      var pass    = (document.getElementById('new-pass-input')   || {}).value || '';
+      var confirm = (document.getElementById('new-pass-confirm') || {}).value || '';
+      var btn     = document.getElementById('reset-pass-btn');
+      var msgEl   = document.getElementById('reset-pass-msg');
+
+      if (pass.length < 6) { showToast('⚠️ পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে'); return; }
+      if (pass !== confirm) { showToast('⚠️ পাসওয়ার্ড মিলছে না'); return; }
+
+      if (btn) { btn.disabled = true; btn.textContent = '⏳ পরিবর্তন হচ্ছে...'; }
+
+      fetch(API_BASE + '/api/user/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: token, email: email, password: pass })
+      }).then(function(r) { return r.json(); }).then(function(data) {
+        if (data.error) {
+          if (btn) { btn.disabled = false; btn.textContent = '✅ পাসওয়ার্ড পরিবর্তন করুন →'; }
+          if (msgEl) { msgEl.style.display = 'block'; msgEl.style.background = '#ffeaea'; msgEl.style.color = '#c0392b'; msgEl.textContent = '❌ ' + data.error; }
+          showToast('❌ ' + data.error);
+          return;
+        }
+        // সফল — auto login করি
+        if (msgEl) { msgEl.style.display = 'block'; msgEl.style.background = '#f0faf4'; msgEl.style.color = '#066144'; msgEl.textContent = '🎉 পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে!'; }
+        showToast('🎉 পাসওয়ার্ড পরিবর্তন সফল! লগইন হচ্ছে...');
+
+        // Auto login
+        if (data.token && data.user) {
+          currentUser = data.user;
+          lsSet('userToken', data.token);
+          lsSet('currentUser', data.user);
+          lsSet('currentUserEmail', data.user.email);
+          setTimeout(function() {
+            var modal = document.getElementById('reset-pass-modal');
+            if (modal) modal.remove();
+            setLoginState(true);
+            updateLessonAccess();
+            renderDashboard();
+            navigate('dashboard');
+          }, 1200);
+        } else {
+          setTimeout(function() {
+            var modal = document.getElementById('reset-pass-modal');
+            if (modal) modal.remove();
+            navigate('auth');
+          }, 1500);
+        }
+      }).catch(function() {
+        if (btn) { btn.disabled = false; btn.textContent = '✅ পাসওয়ার্ড পরিবর্তন করুন →'; }
+        showToast('❌ সার্ভারে সমস্যা হয়েছে');
+      });
     }
 
     async function submitContactForm() {
@@ -5754,6 +5920,8 @@
     
     restoreSession();
     runFadeIn();
+    // পাসওয়ার্ড রিসেট লিংক চেক করি (URL-এ reset_token থাকলে)
+    setTimeout(function() { checkPasswordResetToken(); }, 600);
 
 
 
