@@ -2485,7 +2485,19 @@
   <div id="page-auth" class="page">
     <div class="auth-wrap">
       <div class="auth-card">
-        <div class="auth-logo"><div class="logo" style="font-size:22px;justify-content:center;display:flex;gap:8px"><span style="width:28px;height:28px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px">🎓</span>Ibn Khaldun <span>Institute</span></div></div>
+        <div class="auth-logo">
+          <img
+            id="auth-logo-img"
+            src="images/ইবনে খলদুন.png"
+            alt="Ibn Khaldun Institute"
+            style="height:64px;width:auto;display:inline-block;object-fit:contain;"
+            onerror="this.style.display='none'; document.getElementById('auth-logo-fallback').style.display='flex';"
+          />
+          <div id="auth-logo-fallback" style="display:none;justify-content:center;align-items:center;gap:8px;font-size:22px;">
+            <span style="width:28px;height:28px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;">🎓</span>
+            Ibn Khaldun <span>Institute</span>
+          </div>
+        </div>
         <h2 class="auth-title">স্বাগতম</h2>
         <p class="auth-sub">আপনার শেখার যাত্রা চালিয়ে যান</p>
         <div class="auth-tabs">
@@ -5024,6 +5036,14 @@
         img.src = dataUrl;
         img.style.display = 'block';
         if (fallback) fallback.style.display = 'none';
+      }
+      // Also sync auth logo
+      var authImg = document.getElementById('auth-logo-img');
+      var authFallback = document.getElementById('auth-logo-fallback');
+      if (authImg) {
+        authImg.src = dataUrl;
+        authImg.style.display = 'inline-block';
+        if (authFallback) authFallback.style.display = 'none';
       }
       // Also sync footer logo
       applyFooterLogo(dataUrl);
