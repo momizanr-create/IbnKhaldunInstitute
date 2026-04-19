@@ -1512,7 +1512,7 @@
 
       /* mouse drag */
       var md=false, ms=0, mdelta=0, wasDrag=false;
-      wrap.addEventListener('mousedown',function(e){md=true;ms=e.clientX;mdelta=0;wasDrag=false;track.classList.remove('animated');e.preventDefault();});
+      wrap.addEventListener('mousedown',function(e){md=true;ms=e.clientX;mdelta=0;wasDrag=false;track.classList.remove('animated');});
       window.addEventListener('mousemove',function(e){if(!md)return;mdelta=e.clientX-ms;if(Math.abs(mdelta)>5)wasDrag=true;track.style.transform='translateX('+(pos+mdelta)+'px)';});
       window.addEventListener('mouseup',function(){
         if(!md)return;md=false;track.classList.add('animated');
@@ -1520,7 +1520,7 @@
         else{track.style.transform='translateX('+pos+'px)';}
       });
       /* prevent click after drag */
-      wrap.addEventListener('click', function(e){ if(wasDrag){ e.stopPropagation(); wasDrag=false; } });
+      wrap.addEventListener('click', function(e){ if(wasDrag){ wasDrag=false; e.stopPropagation(); e.preventDefault(); return; } });
 
       setPos(0, false);
       startAuto();
@@ -2708,7 +2708,7 @@
       var catVal = c.category || '';
       var subCatVal = c.subCategory || '';
       var tabVal = c.tabKey || '';
-      return `<div class="course-card" data-cat="${catVal}" data-subcat="${subCatVal}" data-tab="${tabVal}" data-course-id="${slug}" onclick="openCourseDetail('${slug}')">
+      return `<div class="course-card" data-cat="${catVal}" data-subcat="${subCatVal}" data-tab="${tabVal}" data-course-id="${slug}">
         <div class="course-thumb">
           <img src="${img}" alt="${c.title}" loading="lazy"/>
           ${c.featured ? '<div class="badge-bestseller">🔥 সেরা</div>' : ''}
@@ -4787,7 +4787,7 @@
         var key = c.slug || c._id || '';
         var thumb = c.thumbnail || 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&q=80';
         var discount = c.originalPrice && c.price ? Math.round((1 - c.price / c.originalPrice) * 100) : (c.discount || 0);
-        return '<div class="course-card" data-course-id="' + escapeHtml(key) + '" style="cursor:pointer" onclick="(window.openCourseDetail||openCourseDetail)(this.getAttribute(\'data-course-id\'))">' +
+        return '<div class="course-card" data-course-id="' + escapeHtml(key) + '" style="cursor:pointer">' +
           '<div class="course-thumb"><img src="' + thumb + '" alt="' + (c.title||'') + '" loading="lazy"/>' +
           '<div class="thumb-overlay"><span class="play-btn">▶</span></div>' +
           (discount > 0 ? '<span style="position:absolute;top:10px;left:10px;background:var(--primary);color:#1a1a1a;font-size:10px;font-weight:800;padding:3px 9px;border-radius:3px;font-family:var(--font-nav);letter-spacing:1px">' + discount + '% ছাড়</span>' : '') +
@@ -5512,16 +5512,14 @@
       });
     })();
     
-    // Event delegation for course cards
+    // Event delegation for course cards (handles all dynamically rendered cards)
     document.addEventListener('click', function(e) {
-      var courseCard = e.target.closest('.course-card[data-course-id]');
-      if (courseCard) {
-        var courseId = courseCard.getAttribute('data-course-id');
-        if (courseId) {
-          var fn = window.openCourseDetail || openCourseDetail;
-          if (typeof fn === 'function') fn(courseId);
-        }
-      }
+      var courseCard = e.target.closest('.course-card');
+      if (!courseCard) return;
+      var courseId = courseCard.getAttribute('data-course-id');
+      if (!courseId) return;
+      var fn = window.openCourseDetail || openCourseDetail;
+      if (typeof fn === 'function') fn(courseId);
     });
     
     restoreSession();
