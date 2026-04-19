@@ -1385,7 +1385,88 @@ app.put('/api/admin/access-requests/:id', authMiddleware, async (req, res) => {
           }
         }
       });
+
+      // ✅ অনুমোদন ইমেইল পাঠানো
+      const FRONTEND = process.env.FRONTEND_URL || 'https://ibnkhalduninstitute.online';
+      const courseLink = `${FRONTEND}/#course/${request.courseSlug || request.courseId}`;
+      const thumbnailHtml = request.thumbnail
+        ? `<img src="${request.thumbnail}" alt="${request.courseTitle}" style="width:100%;max-width:420px;border-radius:8px;margin:16px 0;display:block">`
+        : '';
+
+      try {
+        await mailTransporter.sendMail({
+          from: '"ইবনে খালদুন ইনস্টিটিউট" <momizanr@gmail.com>',
+          to: request.userEmail,
+          subject: `✅ কোর্স অ্যাক্সেস অনুমোদিত — ${request.courseTitle}`,
+          html: `
+            <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:560px;margin:0 auto;background:#fff;border:1px solid #e8e8e8;border-radius:10px;overflow:hidden">
+              <div style="background:#066144;padding:24px 30px">
+                <h2 style="color:#F5C518;margin:0;font-size:20px">ইবনে খালদুন ইনস্টিটিউট</h2>
+                <p style="color:rgba(255,255,255,0.8);margin:6px 0 0;font-size:13px">অনলাইন শিক্ষা প্ল্যাটফর্ম</p>
+              </div>
+              <div style="padding:30px">
+                <p style="color:#333;font-size:16px;margin-top:0">আসসালামু আলাইকুম, <strong>${request.userName}</strong>!</p>
+                <div style="background:#f0faf4;border-left:4px solid #066144;padding:14px 18px;border-radius:0 6px 6px 0;margin:16px 0">
+                  <p style="margin:0;color:#066144;font-size:15px;font-weight:700">🎉 আপনার কোর্স অ্যাক্সেস অনুমোদিত হয়েছে!</p>
+                </div>
+                <p style="color:#555;font-size:14px">আপনি নিচের কোর্সটিতে এনরোল করতে সক্ষম হয়েছেন:</p>
+                <div style="background:#f9f9f9;border:1px solid #e8e8e8;border-radius:8px;padding:20px;margin:16px 0;text-align:center">
+                  ${thumbnailHtml}
+                  <h3 style="color:#1a1a1a;font-size:18px;margin:8px 0">${request.courseTitle}</h3>
+                  ${request.price ? `<p style="color:#888;font-size:13px;margin:4px 0">মূল্য: ৳${request.price}</p>` : ''}
+                </div>
+                <div style="text-align:center;margin:28px 0">
+                  <a href="${courseLink}"
+                    style="display:inline-block;background:#F5C518;color:#1a1a1a;font-size:15px;font-weight:700;padding:14px 36px;border-radius:6px;text-decoration:none;letter-spacing:0.5px">
+                    ▶ এখনই কোর্স শুরু করুন
+                  </a>
+                </div>
+                <p style="color:#888;font-size:12px;text-align:center">উপরের বাটনে ক্লিক করুন অথবা নিচের লিংক কপি করে ব্রাউজারে পেস্ট করুন:</p>
+                <p style="text-align:center;word-break:break-all">
+                  <a href="${courseLink}" style="color:#066144;font-size:12px">${courseLink}</a>
+                </p>
+              </div>
+              <div style="background:#f5f5f5;padding:14px 30px;text-align:center">
+                <p style="color:#aaa;font-size:11px;margin:0">© ইবনে খালদুন ইনস্টিটিউট — ibnkhalduninstitute.online</p>
+              </div>
+            </div>
+          `,
+        });
+        console.log(`✅ Approval email sent to ${request.userEmail}`);
+      } catch (mailErr) {
+        console.error('❌ Approval email error:', mailErr.message);
+        // email failure should NOT block the approval response
+      }
     }
+
+    // ❌ প্রত্যাখ্যান ইমেইল
+    if (status === 'rejected') {
+      try {
+        await mailTransporter.sendMail({
+          from: '"ইবনে খালদুন ইনস্টিটিউট" <momizanr@gmail.com>',
+          to: request.userEmail,
+          subject: `কোর্স অ্যাক্সেস সম্পর্কে আপডেট — ${request.courseTitle}`,
+          html: `
+            <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:560px;margin:0 auto;background:#fff;border:1px solid #e8e8e8;border-radius:10px;overflow:hidden">
+              <div style="background:#066144;padding:24px 30px">
+                <h2 style="color:#F5C518;margin:0;font-size:20px">ইবনে খালদুন ইনস্টিটিউট</h2>
+              </div>
+              <div style="padding:30px">
+                <p style="color:#333;font-size:16px;margin-top:0">আসসালামু আলাইকুম, <strong>${request.userName}</strong>!</p>
+                <p style="color:#555;font-size:14px">দুঃখিত, <strong>${request.courseTitle}</strong> কোর্সের জন্য আপনার অ্যাক্সেস অনুরোধটি এই মুহূর্তে অনুমোদন করা সম্ভব হয়নি।</p>
+                <p style="color:#555;font-size:14px">আরও তথ্যের জন্য আমাদের সাথে যোগাযোগ করুন।</p>
+              </div>
+              <div style="background:#f5f5f5;padding:14px 30px;text-align:center">
+                <p style="color:#aaa;font-size:11px;margin:0">© ইবনে খালদুন ইনস্টিটিউট — ibnkhalduninstitute.online</p>
+              </div>
+            </div>
+          `,
+        });
+      } catch (mailErr) {
+        console.error('❌ Rejection email error:', mailErr.message);
+      }
+    }
+
     res.json({ message: status === 'approved' ? '✅ অ্যাক্সেস দেওয়া হয়েছে' : '❌ অনুরোধ প্রত্যাখ্যান করা হয়েছে', request });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
