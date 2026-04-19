@@ -15,6 +15,10 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const jwt        = require('jsonwebtoken');
 const bcrypt     = require('bcryptjs');
 const path       = require('path');
+const nodemailer = require('nodemailer');
+
+// ── In-memory OTP store (email → { otp, expiresAt }) ──
+const otpStore = new Map();
 
 const app        = express();
 const PORT       = process.env.PORT || 5000;
@@ -25,6 +29,15 @@ cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key:    process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+// ── Gmail Nodemailer Transporter ──
+const mailTransporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.GMAIL_USER || 'momizanr@gmail.com',
+    pass: process.env.GMAIL_APP_PASS || 'gjgd clsc hurw hbyo',
+  },
 });
 
 // ============================================================
@@ -1017,6 +1030,82 @@ app.post('/api/admin/upload', authMiddleware, upload.single('file'), async (req,
 // ============================================================
 // USER AUTH (Student Accounts)
 // ============================================================
+// ============================================================
+// OTP — ইমেইল যাচাই
+// ============================================================
+
+// OTP পাঠানো
+app.post('/api/user/send-otp', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email || !email.includes('@'))
+      return res.status(400).json({ error: 'সঠিক ইমেইল দিন' });
+
+    // ইতিমধ্যে রেজিস্টার হয়েছে কিনা চেক
+    const exists = await User.findOne({ email: email.toLowerCase() });
+    if (exists)
+      return res.status(400).json({ error: 'এই ইমেইলে ইতিমধ্যে অ্যাকাউন্ট আছে' });
+
+    // ৪ সংখ্যার OTP তৈরি
+    const otp = String(Math.floor(1000 + Math.random() * 9000));
+    const expiresAt = Date.now() + 10 * 60 * 1000; // ১০ মিনিট
+    otpStore.set(email.toLowerCase(), { otp, expiresAt });
+
+    // Gmail দিয়ে পাঠানো
+    await mailTransporter.sendMail({
+      from: `"ইবনে খালদুন ইনস্টিটিউট" <momizanr@gmail.com>`,
+      to: email,
+      subject: 'আপনার OTP কোড — ইবনে খালদুন ইনস্টিটিউট',
+      html: `
+        <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:480px;margin:0 auto;background:#fff;border:1px solid #e8e8e8;border-radius:10px;overflow:hidden">
+          <div style="background:#066144;padding:24px 30px">
+            <h2 style="color:#F5C518;margin:0;font-size:20px">ইবনে খালদুন ইনস্টিটিউট</h2>
+          </div>
+          <div style="padding:30px">
+            <p style="color:#333;font-size:15px;margin-top:0">আসসালামু আলাইকুম,</p>
+            <p style="color:#555;font-size:14px">আপনার নিবন্ধন নিশ্চিত করতে নিচের <strong>৪ সংখ্যার OTP কোড</strong> ব্যবহার করুন:</p>
+            <div style="text-align:center;margin:28px 0">
+              <span style="display:inline-block;background:#F5C518;color:#1a1a1a;font-size:38px;font-weight:900;letter-spacing:12px;padding:16px 32px;border-radius:8px;border:2px solid #d4a90e">${otp}</span>
+            </div>
+            <p style="color:#888;font-size:12px;text-align:center">এই কোডটি <strong>১০ মিনিট</strong> পর্যন্ত কার্যকর থাকবে।<br>আপনি যদি এই অনুরোধ না করে থাকেন, তাহলে এই ইমেইলটি উপেক্ষা করুন।</p>
+          </div>
+          <div style="background:#f5f5f5;padding:14px 30px;text-align:center">
+            <p style="color:#aaa;font-size:11px;margin:0">© ইবনে খালদুন ইনস্টিটিউট — ibnkhalduninstitute.online</p>
+          </div>
+        </div>
+      `,
+    });
+
+    res.json({ message: 'OTP পাঠানো হয়েছে' });
+  } catch (e) {
+    console.error('OTP send error:', e.message);
+    res.status(500).json({ error: 'OTP পাঠাতে সমস্যা হয়েছে: ' + e.message });
+  }
+});
+
+// OTP যাচাই
+app.post('/api/user/verify-otp', async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp)
+      return res.status(400).json({ error: 'ইমেইল ও OTP দিন' });
+
+    const stored = otpStore.get(email.toLowerCase());
+    if (!stored)
+      return res.status(400).json({ error: 'OTP পাওয়া যায়নি। আবার পাঠান' });
+    if (Date.now() > stored.expiresAt)
+      return res.status(400).json({ error: 'OTP মেয়াদ শেষ। আবার পাঠান' });
+    if (stored.otp !== String(otp).trim())
+      return res.status(400).json({ error: 'OTP সঠিক নয়' });
+
+    // Verified — OTP মুছে দাও
+    otpStore.delete(email.toLowerCase());
+    res.json({ verified: true, message: 'ইমেইল যাচাই সফল' });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 app.post('/api/user/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;

@@ -2391,10 +2391,41 @@
         </div>
         <div id="auth-register" class="hidden">
           <div class="auth-form">
-            <div class="form-group"><label>পুরো নাম</label><input class="form-input" type="text" placeholder="আপনার পুরো নাম" /></div>
-            <div class="form-group"><label>ইমেইল ঠিকানা</label><input class="form-input" type="email" placeholder="আপনার ইমেইল" /></div>
-            <div class="form-group"><label>পাসওয়ার্ড</label><input class="form-input" type="password" placeholder="একটি শক্তিশালী পাসওয়ার্ড তৈরি করুন" /></div>
-            <div class="form-group"><label>পাসওয়ার্ড নিশ্চিত করুন</label><input class="form-input" type="password" placeholder="পাসওয়ার্ড নিশ্চিত করুন" /></div>
+            <div class="form-group"><label>পুরো নাম</label><input class="form-input" type="text" id="reg-name" placeholder="আপনার পুরো নাম" /></div>
+
+            <!-- ইমেইল + OTP বাটন -->
+            <div class="form-group">
+              <label>ইমেইল ঠিকানা</label>
+              <div style="display:flex;gap:8px;align-items:center">
+                <input class="form-input" type="email" id="reg-email" placeholder="আপনার ইমেইল" style="flex:1;min-width:0" />
+                <button type="button" id="otp-send-btn" onclick="sendRegisterOTP()"
+                  style="flex-shrink:0;white-space:nowrap;padding:10px 14px;background:var(--Green);color:#fff;border:none;border-radius:var(--radius);font-family:var(--font-nav);font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;gap:5px">
+                  <span>📧</span>&nbsp;OTP পাঠান
+                </button>
+              </div>
+              <div id="otp-status" style="display:none;margin-top:6px;font-size:12px;font-weight:600;font-family:var(--font-nav)"></div>
+            </div>
+
+            <!-- OTP ইনপুট (send করলে দেখাবে) -->
+            <div class="form-group" id="otp-input-group" style="display:none">
+              <label>OTP কোড <span style="color:#888;font-weight:400;font-size:10px">(ইমেইলে পাঠানো ৪ সংখ্যা)</span></label>
+              <div style="display:flex;gap:8px">
+                <input class="form-input" type="text" id="reg-otp" placeholder="0  0  0  0"
+                  maxlength="4" inputmode="numeric"
+                  style="flex:1;font-size:22px;font-weight:700;letter-spacing:10px;text-align:center;padding:10px 14px" />
+                <button type="button" onclick="verifyRegisterOTP()"
+                  style="flex-shrink:0;padding:10px 16px;background:var(--primary);color:#1a1a1a;border:none;border-radius:var(--radius);font-family:var(--font-nav);font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer">
+                  ✔ যাচাই
+                </button>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:5px">
+                <span id="otp-timer" style="font-size:11px;color:#888;font-family:var(--font-nav)"></span>
+                <button type="button" id="otp-resend-btn" onclick="sendRegisterOTP()" style="display:none;font-size:11px;color:var(--Green);background:none;border:none;cursor:pointer;font-family:var(--font-nav);font-weight:700;text-decoration:underline">আবার পাঠান</button>
+              </div>
+            </div>
+
+            <div class="form-group"><label>পাসওয়ার্ড</label><input class="form-input" type="password" id="reg-pass" placeholder="একটি শক্তিশালী পাসওয়ার্ড তৈরি করুন" /></div>
+            <div class="form-group"><label>পাসওয়ার্ড নিশ্চিত করুন</label><input class="form-input" type="password" id="reg-pass-confirm" placeholder="পাসওয়ার্ড নিশ্চিত করুন" /></div>
             <button class="btn btn-primary btn-lg" style="width:100%" onclick="registerAction()">একাউন্ট তৈরি করুন →</button>
             <p style="font-size:12px;text-align:center;color:#555">নিবন্ধন করে আপনি আমাদের <a href="#" style="color:var(--primary)">শর্তাবলি</a> এবং <a href="#" style="color:var(--primary)">গোপনীয়তা নীতি</a> মেনে নিচ্ছেন</p>
           </div>
@@ -2884,6 +2915,23 @@
       } else {
         loginEl.classList.add('hidden'); regEl.classList.remove('hidden');
         h2.textContent = 'একাউন্ট তৈরি করুন'; sub.textContent = 'আজই বিনামূল্যে শেখা শুরু করুন';
+        // OTP state রিসেট
+        _otpEmailVerified = false;
+        if (_otpTimerInterval) clearInterval(_otpTimerInterval);
+        var statusEl = document.getElementById('otp-status');
+        var inputGroup = document.getElementById('otp-input-group');
+        var sendBtn = document.getElementById('otp-send-btn');
+        var emailInput = document.getElementById('reg-email');
+        var otpInput = document.getElementById('reg-otp');
+        var timerEl = document.getElementById('otp-timer');
+        var resendBtn = document.getElementById('otp-resend-btn');
+        if (statusEl) { statusEl.style.display = 'none'; statusEl.textContent = ''; }
+        if (inputGroup) inputGroup.style.display = 'none';
+        if (otpInput) otpInput.value = '';
+        if (timerEl) timerEl.textContent = '';
+        if (resendBtn) resendBtn.style.display = 'none';
+        if (sendBtn) { sendBtn.disabled = false; sendBtn.style.background = 'var(--Green)'; sendBtn.innerHTML = '<span>📧</span>&nbsp;OTP পাঠান'; }
+        if (emailInput) { emailInput.readOnly = false; emailInput.value = ''; }
       }
     }
 
@@ -3349,17 +3397,104 @@
       });
     }
 
+    // ── OTP সিস্টেম ──
+    var _otpEmailVerified = false;
+    var _otpTimerInterval = null;
+
+    function sendRegisterOTP() {
+      var email = (document.getElementById('reg-email') || {}).value;
+      if (!email) email = '';
+      email = email.trim();
+      if (!email || !email.includes('@')) { showToast('⚠️ আগে সঠিক ইমেইল লিখুন'); return; }
+
+      var btn = document.getElementById('otp-send-btn');
+      var statusEl = document.getElementById('otp-status');
+      var inputGroup = document.getElementById('otp-input-group');
+      var resendBtn = document.getElementById('otp-resend-btn');
+
+      if (btn) { btn.disabled = true; btn.innerHTML = '⏳ পাঠানো হচ্ছে...'; }
+      if (statusEl) { statusEl.style.display = 'none'; }
+
+      fetch(API_BASE + '/api/user/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email })
+      }).then(function(r) { return r.json(); }).then(function(data) {
+        if (btn) { btn.disabled = false; btn.innerHTML = '<span>📧</span>&nbsp;আবার পাঠান'; }
+        if (data.error) {
+          showToast('❌ ' + data.error);
+          if (statusEl) { statusEl.style.display = 'block'; statusEl.style.color = '#e74c3c'; statusEl.textContent = '❌ ' + data.error; }
+          return;
+        }
+        showToast('📧 OTP পাঠানো হয়েছে! ইমেইল চেক করুন');
+        if (inputGroup) inputGroup.style.display = 'block';
+        if (statusEl) { statusEl.style.display = 'block'; statusEl.style.color = '#066144'; statusEl.textContent = '✅ ' + email + '-এ OTP পাঠানো হয়েছে'; }
+        _otpEmailVerified = false;
+        // ১০ মিনিট কাউন্টডাউন
+        if (_otpTimerInterval) clearInterval(_otpTimerInterval);
+        var endTime = Date.now() + 10 * 60 * 1000;
+        var timerEl = document.getElementById('otp-timer');
+        if (resendBtn) resendBtn.style.display = 'none';
+        _otpTimerInterval = setInterval(function() {
+          var remaining = Math.max(0, endTime - Date.now());
+          var mins = Math.floor(remaining / 60000);
+          var secs = Math.floor((remaining % 60000) / 1000);
+          if (timerEl) timerEl.textContent = 'মেয়াদ: ' + mins + ':' + (secs < 10 ? '0' : '') + secs;
+          if (remaining === 0) {
+            clearInterval(_otpTimerInterval);
+            if (timerEl) timerEl.textContent = 'OTP মেয়াদ শেষ';
+            if (resendBtn) resendBtn.style.display = 'inline';
+          }
+        }, 1000);
+      }).catch(function(err) {
+        if (btn) { btn.disabled = false; btn.innerHTML = '<span>📧</span>&nbsp;OTP পাঠান'; }
+        showToast('❌ সার্ভারে সমস্যা হয়েছে');
+      });
+    }
+
+    function verifyRegisterOTP() {
+      var email = (document.getElementById('reg-email') || {}).value;
+      if (!email) email = '';
+      email = email.trim();
+      var otp = (document.getElementById('reg-otp') || {}).value;
+      if (!otp) otp = '';
+      otp = otp.trim();
+      if (!otp || otp.length !== 4) { showToast('⚠️ ৪ সংখ্যার OTP লিখুন'); return; }
+
+      var statusEl = document.getElementById('otp-status');
+      fetch(API_BASE + '/api/user/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, otp: otp })
+      }).then(function(r) { return r.json(); }).then(function(data) {
+        if (data.error) {
+          showToast('❌ ' + data.error);
+          if (statusEl) { statusEl.style.display = 'block'; statusEl.style.color = '#e74c3c'; statusEl.textContent = '❌ ' + data.error; }
+          return;
+        }
+        _otpEmailVerified = true;
+        if (_otpTimerInterval) clearInterval(_otpTimerInterval);
+        showToast('✅ ইমেইল যাচাই সফল!');
+        if (statusEl) { statusEl.style.display = 'block'; statusEl.style.color = '#066144'; statusEl.textContent = '✅ ইমেইল সফলভাবে যাচাই হয়েছে'; }
+        var inputGroup = document.getElementById('otp-input-group');
+        if (inputGroup) inputGroup.style.display = 'none';
+        var sendBtn = document.getElementById('otp-send-btn');
+        if (sendBtn) { sendBtn.disabled = true; sendBtn.style.background = '#27ae60'; sendBtn.innerHTML = '✅ যাচাই হয়েছে'; }
+        var emailInput = document.getElementById('reg-email');
+        if (emailInput) emailInput.readOnly = true;
+      }).catch(function() { showToast('❌ সার্ভারে সমস্যা হয়েছে'); });
+    }
+
     function registerAction() {
-      var nameInput  = document.querySelector('#auth-register input[type="text"]');
-      var emailInput = document.querySelector('#auth-register input[type="email"]');
-      var passInput  = document.querySelectorAll('#auth-register input[type="password"]')[0];
-      var confInput  = document.querySelectorAll('#auth-register input[type="password"]')[1];
-      var name  = nameInput  ? nameInput.value.trim()  : '';
-      var email = emailInput ? emailInput.value.trim() : '';
-      var pass  = passInput  ? passInput.value.trim()  : '';
-      var conf  = confInput  ? confInput.value.trim()  : '';
+      var name  = (document.getElementById('reg-name') || {}).value || '';
+      var email = (document.getElementById('reg-email') || {}).value || '';
+      var pass  = (document.getElementById('reg-pass') || {}).value || '';
+      var conf  = (document.getElementById('reg-pass-confirm') || {}).value || '';
+      name = name.trim(); email = email.trim(); pass = pass.trim(); conf = conf.trim();
+
       if (!name)  { showToast('⚠️ আপনার নাম লিখুন'); return; }
       if (!email || !email.includes('@')) { showToast('⚠️ সঠিক ইমেইল দিন'); return; }
+      if (!_otpEmailVerified) { showToast('⚠️ আগে OTP দিয়ে ইমেইল যাচাই করুন'); return; }
       if (pass.length < 6) { showToast('⚠️ পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে'); return; }
       if (pass !== conf) { showToast('⚠️ পাসওয়ার্ড মিলছে না'); return; }
 
