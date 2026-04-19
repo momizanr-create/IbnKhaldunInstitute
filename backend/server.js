@@ -646,6 +646,15 @@ app.post('/api/admin/settings/upload', authMiddleware, upload.single('file'), as
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// Public API to get WhatsApp number
+app.get('/api/public/settings/whatsapp', async (req, res) => {
+  try {
+    const setting = await Settings.findOne({ key: 'whatsappNumber' });
+    res.json({ number: setting ? setting.value : '+8801700000000' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+
 // ============================================================
 // ENROLLMENTS
 // ============================================================
@@ -1781,6 +1790,127 @@ async function ensureAdminExists() {
   }
 }
 
+// ── Create Default Courses and Instructors ──
+async function ensureDefaultContent() {
+  try {
+    // Check if we already have content
+    const courseCount = await Course.countDocuments();
+    const instructorCount = await Instructor.countDocuments();
+    
+    if (courseCount === 0) {
+      console.log('📚 Creating default courses...');
+      
+      const defaultCourses = [
+        // ইসলামিক স্টাডিজ
+        { title: 'কোরআন শিক্ষা - বেসিক', slug: 'quran-basic', category: 'ইসলামিক স্টাডিজ', instructor: 'মাওলানা আব্দুর রহমান', price: 1500, originalPrice: 2000, discount: 25, description: 'শুরু থেকে কোরআন পড়া শিখুন সঠিক তাজবীদসহ', shortDesc: 'কোরআন পড়া শিখুন সঠিক তাজবীদসহ', thumbnail: '', duration: '৩ মাস', lessons: 24, students: 156, rating: 4.8, level: 'শুরুর স্তর', featured: true },
+        { title: 'হাদিস অধ্যয়ন', slug: 'hadith-study', category: 'ইসলামিক স্টাডিজ', instructor: 'শায়খ মুহাম্মদ ইসমাইল', price: 2000, originalPrice: 2500, discount: 20, description: 'সহীহ হাদিসের মূলনীতি ও ব্যাখ্যা শিখুন', shortDesc: 'সহীহ হাদিসের মূলনীতি শিখুন', thumbnail: '', duration: '৪ মাস', lessons: 32, students: 98, rating: 4.9, level: 'মধ্যম স্তর', featured: true },
+        { title: 'ইসলামিক ফিকাহ', slug: 'islamic-fiqh', category: 'ইসলামিক স্টাডিজ', instructor: 'মুফতি তাহের আলী', price: 1800, originalPrice: 2200, discount: 18, description: 'দৈনন্দিন জীবনের ইসলামী বিধান শিখুন', shortDesc: 'দৈনন্দিন ইসলামী বিধান', thumbnail: '', duration: '৩ মাস', lessons: 28, students: 134, rating: 4.7, level: 'সকলের জন্য' },
+        
+        // আরবি ভাষা
+        { title: 'আরবি ভাষা - প্রথম স্তর', slug: 'arabic-level1', category: 'আরবি ভাষা', instructor: 'উস্তাদ ফারুক আহমেদ', price: 2500, originalPrice: 3000, discount: 17, description: 'শূন্য থেকে আরবি ভাষা শিখুন', shortDesc: 'শূন্য থেকে আরবি শিখুন', thumbnail: '', duration: '৬ মাস', lessons: 48, students: 245, rating: 4.9, level: 'শুরুর স্তর', featured: true },
+        { title: 'আরবি ব্যাকরণ - নাহু', slug: 'arabic-grammar-nahw', category: 'আরবি ভাষা', instructor: 'উস্তাদ ফারুক আহমেদ', price: 2200, originalPrice: 2800, discount: 21, description: 'আরবি ব্যাকরণের মূলনীতি শিখুন', shortDesc: 'আরবি ব্যাকরণ শিখুন', thumbnail: '', duration: '৪ মাস', lessons: 36, students: 187, rating: 4.8, level: 'মধ্যম স্তর' },
+        { title: 'কথোপকথন আরবি', slug: 'spoken-arabic', category: 'আরবি ভাষা', instructor: 'ড. আয়েশা খাতুন', price: 3000, originalPrice: 3500, discount: 14, description: 'দৈনন্দিন কথোপকথন আরবি শিখুন', shortDesc: 'কথোপকথন আরবি', thumbnail: '', duration: '৫ মাস', lessons: 40, students: 312, rating: 4.9, level: 'সকলের জন্য', featured: true },
+        
+        // ওয়েব ডেভেলপমেন্ট
+        { title: 'HTML & CSS মাস্টারক্লাস', slug: 'html-css-masterclass', category: 'ওয়েব ডেভেলপমেন্ট', instructor: 'রাফি করিম', price: 1200, originalPrice: 1500, discount: 20, description: 'ওয়েব ডিজাইনের ভিত্তি শিখুন', shortDesc: 'HTML CSS শিখুন', thumbnail: '', duration: '২ মাস', lessons: 20, students: 523, rating: 4.7, level: 'শুরুর স্তর', featured: true },
+        { title: 'JavaScript সম্পূর্ণ কোর্স', slug: 'javascript-complete', category: 'ওয়েব ডেভেলপমেন্ট', instructor: 'রাফি করিম', price: 2500, originalPrice: 3200, discount: 22, description: 'জাভাস্ক্রিপ্ট শূন্য থেকে এক্সপার্ট লেভেল', shortDesc: 'JavaScript শিখুন', thumbnail: '', duration: '৫ মাস', lessons: 45, students: 678, rating: 4.9, level: 'সকলের জন্য' },
+        { title: 'React.js ডেভেলপমেন্ট', slug: 'reactjs-development', category: 'ওয়েব ডেভেলপমেন্ট', instructor: 'তানিয়া আক্তার', price: 3500, originalPrice: 4500, discount: 22, description: 'আধুনিক ওয়েব অ্যাপ তৈরি করুন React দিয়ে', shortDesc: 'React.js শিখুন', thumbnail: '', duration: '৪ মাস', lessons: 38, students: 456, rating: 4.8, level: 'উচ্চ স্তর', featured: true },
+        
+        // গ্রাফিক ডিজাইন
+        { title: 'Adobe Photoshop প্রো', slug: 'photoshop-pro', category: 'গ্রাফিক ডিজাইন', instructor: 'সাদিয়া রহমান', price: 1800, originalPrice: 2300, discount: 22, description: 'ফটোশপ দিয়ে প্রফেশনাল ডিজাইন শিখুন', shortDesc: 'Photoshop শিখুন', thumbnail: '', duration: '৩ মাস', lessons: 30, students: 389, rating: 4.7, level: 'শুরুর স্তর' },
+        { title: 'Illustrator মাস্টারি', slug: 'illustrator-mastery', category: 'গ্রাফিক ডিজাইন', instructor: 'সাদিয়া রহমান', price: 2000, originalPrice: 2600, discount: 23, description: 'ভেক্টর ডিজাইন শিখুন Illustrator দিয়ে', shortDesc: 'Illustrator শিখুন', thumbnail: '', duration: '৩ মাস', lessons: 28, students: 267, rating: 4.8, level: 'মধ্যম স্তর', featured: true },
+        { title: 'লোগো ডিজাইন কোর্স', slug: 'logo-design-course', category: 'গ্রাফিক ডিজাইন', instructor: 'কামাল হোসেন', price: 1500, originalPrice: 2000, discount: 25, description: 'প্রফেশনাল লোগো ডিজাইন শিখুন', shortDesc: 'লোগো ডিজাইন', thumbnail: '', duration: '২ মাস', lessons: 16, students: 412, rating: 4.6, level: 'সকলের জন্য' },
+        
+        // ডিজিটাল মার্কেটিং
+        { title: 'Facebook Marketing', slug: 'facebook-marketing', category: 'ডিজিটাল মার্কেটিং', instructor: 'নাদিয়া সুলতানা', price: 2200, originalPrice: 2800, discount: 21, description: 'ফেসবুক মার্কেটিং এ দক্ষ হন', shortDesc: 'Facebook Marketing', thumbnail: '', duration: '২ মাস', lessons: 22, students: 534, rating: 4.8, level: 'সকলের জন্য', featured: true },
+        { title: 'SEO সম্পূর্ণ গাইড', slug: 'seo-complete-guide', category: 'ডিজিটাল মার্কেটিং', instructor: 'নাদিয়া সুলতানা', price: 2500, originalPrice: 3200, discount: 22, description: 'সার্চ ইঞ্জিন অপটিমাইজেশন শিখুন', shortDesc: 'SEO শিখুন', thumbnail: '', duration: '৩ মাস', lessons: 26, students: 398, rating: 4.9, level: 'মধ্যম স্তর' },
+        { title: 'Email Marketing Pro', slug: 'email-marketing-pro', category: 'ডিজিটাল মার্কেটিং', instructor: 'আরিফ হাসান', price: 1800, originalPrice: 2400, discount: 25, description: 'ইমেইল মার্কেটিং মাস্টার করুন', shortDesc: 'Email Marketing', thumbnail: '', duration: '২ মাস', lessons: 18, students: 276, rating: 4.7, level: 'সকলের জন্য' },
+      ];
+      
+      await Course.insertMany(defaultCourses);
+      console.log('✅ Default courses created');
+    }
+    
+    if (instructorCount === 0) {
+      console.log('👨‍🏫 Creating default instructors...');
+      
+      const defaultInstructors = [
+        { 
+          name: 'মাওলানা আব্দুর রহমান', 
+          slug: 'mawlana-abdur-rahman', 
+          title: 'কোরআন ও তাফসীর বিশেষজ্ঞ', 
+          bio: 'আল-আযহার বিশ্ববিদ্যালয় থেকে ইসলামিক স্টাডিজে মাস্টার্স। ২০+ বছরের শিক্ষকতার অভিজ্ঞতা।', 
+          photo: '', 
+          specializations: ['কোরআন', 'তাফসীর', 'তাজবীদ'], 
+          students: 1250, 
+          courses: 8, 
+          rating: 4.9,
+          social: { facebook: '', youtube: '', twitter: '', linkedin: '' },
+          featured: true 
+        },
+        { 
+          name: 'শায়খ মুহাম্মদ ইসমাইল', 
+          slug: 'shaykh-muhammad-ismail', 
+          title: 'হাদিস ও ফিকাহ শিক্ষক', 
+          bio: 'মদীনা ইসলামিক বিশ্ববিদ্যালয় থেকে হাদিস বিভাগে পিএইচডি। ১৫ বছরের গবেষণা অভিজ্ঞতা।', 
+          photo: '', 
+          specializations: ['হাদিস', 'ফিকাহ', 'উসুল'], 
+          students: 980, 
+          courses: 6, 
+          rating: 4.8,
+          social: { facebook: '', youtube: '', twitter: '', linkedin: '' },
+          featured: true 
+        },
+        { 
+          name: 'উস্তাদ ফারুক আহমেদ', 
+          slug: 'ustad-faruq-ahmed', 
+          title: 'আরবি ভাষা বিশেষজ্ঞ', 
+          bio: 'কায়রো বিশ্ববিদ্যালয় থেকে আরবি সাহিত্যে মাস্টার্স। আরবিতে ১২ বছরের শিক্ষকতা।', 
+          photo: '', 
+          specializations: ['আরবি ভাষা', 'নাহু', 'সরফ'], 
+          students: 1540, 
+          courses: 10, 
+          rating: 4.9,
+          social: { facebook: '', youtube: '', twitter: '', linkedin: '' },
+          featured: true 
+        },
+        { 
+          name: 'রাফি করিম', 
+          slug: 'rafi-karim', 
+          title: 'সিনিয়র ওয়েব ডেভেলপার', 
+          bio: 'ফুল স্ট্যাক ডেভেলপার, ১০+ বছরের ইন্ডাস্ট্রি অভিজ্ঞতা। বাংলাদেশের টপ আইটি কোম্পানিতে কাজ করেছেন।', 
+          photo: '', 
+          specializations: ['JavaScript', 'React', 'Node.js'], 
+          students: 2340, 
+          courses: 12, 
+          rating: 4.9,
+          social: { facebook: '', youtube: '', twitter: '', linkedin: '' },
+          featured: true 
+        },
+        { 
+          name: 'সাদিয়া রহমান', 
+          slug: 'sadia-rahman', 
+          title: 'সিনিয়র গ্রাফিক ডিজাইনার', 
+          bio: 'আন্তর্জাতিক ব্র্যান্ডের সাথে কাজের অভিজ্ঞতা। Adobe Certified Professional। ৮ বছরের ডিজাইন ক্যারিয়ার।', 
+          photo: '', 
+          specializations: ['Photoshop', 'Illustrator', 'UI/UX'], 
+          students: 1876, 
+          courses: 9, 
+          rating: 4.8,
+          social: { facebook: '', youtube: '', twitter: '', linkedin: '' },
+          featured: true 
+        },
+      ];
+      
+      await Instructor.insertMany(defaultInstructors);
+      console.log('✅ Default instructors created');
+    }
+  } catch (err) {
+    console.error('❌ Default content creation error:', err.message);
+  }
+}
+
+
 // ============================================================
 // START
 // ============================================================
@@ -1788,6 +1918,7 @@ mongoose.connect(process.env.MONGODB_URI)
   .then(async () => {
     console.log('✅ MongoDB connected');
     await ensureAdminExists();
+    await ensureDefaultContent();
     app.listen(PORT, () => console.log(`🚀 Server: http://localhost:${PORT}`));
   })
   .catch(err => console.error('❌ MongoDB error:', err));

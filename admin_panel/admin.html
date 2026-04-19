@@ -1010,6 +1010,7 @@
               <div class="card-body" style="padding:20px">
                 <div class="field"><label>সাইটের টাইটেল</label><input id="ss-title" placeholder="ইবনে খালদুন ইনস���টিটিউট"/></div>
                 <div class="field"><label>ট্যাগলাইন</label><input id="ss-tagline" placeholder="অনলাইনে নতুন দক্ষতা অর্জন করুন"/></div>
+                <div class="field"><label>WhatsApp নম্বর</label><input id="ss-whatsapp" placeholder="+8801700000000" type="tel"/></div>
                 <div class="field"><label>ফেভিকন URL</label><input id="ss-favicon" placeholder="https://..."/></div>
                 <div class="field"><label>হেডার হাইট (px)</label><input id="ss-header-h" placeholder="70" type="number"/></div>
                 <div style="border-top:1px solid var(--border);margin-top:14px;padding-top:14px">
@@ -3319,6 +3320,7 @@ async function loadSiteSettings() {
   const defaults = {
     title: 'ইবনে খালদুন ইনস্টিটিউট – অনলাইনে নতুন দক্ষতা অর্জন করুন',
     tagline: 'অনলাইনে নতুন দক্ষতা অর্জন করুন',
+    whatsappNumber: '+8801700000000',
     headerHeight: '70',
     primaryColor: '#F5C518',
     greenColor: '#066144',
@@ -3336,6 +3338,7 @@ async function loadSiteSettings() {
     const d = (data && Object.keys(data).length) ? data : defaults;
     document.getElementById('ss-title').value = d.title || defaults.title;
     document.getElementById('ss-tagline').value = d.tagline || defaults.tagline;
+    document.getElementById('ss-whatsapp').value = d.whatsappNumber || defaults.whatsappNumber;
     document.getElementById('ss-favicon').value = d.favicon || '';
     document.getElementById('ss-header-h').value = d.headerHeight || defaults.headerHeight;
     document.getElementById('ss-primary-hex').value = d.primaryColor || defaults.primaryColor;
@@ -3356,6 +3359,7 @@ async function loadSiteSettings() {
     // Fill defaults on error
     document.getElementById('ss-title').value = defaults.title;
     document.getElementById('ss-tagline').value = defaults.tagline;
+    document.getElementById('ss-whatsapp').value = defaults.whatsappNumber;
     document.getElementById('ss-header-h').value = defaults.headerHeight;
     document.getElementById('ss-primary-hex').value = defaults.primaryColor;
     document.getElementById('ss-primary-color').value = defaults.primaryColor;
@@ -3435,6 +3439,7 @@ async function saveSiteSettings() {
   const body = {
     title: document.getElementById('ss-title').value,
     tagline: document.getElementById('ss-tagline').value,
+    whatsappNumber: document.getElementById('ss-whatsapp').value,
     favicon: document.getElementById('ss-favicon').value || document.getElementById('ss-favicon2').value,
     headerHeight: document.getElementById('ss-header-h').value,
     primaryColor: document.getElementById('ss-primary-hex').value,
