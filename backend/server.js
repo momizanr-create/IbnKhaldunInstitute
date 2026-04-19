@@ -1626,6 +1626,62 @@ app.get('/api/admin/users', authMiddleware, async (req, res) => {
 });
 
 
+// ============================================================
+// ABOUT PAGE — /api/admin/about-page  &  /api/public/about-page
+// ============================================================
+const DEFAULT_ABOUT_PAGE = {
+  heroTitle: 'আমাদের সম্পর্কে',
+  heroSubtitle: 'আমাদের উদ্দেশ্য, কাজ ও শিক্ষা দর্শন',
+  sectionLabel: 'আমাদের পরিচয়',
+  sectionTitle: 'Ibn Khaldun Institute সম্পর্কে',
+  sectionSub: 'ইসলামিক শিক্ষা ও আধুনিক জ্ঞানের সমন্বয়ে একটি পূর্ণাঙ্গ শিক্ষা প্রতিষ্ঠান।',
+  goalIcon: '🎯',
+  goalTitle: 'আমাদের লক্ষ্য',
+  goalDesc: 'বিশ্বের প্রতিটি মুসলিম পরিবারের কাছে মানসম্পন্ন ইসলামিক শিক্ষা পৌঁছে দেওয়া।',
+  visionIcon: '🌟',
+  visionTitle: 'আমাদের দৃষ্টিভঙ্গি',
+  visionDesc: 'ইসলামিক মূল্যবোধের আলোকে আধুনিক জ্ঞান ও দক্ষতা অর্জনের সুযোগ তৈরি করা।',
+  ibnTitle: 'ইবনে খালদুন ইনস্টিটিউট কেন?',
+  ibnPara1: 'ইবনে খালদুন (১৩৩২–১৪০৬) ছিলেন মধ্যযুগের শ্রেষ্ঠ মুসলিম পণ্ডিত।',
+  ibnPara2: 'তাঁর নামে এই ইনস্টিটিউট প্রতিষ্ঠিত হয়েছে জ্ঞান ও গবেষণার আলো ছড়িয়ে দেওয়ার লক্ষ্যে।',
+  stat1Num: '50K+', stat1Label: 'শিক্ষার্থী',
+  stat2Num: '120+', stat2Label: 'কোর্স',
+  stat3Num: '30+',  stat3Label: 'বিশেষজ্ঞ শিক্ষক',
+  faqLabel: 'FAQ',
+  faqTitle: 'ইনস্টিটিউট সম্পর্কিত প্রশ্নোত্তর',
+  faqSub: 'ইবনে খালদুন ইনস্টিটিউটের উদ্দেশ্য, শিক্ষা পদ্ধতি ও সার্টিফিকেট সম্পর্কে জানতে পড়ুন।',
+};
+
+// Public — index.html uses this
+app.get('/api/public/about-page', async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'aboutPage' });
+    const data = (s && s.value && Object.keys(s.value).length) ? s.value : DEFAULT_ABOUT_PAGE;
+    res.json(data);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// Admin GET
+app.get('/api/admin/about-page', authMiddleware, async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'aboutPage' });
+    const data = (s && s.value && Object.keys(s.value).length) ? s.value : DEFAULT_ABOUT_PAGE;
+    res.json(data);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// Admin POST (save)
+app.post('/api/admin/about-page', authMiddleware, async (req, res) => {
+  try {
+    await Settings.findOneAndUpdate(
+      { key: 'aboutPage' },
+      { key: 'aboutPage', value: req.body || {}, updatedAt: new Date() },
+      { upsert: true, new: true }
+    );
+    res.json({ message: '✅ আমাদের সম্পর্কে পেজ সংরক্ষিত হয়েছে' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 const DEFAULT_CONTENT_BUNDLE = {heroSections:{home:{title:'ইবনে খালদুন ইনস্টিটিউট',subtitle:'অনলাইনে নতুন দক্ষতা অর্জন করুন',backgroundImage:''},courses:{title:'সকল কোর্সসমূহ',subtitle:'এক অক্ষর লিখলেই কোর্স রিকমেন্ডেশন দেখুন',backgroundImage:''},about:{title:'আমাদের সম্পর্কে',subtitle:'আমাদের উদ্দেশ্য, কাজ ও শিক্ষা দর্শন',backgroundImage:''},contact:{title:'যোগাযোগ করুন',subtitle:'আমরা আপনার পাশে আছি',backgroundImage:''}},about:{content:'<p>ইবনে খালদুন ইনস্টিটিউট অনলাইন শিক্ষার একটি নির্ভরযোগ্য প্ল্যাটফর্ম।</p>'},contact:{email:'info@ibnkhaldun.edu.bd',phone:'+880 1700-000000',address:'ঢাকা, বাংলাদেশ',content:'যে কোনো প্রশ্নে আমাদের সাথে যোগাযোগ করুন।'},faqs:[{question:'কোর্স কীভাবে শুরু করব?',answer:'পছন্দের কোর্স নির্বাচন করে এনরোল করুন।'}],promo:{title:'জনপ্রিয় কোর্স',subtitle:'সেরা কোর্সগুলো এক জায়গায়',buttonText:'কোর্স দেখুন',buttonLink:'#courses'},navLinks:[{name:'হোম',link:'#home'},{name:'কোর্সসমূহ',link:'#courses'},{name:'আমাদের সম্পর্কে',link:'#about'},{name:'যোগাযোগ',link:'#contact'}],categories:[{name:'কুরআন',slug:'quran',link:'quran'},{name:'আরবি',slug:'arabic',link:'arabic'}],sidebarBody:[{title:'কোর্স সহায়তা',body:'প্রয়োজনে অ্যাডমিনের সাথে যোগাযোগ করুন।'}]};
 async function getContentBundle(){const s=await Settings.findOne({key:'contentBundle'});return Object.assign({},DEFAULT_CONTENT_BUNDLE,s&&s.value?s.value:{})}
 app.get('/api/public-content-bundle',async(req,res)=>{try{res.json(await getContentBundle())}catch(e){res.status(500).json({error:e.message})}});

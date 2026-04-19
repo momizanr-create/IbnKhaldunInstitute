@@ -1379,14 +1379,14 @@
   <!-- Mobile Nav -->
   <div class="mobile-nav" id="mobile-nav">
     <a href="#" onclick="navigateHomeTop(); toggleMobileNav(); return false;">🏠 হোম</a>
-    <a href="#" onclick="navigate('courses'); toggleMobileNav()">📚 ক্যাটাগরি</a>
-    <a href="#" onclick="navigate('instructors'); toggleMobileNav()">👨‍🏫 ইন্সট্রাক্টর</a>
-    <a href="#" onclick="navigate('blog'); toggleMobileNav()">📝 ব্লগ</a>
-    <a href="#" onclick="navigate('about'); toggleMobileNav()">ℹ️ আমাদের সম্পর্কে</a>
-    <a href="#" onclick="navigate('contact'); toggleMobileNav()">📞 যোগাযোগ</a>
-    <a href="#" id="mobile-nav-hub" class="hidden" onclick="navigate('dashboard'); toggleMobileNav()">📖 লার্নিং হাব</a>
-    <a href="#" id="mobile-nav-login" onclick="navigate('auth'); toggleMobileNav()">🔐 লগইন / রেজিস্টার</a>
-    <a href="#" id="mobile-nav-logout" class="hidden" style="color:#F5C518" onclick="logoutAction(); toggleMobileNav()">🚪 লগ আউট</a>
+    <a href="#" onclick="navigate('courses'); toggleMobileNav(); return false;">📚 ক্যাটাগরি</a>
+    <a href="#" onclick="navigate('instructors'); toggleMobileNav(); return false;">👨‍🏫 ইন্সট্রাক্টর</a>
+    <a href="#" onclick="navigate('blog'); toggleMobileNav(); return false;">📝 ব্লগ</a>
+    <a href="#" onclick="navigate('about'); toggleMobileNav(); return false;">ℹ️ আমাদের সম্পর্কে</a>
+    <a href="#" onclick="navigate('contact'); toggleMobileNav(); return false;">📞 যোগাযোগ</a>
+    <a href="#" id="mobile-nav-hub" class="hidden" onclick="navigate('dashboard'); toggleMobileNav(); return false;">📖 লার্নিং হাব</a>
+    <a href="#" id="mobile-nav-login" onclick="navigate('auth'); toggleMobileNav(); return false;">🔐 লগইন / রেজিস্টার</a>
+    <a href="#" id="mobile-nav-logout" class="hidden" style="color:#F5C518" onclick="logoutAction(); toggleMobileNav(); return false;">🚪 লগ আউট</a>
   </div>
 
   <!-- ===================== HOME PAGE ===================== -->
@@ -2279,53 +2279,53 @@
 
   <!-- ===================== ABOUT US PAGE ===================== -->
   <div id="page-about" class="page">
-    <div class="page-hero">
+    <div class="page-hero" id="about-page-hero">
       <div class="container">
-        <h1>আমাদের সম্পর্কে</h1>
-        <p>ইবনে খালদুন ইনস্টিটিউট সম্পর্কে জানুন</p>
+        <h1 id="about-hero-h1">আমাদের সম্পর্কে</h1>
+        <p id="about-hero-p">ইবনে খালদুন ইনস্টিটিউট সম্পর্কে জানুন</p>
       </div>
     </div>
     <div class="section">
       <div class="container">
 
           <div class="section-head">
-            <span class="section-label">আমাদের পরিচয়</span>
-            <h2 class="section-title">Ibn Khaldun Institute সম্পর্কে</h2>
+            <span class="section-label" id="about-section-label-el">আমাদের পরিচয়</span>
+            <h2 class="section-title" id="about-section-title-el">Ibn Khaldun Institute সম্পর্কে</h2>
             <div class="section-title-underline" style="margin:12px 0 0"></div>
-            <p class="section-sub">ইসলামিক শিক্ষা ও আধুনিক জ্ঞানের সমন্বয়ে একটি বিশ্বমানের অনলাইন লার্নিং প্ল্যাটফর্ম।</p>
+            <p class="section-sub" id="about-section-sub-el">ইসলামিক শিক্ষা ও আধুনিক জ্ঞানের সমন্বয়ে একটি বিশ্বমানের অনলাইন লার্নিং প্ল্যাটফর্ম।</p>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-bottom:48px">
             <div>
               <div class="feature-card" style="height:100%">
-                <div class="feature-icon">🎯</div>
-                <div class="feature-title">আমাদের লক্ষ্য</div>
-                <div class="feature-desc">বিশ্বের প্রতিটি মুসলিম পরিবারের কাছে মানসম্পন্ন ইসলামিক ও পেশাদার শিক্ষা পৌঁছে দেওয়া। আমরা বিশ্বাস করি জ্ঞান অর্জন প্রতিটি মুসলিমের জন্য ফরজ।</div>
+                <div class="feature-icon" id="about-goal-icon-el">🎯</div>
+                <div class="feature-title" id="about-goal-title-el">আমাদের লক্ষ্য</div>
+                <div class="feature-desc" id="about-goal-desc-el">বিশ্বের প্রতিটি মুসলিম পরিবারের কাছে মানসম্পন্ন ইসলামিক ও পেশাদার শিক্ষা পৌঁছে দেওয়া। আমরা বিশ্বাস করি জ্ঞান অর্জন প্রতিটি মুসলিমের জন্য ফরজ।</div>
               </div>
             </div>
             <div>
               <div class="feature-card" style="height:100%">
-                <div class="feature-icon">🌟</div>
-                <div class="feature-title">আমাদের দৃষ্টিভঙ্গি</div>
-                <div class="feature-desc">ইসলামিক মূল্যবোধের আলোকে আধুনিক প্রযুক্তি ও পেশাদার দক্ষতা অর্জনের সুযোগ তৈরি করা। আমরা ঐতিহ্য ও আধুনিকতার মেলবন্ধন ঘটাই।</div>
+                <div class="feature-icon" id="about-vision-icon-el">🌟</div>
+                <div class="feature-title" id="about-vision-title-el">আমাদের দৃষ্টিভঙ্গি</div>
+                <div class="feature-desc" id="about-vision-desc-el">ইসলামিক মূল্যবোধের আলোকে আধুনিক প্রযুক্তি ও পেশাদার দক্ষতা অর্জনের সুযোগ তৈরি করা। আমরা ঐতিহ্য ও আধুনিকতার মেলবন্ধন ঘটাই।</div>
               </div>
             </div>
           </div>
           <div style="background:linear-gradient(135deg,#1a1a1a,#2a2a2a);border-left:4px solid var(--primary);border-radius:var(--radius);padding:32px 36px;color:#fff;margin-bottom:40px">
-            <h3 style="font-family:var(--font-heading);font-size:20px;font-weight:700;margin-bottom:14px;color:var(--primary)">ইবনে খালদুন ইনস্টিটিউট কেন?</h3>
-            <p style="font-size:14.5px;color:rgba(255,255,255,0.75);line-height:1.8;margin-bottom:12px">ইবনে খালদুন (১৩৩২–১৪০৬) ছিলেন একজন মহান মুসলিম ঐতিহাসিক, সমাজবিজ্ঞানী ও শিক্ষাবিদ। তিনি জ্ঞান ও সভ্যতার গভীর সম্পর্ক নিয়ে অনন্য গবেষণা করেছিলেন।</p>
-            <p style="font-size:14.5px;color:rgba(255,255,255,0.75);line-height:1.8">তাঁর নামে এই ইনস্টিটিউট পরিচালিত হচ্ছে — যেখানে জ্ঞান, ঈমান ও চরিত্র গঠনের মাধ্যমে একটি আলোকিত প্রজন্ম তৈরি করার স্বপ্ন লালন করা হয়।</p>
+            <h3 id="about-ibn-title-el" style="font-family:var(--font-heading);font-size:20px;font-weight:700;margin-bottom:14px;color:var(--primary)">ইবনে খালদুন ইনস্টিটিউট কেন?</h3>
+            <p id="about-ibn-para1-el" style="font-size:14.5px;color:rgba(255,255,255,0.75);line-height:1.8;margin-bottom:12px">ইবনে খালদুন (১৩৩২–১৪০৬) ছিলেন একজন মহান মুসলিম ঐতিহাসিক, সমাজবিজ্ঞানী ও শিক্ষাবিদ। তিনি জ্ঞান ও সভ্যতার গভীর সম্পর্ক নিয়ে অনন্য গবেষণা করেছিলেন।</p>
+            <p id="about-ibn-para2-el" style="font-size:14.5px;color:rgba(255,255,255,0.75);line-height:1.8">তাঁর নামে এই ইনস্টিটিউট পরিচালিত হচ্ছে — যেখানে জ্ঞান, ঈমান ও চরিত্র গঠনের মাধ্যমে একটি আলোকিত প্রজন্ম তৈরি করার স্বপ্ন লালন করা হয়।</p>
           </div>
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;text-align:center">
-            <div class="dash-stat-card"><div class="dash-stat-num">50K+</div><div class="dash-stat-label">শিক্ষার্থী</div></div>
-            <div class="dash-stat-card"><div class="dash-stat-num">120+</div><div class="dash-stat-label">কোর্স</div></div>
-            <div class="dash-stat-card"><div class="dash-stat-num">30+</div><div class="dash-stat-label">বিশেষজ্ঞ শিক্ষক</div></div>
+            <div class="dash-stat-card"><div class="dash-stat-num" id="about-stat1-num-el">50K+</div><div class="dash-stat-label" id="about-stat1-label-el">শিক্ষার্থী</div></div>
+            <div class="dash-stat-card"><div class="dash-stat-num" id="about-stat2-num-el">120+</div><div class="dash-stat-label" id="about-stat2-label-el">কোর্স</div></div>
+            <div class="dash-stat-card"><div class="dash-stat-num" id="about-stat3-num-el">30+</div><div class="dash-stat-label" id="about-stat3-label-el">বিশেষজ্ঞ শিক্ষক</div></div>
           </div>
           <div class="faq-wrap" style="margin-top:54px">
             <div class="section-head center" style="margin-bottom:28px">
-              <span class="section-label">FAQ</span>
-              <h2 class="section-title" style="font-size:clamp(24px,3vw,32px)">ইনস্টিটিউট সম্পর্কিত প্রশ্নোত্তর</h2>
+              <span class="section-label" id="about-faq-label-el">FAQ</span>
+              <h2 class="section-title" id="about-faq-title-el" style="font-size:clamp(24px,3vw,32px)">ইনস্টিটিউট সম্পর্কিত প্রশ্নোত্তর</h2>
               <div class="section-title-underline"></div>
-              <p class="section-sub">ইবনে খালদুন ইনস্টিটিউটের উদ্দেশ্য, শিক্ষা পদ্ধতি ও সার্টিফিকেট সম্পর্কে জানতে পড়ুন।</p>
+              <p class="section-sub" id="about-faq-sub-el">ইবনে খালদুন ইনস্টিটিউটের উদ্দেশ্য, শিক্ষা পদ্ধতি ও সার্টিফিকেট সম্পর্কে জানতে পড়ুন।</p>
             </div>
             <div class="faq-list" id="about-faq-list"></div>
           </div>
@@ -2700,6 +2700,7 @@
       setTimeout(runFadeIn, 50);
       if (page === 'detail') { setTimeout(updateLessonAccess, 100); updateSidebarEnrollBtn(); updateSidebarImage(); }
       if (page === 'courses') { loadCoursesPage(); }
+      if (page === 'about') { if (typeof loadAndApplyAboutPage === 'function') loadAndApplyAboutPage(); }
       if (page === 'instructors' && window._apiInstructors && window._apiInstructors.length) { renderAPIInstructors(window._apiInstructors); }
       // Update URL hash for bookmarking / sharing
       try {
@@ -4426,7 +4427,12 @@
 
     // ── Password Reset Page (URL token থেকে) ──
     function checkPasswordResetToken() {
-      var params = new URLSearchParams(window.location.search);
+      // search 한 및 hash 어는 모두 토큰 확인 한다
+      var searchStr = window.location.search || '';
+      var hashStr   = window.location.hash   || '';
+      var hashQuery = hashStr.indexOf('?') !== -1 ? hashStr.slice(hashStr.indexOf('?')) : '';
+      var combined  = searchStr || hashQuery;
+      var params = new URLSearchParams(combined);
       var token  = params.get('reset_token');
       var email  = params.get('email');
       if (!token || !email) return;
@@ -5862,6 +5868,47 @@
         });
       }
 
+      function applyAboutPageContent(d) {
+        if (!d || !Object.keys(d).length) return;
+        function setText(id, val) { var el = document.getElementById(id); if (el && val) el.textContent = val; }
+        setText('about-hero-h1',         d.heroTitle);
+        setText('about-hero-p',          d.heroSubtitle);
+        setText('about-section-label-el',d.sectionLabel);
+        setText('about-section-title-el',d.sectionTitle);
+        setText('about-section-sub-el',  d.sectionSub);
+        setText('about-goal-icon-el',    d.goalIcon);
+        setText('about-goal-title-el',   d.goalTitle);
+        setText('about-goal-desc-el',    d.goalDesc);
+        setText('about-vision-icon-el',  d.visionIcon);
+        setText('about-vision-title-el', d.visionTitle);
+        setText('about-vision-desc-el',  d.visionDesc);
+        setText('about-ibn-title-el',    d.ibnTitle);
+        setText('about-ibn-para1-el',    d.ibnPara1);
+        setText('about-ibn-para2-el',    d.ibnPara2);
+        setText('about-stat1-num-el',    d.stat1Num);
+        setText('about-stat1-label-el',  d.stat1Label);
+        setText('about-stat2-num-el',    d.stat2Num);
+        setText('about-stat2-label-el',  d.stat2Label);
+        setText('about-stat3-num-el',    d.stat3Num);
+        setText('about-stat3-label-el',  d.stat3Label);
+        setText('about-faq-label-el',    d.faqLabel);
+        setText('about-faq-title-el',    d.faqTitle);
+        setText('about-faq-sub-el',      d.faqSub);
+        // about-page এ সংরক্ষিত faqItems থাকলে সেটা দিয়ে about-faq-list রেন্ডার করি
+        if (Array.isArray(d.faqItems) && d.faqItems.length) {
+          if (typeof renderFAQList === 'function') {
+            renderFAQList('about-faq-list', d.faqItems);
+          }
+        }
+      }
+
+      function loadAndApplyAboutPage() {
+        fetch('/api/public/about-page')
+          .then(function(r) { return r.json(); })
+          .then(function(d) { if (d && Object.keys(d).length) applyAboutPageContent(d); })
+          .catch(function() {});
+      }
+
       function applyManagedContent(bundle) {
         managedBundle = bundle || {};
         applyNavigation(managedBundle);
@@ -5872,6 +5919,7 @@
         applyPageHero('contact', heroes.contact);
         applyAboutAndFaq(managedBundle);
         applyContact(managedBundle);
+        loadAndApplyAboutPage();
         applyPromo(managedBundle);
         applySidebar(managedBundle);
         applyHeroSearch();
