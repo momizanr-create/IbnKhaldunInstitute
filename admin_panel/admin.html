@@ -116,7 +116,8 @@
     .sidebar-brand { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.2; }
     .sidebar-sub   { font-size: 11px; color: var(--text2); margin-top: 2px; }
     .sidebar-nav   { flex: 1; padding: 14px 10px; overflow-y: auto; max-height: calc(100vh - 140px); }
-    .nav-section   { padding: 10px 10px 5px; font-size: 10px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 1.5px; }
+    .nav-section   { padding: 10px 10px 5px; font-size: 10px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 8px; }
+    .nav-section:first-child { margin-top: 0; }
     .nav-item {
       display: flex; align-items: center; gap: 11px;
       padding: 10px 12px; font-size: 14px; color: var(--text2);
@@ -433,35 +434,45 @@
         </div>
       </div>
       <nav class="sidebar-nav">
-        <div class="nav-section">Main</div>
+        <div class="nav-section">ওভারভিউ</div>
         <div class="nav-item active" onclick="navTo('dashboard')"><span class="icon">📊</span> ড্যাশবোর্ড</div>
-        <div class="nav-section">সাইট কাস্টমাইজ</div>
-        <div class="nav-item" onclick="navTo('site-settings')"><span class="icon">🌐</span> সাইট সেটিংস</div>
-        <div class="nav-item" onclick="navTo('navigation-mgr')"><span class="icon">🔗</span> নেভিগেশন</div>
-        <div class="nav-item" onclick="navTo('hero-section')"><span class="icon">🖼️</span> হিরো সেকশন</div>
-        <div class="nav-item" onclick="navTo('featured-courses-mgr')"><span class="icon">⭐</span> ফিচার্ড কোর্স</div>
-        <div class="nav-item" onclick="navTo('cta-section')"><span class="icon">📣</span> CTA সেকশন</div>
-        <div class="nav-item" onclick="navTo('welcome-popup')"><span class="icon">🎉</span> ওয়েলকাম পপআপ</div>
-        <div class="nav-item" onclick="navTo('footer-mgr')"><span class="icon">🦶</span> ফুটার</div>
-        <div class="nav-item" onclick="navTo('theme-settings')"><span class="icon">🎨</span> থিম / রঙ</div>
-        <div class="nav-section">Content</div>
-        <div class="nav-item" onclick="navTo('courses')"><span class="icon">📚</span> কোর্স</div>
+        
+        <div class="nav-section">কোর্স ম্যানেজমেন্ট</div>
+        <div class="nav-item" onclick="navTo('courses')"><span class="icon">📚</span> সকল কোর্স</div>
         <div class="nav-item" onclick="navTo('course-detail-mgr')"><span class="icon">📝</span> কোর্স ডিটেইল</div>
+        <div class="nav-item" onclick="navTo('course-tabs')"><span class="icon">🧭</span> কোর্স ট্যাব</div>
+        <div class="nav-item" onclick="navTo('categories')"><span class="icon">🏷️</span> ক্যাটাগরি</div>
+        
+        <div class="nav-section">টিম ও কন্টেন্ট</div>
         <div class="nav-item" onclick="navTo('instructors')"><span class="icon">👨‍🏫</span> ইন্সট্রাক্টর</div>
         <div class="nav-item" onclick="navTo('testimonials')"><span class="icon">💬</span> রিভিউ</div>
-        <div class="nav-item" onclick="navTo('notices')"><span class="icon">📢</span> নোটিশ</div>
         <div class="nav-item" onclick="navTo('blog-posts')"><span class="icon">📝</span> ব্লগ</div>
-        <div class="nav-item" onclick="navTo('contact-content')"><span class="icon">📞</span> কনট্যাক্ট</div>
-        <div class="nav-section">Content</div>
-        <div class="nav-item" onclick="navTo('categories')"><span class="icon">🏷️</span> ক্যাটাগরি</div>
-        <div class="nav-item" onclick="navTo('course-tabs')"><span class="icon">🧭</span> কোর্স ট্যাব</div>
+        
+        <div class="nav-section">হোমপেজ কন্টেন্ট</div>
+        <div class="nav-item" onclick="navTo('hero-section')"><span class="icon">🎯</span> হিরো সেকশন</div>
         <div class="nav-item" onclick="navTo('hero-courses')"><span class="icon">🖼️</span> হিরো কার্ড</div>
+        <div class="nav-item" onclick="navTo('featured-courses-mgr')"><span class="icon">⭐</span> ফিচার্ড কোর্স</div>
+        <div class="nav-item" onclick="navTo('notices')"><span class="icon">📢</span> নোটিশ</div>
+        <div class="nav-item" onclick="navTo('welcome-popup')"><span class="icon">🎉</span> ওয়েলকাম পপআপ</div>
+        
+        <div class="nav-section">পেজ কন্টেন্ট</div>
+        <div class="nav-item" onclick="navTo('full-content')"><span class="icon">🧩</span> সম্পূর্ণ কনটেন্ট</div>
         <div class="nav-item" onclick="navTo('faqs')"><span class="icon">❓</span> FAQ</div>
-        <div class="nav-section">Business</div>
-        <div class="nav-item" onclick="navTo('enrollments')"><span class="icon">📋</span> এনরোলমেন্ট</div>
+        <div class="nav-item" onclick="navTo('contact-content')"><span class="icon">📞</span> কনট্যাক্ট পেজ</div>
+        
+        <div class="nav-section">সাইট কাস্টমাইজেশন</div>
+        <div class="nav-item" onclick="navTo('site-settings')"><span class="icon">🌐</span> সাইট সেটিংস</div>
+        <div class="nav-item" onclick="navTo('navigation-mgr')"><span class="icon">🔗</span> নেভিগেশন</div>
+        <div class="nav-item" onclick="navTo('footer-mgr')"><span class="icon">🦶</span> ফুটার</div>
+        <div class="nav-item" onclick="navTo('theme-settings')"><span class="icon">🎨</span> থিম / রঙ</div>
+        <div class="nav-item" onclick="navTo('cta-section')"><span class="icon">📣</span> CTA সেকশন</div>
+        
+        <div class="nav-section">ব্যবসা ও ব্যবহারকারী</div>
         <div class="nav-item" onclick="navTo('access-requests')"><span class="icon">🔐</span> অ্যাক্সেস রিকোয়েস্ট</div>
+        <div class="nav-item" onclick="navTo('enrollments')"><span class="icon">📋</span> এনরোলমেন্ট</div>
         <div class="nav-item" onclick="navTo('users')"><span class="icon">👥</span> ব্যবহারকারী</div>
-        <div class="nav-section">Settings</div>
+        
+        <div class="nav-section">সেটিংস</div>
         <div class="nav-item" onclick="navTo('settings')"><span class="icon">⚙️</span> সেটিংস</div>
       </nav>
       <div class="sidebar-footer">

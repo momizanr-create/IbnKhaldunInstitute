@@ -1572,6 +1572,21 @@
         </div>
     </section>
 
+    <!-- Featured Instructors Section -->
+    <section class="featured-instructors-section section-alt">
+      <div class="container">
+        <div class="section-head center fade-in">
+          <span class="section-label">জনপ্রিয় শিক্ষক</span>
+          <h2 class="section-title">আমাদের অভিজ্ঞ ও দক্ষ শিক্ষকবৃন্দ</h2>
+          <div class="section-title-underline"></div>
+          <p class="section-sub">বিশেষজ্ঞ শিক্ষকদের সাথে পরিচিত হোন যারা আপনাকে সফলতার পথ দেখাবেন।</p>
+        </div>
+        <div id="featured-instructors-grid" class="instructors-grid fade-in">
+          <!-- Featured instructors will be loaded dynamically from admin panel -->
+        </div>
+      </div>
+    </section>
+
     <section class="faq-section alt" id="home-faq-section">
       <div class="container">
         <div class="section-head center">
@@ -3060,6 +3075,30 @@
             '<p style="font-size:14.5px;color:var(--text-mid);line-height:1.75">' + instData.bio + '</p>' +
             '<div style="margin-top:14px"><button class="btn btn-outline" style="font-size:12px;padding:8px 20px" onclick="openInstructorProfile(\'' + course.instructorId + '\')">👤 সম্পূর্ণ প্রোফা  �ল দেখুন →</button></div>';
         }
+      }
+
+      // Update sidebar includes from API course data
+      var sidebarIncludesEl = document.querySelector('.sidebar-includes');
+      if (sidebarIncludesEl) {
+        var apiCourse = window._allCoursesData ? window._allCoursesData.find(function(c) {
+          return String(c.slug || '') === String(courseId) || String(c._id || '') === String(courseId);
+        }) : null;
+        
+        var includes = apiCourse && apiCourse.includes && Array.isArray(apiCourse.includes) && apiCourse.includes.length > 0
+          ? apiCourse.includes
+          : course.includes && Array.isArray(course.includes) && course.includes.length > 0
+          ? course.includes
+          : [
+              course.duration || '৪২ ঘণ্টার অন-ডিমান্ড ভিডিও',
+              '১৪২টি ডাউনলোডযোগ্য রিসোর্স',
+              'আজীবন অ্যাক্সেস',
+              'মোবাইল ও ডেস্কটপে অ্যাক্সেস',
+              'সম্পন্নের সার্টিফিকেট'
+            ];
+        
+        sidebarIncludesEl.innerHTML = includes.map(function(item) {
+          return '<li>' + escapeHtml(item) + '</li>';
+        }).join('');
       }
 
       // Build curriculum for this course
@@ -4897,6 +4936,7 @@
     function renderAPIInstructors(instructors) {
       var grid = document.getElementById('instructors-grid');
       var pageGrid = document.getElementById('page-instructors-grid');
+      var featuredGrid = document.getElementById('featured-instructors-grid');
       var targetGrids = [grid, pageGrid].filter(Boolean);
       if (!targetGrids.length || !instructors.length) return;
       var html = instructors.map(function(inst) {
@@ -4914,8 +4954,23 @@
           '<span>📚 ' + (inst.courses||0) + '</span>' +
           '</div></div></div>';
       }).join('');
+      
+      // Featured instructors for homepage
       var homeInstructors = instructors.filter(function(inst) { return inst.featured === true || inst.featured === 'true'; });
       if (!homeInstructors.length) homeInstructors = instructors.slice(0, 8);
+      
+      // Render featured instructors section
+      if (featuredGrid) {
+        featuredGrid.innerHTML = homeInstructors.slice(0, 6).map(function(inst) {
+          var key = inst.slug || inst._id;
+          var photo = inst.photo || 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=160&h=160&fit=crop&crop=face';
+          var specs = (inst.specializations || []).slice(0, 2).join(' · ') || inst.title || '';
+          return '<div class="instructor-card fade-in visible" onclick="openInstructorProfile(\'' + key + '\')" style="cursor:pointer">' +
+            '<div class="instructor-photo-wrap"><img src="' + photo + '" alt="' + (inst.name||'') + '" class="instructor-photo" loading="lazy"/></div>' +
+            '<div class="instructor-info"><div class="instructor-name">' + (inst.name||'') + ' <span style="font-size:11px;color:var(--primary)">★</span></div><div class="instructor-title">' + (inst.title||specs) + '</div><div class="instructor-stats"><span>👥 ' + (inst.students||0) + '</span><span>★ ' + (inst.rating||4.8) + '</span><span>📚 ' + (inst.courses||0) + '</span></div></div></div>';
+        }).join('');
+      }
+      
       if (grid) grid.innerHTML = homeInstructors.slice(0, 8).map(function(inst) {
         var key = inst.slug || inst._id;
         var photo = inst.photo || 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=160&h=160&fit=crop&crop=face';
@@ -5529,4 +5584,4 @@
 
   </script>
 </body>
-</html> 
+</html>
