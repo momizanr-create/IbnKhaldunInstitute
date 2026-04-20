@@ -835,26 +835,11 @@
 
         <!-- ── CATEGORIES ── -->
         <div class="page" id="page-categories">
-
-          <!-- ডিফল্ট ক্যাটাগরি সেভ banner -->
-          <div id="categories-seed-banner" style="display:none;background:linear-gradient(135deg,rgba(251,146,60,0.15),rgba(251,146,60,0.05));border:1px solid rgba(251,146,60,0.4);border-radius:var(--radius);padding:16px 22px;margin-bottom:18px;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
-            <div>
-              <div style="font-size:14px;font-weight:700;color:var(--orange);margin-bottom:4px">⚠️ ক্যাটাগরিগুলো এখনো সার্ভারে সেভ হয়নি</div>
-              <div style="font-size:12px;color:var(--text2)">নিচে ৯টি ডিফল্ট ক্যাটাগরি দেখানো হচ্ছে। এগুলো সার্ভারে সেভ করতে বাটনে ক্লিক করুন।</div>
-            </div>
-            <button id="seed-cats-btn" class="btn btn-primary" onclick="seedDefaultCategories()" style="white-space:nowrap">
-              💾 সার্ভারে সেভ করুন
-            </button>
-          </div>
-
           <div class="card">
             <div class="card-header">
-              <div class="card-header-left">
-                <h3>🏷️ ক্যাটাগরি সমূহ</h3>
-                <span class="card-subtitle">৯টি মূল ক্যাটাগরি ও সাব ক্যাটাগরি</span>
-              </div>
+              <h3>🏷️ ক্যাটাগরি সমূহ</h3>
               <div style="display:flex;gap:8px">
-                <button class="btn btn-sm" style="background:var(--teal-bg);color:var(--teal);border:1px solid rgba(45,212,191,0.3)" onclick="seedDefaultCategories()" title="ডিফল্ট ৯টি ক্যাটাগরি সার্ভারে সেভ করুন">✨ ডিফল্ট সেভ করুন</button>
+                <button class="btn btn-sm" style="background:var(--teal-bg);color:var(--teal);border:1px solid rgba(45,212,191,0.3)" onclick="seedDefaultCategories()">✨ ডিফল্ট ৯টি ক্যাটাগরি যোগ করুন</button>
                 <button class="btn btn-primary" onclick="openCategoryModal()">+ নতুন ক্যাটাগরি</button>
               </div>
             </div>
@@ -5219,7 +5204,7 @@ const DEFAULT_CATEGORIES = [
   {
     icon: '📖', name: 'কুরআন শিক্ষা', slug: 'quran', order: 1, active: true,
     subCategories: [
-      { icon: '📗', name: 'জার্নি টু কুরআন (৪ মাসে কুরআন শরীফ)', slug: 'journey-to-quran', order: 1, active: true },
+      { icon: '🕌', name: 'জার্নি টু কুরআন (৪ মাসে কুরআন শরীফ)', slug: 'journey-to-quran', order: 1, active: true },
       { icon: '👩', name: 'মহিলাদের কুরআন যাত্রা', slug: 'womens-quran-journey', order: 2, active: true },
       { icon: '🔬', name: 'আল কোরআন ও বিজ্ঞান', slug: 'quran-and-science', order: 3, active: true },
     ]
@@ -5290,9 +5275,8 @@ let _currentCatId = null;
 let _currentCatName = '';
 
 async function seedDefaultCategories() {
-  const btn = document.getElementById('seed-cats-btn');
-  if (btn) { btn.disabled = true; btn.textContent = 'তৈরি হচ্ছে...'; }
   try {
+    toast('ডিফল্ট ক্যাটাগরি তৈরি হচ্ছে...');
     for (const cat of DEFAULT_CATEGORIES) {
       let created;
       try {
@@ -5312,67 +5296,39 @@ async function seedDefaultCategories() {
         }
       }
     }
-    toast('✅ সকল ৯টি ক্যাটাগরি ও সাব ক্যাটাগরি সার্ভারে সেভ হয়েছে!');
+    toast('✅ সকল ডিফল্ট ক্যাটাগরি ও সাব ক্যাটাগরি তৈরি হয়েছে!');
     loadCategories();
-  } catch(e) {
-    toast('সমস্যা: ' + e.message, 'error');
-    if (btn) { btn.disabled = false; btn.textContent = '💾 সার্ভারে সেভ করুন'; }
-  }
-}
-
-// ডিফল্ট ক্যাটাগরি দিয়ে টেবিল রেন্ডার (server-এ নেই, শুধু UI-তে দেখায়)
-function renderDefaultCategoriesTable() {
-  const tbody = document.getElementById('categories-tbody');
-  if (!tbody) return;
-  tbody.innerHTML = DEFAULT_CATEGORIES.map(c => `<tr style="opacity:0.8">
-    <td style="font-size:22px">${c.icon || '📚'}</td>
-    <td><strong>${c.name}</strong> <span style="font-size:10px;color:var(--orange);background:var(--orange-bg);padding:2px 7px;border-radius:10px;margin-left:6px">সেভ হয়নি</span></td>
-    <td><code style="font-size:12px;color:var(--text2)">${c.slug}</code></td>
-    <td><span style="background:var(--blue-bg);color:var(--blue);padding:3px 8px;border-radius:20px;font-size:12px">
-      📂 ${c.subCategories.length} টি সাব ক্যাটাগরি
-    </span></td>
-    <td>${c.order}</td>
-    <td><span class="badge badge-green">সক্রিয়</span></td>
-    <td><span style="font-size:12px;color:var(--text2)">—</span></td>
-  </tr>`).join('');
-  // banner দেখাও
-  const panel = document.getElementById('categories-seed-banner');
-  if (panel) panel.style.display = 'flex';
+  } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
 }
 
 async function loadCategories() {
   try {
     let list = await api('GET', '/api/admin/categories');
-    // server-এ ক্যাটাগরি নেই → ডিফল্ট UI-তে দেখাও
-    if (!list || list.length === 0) {
-      renderDefaultCategoriesTable();
-      return;
-    }
-    // banner লুকাও
-    const panel = document.getElementById('categories-seed-banner');
-    if (panel) panel.style.display = 'none';
-    document.getElementById('categories-tbody').innerHTML = list.map(c => `<tr>
-        <td style="font-size:22px">${c.icon || '📚'}</td>
-        <td><strong>${c.name}</strong></td>
-        <td><code style="font-size:12px;color:var(--text2)">${c.slug}</code></td>
-        <td>
-          <span style="background:var(--blue-bg);color:var(--blue);padding:3px 8px;border-radius:20px;font-size:12px;cursor:pointer"
-            onclick="openSubCategoryPanel('${c._id}','${c.name.replace(/'/g,"\'")}')">
-            📂 ${(c.subCategories||[]).length} টি সাব ক্যাটাগরি
-          </span>
-        </td>
-        <td>${c.order || 0}</td>
-        <td><span class="badge badge-${c.active ? 'green' : 'red'}">${c.active ? 'সক্রিয়' : 'নিষ্ক্রিয়'}</span></td>
-        <td style="display:flex;gap:6px">
-          <button class="btn btn-edit btn-sm" onclick="editCategory('${c._id}')">✏️</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteCategory('${c._id}')">🗑️</button>
-        </td>
-      </tr>`).join('');
-  } catch(e) {
-    // API error হলেও ডিফল্ট দেখাও
-    renderDefaultCategoriesTable();
-  }
+    document.getElementById('categories-tbody').innerHTML = list.length
+      ? list.map(c => `<tr>
+          <td style="font-size:22px">${c.icon || '📚'}</td>
+          <td><strong>${c.name}</strong></td>
+          <td><code style="font-size:12px;color:var(--text2)">${c.slug}</code></td>
+          <td>
+            <span style="background:var(--blue-bg);color:var(--blue);padding:3px 8px;border-radius:20px;font-size:12px;cursor:pointer"
+              onclick="openSubCategoryPanel('${c._id}','${c.name.replace(/'/g,"\'")}')">
+              📂 ${(c.subCategories||[]).length} টি সাব ক্যাটাগরি
+            </span>
+          </td>
+          <td>${c.order || 0}</td>
+          <td><span class="badge badge-${c.active ? 'green' : 'red'}">${c.active ? 'সক্রিয়' : 'নিষ্ক্রিয়'}</span></td>
+          <td style="display:flex;gap:6px">
+            <button class="btn btn-edit btn-sm" onclick="editCategory('${c._id}')">✏️</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteCategory('${c._id}')">🗑️</button>
+          </td>
+        </tr>`).join('')
+      : `<tr><td colspan="7" style="text-align:center;padding:30px">
+          <div style="color:var(--text2);margin-bottom:16px;font-size:15px">কোনো ক্যাটাগরি নেই</div>
+          <button class="btn btn-primary" onclick="seedDefaultCategories()">✨ ডিফল্ট ৯টি ক্যাটাগরি ও সাব ক্যাটাগরি তৈরি করুন</button>
+        </td></tr>`;
+  } catch(e) { toast('লোড হয়নি', 'error'); }
 }
+
 async function openSubCategoryPanel(catId, catName) {
   _currentCatId = catId;
   _currentCatName = catName;
@@ -5969,4 +5925,4 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
 })();
 </script>   
 </body>
-</html> 
+</html>
