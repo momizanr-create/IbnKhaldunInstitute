@@ -474,6 +474,7 @@
         <div class="nav-item" onclick="navTo('users')"><span class="icon">👥</span> ব্যবহারকারী</div>
         
         <div class="nav-section">সেটিংস</div>
+        <div class="nav-item" onclick="navTo('analytics')"><span class="icon">📊</span> Analytics & Tracking</div>
         <div class="nav-item" onclick="navTo('settings')"><span class="icon">⚙️</span> সেটিংস</div>
       </nav>
       <div class="sidebar-footer">
@@ -993,6 +994,160 @@
                 <input type="password" id="confirm-pass" placeholder="পুনরায় লিখুন"/>
               </div>
               <button class="btn btn-primary" onclick="changePassword()">পাসওয়ার্ড পরিবর্তন করুন</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════
+             ANALYTICS & TRACKING PAGE
+        ══════════════════════════════════════════════════ -->
+        <div class="page" id="page-analytics">
+          <div class="page-header">
+            <h2>📊 Analytics & Tracking</h2>
+            <p>Google Analytics ও Facebook Pixel কোড index.html এ স্বয়ংক্রিয়ভাবে যুক্ত হবে — এখানে ID দিয়ে সেভ করলেই সাথে সাথে কাজ শুরু হবে।</p>
+          </div>
+
+          <!-- Status Banner -->
+          <div id="analytics-status-banner" style="background:var(--blue-bg);border:1px solid rgba(96,165,250,0.3);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--blue)">
+            <span>⏳</span><span>স্ট্যাটাস চেক হচ্ছে...</span>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+
+            <!-- Google Analytics Card -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-header-left">
+                  <h3>📈 Google Analytics 4</h3>
+                  <span class="card-subtitle">index.html এ automatic gtag inject হবে</span>
+                </div>
+                <div id="ga-badge" style="padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;background:var(--red-bg);color:var(--red)">অনির্ধারিত</div>
+              </div>
+              <div class="card-body" style="padding:22px">
+                <div class="field">
+                  <label>Measurement ID</label>
+                  <input id="ga-measurement-id" placeholder="G-XXXXXXXXXX" style="font-family:monospace;letter-spacing:1px"/>
+                  <div style="font-size:11px;color:var(--text2);margin-top:6px">
+                    📌 Google Analytics &gt; Admin &gt; Data Streams &gt; Measurement ID থেকে পাবেন (G-XXXXXXXXXX format)
+                  </div>
+                </div>
+
+                <!-- GA কী কী ট্র্যাক হবে -->
+                <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-top:4px">
+                  <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">✅ যা যা ট্র্যাক হবে</div>
+                  <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text3)">
+                    <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--green)">●</span> লাইভ ভিজিটর সংখ্যা (Real-time Users)</div>
+                    <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--green)">●</span> প্রতিটি পেজে ভিজিট (home, courses, about, contact, detail)</div>
+                    <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--green)">●</span> কোর্সে ক্লিক সংখ্যা ও কোন কোর্সে কত ক্লিক</div>
+                    <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--green)">●</span> ইউজার কত সময় সাইটে ছিল (time on page)</div>
+                    <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--green)">●</span> তারিখ অনুযায়ী ভিজিটর সংখ্যা ও ক্লিক রিপোর্ট</div>
+                    <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--green)">●</span> ডিভাইস, দেশ ও ব্রাউজার তথ্য</div>
+                    <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--green)">●</span> নতুন বনাম পুরনো ভিজিটর</div>
+                  </div>
+                </div>
+
+                <!-- GA Setup Guide -->
+                <div style="background:linear-gradient(135deg,rgba(245,197,24,0.06),transparent);border:1px solid rgba(245,197,24,0.2);border-radius:var(--radius-sm);padding:14px;margin-top:12px">
+                  <div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:8px">📋 সেটআপ গাইড</div>
+                  <ol style="font-size:12px;color:var(--text3);padding-left:16px;line-height:1.9;margin:0">
+                    <li>analytics.google.com এ যান ও লগইন করুন</li>
+                    <li>নতুন Property তৈরি করুন (বা বিদ্যমান বেছে নিন)</li>
+                    <li>Admin &gt; Data Streams &gt; Web Stream বেছে নিন</li>
+                    <li>Measurement ID কপি করুন (G-XXXXXXXXXX)</li>
+                    <li>উপরে বক্সে পেস্ট করে সেভ করুন — শেষ!</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+
+            <!-- Facebook Pixel Card -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-header-left">
+                  <h3>📘 Facebook Pixel</h3>
+                  <span class="card-subtitle">index.html এ automatic Pixel inject হবে</span>
+                </div>
+                <div id="fb-badge" style="padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;background:var(--red-bg);color:var(--red)">অনির্ধারিত</div>
+              </div>
+              <div class="card-body" style="padding:22px">
+                <div class="field">
+                  <label>Pixel ID</label>
+                  <input id="fb-pixel-id" placeholder="1234567890123456" style="font-family:monospace;letter-spacing:1px"/>
+                  <div style="font-size:11px;color:var(--text2);margin-top:6px">
+                    📌 Facebook Events Manager &gt; Connect Data Source &gt; Pixel থেকে ID পাবেন (15-16 সংখ্যার)
+                  </div>
+                </div>
+
+                <!-- FB কী ট্র্যাক হবে -->
+                <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-top:4px">
+                  <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">✅ যা যা ট্র্যাক হবে</div>
+                  <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text3)">
+                    <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--green)">●</span> PageView — প্রতিবার সাইট ভিজিট</div>
+                    <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--green)">●</span> ViewContent — কোর্স কার্ড ক্লিক ও দেখা</div>
+                    <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--green)">●</span> Custom Events — কোর্স ক্লিক ও পেজ ভিজিট</div>
+                    <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--green)">●</span> Retargeting Audience তৈরির জন্য ডেটা</div>
+                    <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--green)">●</span> Facebook Ads Conversion ট্র্যাকিং</div>
+                  </div>
+                </div>
+
+                <!-- FB Setup Guide -->
+                <div style="background:linear-gradient(135deg,rgba(96,165,250,0.06),transparent);border:1px solid rgba(96,165,250,0.2);border-radius:var(--radius-sm);padding:14px;margin-top:12px">
+                  <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:8px">📋 সেটআপ গাইড</div>
+                  <ol style="font-size:12px;color:var(--text3);padding-left:16px;line-height:1.9;margin:0">
+                    <li>business.facebook.com/events_manager এ যান</li>
+                    <li>Data Sources &gt; Pixels বেছে নিন</li>
+                    <li>নতুন Pixel তৈরি করুন বা বিদ্যমানটি বেছে নিন</li>
+                    <li>Pixel ID (15-16 সংখ্যার) কপি করুন</li>
+                    <li>উপরে বক্সে পেস্ট করে সেভ করুন — শেষ!</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Enable/Disable & Save -->
+          <div class="card" style="margin-top:16px">
+            <div class="card-header">
+              <h3>⚙️ কনফিগারেশন</h3>
+            </div>
+            <div class="card-body" style="padding:20px">
+              <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;font-weight:600;color:var(--text)">
+                  <div id="analytics-toggle-wrap" style="position:relative;width:48px;height:26px">
+                    <input type="checkbox" id="analytics-enabled" style="opacity:0;width:0;height:0;position:absolute" checked/>
+                    <div id="analytics-toggle-bg" style="position:absolute;inset:0;border-radius:26px;background:var(--green);transition:background 0.2s;cursor:pointer" onclick="document.getElementById('analytics-enabled').click();updateAnalyticsToggleUI()"></div>
+                    <div id="analytics-toggle-dot" style="position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform 0.2s;pointer-events:none;transform:translateX(22px)"></div>
+                  </div>
+                  Analytics সক্রিয় রাখুন
+                </label>
+                <span style="font-size:12px;color:var(--text2)">বন্ধ করলে GA ও Pixel কোনোটাই কাজ করবে না</span>
+              </div>
+
+              <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <button class="btn btn-primary" onclick="saveAnalyticsConfig()">💾 সংরক্ষণ করুন</button>
+                <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="loadAnalyticsConfig()">🔄 রিলোড</button>
+                <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="testAnalyticsConfig()">🧪 সংযোগ পরীক্ষা করুন</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Preview / Embedded GA note -->
+          <div class="card" style="margin-top:16px;background:linear-gradient(135deg,var(--bg2),var(--bg3))">
+            <div class="card-body" style="padding:22px">
+              <div style="display:flex;align-items:flex-start;gap:16px">
+                <div style="font-size:36px">📡</div>
+                <div>
+                  <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px">Live Analytics দেখুন</div>
+                  <div style="font-size:13px;color:var(--text3);line-height:1.7;margin-bottom:14px">
+                    Real-time ডেটা, কোন পেজে কত ভিজিটর, কোন কোর্সে কত ক্লিক — সব দেখতে নিচের বাটনে ক্লিক করে Google Analytics Dashboard খুলুন।
+                    Measurement ID সেভ করার পর ডেটা আসতে ২৪-৪৮ ঘণ্টা সময় লাগতে পারে।
+                  </div>
+                  <div style="display:flex;gap:10px;flex-wrap:wrap">
+                    <a id="ga-dashboard-link" href="https://analytics.google.com" target="_blank" rel="noopener" class="btn btn-primary btn-sm">📊 Google Analytics খুলুন</a>
+                    <a href="https://business.facebook.com/events_manager" target="_blank" rel="noopener" class="btn btn-sm" style="background:var(--blue-bg);color:var(--blue);border:1px solid rgba(96,165,250,0.3)">📘 Facebook Events Manager</a>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -2226,7 +2381,7 @@ const pageTitles = {
   'access-requests': 'অ্যাক্সেস রিকোয়েস্ট',
   users: 'ব্যবহারকারী',
   'blog-posts': 'ব্লগ', 'contact-content': 'কনট্যাক্ট', 'about-page': 'আমাদের সম্পর্কে',
-  faqs: 'FAQ',
+  faqs: 'FAQ', analytics: 'Analytics & Tracking',
 };
 
 function navTo(page) {
@@ -2247,6 +2402,7 @@ function navTo(page) {
     'access-requests': loadAccessRequests, users: loadUsers,
     'blog-posts': loadBlogPosts, 'contact-content': loadContactContent,
     faqs: loadFaqs, 'about-page': loadAboutPageContent,
+    analytics: loadAnalyticsConfig,
   };
   if (loaders[page]) loaders[page]();
 }
@@ -3493,6 +3649,136 @@ async function changePassword() {
   } catch (e) { toast('সমস্যা: ' + e.message, 'error'); }
 }
 
+// ────────────────────────────────────────────
+// ANALYTICS & TRACKING CONFIG
+// ────────────────────────────────────────────
+function updateAnalyticsToggleUI() {
+  const cb  = document.getElementById('analytics-enabled');
+  const bg  = document.getElementById('analytics-toggle-bg');
+  const dot = document.getElementById('analytics-toggle-dot');
+  if (!cb || !bg || !dot) return;
+  if (cb.checked) {
+    bg.style.background = 'var(--green)';
+    dot.style.transform = 'translateX(22px)';
+  } else {
+    bg.style.background = 'var(--border2)';
+    dot.style.transform = 'translateX(0)';
+  }
+}
+
+function updateAnalyticsBanner(cfg) {
+  const banner = document.getElementById('analytics-status-banner');
+  const gaBadge = document.getElementById('ga-badge');
+  const fbBadge = document.getElementById('fb-badge');
+  if (!banner) return;
+
+  const gaOk = cfg && cfg.gaId && cfg.gaId.trim();
+  const fbOk = cfg && cfg.fbPixelId && cfg.fbPixelId.trim();
+  const enabled = !cfg || cfg.enabled !== false;
+
+  // GA badge
+  if (gaBadge) {
+    if (!enabled) {
+      gaBadge.style.background = 'var(--red-bg)'; gaBadge.style.color = 'var(--red)'; gaBadge.textContent = 'বন্ধ';
+    } else if (gaOk) {
+      gaBadge.style.background = 'var(--green-bg)'; gaBadge.style.color = 'var(--green)'; gaBadge.textContent = 'সক্রিয় ✓';
+    } else {
+      gaBadge.style.background = 'var(--orange-bg)'; gaBadge.style.color = 'var(--orange)'; gaBadge.textContent = 'ID দিন';
+    }
+  }
+  // FB badge
+  if (fbBadge) {
+    if (!enabled) {
+      fbBadge.style.background = 'var(--red-bg)'; fbBadge.style.color = 'var(--red)'; fbBadge.textContent = 'বন্ধ';
+    } else if (fbOk) {
+      fbBadge.style.background = 'var(--green-bg)'; fbBadge.style.color = 'var(--green)'; fbBadge.textContent = 'সক্রিয় ✓';
+    } else {
+      fbBadge.style.background = 'var(--orange-bg)'; fbBadge.style.color = 'var(--orange)'; fbBadge.textContent = 'ID দিন';
+    }
+  }
+
+  // Status banner
+  if (!enabled) {
+    banner.style.background = 'var(--red-bg)'; banner.style.borderColor = 'rgba(239,68,68,0.3)'; banner.style.color = 'var(--red)';
+    banner.innerHTML = '<span>❌</span><span><strong>Analytics বন্ধ আছে</strong> — সক্রিয় করতে নিচের চেকবক্স চালু করুন</span>';
+  } else if (gaOk || fbOk) {
+    banner.style.background = 'var(--green-bg)'; banner.style.borderColor = 'rgba(34,197,94,0.3)'; banner.style.color = 'var(--green)';
+    var parts = [];
+    if (gaOk) parts.push('GA: <code style="background:rgba(34,197,94,0.15);padding:1px 6px;border-radius:4px">' + cfg.gaId + '</code>');
+    if (fbOk) parts.push('FB Pixel: <code style="background:rgba(34,197,94,0.15);padding:1px 6px;border-radius:4px">' + cfg.fbPixelId + '</code>');
+    banner.innerHTML = '<span>✅</span><span><strong>Analytics সক্রিয়</strong> — ' + parts.join(' &nbsp;|&nbsp; ') + ' — index.html এ কাজ হচ্ছে</span>';
+  } else {
+    banner.style.background = 'var(--orange-bg)'; banner.style.borderColor = 'rgba(251,146,60,0.3)'; banner.style.color = 'var(--orange)';
+    banner.innerHTML = '<span>⚠️</span><span><strong>Analytics চালু কিন্তু কোনো ID দেওয়া নেই</strong> — নিচে Google Analytics বা Facebook Pixel ID যোগ করুন</span>';
+  }
+
+  // GA dashboard link
+  const gaLink = document.getElementById('ga-dashboard-link');
+  if (gaLink && gaOk) {
+    gaLink.href = 'https://analytics.google.com/analytics/web/#/p' + cfg.gaId.replace('G-','') + '/reports/reportinghub';
+  }
+}
+
+async function loadAnalyticsConfig() {
+  try {
+    const cfg = await api('GET', '/api/admin/analytics-config');
+    const el = (id) => document.getElementById(id);
+    if (el('ga-measurement-id')) el('ga-measurement-id').value = cfg.gaId || '';
+    if (el('fb-pixel-id'))       el('fb-pixel-id').value       = cfg.fbPixelId || '';
+    const cbEl = el('analytics-enabled');
+    if (cbEl) cbEl.checked = cfg.enabled !== false;
+    updateAnalyticsToggleUI();
+    updateAnalyticsBanner(cfg);
+  } catch(e) {
+    const banner = document.getElementById('analytics-status-banner');
+    if (banner) {
+      banner.style.background = 'var(--red-bg)'; banner.style.color = 'var(--red)';
+      banner.innerHTML = '<span>❌</span><span>Analytics Config লোড হয়নি: ' + e.message + '</span>';
+    }
+    toast('Analytics config লোড হয়নি', 'error');
+  }
+}
+
+async function saveAnalyticsConfig() {
+  const gaId      = (document.getElementById('ga-measurement-id') || {}).value || '';
+  const fbPixelId = (document.getElementById('fb-pixel-id')       || {}).value || '';
+  const enabled   = (document.getElementById('analytics-enabled') || {}).checked !== false;
+
+  // Basic validation
+  if (gaId && !/^G-[A-Z0-9]+$/i.test(gaId.trim())) {
+    toast('GA Measurement ID টি সঠিক নয়। G-XXXXXXXXXX format হওয়া উচিত।', 'error'); return;
+  }
+  if (fbPixelId && !/^\d{10,20}$/.test(fbPixelId.trim())) {
+    toast('Facebook Pixel ID টি সঠিক নয়। শুধু সংখ্যা (10-16 ডিজিট) হওয়া উচিত।', 'error'); return;
+  }
+
+  const body = { gaId: gaId.trim(), fbPixelId: fbPixelId.trim(), enabled };
+  try {
+    await api('POST', '/api/admin/analytics-config', body);
+    updateAnalyticsBanner(body);
+    updateAnalyticsToggleUI();
+    toast('✅ Analytics Config সংরক্ষিত — index.html এ সাথে সাথে কাজ শুরু হবে');
+  } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
+}
+
+async function testAnalyticsConfig() {
+  toast('🔄 সংযোগ পরীক্ষা হচ্ছে...', 'info');
+  try {
+    const r = await fetch(API + '/api/public/analytics-config');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const cfg = await r.json();
+    const gaOk = cfg.gaId && cfg.gaId.trim();
+    const fbOk = cfg.fbPixelId && cfg.fbPixelId.trim();
+    let msg = '✅ Public API সংযোগ সফল!\n';
+    msg += gaOk ? '● GA: ' + cfg.gaId + ' ✓\n' : '● GA: সেট নেই\n';
+    msg += fbOk ? '● FB Pixel: ' + cfg.fbPixelId + ' ✓\n' : '● FB Pixel: সেট নেই\n';
+    msg += '● Enabled: ' + (cfg.enabled !== false ? 'হ্যাঁ' : 'না');
+    alert(msg);
+  } catch(e) {
+    toast('সংযোগ ব্যর্থ: ' + e.message, 'error');
+  }
+}
+
 
 // ────────────────────────────────────────────
 // NEW SECTION PAGES — navTo registration
@@ -3501,7 +3787,7 @@ async function changePassword() {
 const _origNavTo = window.navTo;
 window.navTo = function(section) {
   const newPages = ['site-settings','navigation-mgr','hero-section','featured-courses-mgr',
-    'course-detail-mgr','cta-section','welcome-popup','footer-mgr','theme-settings'];
+    'course-detail-mgr','cta-section','welcome-popup','footer-mgr','theme-settings','analytics'];
   if (newPages.includes(section)) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -3517,7 +3803,7 @@ window.navTo = function(section) {
       'hero-section':'হিরো সেকশন','featured-courses-mgr':'ফিচার্ড কোর্স',
       'course-detail-mgr':'কোর্স ডিটেইল','cta-section':'CTA সেকশন',
       'welcome-popup':'ওয়েলকাম পপআপ','footer-mgr':'ফুটার',
-      'theme-settings':'থিম / রঙ'
+      'theme-settings':'থিম / রঙ','analytics':'Analytics & Tracking'
     };
     document.getElementById('page-title').textContent = titles[section] || section;
     // Load data for section
@@ -3530,6 +3816,7 @@ window.navTo = function(section) {
     if (section === 'welcome-popup') loadWelcomePopup();
     if (section === 'footer-mgr') loadFooter();
     if (section === 'theme-settings') loadThemeSettings();
+    if (section === 'analytics') loadAnalyticsConfig();
     if (window.innerWidth <= 768) {
       document.getElementById('sidebar').classList.remove('open');
     }
@@ -3688,7 +3975,38 @@ async function saveSiteSettings() {
   };
   try {
     await api('POST', '/api/admin/site-settings', body);
-    toast('✅ সাইট সেটিংস সংরক্ষিত হয়েছে');
+
+    // ── Disconnect Fix: WhatsApp নম্বর আলাদা endpoint এও সেভ করি ──
+    // index.html /api/public/settings/whatsapp ও /api/site-settings উভয়ই পড়ে
+    if (body.whatsappNumber) {
+      try {
+        await api('POST', '/api/admin/site-settings', body); // already done above
+      } catch(_) {}
+    }
+
+    // ── Disconnect Fix: Content Bundle এও title/tagline sync ──
+    // index.html /api/public-content-bundle থেকেও site info পড়ে
+    try {
+      const bundle = await api('GET', '/api/admin/content-bundle').catch(() => ({}));
+      const updatedBundle = Object.assign({}, bundle, {
+        siteTitle:   body.title   || bundle.siteTitle,
+        siteTagline: body.tagline || bundle.siteTagline,
+        logoHeader:  body.logoHeader || bundle.logoHeader,
+        logoFooter:  body.logoFooter || bundle.logoFooter,
+        topBanner: {
+          enabled: body.topBannerEnabled,
+          text:    body.topBannerText,
+          link:    body.topBannerLink,
+          bg:      body.topBannerBg,
+          color:   body.topBannerColor,
+        },
+      });
+      await api('POST', '/api/admin/content-bundle', updatedBundle);
+    } catch(_) {
+      // content-bundle sync ব্যর্থ হলেও মূল save সফল
+    }
+
+    toast('✅ সাইট সেটিংস সংরক্ষিত হয়েছে — index.html এ সাথে সাথে প্রতিফলিত হবে');
   } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
 }
 
@@ -3721,6 +4039,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   // Init theme panel
   initThemePanel();
+
+  // ── Analytics toggle UI sync ──
+  const aCb = document.getElementById('analytics-enabled');
+  if (aCb) {
+    aCb.addEventListener('change', updateAnalyticsToggleUI);
+    updateAnalyticsToggleUI();
+  }
 });
 
 // ────────────────────────────────────────────

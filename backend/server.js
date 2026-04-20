@@ -1787,6 +1787,54 @@ app.get('/api/admin/content-bundle',authMiddleware,async(req,res)=>{try{res.json
 app.post('/api/admin/content-bundle',authMiddleware,async(req,res)=>{try{await Settings.findOneAndUpdate({key:'contentBundle'},{key:'contentBundle',value:req.body||{},updatedAt:new Date()},{upsert:true});res.json({message:'Content bundle saved'})}catch(e){res.status(500).json({error:e.message})}});
 
 // ============================================================
+// ANALYTICS & TRACKING CONFIG
+// ─────────────────────────────────────────────────────────────
+// index.html এ Google Analytics (gtag) ও Facebook Pixel কোড
+// dynamic ভাবে inject করার জন্য এই endpoint ব্যবহার হয়।
+// Admin panel থেকে ID বসালেই index.html এ কাজ শুরু হয়।
+// ============================================================
+// Public endpoint — index.html পড়ে এখান থেকে
+app.get('/api/public/analytics-config', async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'analyticsConfig' });
+    const data = (s && s.value) ? s.value : { gaId: '', fbPixelId: '', enabled: false };
+    // শুধু safe fields return করি
+    res.json({
+      gaId:       data.gaId       || '',
+      fbPixelId:  data.fbPixelId  || '',
+      enabled:    data.enabled    !== false,
+    });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// Admin GET
+app.get('/api/admin/analytics-config', authMiddleware, async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'analyticsConfig' });
+    res.json(s ? s.value : { gaId: '', fbPixelId: '', enabled: false });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// Admin POST (save)
+app.post('/api/admin/analytics-config', authMiddleware, async (req, res) => {
+  try {
+    const { gaId, fbPixelId, enabled } = req.body;
+    const value = {
+      gaId:      (gaId      || '').trim(),
+      fbPixelId: (fbPixelId || '').trim(),
+      enabled:   enabled !== false,
+      updatedAt: new Date().toISOString(),
+    };
+    await Settings.findOneAndUpdate(
+      { key: 'analyticsConfig' },
+      { key: 'analyticsConfig', value, updatedAt: new Date() },
+      { upsert: true }
+    );
+    res.json({ message: '✅ Analytics config সংরক্ষিত হয়েছে' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ============================================================
 // AUTO-CREATE ADMIN
 // ============================================================
 async function ensureAdminExists() {

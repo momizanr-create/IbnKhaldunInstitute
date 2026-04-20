@@ -38,6 +38,103 @@
   <link rel="icon" type="image/png" href="images/logo.png" />
   <link rel="apple-touch-icon" href="images/logo.png" />
   
+  <!-- ═══════════════════════════════════════════════════════════
+       GOOGLE ANALYTICS & FACEBOOK PIXEL — DYNAMIC INJECTION
+       Admin panel থেকে GA Measurement ID ও FB Pixel ID দিলে
+       স্বয়ংক্রিয়ভাবে এখানে কাজ শুরু হয়।
+       index.html এ কোনো হার্ডকোড ID নেই — সব API থেকে লোড।
+  ═══════════════════════════════════════════════════════════ -->
+  <script>
+  (function() {
+    var _API = 'https://ibnkhalduninstitute.onrender.com';
+
+    /* ── Google Analytics gtag injection ── */
+    function injectGA(mid) {
+      if (!mid || window._gaInjected) return;
+      window._gaInjected = true;
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + mid;
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ window.dataLayer.push(arguments); }
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', mid, { send_page_view: true });
+      window._gaMeasurementId = mid;
+    }
+
+    /* ── Facebook Pixel injection ── */
+    function injectFBPixel(pid) {
+      if (!pid || window._fbPixelInjected) return;
+      window._fbPixelInjected = true;
+      !function(f,b,e,v,n,t,s){
+        if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)
+      }(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+      window.fbq('init', pid);
+      window.fbq('track', 'PageView');
+      window._fbPixelId = pid;
+    }
+
+    /* ── Analytics Config লোড ── */
+    fetch(_API + '/api/public/analytics-config')
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(cfg){
+        if (!cfg || cfg.enabled === false) return;
+        window._analyticsConfig = cfg;
+        if (cfg.gaId)      injectGA(cfg.gaId);
+        if (cfg.fbPixelId) injectFBPixel(cfg.fbPixelId);
+      })
+      .catch(function(){});
+
+    /* ── Helper: GA event send ── */
+    window.ikTrackEvent = function(action, category, label, value) {
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', action, {
+          event_category: category || 'general',
+          event_label:    label    || '',
+          value:          value    || 0,
+        });
+      }
+      if (typeof window.fbq === 'function') {
+        window.fbq('trackCustom', action, { category: category, label: label });
+      }
+    };
+
+    /* ── Helper: GA page_view (SPA page navigation) ── */
+    window.ikTrackPageView = function(pageName) {
+      if (typeof window.gtag === 'function' && window._gaMeasurementId) {
+        window.gtag('event', 'page_view', {
+          page_title:    pageName || document.title,
+          page_location: window.location.href + '#' + (pageName || ''),
+        });
+      }
+      if (typeof window.fbq === 'function') {
+        window.fbq('track', 'PageView');
+      }
+    };
+
+    /* ── Time on page tracking ── */
+    window._pageEnterTime = Date.now();
+    window.addEventListener('beforeunload', function() {
+      var seconds = Math.round((Date.now() - window._pageEnterTime) / 1000);
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'time_on_page', {
+          event_category: 'engagement',
+          event_label:    'total_seconds',
+          value:          seconds,
+          non_interaction: true,
+        });
+      }
+    });
+  })();
+  </script>
+
   <!-- Schema.org markup for Google -->
   <script type="application/ld+json">
   {
@@ -5317,6 +5414,24 @@
           }
           applyTopBanner(siteSettings);
         }
+        // ── Disconnect Fix: content-bundle থেকেও site info পড়ি ──
+        // Admin "সাইট সেটিংস" পেজ save করলে content-bundle এও sync হয়
+        // এটা নিশ্চিত করে যে logo/banner/title সব সময় কাজ করে
+        try {
+          var cb = await fetch(API_BASE + '/api/public-content-bundle').then(function(r){ return r.ok ? r.json() : {}; }).catch(function(){ return {}; });
+          if (cb.siteTitle && !siteSettings) document.title = cb.siteTitle;
+          if (cb.logoHeader && (!siteSettings || !siteSettings.logoHeader)) applyLogo(cb.logoHeader);
+          if (cb.logoFooter && (!siteSettings || !siteSettings.logoFooter)) applyFooterLogo(cb.logoFooter);
+          if (cb.topBanner && (!siteSettings || !siteSettings.topBannerText)) {
+            applyTopBanner({
+              topBannerEnabled: cb.topBanner.enabled,
+              topBannerText: cb.topBanner.text,
+              topBannerLink: cb.topBanner.link,
+              topBannerBg: cb.topBanner.bg,
+              topBannerColor: cb.topBanner.color,
+            });
+          }
+        } catch(_) {}
 
         // ── NAVIGATION ──
         if (navData && navData.links && navData.links.length) {
@@ -6343,6 +6458,10 @@
           window.currentPage = page;
           originalNavigate(page);
           setActivePublicNav(page);
+          // ── Analytics: SPA Page View Tracking ──
+          if (typeof window.ikTrackPageView === 'function') {
+            window.ikTrackPageView(page);
+          }
           setTimeout(function() {
             var savedScroll = sessionStorage.getItem('ik_scroll_' + page);
             if (savedScroll) window.scrollTo(0, parseInt(savedScroll, 10) || 0);
@@ -6367,6 +6486,23 @@
       if (!courseCard) return;
       var courseId = courseCard.getAttribute('data-course-id');
       if (!courseId) return;
+
+      // ── Analytics: Course Click Tracking ──
+      var courseTitle = courseCard.querySelector('.course-title, h3, h4');
+      var label = courseTitle ? courseTitle.textContent.trim() : courseId;
+      if (typeof window.ikTrackEvent === 'function') {
+        window.ikTrackEvent('course_click', 'course', label, 1);
+      }
+      // Facebook Pixel — ViewContent
+      if (typeof window.fbq === 'function') {
+        window.fbq('track', 'ViewContent', {
+          content_name: label,
+          content_category: 'course',
+          content_ids: [courseId],
+          content_type: 'product',
+        });
+      }
+
       var fn = window.openCourseDetail || openCourseDetail;
       if (typeof fn === 'function') fn(courseId);
     });
