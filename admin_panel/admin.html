@@ -1006,7 +1006,7 @@
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
               <div>
                 <h2>📊 Analytics & Tracking</h2>
-                <p>লাইভ ভিজিটর ট্র্যাকার — রিয়েলটাইম ডেটা সরাসরি দেখুন।</p>
+                <p>রিয়েলটাইম ভিজিটর ট্র্যাকার — সার্ভার থেকে সরাসরি লাইভ ডেটা।</p>
               </div>
               <div style="display:flex;gap:8px;align-items:center">
                 <span id="an-last-refresh" style="font-size:11px;color:var(--text2)">লোড হচ্ছে...</span>
@@ -1025,56 +1025,77 @@
               <div class="stat-info"><h3 id="an-live-users">—</h3><p>এখন সাইটে আছেন</p></div>
             </div>
             <div class="stat-card card-yellow">
-              <div class="stat-card-top">
-                <div class="stat-icon yellow">👤</div>
-              </div>
+              <div class="stat-card-top"><div class="stat-icon yellow">📅</div></div>
               <div class="stat-info"><h3 id="an-total-users">—</h3><p>আজকের মোট ভিজিট</p></div>
             </div>
             <div class="stat-card card-blue">
-              <div class="stat-card-top">
-                <div class="stat-icon blue">📄</div>
-              </div>
-              <div class="stat-info"><h3 id="an-pageviews">—</h3><p>মোট পেজ ভিউ (৭ দিন)</p></div>
+              <div class="stat-card-top"><div class="stat-icon blue">📊</div></div>
+              <div class="stat-info"><h3 id="an-pageviews">—</h3><p>মোট ভিজিট (৭ দিন)</p></div>
             </div>
             <div class="stat-card card-orange">
-              <div class="stat-card-top">
-                <div class="stat-icon orange">🖥️</div>
-              </div>
+              <div class="stat-card-top"><div class="stat-icon orange">🖥️</div></div>
               <div class="stat-info"><h3 id="an-avg-time">—</h3><p>ডেস্কটপ ভিজিটর</p></div>
             </div>
             <div class="stat-card card-teal">
-              <div class="stat-card-top">
-                <div class="stat-icon teal">📱</div>
-              </div>
+              <div class="stat-card-top"><div class="stat-icon teal">📱</div></div>
               <div class="stat-info"><h3 id="an-new-users">—</h3><p>মোবাইল ভিজিটর</p></div>
             </div>
           </div>
 
-          <!-- ── দুই কলামের গ্রিড ── -->
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:4px">
+          <!-- ── সারি ১: তারিখ চার্ট (পূর্ণ প্রস্থ) ── -->
+          <div class="card" style="margin-bottom:20px">
+            <div class="card-header">
+              <div class="card-header-left">
+                <h3>📅 তারিখ অনুযায়ী ভিজিট</h3>
+                <span class="card-subtitle" id="an-chart-subtitle">লোড হচ্ছে...</span>
+              </div>
+            </div>
+            <div class="card-body" style="padding:20px 24px 24px">
+              <!-- Y-axis + bars -->
+              <div style="display:flex;gap:10px">
+                <!-- Y labels -->
+                <div id="an-chart-ylabels" style="display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end;width:32px;flex-shrink:0;padding-bottom:22px">
+                  <span style="font-size:9px;color:var(--text2)">—</span>
+                  <span style="font-size:9px;color:var(--text2)">—</span>
+                  <span style="font-size:9px;color:var(--text2)">—</span>
+                </div>
+                <!-- chart area -->
+                <div style="flex:1;min-width:0">
+                  <div id="an-chart-wrap" style="height:200px;display:flex;align-items:flex-end;gap:4px;overflow:hidden;position:relative">
+                    <div style="color:var(--text2);font-size:13px;margin:auto">ডেটা লোড হচ্ছে...</div>
+                  </div>
+                  <!-- horizontal grid lines (overlay) -->
+                  <div id="an-chart-labels" style="display:flex;gap:4px;margin-top:6px;overflow:hidden"></div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-            <!-- তারিখ অনুযায়ী ভিজিট চার্ট -->
+          <!-- ── সারি ২: ঘণ্টা ভিত্তিক + পেজ ভিজিট ── -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+
+            <!-- ঘণ্টা অনুযায়ী ভিজিট (আজ) -->
             <div class="card">
               <div class="card-header">
                 <div class="card-header-left">
-                  <h3>📅 তারিখ অনুযায়ী ভিজিট</h3>
-                  <span class="card-subtitle" id="an-chart-subtitle">লোড হচ্ছে...</span>
+                  <h3>⏰ ঘণ্টা অনুযায়ী ভিজিট</h3>
+                  <span class="card-subtitle">আজকের প্রতি ঘণ্টার ডেটা</span>
                 </div>
               </div>
               <div class="card-body" style="padding:16px 20px 20px">
-                <div id="an-chart-wrap" style="height:180px;display:flex;align-items:flex-end;gap:3px;overflow:hidden">
-                  <div style="color:var(--text2);font-size:13px;margin:auto">ডেটা লোড হচ্ছে...</div>
+                <div id="an-hourly-wrap" style="height:130px;display:flex;align-items:flex-end;gap:3px;overflow:hidden">
+                  <div style="color:var(--text2);font-size:13px;margin:auto">লোড হচ্ছে...</div>
                 </div>
-                <div id="an-chart-labels" style="display:flex;gap:3px;margin-top:6px;overflow:hidden"></div>
+                <div id="an-hourly-labels" style="display:flex;gap:3px;margin-top:6px;overflow:hidden"></div>
               </div>
             </div>
 
-            <!-- কোন পেজে কত ভিজিট -->
+            <!-- পেজ অনুযায়ী ভিজিট -->
             <div class="card">
               <div class="card-header">
                 <div class="card-header-left">
                   <h3>🗂️ পেজ অনুযায়ী ভিজিট</h3>
-                  <span class="card-subtitle">কোন পেজে কতজন গেছেন</span>
+                  <span class="card-subtitle">কোন পেজে কতজন গেছেন (মোট)</span>
                 </div>
               </div>
               <div class="card-body" style="padding:16px 20px">
@@ -1083,8 +1104,12 @@
                 </div>
               </div>
             </div>
+          </div>
 
-            <!-- এখন সাইটে আছেন — লাইভ ভিজিটর তালিকা -->
+          <!-- ── সারি ৩: এখন সাইটে + কোর্স ভিজিট ── -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+
+            <!-- এখন সাইটে আছেন — লাইভ ভিজিটর -->
             <div class="card">
               <div class="card-header">
                 <div class="card-header-left">
@@ -1099,7 +1124,26 @@
               </div>
             </div>
 
-            <!-- ডিভাইস breakdown -->
+            <!-- কোর্স পেজ ভিজিট (pageBreakdown থেকে) -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-header-left">
+                  <h3>📚 কোর্স পেজ ভিজিট</h3>
+                  <span class="card-subtitle" id="an-course-subtitle">এখন কোন পেজে কতজন</span>
+                </div>
+              </div>
+              <div class="card-body" style="padding:16px 20px">
+                <div id="an-course-page-list">
+                  <div style="color:var(--text2);font-size:13px;padding:20px 0;text-align:center">লোড হচ্ছে...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── সারি ৪: ডিভাইস + সারাংশ ── -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+
+            <!-- ডিভাইস ব্রেকডাউন -->
             <div class="card">
               <div class="card-header">
                 <div class="card-header-left">
@@ -1114,7 +1158,22 @@
               </div>
             </div>
 
+            <!-- সাইট সারাংশ -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-header-left">
+                  <h3>📈 সাইট সারাংশ</h3>
+                  <span class="card-subtitle">সার্ভার চালু থাকা থেকে মোট ডেটা</span>
+                </div>
+              </div>
+              <div class="card-body" style="padding:16px 20px">
+                <div id="an-summary-list">
+                  <div style="color:var(--text2);font-size:13px;padding:20px 0;text-align:center">লোড হচ্ছে...</div>
+                </div>
+              </div>
+            </div>
           </div>
+
         </div>
 
 
@@ -3616,29 +3675,39 @@ async function changePassword() {
 
 // ════════════════════════════════════════════════════════════
 // ANALYTICS LIVE DASHBOARD
-// server.js এর /api/admin/realtime-visitors থেকে ডেটা আসে
+// server.js /api/admin/realtime-visitors থেকে সরাসরি ডেটা
 // ════════════════════════════════════════════════════════════
 
 // ── হেল্পার: সংখ্যা ফরম্যাট ──
 function anFmt(n) {
-  if (n === null || n === undefined) return '—';
+  if (n === null || n === undefined || isNaN(n)) return '০';
   return Number(n).toLocaleString('bn-BD');
 }
 
 // ── হেল্পার: শতাংশ বার ──
 function anBar(val, max, color) {
   const pct = max ? Math.round((val / max) * 100) : 0;
-  return `<div style="height:5px;background:var(--border);border-radius:3px;margin-top:5px;overflow:hidden">
-    <div style="height:100%;width:${pct}%;background:${color||'var(--primary)'};border-radius:3px;transition:width 0.6s ease"></div>
+  return `<div style="height:5px;background:var(--border);border-radius:3px;margin-top:6px;overflow:hidden">
+    <div style="height:100%;width:${pct}%;background:${color||'var(--primary)'};border-radius:3px;transition:width 0.7s ease"></div>
   </div>`;
 }
 
-// ── হেল্পার: সেকেন্ড → মানবপাঠ্য ──
-function anTime(sec) {
-  if (!sec) return '০ সেকেন্ড';
-  const s = Math.round(sec);
-  if (s < 60) return s + ' সেকেন্ড';
-  return Math.floor(s/60) + 'মি ' + (s%60) + 'সে';
+// ── হেল্পার: date string → MM/DD ──
+function anDateLabel(dateStr) {
+  if (!dateStr) return '';
+  const raw = String(dateStr).replace(/-/g, '');
+  if (raw.length >= 8) return raw.slice(4,6) + '/' + raw.slice(6,8);
+  return dateStr.slice(-5).replace('-','/');
+}
+
+// ── হেল্পার: hour string → "HH টা" ──
+function anHourLabel(hourStr) {
+  if (!hourStr) return '';
+  // "2025-04-20T14:00" বা "14:00" format
+  const m = String(hourStr).match(/(\d{1,2}):00/);
+  if (!m) return hourStr;
+  const h = parseInt(m[1]);
+  return h + 'টা';
 }
 
 // ── Realtime data fetch ──
@@ -3655,105 +3724,146 @@ async function loadAllAnalytics() {
 
   const data = await fetchRealtimeData();
   if (!data) {
-    const el = document.getElementById('an-live-users');
-    if (el) el.textContent = '—';
+    ['an-live-users','an-total-users','an-pageviews','an-avg-time','an-new-users'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = '—';
+    });
     if (sub) sub.textContent = 'সার্ভার থেকে ডেটা আসেনি';
     return;
   }
 
-  renderRealtimeAll(data);
+  // সব section render
+  anRenderStatCards(data);
+  anRenderDailyChart(data);
+  anRenderHourlyChart(data);
+  anRenderPagesList(data);
+  anRenderLiveVisitors(data);
+  anRenderCoursePageList(data);
+  anRenderDevices(data);
+  anRenderSummary(data);
 
-  const el = document.getElementById('an-last-refresh');
-  if (el) el.textContent = 'আপডেট: ' + new Date().toLocaleTimeString('bn-BD');
-  if (sub) sub.textContent = 'লাইভ ডেটা — সার্ভার ট্র্যাকার';
+  const refreshEl = document.getElementById('an-last-refresh');
+  if (refreshEl) refreshEl.textContent = 'আপডেট: ' + new Date().toLocaleTimeString('bn-BD');
+  if (sub) sub.textContent = 'শেষ ৭ দিনের লাইভ ডেটা';
 }
 
-// ── সব section render ──
-function renderRealtimeAll(data) {
-  renderLiveCount(data);
-  renderSummaryCards(data);
-  renderDailyChart(data);
-  renderPagesList(data);
-  renderLiveVisitorsList(data);
-  renderDevices(data);
-}
-
-// ── ১. লাইভ ভিজিটর সংখ্যা ও সব stat cards ──
-function renderLiveCount(data) {
+// ── ১. STAT CARDS ──
+function anRenderStatCards(data) {
   const count = data.activeCount || 0;
 
-  // এখন সাইটে আছেন
-  const el = document.getElementById('an-live-users');
-  if (el) el.textContent = count;
+  const liveEl = document.getElementById('an-live-users');
+  if (liveEl) liveEl.textContent = anFmt(count);
 
   const badge = document.getElementById('an-live-badge');
-  if (badge) badge.textContent = count > 0 ? '● লাইভ' : '● অপেক্ষায়';
-
-  // আজকের মোট ভিজিট
-  const totalEl = document.getElementById('an-total-users');
-  if (totalEl) {
-    const today = (data.dailyVisits || []).slice(-1)[0];
-    totalEl.textContent = anFmt(today ? today.count : 0);
+  if (badge) {
+    badge.textContent = count > 0 ? '● লাইভ' : '● অপেক্ষায়';
+    badge.className = 'stat-trend ' + (count > 0 ? 'up' : '');
   }
 
-  // মোট পেজ ভিউ (৭ দিন)
-  const pvEl = document.getElementById('an-pageviews');
-  if (pvEl) pvEl.textContent = anFmt(
-    (data.dailyVisits || []).reduce((s, d) => s + (d.count || 0), 0)
-  );
+  // আজকের মোট ভিজিট
+  const todayKey = new Date().toISOString().slice(0,10);
+  const todayRow = (data.dailyVisits || []).find(r => r.date === todayKey);
+  const todayCount = todayRow ? todayRow.count : 0;
+  const totalEl = document.getElementById('an-total-users');
+  if (totalEl) totalEl.textContent = anFmt(todayCount);
 
-  // ডেস্কটপ ভিজিটর
+  // ৭ দিনের মোট
+  const weekTotal = (data.dailyVisits || []).reduce((s, d) => s + (d.count || 0), 0);
+  const pvEl = document.getElementById('an-pageviews');
+  if (pvEl) pvEl.textContent = anFmt(weekTotal);
+
+  // ডেস্কটপ
   const atEl = document.getElementById('an-avg-time');
   if (atEl) atEl.textContent = anFmt((data.deviceBreakdown || {}).desktop || 0);
 
-  // মোবাইল ভিজিটর
+  // মোবাইল
   const nuEl = document.getElementById('an-new-users');
   if (nuEl) nuEl.textContent = anFmt((data.deviceBreakdown || {}).mobile || 0);
 }
 
-// ── ২. Summary cards ──
-function renderSummaryCards(data) {
-  // উপরে renderLiveCount এ করা হয়েছে
-}
-
-// ── ৩. দৈনিক চার্ট ──
-function renderDailyChart(data) {
+// ── ২. DAILY CHART (৭ দিন) ──
+function anRenderDailyChart(data) {
   const wrap   = document.getElementById('an-chart-wrap');
   const labels = document.getElementById('an-chart-labels');
+  const yLabels = document.getElementById('an-chart-ylabels');
   if (!wrap) return;
 
   const rows = data.dailyVisits || [];
-  if (!rows.length || rows.every(r => !r.count)) {
-    wrap.innerHTML = '<div style="color:var(--text2);font-size:13px;margin:auto;text-align:center">আজ এখনো ভিজিটর আসেনি</div>';
+  if (!rows.length || rows.every(r => !(r.count))) {
+    wrap.innerHTML = '<div style="color:var(--text2);font-size:13px;margin:auto;text-align:center">এখনো ভিজিটর ডেটা নেই</div>';
     if (labels) labels.innerHTML = '';
     return;
   }
 
   const maxVal = Math.max(...rows.map(r => r.count || 0), 1);
+  const chartH = 200;
+
+  // Y labels
+  if (yLabels) {
+    yLabels.innerHTML = [maxVal, Math.round(maxVal/2), 0].map(v =>
+      `<span style="font-size:9px;color:var(--text2)">${anFmt(v)}</span>`
+    ).join('');
+  }
+
   wrap.style.display = 'flex';
   wrap.innerHTML = rows.map(r => {
-    const h   = Math.max(4, Math.round(((r.count||0) / maxVal) * 160));
-    const tip = r.date + ': ' + (r.count||0) + ' ভিজিট';
-    return `<div title="${tip}" style="flex:1;min-width:8px;height:${h}px;background:var(--primary);border-radius:3px 3px 0 0;cursor:pointer;opacity:0.85;transition:opacity .2s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.85"></div>`;
+    const cnt = r.count || 0;
+    const h = Math.max(4, Math.round((cnt / maxVal) * (chartH - 10)));
+    const dateLabel = anDateLabel(r.date);
+    const isToday = r.date === new Date().toISOString().slice(0,10);
+    const barColor = isToday ? 'var(--green)' : 'var(--primary)';
+    return `<div style="flex:1;min-width:10px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;cursor:pointer" title="${r.date}: ${cnt} ভিজিট">
+      <span style="font-size:9px;color:var(--text2);${cnt > 0 ? '' : 'opacity:0'}">${anFmt(cnt)}</span>
+      <div style="width:100%;height:${h}px;background:${barColor};border-radius:4px 4px 0 0;opacity:0.85;transition:opacity .2s" onmouseover="this.style.opacity=1;this.style.transform='scaleY(1.03)'" onmouseout="this.style.opacity=0.85;this.style.transform='scaleY(1)'"></div>
+    </div>`;
   }).join('');
 
   if (labels) {
     labels.style.display = 'flex';
     labels.innerHTML = rows.map((r, i) => {
-      const show = i === 0 || i === rows.length - 1 || i === Math.floor(rows.length / 2);
-      let d = '';
-      if (r.date) {
-        // YYYY-MM-DD বা YYYYMMDD উভয় format handle
-        const raw = r.date.replace(/-/g, '');
-        d = raw.slice(4, 6) + '/' + raw.slice(6, 8);
-      }
-      return `<div style="flex:1;min-width:8px;font-size:9px;color:var(--text2);text-align:center;overflow:hidden">${show ? d : ''}</div>`;
+      const show = i === 0 || i === rows.length - 1 || i === 3;
+      const isToday = r.date === new Date().toISOString().slice(0,10);
+      return `<div style="flex:1;font-size:9px;color:${isToday ? 'var(--green)' : 'var(--text2)'};font-weight:${isToday?'700':'400'};text-align:center;overflow:hidden">${show || isToday ? anDateLabel(r.date) : ''}</div>`;
     }).join('');
   }
 }
 
-// ── ৪. পেজ ভিজিট ──
-function renderPagesList(data) {
+// ── ৩. HOURLY CHART (আজ, শেষ ২৪ ঘণ্টা) ──
+function anRenderHourlyChart(data) {
+  const wrap   = document.getElementById('an-hourly-wrap');
+  const labels = document.getElementById('an-hourly-labels');
+  if (!wrap) return;
+
+  const rows = data.hourlyHits || [];
+  if (!rows.length || rows.every(r => !r.count)) {
+    wrap.innerHTML = '<div style="color:var(--text2);font-size:12px;margin:auto;text-align:center">আজ এখনো ঘণ্টার ডেটা নেই</div>';
+    if (labels) labels.innerHTML = '';
+    return;
+  }
+
+  const maxVal = Math.max(...rows.map(r => r.count || 0), 1);
+  const chartH = 130;
+
+  wrap.style.display = 'flex';
+  wrap.innerHTML = rows.map(r => {
+    const cnt = r.count || 0;
+    const h = Math.max(3, Math.round((cnt / maxVal) * (chartH - 8)));
+    return `<div style="flex:1;min-width:6px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;cursor:pointer" title="${anHourLabel(r.hour)}: ${cnt} ভিজিট">
+      <div style="width:100%;height:${h}px;background:var(--blue);border-radius:3px 3px 0 0;opacity:0.8;transition:opacity .2s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8"></div>
+    </div>`;
+  }).join('');
+
+  if (labels) {
+    labels.style.display = 'flex';
+    labels.innerHTML = rows.map((r, i) => {
+      const show = i === 0 || i === rows.length - 1 || i % 6 === 0;
+      return `<div style="flex:1;font-size:8px;color:var(--text2);text-align:center;overflow:hidden">${show ? anHourLabel(r.hour) : ''}</div>`;
+    }).join('');
+  }
+}
+
+// ── ৪. PAGE HITS LIST ──
+function anRenderPagesList(data) {
   const el = document.getElementById('an-pages-list');
   if (!el) return;
 
@@ -3763,82 +3873,171 @@ function renderPagesList(data) {
     return;
   }
   const maxV = rows[0]?.count || 1;
+  const icons = { 'হোম':'🏠', 'কোর্সসমূহ':'📚', 'আমাদের সম্পর্কে':'ℹ️', 'যোগাযোগ':'📞', 'home':'🏠', 'courses':'📚' };
   el.innerHTML = rows.map(r => {
-    const icons = { 'হোম':'🏠', 'কোর্সসমূহ':'📚', 'আমাদের সম্পর্কে':'ℹ️', 'যোগাযোগ':'📞' };
     const icon = icons[r.page] || '📄';
-    return `<div style="margin-bottom:12px">
-      <div style="display:flex;justify-content:space-between;font-size:13px">
+    const pct  = maxV ? Math.round((r.count / maxV) * 100) : 0;
+    return `<div style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px">
         <span style="color:var(--text)">${icon} ${r.page}</span>
-        <strong style="color:var(--primary)">${anFmt(r.count)}</strong>
+        <span style="display:flex;align-items:center;gap:6px">
+          <strong style="color:var(--primary)">${anFmt(r.count)}</strong>
+          <span style="font-size:11px;color:var(--text2)">${pct}%</span>
+        </span>
       </div>
       ${anBar(r.count, maxV, 'var(--primary)')}
     </div>`;
   }).join('');
 }
 
-// ── ৫. লাইভ ভিজিটর তালিকা (কোর্স ক্লিক রিপোর্টের জায়গায়) ──
-function renderLiveVisitorsList(data) {
+// ── ৫. LIVE VISITORS LIST ──
+function anRenderLiveVisitors(data) {
   const el = document.getElementById('an-course-clicks');
   if (!el) return;
 
-  // subtitle আপডেট
   const sub = document.getElementById('live-visitor-subtitle');
   const visitors = data.visitors || [];
-  if (sub) sub.textContent = visitors.length ? visitors.length + ' জন এখন অনলাইন' : 'কেউ এখন নেই';
+  if (sub) sub.textContent = visitors.length ? visitors.length + ' জন এখন অনলাইন' : 'এখন কেউ নেই';
 
   if (!visitors.length) {
-    el.innerHTML = '<div style="color:var(--text2);font-size:13px;text-align:center;padding:20px 0;line-height:1.8">এখন কেউ সাইটে নেই<br><small style="opacity:.6">ভিজিটর এলে এখানে দেখাবে</small></div>';
+    el.innerHTML = `<div style="text-align:center;padding:24px 0;color:var(--text2);font-size:13px;line-height:2">
+      <div style="font-size:28px;margin-bottom:8px">🌙</div>
+      এখন কেউ সাইটে নেই<br>
+      <small style="opacity:.6">ভিজিটর এলে এখানে লাইভ দেখাবে</small>
+    </div>`;
     return;
   }
 
   const devIcon = { mobile:'📱', desktop:'🖥️', tablet:'📟' };
-  el.innerHTML = visitors.slice(0, 8).map(v => {
+  el.innerHTML = visitors.slice(0, 10).map(v => {
     const icon = devIcon[v.device] || '💻';
-    const dur  = v.duration < 60 ? v.duration + 'সে' : Math.floor(v.duration/60) + 'মি';
-    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:8px;background:var(--bg3);border-radius:8px">
-      <span style="font-size:18px">${icon}</span>
+    const dur  = v.duration < 60 ? v.duration + 'সে' : Math.floor(v.duration/60) + 'মি ' + (v.duration % 60) + 'সে';
+    const ago  = v.secondsAgo < 10 ? 'এইমাত্র' : v.secondsAgo + 'সে আগে';
+    return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:10px 12px;background:var(--bg3);border-radius:10px;border:1px solid var(--border)">
+      <span style="font-size:20px">${icon}</span>
       <div style="flex:1;min-width:0">
-        <div style="font-size:13px;font-weight:600;color:var(--text)">${v.page}</div>
-        <div style="font-size:11px;color:var(--text2)">${v.path}</div>
+        <div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${v.page}</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px">${v.path}</div>
       </div>
       <div style="text-align:right;flex-shrink:0">
         <div style="font-size:11px;color:var(--green);font-weight:700">● লাইভ</div>
-        <div style="font-size:11px;color:var(--text2)">${dur}</div>
+        <div style="font-size:10px;color:var(--text2);margin-top:2px">${dur}</div>
+        <div style="font-size:10px;color:var(--text2)">${ago}</div>
       </div>
     </div>`;
   }).join('');
 }
 
-// ── ৬. ডিভাইস breakdown ──
-function renderDevices(data) {
+// ── ৬. COURSE PAGE BREAKDOWN (লাইভ: কে এখন কোথায়) ──
+function anRenderCoursePageList(data) {
+  const el = document.getElementById('an-course-page-list');
+  const sub = document.getElementById('an-course-subtitle');
+  if (!el) return;
+
+  const pb = data.pageBreakdown || {};
+  const entries = Object.entries(pb).sort((a,b) => b[1]-a[1]);
+
+  if (!entries.length) {
+    if (sub) sub.textContent = 'এখন কেউ সাইটে নেই';
+    el.innerHTML = '<div style="color:var(--text2);font-size:13px;text-align:center;padding:20px 0">লাইভ ভিজিটর এলে এখানে দেখাবে</div>';
+    return;
+  }
+
+  const total = entries.reduce((s,[,v])=>s+v,0)||1;
+  if (sub) sub.textContent = 'এখন ' + total + ' জন — কোন পেজে কতজন';
+
+  const icons = { 'হোম':'🏠', 'কোর্সসমূহ':'📚', 'আমাদের সম্পর্কে':'ℹ️', 'যোগাযোগ':'📞' };
+  const colors = ['var(--primary)','var(--blue)','var(--green)','var(--orange)','var(--teal)'];
+  el.innerHTML = entries.map(([page, cnt], i) => {
+    const icon = icons[page] || '📄';
+    const pct  = Math.round((cnt/total)*100);
+    return `<div style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px">
+        <span style="color:var(--text)">${icon} ${page}</span>
+        <span style="display:flex;align-items:center;gap:6px">
+          <strong style="color:${colors[i%colors.length]}">${anFmt(cnt)} জন</strong>
+          <span style="font-size:11px;color:var(--text2)">${pct}%</span>
+        </span>
+      </div>
+      ${anBar(cnt, total, colors[i%colors.length])}
+    </div>`;
+  }).join('');
+}
+
+// ── ৭. DEVICE BREAKDOWN ──
+function anRenderDevices(data) {
   const el = document.getElementById('an-device-list');
   if (!el) return;
 
   const bd = data.deviceBreakdown || {};
-  const entries = Object.entries(bd);
+  const entries = Object.entries(bd).sort((a,b) => b[1]-a[1]);
+
   if (!entries.length) {
-    el.innerHTML = '<div style="color:var(--text2);font-size:12px">এখনো ডেটা নেই</div>';
+    el.innerHTML = '<div style="color:var(--text2);font-size:13px;text-align:center;padding:20px 0">এখনো ডিভাইস ডেটা নেই</div>';
     return;
   }
 
-  const total = entries.reduce((s, [, v]) => s + v, 0) || 1;
-  const icons = { mobile:'📱', desktop:'🖥️', tablet:'📟' };
+  const total = entries.reduce((s,[,v])=>s+v,0)||1;
+  const icons  = { mobile:'📱', desktop:'🖥️', tablet:'📟' };
   const colors = { mobile:'var(--green)', desktop:'var(--blue)', tablet:'var(--orange)' };
+  const labels = { mobile:'মোবাইল', desktop:'ডেস্কটপ', tablet:'ট্যাবলেট' };
 
   el.innerHTML = entries.map(([dev, cnt]) => {
-    const pct = Math.round((cnt / total) * 100);
-    return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-      <span style="font-size:16px">${icons[dev]||'💻'}</span>
-      <div style="flex:1">
-        <div style="display:flex;justify-content:space-between;font-size:12px">
-          <span style="color:var(--text3)">${dev}</span>
-          <span style="color:var(--text)">${pct}% (${anFmt(cnt)})</span>
+    const pct = Math.round((cnt/total)*100);
+    return `<div style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:22px">${icons[dev]||'💻'}</span>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px">
+            <span style="color:var(--text)">${labels[dev]||dev}</span>
+            <span style="display:flex;align-items:center;gap:6px">
+              <strong style="color:${colors[dev]||'var(--primary)'}">${anFmt(cnt)}</strong>
+              <span style="font-size:11px;color:var(--text2)">${pct}%</span>
+            </span>
+          </div>
+          ${anBar(cnt, total, colors[dev]||'var(--primary)')}
         </div>
-        ${anBar(cnt, total, colors[dev]||'var(--primary)')}
       </div>
     </div>`;
   }).join('');
+}
 
+// ── ৮. SUMMARY ──
+function anRenderSummary(data) {
+  const el = document.getElementById('an-summary-list');
+  if (!el) return;
+
+  const totalHits  = data.totalHits  || 0;
+  const weekTotal  = (data.dailyVisits||[]).reduce((s,d)=>s+(d.count||0),0);
+  const todayKey   = new Date().toISOString().slice(0,10);
+  const todayRow   = (data.dailyVisits||[]).find(r=>r.date===todayKey);
+  const todayHits  = todayRow ? todayRow.count : 0;
+  const activeNow  = data.activeCount || 0;
+  const totalPages = (data.pageHits||[]).length;
+  const topPage    = (data.pageHits||[])[0];
+  const devBreak   = data.deviceBreakdown || {};
+  const mobileAmt  = devBreak.mobile || 0;
+  const desktopAmt = devBreak.desktop || 0;
+  const totalDev   = (mobileAmt + desktopAmt) || 1;
+  const mobilePct  = Math.round((mobileAmt/totalDev)*100);
+
+  const rows = [
+    { icon:'🌐', label:'সার্ভার চালু থেকে মোট ভিজিট', value: anFmt(totalHits) },
+    { icon:'📅', label:'এই সপ্তাহে (৭ দিন)', value: anFmt(weekTotal) },
+    { icon:'📆', label:'আজ এ পর্যন্ত', value: anFmt(todayHits) },
+    { icon:'👁️', label:'এখন সাইটে আছেন', value: anFmt(activeNow) + ' জন' },
+    { icon:'🗂️', label:'ট্র্যাক করা পেজ সংখ্যা', value: anFmt(totalPages) + ' টি' },
+    { icon:'📱', label:'মোবাইল ভিজিটর (লাইভ)', value: mobilePct + '%' },
+    ...(topPage ? [{ icon:'🏆', label:'সবচেয়ে জনপ্রিয় পেজ', value: topPage.page + ' (' + anFmt(topPage.count) + ')' }] : []),
+  ];
+
+  el.innerHTML = rows.map(r => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+      <span style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2)">
+        <span>${r.icon}</span>${r.label}
+      </span>
+      <strong style="font-size:14px;color:var(--text)">${r.value}</strong>
+    </div>`).join('');
 }
 
 // ── Analytics পেজ লোড হলে ──
