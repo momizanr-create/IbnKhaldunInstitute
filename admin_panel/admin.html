@@ -838,7 +838,10 @@
           <div class="card">
             <div class="card-header">
               <h3>🏷️ ক্যাটাগরি সমূহ</h3>
-              <button class="btn btn-primary" onclick="openCategoryModal()">+ নতুন ক্যাটাগরি</button>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-sm" style="background:var(--teal-bg);color:var(--teal);border:1px solid rgba(45,212,191,0.3)" onclick="seedDefaultCategories()">✨ ডিফল্ট ৯টি ক্যাটাগরি যোগ করুন</button>
+                <button class="btn btn-primary" onclick="openCategoryModal()">+ নতুন ক্যাটাগরি</button>
+              </div>
             </div>
             <div class="card-body">
               <table><thead><tr>
@@ -1806,15 +1809,15 @@
       <div class="row2">
         <div class="field"><label>ক্যাটাগরি</label>
           <select id="fc-category">
-            <option value="quran">quran</option>
-            <option value="productivity">productivity</option>
-            <option value="family">family</option>
-            <option value="seerah">seerah</option>
-            <option value="sunnah">sunnah</option>
-            <option value="fiqh">fiqh</option>
-            <option value="arabic">arabic</option>
-            <option value="hadith">hadith</option>
-            <option value="aqidah">aqidah</option>
+            <option value="quran">📖 কুরআন শিক্ষা</option>
+            <option value="productivity">⚡ প্রোডাক্টিভিটি এবং লাইফ হ্যাকস</option>
+            <option value="family">👨‍👩‍👧 পারিবারিক জীবন</option>
+            <option value="seerah">📜 সীরাহ এবং ইতিহাস</option>
+            <option value="sunnah">🌙 সুন্নাহ এবং লাইফস্টাইল</option>
+            <option value="fiqh">⚖️ ফিকাহ</option>
+            <option value="hadith">📝 হাদীস</option>
+            <option value="homeschooling">🏡 হোমস্কুলিং এবং প্যারেন্টিং</option>
+            <option value="aqidah">🕌 ইসলামী বিশ্বাস ও মতবাদ</option>
           </select>
         </div>
         <div class="field"><label>কোন ট্যাবে দেখাবে</label>
@@ -2807,14 +2810,22 @@ async function openCourseModal(course = null) {
       catSel.innerHTML = '<option value="">-- ক্যাটাগরি বাছুন --</option>' +
         allCats.map(c => `<option value="${c.slug||c.name}" ${course?.category === (c.slug||c.name) ? 'selected' : ''}>${c.icon || ''} ${c.name}</option>`).join('');
     } else {
-      catSel.innerHTML = '<option value="quran">Quran</option><option value="arabic">Arabic</option><option value="fiqh">Fiqh</option><option value="hadith">Hadith</option><option value="other">Other</option>';
+      // ডিফল্ট ক্যাটাগরি দেখাও
+      catSel.innerHTML = '<option value="">-- ক্যাটাগরি বাছুন --</option>' +
+        DEFAULT_CATEGORIES.map(c => `<option value="${c.slug}" ${course?.category === c.slug ? 'selected' : ''}>${c.icon || ''} ${c.name}</option>`).join('');
     }
     if (course?.category) catSel.value = course.category;
     // Load subcategories for selected category
-    window._allCatsData = allCats;
+    window._allCatsData = allCats.length ? allCats : DEFAULT_CATEGORIES;
     loadSubCatOptions(catSel.value, course?.subCategory);
   } catch(e) {
-    document.getElementById('c-category').innerHTML = '<option>Quran</option><option>Arabic</option><option>Fiqh</option><option>Hadith</option><option>Other</option>';
+    // fallback: DEFAULT_CATEGORIES ব্যবহার করো
+    window._allCatsData = DEFAULT_CATEGORIES;
+    const catSel2 = document.getElementById('c-category');
+    catSel2.innerHTML = '<option value="">-- ক্যাটাগরি বাছুন --</option>' +
+      DEFAULT_CATEGORIES.map(c => `<option value="${c.slug}" ${course?.category === c.slug ? 'selected' : ''}>${c.icon || ''} ${c.name}</option>`).join('');
+    if (course?.category) catSel2.value = course.category;
+    loadSubCatOptions(catSel2.value, course?.subCategory);
   }
 
   // Load course tabs
@@ -2852,7 +2863,8 @@ async function openCourseModal(course = null) {
 // Load subcategory dropdown based on selected category
 function loadSubCatOptions(catVal, selectedSub) {
   const subSel = document.getElementById('c-subcategory');
-  const cats = window._allCatsData || [];
+  // প্রথমে server data, না থাকলে DEFAULT_CATEGORIES
+  const cats = (window._allCatsData && window._allCatsData.length) ? window._allCatsData : DEFAULT_CATEGORIES;
   const found = cats.find(c => (c.slug || c.name) === catVal);
   if (found && found.subCategories && found.subCategories.length) {
     const activeSubs = found.subCategories.filter(s => s.active !== false);
@@ -5186,14 +5198,112 @@ async function saveThemeSettings() {
 
 
 // ────────────────────────────────────────────
+// DEFAULT CATEGORIES DATA
+// ────────────────────────────────────────────
+const DEFAULT_CATEGORIES = [
+  {
+    icon: '📖', name: 'কুরআন শিক্ষা', slug: 'quran', order: 1, active: true,
+    subCategories: [
+      { icon: '🕌', name: 'জার্নি টু কুরআন (৪ মাসে কুরআন শরীফ)', slug: 'journey-to-quran', order: 1, active: true },
+      { icon: '👩', name: 'মহিলাদের কুরআন যাত্রা', slug: 'womens-quran-journey', order: 2, active: true },
+      { icon: '🔬', name: 'আল কোরআন ও বিজ্ঞান', slug: 'quran-and-science', order: 3, active: true },
+    ]
+  },
+  {
+    icon: '⚡', name: 'প্রোডাক্টিভিটি এবং লাইফ হ্যাকস', slug: 'productivity', order: 2, active: true,
+    subCategories: [
+      { icon: '🤖', name: 'এআই (AI) ব্যবহার', slug: 'ai-usage', order: 1, active: true },
+      { icon: '🔍', name: 'গবেষণা ও রিসার্চ কোর্স', slug: 'research-course', order: 2, active: true },
+    ]
+  },
+  {
+    icon: '👨‍👩‍👧', name: 'পারিবারিক জীবন', slug: 'family', order: 3, active: true,
+    subCategories: [
+      { icon: '💍', name: 'বিবাহ ও দাম্পত্য জীবন', slug: 'marriage-family-life', order: 1, active: true },
+      { icon: '🏠', name: 'পরিবার ব্যবস্থা', slug: 'family-system', order: 2, active: true },
+    ]
+  },
+  {
+    icon: '📜', name: 'সীরাহ এবং ইতিহাস', slug: 'seerah', order: 4, active: true,
+    subCategories: [
+      { icon: '🌟', name: 'সিরাহ ও আপত্তির খণ্ডন', slug: 'seerah-refutation', order: 1, active: true },
+      { icon: '🗺️', name: 'ইসলামী ভূগোল ব্যবস্থা', slug: 'islamic-geography', order: 2, active: true },
+      { icon: '📚', name: 'সহজে ইসলামী ইতিহাস', slug: 'easy-islamic-history', order: 3, active: true },
+    ]
+  },
+  {
+    icon: '🌙', name: 'সুন্নাহ এবং লাইফস্টাইল', slug: 'sunnah', order: 5, active: true,
+    subCategories: [
+      { icon: '🕋', name: 'হজ ও ওমরা প্রস্তুতি', slug: 'hajj-umrah', order: 1, active: true },
+      { icon: '🚿', name: 'মহিলাদের তাহারাত', slug: 'womens-taharah', order: 2, active: true },
+    ]
+  },
+  {
+    icon: '⚖️', name: 'ফিকাহ', slug: 'fiqh', order: 6, active: true,
+    subCategories: [
+      { icon: '🎯', name: 'মাকাসিদে শরিয়াহ', slug: 'maqasid-shariah', order: 1, active: true },
+      { icon: '🏛️', name: 'আধুনিক রাষ্ট্র ব্যবস্থা', slug: 'modern-state-system', order: 2, active: true },
+    ]
+  },
+  {
+    icon: '📝', name: 'হাদীস', slug: 'hadith', order: 7, active: true,
+    subCategories: [
+      { icon: '⚠️', name: 'হাদিস অস্বীকারে ফেতনা (রিফিউটেশন)', slug: 'hadith-denial-refutation', order: 1, active: true },
+      { icon: '🔎', name: 'প্রাচ্যবাদ ও ইসলাম', slug: 'orientalism-and-islam', order: 2, active: true },
+    ]
+  },
+  {
+    icon: '🏡', name: 'হোমস্কুলিং এবং প্যারেন্টিং', slug: 'homeschooling', order: 8, active: true,
+    subCategories: [
+      { icon: '👶', name: 'প্যারেন্টিং', slug: 'parenting', order: 1, active: true },
+      { icon: '🎓', name: 'বিদেশে উচ্চ শিক্ষা', slug: 'higher-education-abroad', order: 2, active: true },
+    ]
+  },
+  {
+    icon: '🕌', name: 'ইসলামী বিশ্বাস ও মতবাদ', slug: 'aqidah', order: 9, active: true,
+    subCategories: [
+      { icon: '🚫', name: 'কাদিয়ানীয়াত', slug: 'qadianism', order: 1, active: true },
+      { icon: '🧠', name: 'আধুনিক মতবাদ', slug: 'modern-ideology', order: 2, active: true },
+    ]
+  },
+];
+
+// ────────────────────────────────────────────
 // CATEGORIES (সাব ক্যাটাগরি সহ)
 // ────────────────────────────────────────────
 let _currentCatId = null;
 let _currentCatName = '';
 
+async function seedDefaultCategories() {
+  try {
+    toast('ডিফল্ট ক্যাটাগরি তৈরি হচ্ছে...');
+    for (const cat of DEFAULT_CATEGORIES) {
+      let created;
+      try {
+        created = await api('POST', '/api/admin/categories', {
+          name: cat.name, icon: cat.icon, slug: cat.slug,
+          order: cat.order, active: cat.active,
+        });
+      } catch(ce) { continue; }
+      if (created && created._id && cat.subCategories) {
+        for (const sub of cat.subCategories) {
+          try {
+            await api('POST', `/api/admin/categories/${created._id}/subcategories`, {
+              name: sub.name, icon: sub.icon, slug: sub.slug,
+              order: sub.order, active: sub.active,
+            });
+          } catch(se) {}
+        }
+      }
+    }
+    toast('✅ সকল ডিফল্ট ক্যাটাগরি ও সাব ক্যাটাগরি তৈরি হয়েছে!');
+    loadCategories();
+  } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
+}
+
 async function loadCategories() {
   try {
-    const list = await api('GET', '/api/admin/categories');
+    let list = await api('GET', '/api/admin/categories');
     document.getElementById('categories-tbody').innerHTML = list.length
       ? list.map(c => `<tr>
           <td style="font-size:22px">${c.icon || '📚'}</td>
@@ -5201,7 +5311,7 @@ async function loadCategories() {
           <td><code style="font-size:12px;color:var(--text2)">${c.slug}</code></td>
           <td>
             <span style="background:var(--blue-bg);color:var(--blue);padding:3px 8px;border-radius:20px;font-size:12px;cursor:pointer"
-              onclick="openSubCategoryPanel('${c._id}','${c.name.replace(/'/g,"\\'")}')">
+              onclick="openSubCategoryPanel('${c._id}','${c.name.replace(/'/g,"\'")}')">
               📂 ${(c.subCategories||[]).length} টি সাব ক্যাটাগরি
             </span>
           </td>
@@ -5212,7 +5322,10 @@ async function loadCategories() {
             <button class="btn btn-danger btn-sm" onclick="deleteCategory('${c._id}')">🗑️</button>
           </td>
         </tr>`).join('')
-      : '<tr><td colspan="7" style="text-align:center;color:var(--text2);padding:24px">কোনো ক্যাটাগরি নেই — উপরে "+ নতুন ক্যাটাগরি" বাটনে ক্লিক করুন</td></tr>';
+      : `<tr><td colspan="7" style="text-align:center;padding:30px">
+          <div style="color:var(--text2);margin-bottom:16px;font-size:15px">কোনো ক্যাটাগরি নেই</div>
+          <button class="btn btn-primary" onclick="seedDefaultCategories()">✨ ডিফল্ট ৯টি ক্যাটাগরি ও সাব ক্যাটাগরি তৈরি করুন</button>
+        </td></tr>`;
   } catch(e) { toast('লোড হয়নি', 'error'); }
 }
 
