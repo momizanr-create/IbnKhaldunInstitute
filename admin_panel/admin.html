@@ -1009,7 +1009,7 @@
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
               <div>
                 <h2>📊 Analytics & Tracking</h2>
-                <p>লাইভ ভিজিটর ট্র্যাকার — সরাসরি এডমিন প্যানেলে দেখুন।</p>
+                <p>লাইভ ভিজিটর ট্র্যাকার — রিয়েলটাইম ডেটা এখানেই দেখুন।</p>
               </div>
               <div style="display:flex;gap:8px;align-items:center">
                 <span id="an-last-refresh" style="font-size:11px;color:var(--text2)">লোড হচ্ছে...</span>
@@ -3603,8 +3603,6 @@ async function changePassword() {
 // server.js এর /api/admin/realtime-visitors থেকে ডেটা আসে
 // ════════════════════════════════════════════════════════════
 
-const GA_MEASUREMENT_ID = 'G-JPJ5Y9Z1T0';
-
 // ── হেল্পার: সংখ্যা ফরম্যাট ──
 function anFmt(n) {
   if (n === null || n === undefined) return '—';
@@ -3830,15 +3828,7 @@ async function loadAnalyticsConfig() {
   loadAllAnalytics();
 }
 
-// ── backward compat stubs ──
-function updateAnalyticsToggleUI() {}
-function updateAnalyticsBanner() {}
-async function saveAnalyticsConfig() {}
-async function saveFbPixelOnly() {}
-async function saveGaPropertyId() {}
-async function testAnalyticsConfig() {
-  toast('✅ GA: G-JPJ5Y9Z1T0 সক্রিয় — নিজস্ব tracker চালু।');
-}
+
 
 // ── Auto-refresh: প্রতি ১৫ সেকেন্ডে লাইভ আপডেট ──
 setInterval(() => {
