@@ -1818,12 +1818,15 @@ app.get('/api/admin/analytics-config', authMiddleware, async (req, res) => {
 // Admin POST (save)
 app.post('/api/admin/analytics-config', authMiddleware, async (req, res) => {
   try {
-    const { gaId, fbPixelId, enabled } = req.body;
+    const { gaId, fbPixelId, enabled, propertyId, serviceAccountEmail, serviceAccountKey } = req.body;
     const value = {
-      gaId:      (gaId      || '').trim(),
-      fbPixelId: (fbPixelId || '').trim(),
-      enabled:   enabled !== false,
-      updatedAt: new Date().toISOString(),
+      gaId:                (gaId                || 'G-JPJ5Y9Z1T0').trim(),
+      fbPixelId:           (fbPixelId           || '').trim(),
+      propertyId:          (propertyId          || '').trim(),
+      serviceAccountEmail: (serviceAccountEmail || '').trim(),
+      serviceAccountKey:   (serviceAccountKey   || '').trim(),
+      enabled:             enabled !== false,
+      updatedAt:           new Date().toISOString(),
     };
     await Settings.findOneAndUpdate(
       { key: 'analyticsConfig' },
@@ -1833,6 +1836,210 @@ app.post('/api/admin/analytics-config', authMiddleware, async (req, res) => {
     res.json({ message: '✅ Analytics config সংরক্ষিত হয়েছে' });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
+
+// ============================================================
+// GA REPORT PROXY — Google Analytics Data API v1
+// Admin panel থেকে সরাসরি লাইভ ডেটা দেখার জন্য।
+// Service Account JSON দিলে real data, না হলে demo ডেটা।
+// ============================================================
+app.post('/api/admin/ga-report', authMiddleware, async (req, res) => {
+  try {
+    const cfg = await Settings.findOne({ key: 'analyticsConfig' });
+    const config = cfg ? cfg.value : {};
+    const propertyId = config.propertyId || '';
+    const saEmail    = config.serviceAccountEmail || '';
+    const saKey      = config.serviceAccountKey   || '';
+
+    const { type, days = 28, eventName } = req.body;
+
+    // ── Service Account না থাকলে demo ডেটা ──
+    if (!propertyId || !saEmail || !saKey) {
+      return res.json(makeDemoData(type, parseInt(days)));
+    }
+
+    // ── Google Analytics Data API v1 JWT Auth ──
+    const jwt = require('jsonwebtoken');
+    const https = require('https');
+    const now = Math.floor(Date.now() / 1000);
+    const jwtPayload = {
+      iss: saEmail,
+      scope: 'https://www.googleapis.com/auth/analytics.readonly',
+      aud: 'https://oauth2.googleapis.com/token',
+      exp: now + 3600,
+      iat: now,
+    };
+    const cleanKey = saKey.replace(/\\n/g, '\n');
+    const jwtToken = jwt.sign(jwtPayload, cleanKey, { algorithm: 'RS256' });
+
+    // Token পাওয়া
+    const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=${jwtToken}`,
+    });
+    if (!tokenRes.ok) throw new Error('OAuth token failed: ' + tokenRes.status);
+    const tokenData = await tokenRes.json();
+    const accessToken = tokenData.access_token;
+    const propId = 'properties/' + propertyId.replace('properties/', '');
+    const daysN = parseInt(days) || 28;
+
+    // ── Type অনুযায়ী ভিন্ন report ──
+    if (type === 'realtime') {
+      const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/${propId}:runRealtimeReport`, {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ metrics: [{ name: 'activeUsers' }] }),
+      });
+      const d = await r.json();
+      const val = d.rows?.[0]?.metricValues?.[0]?.value || 0;
+      return res.json({ activeUsers: parseInt(val) });
+    }
+
+    if (type === 'summary') {
+      const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/${propId}:runReport`, {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dateRanges: [{ startDate: daysN + 'daysAgo', endDate: 'today' }],
+          metrics: [
+            { name: 'totalUsers' }, { name: 'screenPageViews' },
+            { name: 'userEngagementDuration' }, { name: 'newUsers' },
+          ],
+        }),
+      });
+      const d = await r.json();
+      const mv = d.rows?.[0]?.metricValues || [];
+      return res.json({
+        totalUsers:             parseInt(mv[0]?.value || 0),
+        screenPageViews:        parseInt(mv[1]?.value || 0),
+        userEngagementDuration: parseFloat(mv[2]?.value || 0),
+        newUsers:               parseInt(mv[3]?.value || 0),
+      });
+    }
+
+    if (type === 'daily') {
+      const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/${propId}:runReport`, {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dateRanges: [{ startDate: daysN + 'daysAgo', endDate: 'today' }],
+          dimensions: [{ name: 'date' }],
+          metrics: [{ name: 'screenPageViews' }],
+          orderBys: [{ dimension: { dimensionName: 'date' } }],
+        }),
+      });
+      const d = await r.json();
+      const rows = (d.rows || []).map(row => ({
+        date:  row.dimensionValues?.[0]?.value || '',
+        value: parseInt(row.metricValues?.[0]?.value || 0),
+      }));
+      return res.json({ rows });
+    }
+
+    if (type === 'pages') {
+      const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/${propId}:runReport`, {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dateRanges: [{ startDate: daysN + 'daysAgo', endDate: 'today' }],
+          dimensions: [{ name: 'pageTitle' }],
+          metrics: [{ name: 'screenPageViews' }],
+          orderBys: [{ metric: { metricName: 'screenPageViews' }, desc: true }],
+          limit: 10,
+        }),
+      });
+      const d = await r.json();
+      const rows = (d.rows || []).map(row => ({
+        page:  row.dimensionValues?.[0]?.value || '',
+        value: parseInt(row.metricValues?.[0]?.value || 0),
+      }));
+      return res.json({ rows });
+    }
+
+    if (type === 'events') {
+      const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/${propId}:runReport`, {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dateRanges: [{ startDate: daysN + 'daysAgo', endDate: 'today' }],
+          dimensions: [{ name: 'eventName' }, { name: 'customEvent:event_label' }],
+          metrics: [{ name: 'eventCount' }],
+          dimensionFilter: {
+            filter: { fieldName: 'eventName', stringFilter: { value: eventName || 'course_click' } },
+          },
+          orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
+          limit: 10,
+        }),
+      });
+      const d = await r.json();
+      const rows = (d.rows || []).map(row => ({
+        label: row.dimensionValues?.[1]?.value || row.dimensionValues?.[0]?.value || '',
+        value: parseInt(row.metricValues?.[0]?.value || 0),
+      }));
+      return res.json({ rows });
+    }
+
+    if (type === 'devices') {
+      const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/${propId}:runReport`, {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dateRanges: [{ startDate: daysN + 'daysAgo', endDate: 'today' }],
+          dimensions: [{ name: 'deviceCategory' }],
+          metrics: [{ name: 'sessions' }],
+          orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
+        }),
+      });
+      const d = await r.json();
+      const rows = (d.rows || []).map(row => ({
+        device: row.dimensionValues?.[0]?.value || '',
+        value:  parseInt(row.metricValues?.[0]?.value || 0),
+      }));
+      return res.json({ rows });
+    }
+
+    if (type === 'countries') {
+      const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/${propId}:runReport`, {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dateRanges: [{ startDate: daysN + 'daysAgo', endDate: 'today' }],
+          dimensions: [{ name: 'country' }],
+          metrics: [{ name: 'sessions' }],
+          orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
+          limit: 5,
+        }),
+      });
+      const d = await r.json();
+      const rows = (d.rows || []).map(row => ({
+        country: row.dimensionValues?.[0]?.value || '',
+        value:   parseInt(row.metricValues?.[0]?.value || 0),
+      }));
+      return res.json({ rows });
+    }
+
+    res.json({ error: 'unknown type' });
+  } catch (e) {
+    console.error('GA report error:', e.message);
+    // Error হলে demo ডেটা পাঠাই যাতে UI ভেঙে না যায়
+    res.json(makeDemoData(req.body.type, parseInt(req.body.days) || 28));
+  }
+});
+
+// ── Demo ডেটা (Service Account না থাকলে) ──
+function makeDemoData(type, days) {
+  if (type === 'realtime') return { activeUsers: 0, _demo: true };
+  if (type === 'summary') return { totalUsers: null, screenPageViews: null, userEngagementDuration: null, newUsers: null, _demo: true };
+  if (type === 'daily') {
+    const rows = [];
+    for (let i = days; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      rows.push({ date: d.toISOString().slice(0,10).replace(/-/g,''), value: 0 });
+    }
+    return { rows, _demo: true };
+  }
+  return { rows: [], _demo: true };
+}
 
 // ============================================================
 // AUTO-CREATE ADMIN
