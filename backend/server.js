@@ -315,6 +315,40 @@ const accessRequestSchema = new mongoose.Schema({
 });
 const AccessRequest = mongoose.model('AccessRequest', accessRequestSchema);
 
+
+// ============================================================
+// REALTIME VISITOR TRACKING (In-Memory — GA-independent)
+// প্রতিটি ভিজিটর ৩০ সেকেন্ড পর পর heartbeat পাঠায়।
+// ৯০ সেকেন্ড heartbeat না পেলে visitor অফলাইন ধরা হয়।
+// ============================================================
+const VISITOR_TIMEOUT_MS = 90 * 1000;
+const activeVisitors = new Map(); // visitorId → { page, device, lastSeen, path, enteredAt }
+
+// পুরনো visitor cleanup — প্রতি ৩০ সেকেন্ডে
+setInterval(() => {
+  const now = Date.now();
+  for (const [id, v] of activeVisitors.entries()) {
+    if (now - v.lastSeen > VISITOR_TIMEOUT_MS) activeVisitors.delete(id);
+  }
+}, 30000);
+
+// Page-wise stats (in-memory)
+const pageHits    = {};   // { pageName: count }
+const hourlyHits  = [];   // [{ hour: "HH:00", count: N }] — শেষ ২৪ ঘণ্টা
+const deviceStats = {};   // { mobile: N, desktop: N, tablet: N }
+const dailyVisits = {};   // { "YYYY-MM-DD": count }
+
+function recordPageHit(page, device) {
+  pageHits[page]      = (pageHits[page]      || 0) + 1;
+  deviceStats[device] = (deviceStats[device] || 0) + 1;
+  const hKey   = new Date().toISOString().slice(0, 13) + ':00';
+  const hEntry = hourlyHits.find(h => h.hour === hKey);
+  if (hEntry) hEntry.count++;
+  else { hourlyHits.push({ hour: hKey, count: 1 }); if (hourlyHits.length > 24) hourlyHits.shift(); }
+  const dKey = new Date().toISOString().slice(0, 10);
+  dailyVisits[dKey] = (dailyVisits[dKey] || 0) + 1;
+}
+
 // ============================================================
 // AUTH MIDDLEWARE
 // ============================================================
@@ -1805,6 +1839,101 @@ app.get('/api/public/analytics-config', async (req, res) => {
       enabled:    data.enabled    !== false,
     });
   } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+
+// ── Visitor Heartbeat — index.html থেকে প্রতি ৩০ সেকেন্ডে call হয় ──
+app.post('/api/public/visitor-heartbeat', (req, res) => {
+  try {
+    const { visitorId, page, device, path: urlPath, isNew } = req.body;
+    if (!visitorId) return res.json({ ok: false });
+
+    const now = Date.now();
+    const existing = activeVisitors.get(visitorId);
+
+    if (!existing) {
+      // নতুন visitor
+      activeVisitors.set(visitorId, {
+        page:      page     || 'home',
+        device:    device   || 'desktop',
+        path:      urlPath  || '/',
+        lastSeen:  now,
+        enteredAt: now,
+      });
+      recordPageHit(page || 'home', device || 'desktop');
+    } else {
+      // existing visitor — শুধু lastSeen আপডেট, নতুন page হলে page আপডেট
+      const oldPage = existing.page;
+      existing.lastSeen = now;
+      existing.page     = page   || existing.page;
+      existing.device   = device || existing.device;
+      existing.path     = urlPath || existing.path;
+      // page change হলে নতুন hit record করি
+      if (isNew || (page && page !== oldPage)) {
+        recordPageHit(page || 'home', device || existing.device);
+      }
+    }
+    res.json({ ok: true, activeCount: activeVisitors.size });
+  } catch(e) { res.json({ ok: false }); }
+});
+
+// ── Realtime Visitors — Admin Panel থেকে call হয় ──
+app.get('/api/admin/realtime-visitors', authMiddleware, (req, res) => {
+  try {
+    const now = Date.now();
+
+    // সক্রিয় visitors list
+    const visitors = [];
+    for (const [id, v] of activeVisitors.entries()) {
+      visitors.push({
+        page:       v.page,
+        device:     v.device,
+        path:       v.path,
+        secondsAgo: Math.floor((now - v.lastSeen) / 1000),
+        duration:   Math.floor((now - v.enteredAt) / 1000),
+      });
+    }
+
+    // Device breakdown
+    const devBreakdown = {};
+    for (const v of visitors) {
+      devBreakdown[v.device] = (devBreakdown[v.device] || 0) + 1;
+    }
+
+    // Page breakdown (current active)
+    const pageBreakdown = {};
+    for (const v of visitors) {
+      pageBreakdown[v.page] = (pageBreakdown[v.page] || 0) + 1;
+    }
+
+    // শেষ ৭ দিনের daily visits
+    const dailyRows = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const key = d.toISOString().slice(0, 10);
+      dailyRows.push({ date: key, count: dailyVisits[key] || 0 });
+    }
+
+    // শেষ ২৪ ঘণ্টার hourly
+    const hourlyRows = hourlyHits.slice(-24);
+
+    // Page hit totals
+    const pageHitRows = Object.entries(pageHits)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 8)
+      .map(([page, count]) => ({ page, count }));
+
+    res.json({
+      activeCount:    visitors.length,
+      visitors:       visitors.slice(0, 50),
+      deviceBreakdown: devBreakdown,
+      pageBreakdown,
+      pageHits:       pageHitRows,
+      hourlyHits:     hourlyRows,
+      dailyVisits:    dailyRows,
+      totalHits:      Object.values(pageHits).reduce((s, n) => s + n, 0),
+    });
+  } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
 // Admin GET

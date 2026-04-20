@@ -141,6 +141,64 @@
         });
       }
     });
+
+    /* ── Realtime Visitor Heartbeat (Admin Panel এ লাইভ দেখায়) ── */
+    (function() {
+      var _HB_API = 'https://ibnkhalduninstitute.onrender.com';
+
+      // Unique visitor ID — session জুড়ে একই থাকে
+      var _vid = sessionStorage.getItem('_ik_vid');
+      if (!_vid) {
+        _vid = 'v_' + Math.random().toString(36).slice(2, 10) + '_' + Date.now().toString(36);
+        sessionStorage.setItem('_ik_vid', _vid);
+      }
+
+      // Device detect
+      function getDevice() {
+        var ua = navigator.userAgent;
+        if (/tablet|ipad/i.test(ua)) return 'tablet';
+        if (/mobile|android|iphone/i.test(ua)) return 'mobile';
+        return 'desktop';
+      }
+
+      // Current page detect
+      function getPage() {
+        var hash = window.location.hash.replace('#','') || 'home';
+        var map  = { home:'হোম', courses:'কোর্সসমূহ', about:'আমাদের সম্পর্কে', contact:'যোগাযোগ' };
+        return map[hash] || hash || 'হোম';
+      }
+
+      var _lastPage = getPage();
+      var _isFirst  = true;
+
+      function sendHeartbeat() {
+        var page = getPage();
+        var isNew = _isFirst || page !== _lastPage;
+        _lastPage = page;
+        _isFirst  = false;
+        fetch(_HB_API + '/api/public/visitor-heartbeat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            visitorId: _vid,
+            page:      page,
+            device:    getDevice(),
+            path:      window.location.pathname + window.location.hash,
+            isNew:     isNew,
+          }),
+          keepalive: true,
+        }).catch(function(){});
+      }
+
+      // প্রথমে পাঠাও, তারপর প্রতি ৩০ সেকেন্ডে
+      sendHeartbeat();
+      setInterval(sendHeartbeat, 30000);
+
+      // Hash পরিবর্তনে (SPA navigation) সাথে সাথে পাঠাও
+      window.addEventListener('hashchange', function() {
+        setTimeout(sendHeartbeat, 200);
+      });
+    })();
   })();
   </script>
 

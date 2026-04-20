@@ -1095,10 +1095,10 @@
               </div>
             </div>
 
-            <!-- কোর্স ক্লিক রিপোর্ট -->
+            <!-- লাইভ ভিজিটর তালিকা -->
             <div class="card">
               <div class="card-header">
-                <div class="card-header-left"><h3>🖱️ কোর্স ক্লিক রিপোর্ট</h3><span class="card-subtitle">কোন কোর্সে কতবার ক্লিক হয়েছে</span></div>
+                <div class="card-header-left"><h3>👥 এখন সাইটে আছেন</h3><span class="card-subtitle" id="live-visitor-subtitle">লোড হচ্ছে...</span></div>
               </div>
               <div class="card-body" style="padding:16px 20px">
                 <div id="an-course-clicks">
@@ -3637,19 +3637,28 @@ async function changePassword() {
 // ────────────────────────────────────────────
 // ════════════════════════════════════════════════════════════
 // ANALYTICS LIVE DASHBOARD
-// Google Analytics Data API v1 — server.js proxy দিয়ে
-// GA Measurement ID: G-JPJ5Y9Z1T0 (hardcoded + active)
+// ════════════════════════════════════════════════════════════
+// REALTIME ANALYTICS — নিজস্ব tracker (GA-independent)
+// server.js এর /api/admin/realtime-visitors থেকে ডেটা আসে
 // ════════════════════════════════════════════════════════════
 
 const GA_MEASUREMENT_ID = 'G-JPJ5Y9Z1T0';
 
-// ── হেল্পার: সংখ্যা ফরম্যাট (৫০০০ → ৫,০০০) ──
+// ── হেল্পার: সংখ্যা ফরম্যাট ──
 function anFmt(n) {
   if (n === null || n === undefined) return '—';
   return Number(n).toLocaleString('bn-BD');
 }
 
-// ── হেল্পার: সেকেন্ড → মিনিট:সেকেন্ড ──
+// ── হেল্পার: শতাংশ বার ──
+function anBar(val, max, color) {
+  const pct = max ? Math.round((val / max) * 100) : 0;
+  return `<div style="height:5px;background:var(--border);border-radius:3px;margin-top:5px;overflow:hidden">
+    <div style="height:100%;width:${pct}%;background:${color||'var(--primary)'};border-radius:3px;transition:width 0.6s ease"></div>
+  </div>`;
+}
+
+// ── হেল্পার: সেকেন্ড → মানবপাঠ্য ──
 function anTime(sec) {
   if (!sec) return '০ সেকেন্ড';
   const s = Math.round(sec);
@@ -3657,229 +3666,211 @@ function anTime(sec) {
   return Math.floor(s/60) + 'মি ' + (s%60) + 'সে';
 }
 
-// ── হেল্পার: শতাংশ বার রেন্ডার ──
-function anBar(val, max, color) {
-  const pct = max ? Math.round((val/max)*100) : 0;
-  return `<div style="height:5px;background:var(--border);border-radius:3px;margin-top:5px;overflow:hidden">
-    <div style="height:100%;width:${pct}%;background:${color || 'var(--primary)'};border-radius:3px;transition:width 0.6s ease"></div>
-  </div>`;
-}
-
-// ── GA Report API কল (server.js proxy ব্যবহার) ──
-async function gaReport(body) {
+// ── Realtime data fetch ──
+async function fetchRealtimeData() {
   try {
-    return await api('POST', '/api/admin/ga-report', body);
-  } catch(e) {
-    return null;
-  }
+    return await api('GET', '/api/admin/realtime-visitors');
+  } catch(e) { return null; }
 }
 
 // ── সব Analytics ডেটা লোড করো ──
 async function loadAllAnalytics() {
-  const days = parseInt((document.getElementById('an-date-range') || {}).value || '28');
   const sub = document.getElementById('an-chart-subtitle');
-  if (sub) sub.textContent = 'গত ' + days + ' দিনের ডেটা লোড হচ্ছে...';
+  if (sub) sub.textContent = 'ডেটা লোড হচ্ছে...';
 
-  // লাইভ রিয়েলটাইম ও রিপোর্ট একসাথে
-  await Promise.all([
-    loadAnRealtime(),
-    loadAnSummary(days),
-    loadAnDailyChart(days),
-    loadAnPages(days),
-    loadAnCourseClicks(days),
-    loadAnDevices(days),
-    loadAnCountries(days),
-  ]);
+  const data = await fetchRealtimeData();
+  if (!data) {
+    const el = document.getElementById('an-live-users');
+    if (el) el.textContent = '—';
+    if (sub) sub.textContent = 'সার্ভার থেকে ডেটা আসেনি';
+    return;
+  }
+
+  renderRealtimeAll(data);
 
   const el = document.getElementById('an-last-refresh');
   if (el) el.textContent = 'আপডেট: ' + new Date().toLocaleTimeString('bn-BD');
-  if (sub) sub.textContent = 'গত ' + days + ' দিনের ডেটা';
+  if (sub) sub.textContent = 'লাইভ ডেটা — সার্ভার ট্র্যাকার';
 }
 
-// ── ১. Real-time লাইভ ব্যবহারকারী ──
-async function loadAnRealtime() {
-  const el = document.getElementById('an-live-users');
+// ── সব section render ──
+function renderRealtimeAll(data) {
+  renderLiveCount(data);
+  renderSummaryCards(data);
+  renderDailyChart(data);
+  renderPagesList(data);
+  renderLiveVisitorsList(data);
+  renderDevices(data);
+}
+
+// ── ১. লাইভ ভিজিটর সংখ্যা ──
+function renderLiveCount(data) {
+  const el    = document.getElementById('an-live-users');
   const badge = document.getElementById('an-live-badge');
-  if (el) el.textContent = '...';
-  const data = await gaReport({ type: 'realtime' });
-  if (data && data.activeUsers !== undefined && !data._demo) {
-    // Service Account আছে — সংখ্যা দেখাও
-    if (el) el.textContent = anFmt(data.activeUsers);
-    if (badge) { badge.style.animation = ''; badge.textContent = '● লাইভ'; }
-  } else {
-    // Service Account নেই — GA Realtime এ redirect করতে বলো
-    if (el) {
-      el.innerHTML = '<a href="https://analytics.google.com/analytics/web/#/p/realtime" target="_blank" style="color:var(--green);font-size:14px;text-decoration:none;font-weight:700">↗ GA দেখুন</a>';
-    }
-    if (badge) { badge.textContent = '● চলছে'; }
-  }
-  // Pulse dot
-  const dot = document.getElementById('an-live-dot');
+  const dot   = document.getElementById('an-live-dot');
+  const count = data.activeCount || 0;
+
+  if (el) el.textContent = count;
+  if (badge) badge.textContent = count > 0 ? '● লাইভ' : '● অপেক্ষায়';
+
+  // Pulse animation
   if (dot) {
     dot.style.transition = 'opacity 0.3s';
-    dot.style.opacity = '0.5';
+    dot.style.opacity = '0.4';
     setTimeout(() => { if(dot) dot.style.opacity = '1'; }, 300);
   }
-}
 
-// ── ২. সারসংক্ষেপ স্ট্যাট ──
-async function loadAnSummary(days) {
-  const data = await gaReport({ type: 'summary', days });
-  const set = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
-  const setLink = (id) => {
-    const e = document.getElementById(id);
-    if (e) e.innerHTML = '<a href="https://analytics.google.com/analytics/web/" target="_blank" style="color:var(--text2);font-size:12px;text-decoration:none">↗ GA</a>';
-  };
-  if (data && !data._demo && data.totalUsers !== null) {
-    set('an-total-users', anFmt(data.totalUsers));
-    set('an-pageviews',   anFmt(data.screenPageViews));
-    set('an-avg-time',    anTime(data.userEngagementDuration));
-    set('an-new-users',   anFmt(data.newUsers));
-  } else {
-    ['an-total-users','an-pageviews','an-avg-time','an-new-users'].forEach(id => setLink(id));
+  // আজকের মোট হিট — stat cards
+  const totalEl = document.getElementById('an-total-users');
+  if (totalEl) totalEl.textContent = anFmt(data.totalHits || 0);
+
+  // Pageviews (totalHits এর সমান এখানে)
+  const pvEl = document.getElementById('an-pageviews');
+  if (pvEl) pvEl.textContent = anFmt(
+    (data.dailyVisits || []).reduce((s, d) => s + (d.count || 0), 0)
+  );
+
+  // নতুন ভিজিটর (daily শেষ দিন)
+  const nuEl = document.getElementById('an-new-users');
+  if (nuEl) {
+    const today = (data.dailyVisits || []).slice(-1)[0];
+    nuEl.textContent = anFmt(today ? today.count : 0);
   }
+
+  // গড় সময় — tracker এ নেই তাই —
+  const atEl = document.getElementById('an-avg-time');
+  if (atEl) atEl.textContent = '—';
 }
 
-// ── ৩. তারিখ অনুযায়ী দৈনিক চার্ট ──
-async function loadAnDailyChart(days) {
+// ── ২. Summary cards ──
+function renderSummaryCards(data) {
+  // উপরে renderLiveCount এ করা হয়েছে
+}
+
+// ── ৩. দৈনিক চার্ট ──
+function renderDailyChart(data) {
   const wrap   = document.getElementById('an-chart-wrap');
   const labels = document.getElementById('an-chart-labels');
   if (!wrap) return;
-  wrap.innerHTML = '<div style="color:var(--text2);font-size:13px;margin:auto">লোড হচ্ছে...</div>';
 
-  const data = await gaReport({ type: 'daily', days });
-  if (!data || !data.rows || !data.rows.length) {
-    wrap.innerHTML = '<div style="color:var(--text2);font-size:12px;margin:auto;text-align:center">ডেটা নেই<br><small>Service Account সেটআপ করুন</small></div>';
+  const rows = data.dailyVisits || [];
+  if (!rows.length || rows.every(r => !r.count)) {
+    wrap.innerHTML = '<div style="color:var(--text2);font-size:13px;margin:auto;text-align:center">আজ এখনো ভিজিটর আসেনি</div>';
     if (labels) labels.innerHTML = '';
     return;
   }
 
-  const rows   = data.rows.slice(-days);
-  const maxVal = Math.max(...rows.map(r => r.value || 0), 1);
-  const barW   = Math.max(4, Math.floor(560 / rows.length) - 3);
-
+  const maxVal = Math.max(...rows.map(r => r.count || 0), 1);
   wrap.style.display = 'flex';
   wrap.innerHTML = rows.map(r => {
-    const h   = Math.max(4, Math.round((r.value / maxVal) * 160));
-    const tip = r.date + ': ' + r.value + ' ভিজিট';
-    return `<div title="${tip}" style="flex:1;min-width:${barW}px;max-width:28px;height:${h}px;background:var(--primary);border-radius:3px 3px 0 0;cursor:pointer;transition:opacity 0.2s;opacity:0.85" onmouseover="this.style.opacity=1;this.title=''" onmouseout="this.style.opacity=0.85"></div>`;
+    const h   = Math.max(4, Math.round(((r.count||0) / maxVal) * 160));
+    const tip = r.date + ': ' + (r.count||0) + ' ভিজিট';
+    return `<div title="${tip}" style="flex:1;min-width:8px;height:${h}px;background:var(--primary);border-radius:3px 3px 0 0;cursor:pointer;opacity:0.85;transition:opacity .2s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.85"></div>`;
   }).join('');
 
   if (labels) {
-    // শুধু প্রথম, মাঝ ও শেষের লেবেল দেখাই
     labels.style.display = 'flex';
-    const step = Math.max(1, Math.floor(rows.length / 5));
     labels.innerHTML = rows.map((r, i) => {
-      const show = i === 0 || i === rows.length-1 || i % step === 0;
-      const d = r.date ? r.date.slice(4) : ''; // MMDD
-      return `<div style="flex:1;min-width:${barW}px;max-width:28px;font-size:9px;color:var(--text2);text-align:center;overflow:hidden">${show ? d : ''}</div>`;
+      const show = i === 0 || i === rows.length - 1 || i === 3;
+      const d = r.date ? r.date.slice(5) : ''; // MM-DD
+      return `<div style="flex:1;min-width:8px;font-size:9px;color:var(--text2);text-align:center;overflow:hidden">${show ? d : ''}</div>`;
     }).join('');
   }
 }
 
-// ── ৪. পেজ ভিজিট তালিকা ──
-async function loadAnPages(days) {
+// ── ৪. পেজ ভিজিট ──
+function renderPagesList(data) {
   const el = document.getElementById('an-pages-list');
   if (!el) return;
-  el.innerHTML = '<div style="color:var(--text2);font-size:13px;padding:10px 0">লোড হচ্ছে...</div>';
 
-  const data = await gaReport({ type: 'pages', days });
-  if (!data || !data.rows || !data.rows.length) {
-    el.innerHTML = '<div style="color:var(--text2);font-size:13px;text-align:center;padding:20px 0">ডেটা নেই — Service Account সেটআপ করুন</div>';
+  const rows = data.pageHits || [];
+  if (!rows.length) {
+    el.innerHTML = '<div style="color:var(--text2);font-size:13px;text-align:center;padding:20px 0">এখনো পেজ ডেটা নেই</div>';
     return;
   }
-
-  const pageLabels = { home:'🏠 হোম', courses:'📚 কোর্সসমূহ', about:'ℹ️ আমাদের সম্পর্কে', contact:'📞 যোগাযোগ', detail:'📖 কোর্স ডিটেইল' };
-  const maxV = data.rows[0]?.value || 1;
-  el.innerHTML = data.rows.slice(0, 8).map(r => {
-    const label = pageLabels[r.page] || ('📄 ' + r.page);
+  const maxV = rows[0]?.count || 1;
+  el.innerHTML = rows.map(r => {
+    const icons = { 'হোম':'🏠', 'কোর্সসমূহ':'📚', 'আমাদের সম্পর্কে':'ℹ️', 'যোগাযোগ':'📞' };
+    const icon = icons[r.page] || '📄';
     return `<div style="margin-bottom:12px">
       <div style="display:flex;justify-content:space-between;font-size:13px">
-        <span style="color:var(--text)">${label}</span>
-        <strong style="color:var(--primary)">${anFmt(r.value)}</strong>
+        <span style="color:var(--text)">${icon} ${r.page}</span>
+        <strong style="color:var(--primary)">${anFmt(r.count)}</strong>
       </div>
-      ${anBar(r.value, maxV, 'var(--primary)')}
+      ${anBar(r.count, maxV, 'var(--primary)')}
     </div>`;
   }).join('');
 }
 
-// ── ৫. কোর্স ক্লিক রিপোর্ট ──
-async function loadAnCourseClicks(days) {
+// ── ৫. লাইভ ভিজিটর তালিকা (কোর্স ক্লিক রিপোর্টের জায়গায়) ──
+function renderLiveVisitorsList(data) {
   const el = document.getElementById('an-course-clicks');
   if (!el) return;
-  el.innerHTML = '<div style="color:var(--text2);font-size:13px;padding:10px 0">লোড হচ্ছে...</div>';
 
-  const data = await gaReport({ type: 'events', eventName: 'course_click', days });
-  if (!data || !data.rows || !data.rows.length) {
-    el.innerHTML = `<div style="color:var(--text2);font-size:12px;text-align:center;padding:20px 0;line-height:1.8">
-      ডেটা নেই<br>
-      <small>কোর্সে ক্লিক হলে এখানে দেখাবে।<br>Service Account সেটআপ করলে সব দেখাবে।</small>
-    </div>`;
+  // subtitle আপডেট
+  const sub = document.getElementById('live-visitor-subtitle');
+  const visitors = data.visitors || [];
+  if (sub) sub.textContent = visitors.length ? visitors.length + ' জন এখন অনলাইন' : 'কেউ এখন নেই';
+
+  if (!visitors.length) {
+    el.innerHTML = '<div style="color:var(--text2);font-size:13px;text-align:center;padding:20px 0;line-height:1.8">এখন কেউ সাইটে নেই<br><small style="opacity:.6">ভিজিটর এলে এখানে দেখাবে</small></div>';
     return;
   }
 
-  const maxV = data.rows[0]?.value || 1;
-  el.innerHTML = data.rows.slice(0, 8).map(r => `
-    <div style="margin-bottom:12px">
-      <div style="display:flex;justify-content:space-between;font-size:13px">
-        <span style="color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:75%">🖱️ ${r.label || r.page || 'অজানা কোর্স'}</span>
-        <strong style="color:var(--blue)">${anFmt(r.value)} ক্লিক</strong>
+  const devIcon = { mobile:'📱', desktop:'🖥️', tablet:'📟' };
+  el.innerHTML = visitors.slice(0, 8).map(v => {
+    const icon = devIcon[v.device] || '💻';
+    const dur  = v.duration < 60 ? v.duration + 'সে' : Math.floor(v.duration/60) + 'মি';
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:8px;background:var(--bg3);border-radius:8px">
+      <span style="font-size:18px">${icon}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600;color:var(--text)">${v.page}</div>
+        <div style="font-size:11px;color:var(--text2)">${v.path}</div>
       </div>
-      ${anBar(r.value, maxV, 'var(--blue)')}
-    </div>`).join('');
-}
-
-// ── ৬. ডিভাইস তথ্য ──
-async function loadAnDevices(days) {
-  const el = document.getElementById('an-device-list');
-  if (!el) return;
-  el.innerHTML = '<div style="color:var(--text2);font-size:13px">লোড হচ্ছে...</div>';
-
-  const data = await gaReport({ type: 'devices', days });
-  if (!data || !data.rows || !data.rows.length) {
-    el.innerHTML = '<div style="color:var(--text2);font-size:12px">ডেটা নেই</div>';
-    return;
-  }
-
-  const icons = { mobile:'📱', desktop:'🖥️', tablet:'📟' };
-  const total = data.rows.reduce((s, r) => s + r.value, 0) || 1;
-  el.innerHTML = data.rows.map(r => {
-    const pct = Math.round((r.value/total)*100);
-    const icon = icons[r.device?.toLowerCase()] || '💻';
-    return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-      <span style="font-size:16px">${icon}</span>
-      <div style="flex:1">
-        <div style="display:flex;justify-content:space-between;font-size:12px">
-          <span style="color:var(--text3)">${r.device}</span>
-          <span style="color:var(--text)">${pct}%</span>
-        </div>
-        ${anBar(r.value, total, r.device?.toLowerCase()==='mobile'?'var(--green)':r.device?.toLowerCase()==='desktop'?'var(--blue)':'var(--orange)')}
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:11px;color:var(--green);font-weight:700">● লাইভ</div>
+        <div style="font-size:11px;color:var(--text2)">${dur}</div>
       </div>
     </div>`;
   }).join('');
 }
 
-// ── ৭. দেশ তথ্য ──
-async function loadAnCountries(days) {
-  const el = document.getElementById('an-country-list');
+// ── ৬. ডিভাইস breakdown ──
+function renderDevices(data) {
+  const el = document.getElementById('an-device-list');
   if (!el) return;
-  el.innerHTML = '<div style="color:var(--text2);font-size:13px">লোড হচ্ছে...</div>';
 
-  const data = await gaReport({ type: 'countries', days });
-  if (!data || !data.rows || !data.rows.length) {
-    el.innerHTML = '<div style="color:var(--text2);font-size:12px">ডেটা নেই</div>';
+  const bd = data.deviceBreakdown || {};
+  const entries = Object.entries(bd);
+  if (!entries.length) {
+    el.innerHTML = '<div style="color:var(--text2);font-size:12px">এখনো ডেটা নেই</div>';
     return;
   }
 
-  const maxV = data.rows[0]?.value || 1;
-  el.innerHTML = data.rows.slice(0, 5).map(r => `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;font-size:12px">
-      <span style="color:var(--text3)">🌍 ${r.country}</span>
-      <span style="color:var(--text);font-weight:600">${anFmt(r.value)}</span>
-    </div>`).join('');
+  const total = entries.reduce((s, [, v]) => s + v, 0) || 1;
+  const icons = { mobile:'📱', desktop:'🖥️', tablet:'📟' };
+  const colors = { mobile:'var(--green)', desktop:'var(--blue)', tablet:'var(--orange)' };
+
+  el.innerHTML = entries.map(([dev, cnt]) => {
+    const pct = Math.round((cnt / total) * 100);
+    return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <span style="font-size:16px">${icons[dev]||'💻'}</span>
+      <div style="flex:1">
+        <div style="display:flex;justify-content:space-between;font-size:12px">
+          <span style="color:var(--text3)">${dev}</span>
+          <span style="color:var(--text)">${pct}% (${anFmt(cnt)})</span>
+        </div>
+        ${anBar(cnt, total, colors[dev]||'var(--primary)')}
+      </div>
+    </div>`;
+  }).join('');
+
+  // দেশ section — tracker এ নেই
+  const cEl = document.getElementById('an-country-list');
+  if (cEl) cEl.innerHTML = '<div style="color:var(--text2);font-size:12px">Tracker এ দেশ ডেটা নেই</div>';
 }
 
-// ── Analytics পেজ লোড হলে ডেটা টানা ──
+// ── Analytics পেজ লোড হলে ──
 async function loadAnalyticsConfig() {
   loadAllAnalytics();
 }
@@ -3891,16 +3882,18 @@ async function saveAnalyticsConfig() {}
 async function saveFbPixelOnly() {}
 async function saveGaPropertyId() {}
 async function testAnalyticsConfig() {
-  toast('✅ GA: G-JPJ5Y9Z1T0 সক্রিয় — ট্র্যাকিং চলছে।');
+  toast('✅ GA: G-JPJ5Y9Z1T0 সক্রিয় — নিজস্ব tracker চালু।');
 }
 
-// ── Auto-refresh: প্রতি ৩০ সেকেন্ডে লাইভ ভিজিটর আপডেট ──
+// ── Auto-refresh: প্রতি ১৫ সেকেন্ডে লাইভ আপডেট ──
 setInterval(() => {
   const analyticsPage = document.getElementById('page-analytics');
   if (analyticsPage && analyticsPage.classList.contains('active')) {
-    loadAnRealtime();
+    loadAllAnalytics();
   }
-}, 30000);
+}, 15000);
+
+
 
 
 // ────────────────────────────────────────────
