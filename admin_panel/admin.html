@@ -1031,9 +1031,21 @@
             </div>
           </div>
 
+          <!-- ── GA Realtime সরাসরি লিংক ব্যানার ── -->
+          <div style="background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.25);border-radius:var(--radius-sm);padding:12px 18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--green)">
+              <span id="an-live-dot" style="font-size:16px">🟢</span>
+              <div>
+                <strong>Google Analytics Realtime সক্রিয়</strong>
+                <span style="color:var(--text2);margin-left:8px;font-size:12px">G-JPJ5Y9Z1T0 — ট্র্যাকিং চলছে</span>
+              </div>
+            </div>
+            <a href="https://analytics.google.com/analytics/web/#/p/realtime" target="_blank" class="btn btn-success btn-sm">👁️ লাইভ ভিজিটর দেখুন →</a>
+          </div>
+
           <!-- ── লাইভ স্ট্যাট কার্ড ── -->
           <div class="stats-grid" id="an-stat-cards">
-            <div class="stat-card card-green">
+            <div class="stat-card card-green" style="cursor:pointer" onclick="window.open('https://analytics.google.com/analytics/web/#/p/realtime','_blank')" title="Google Analytics Realtime খুলুন">
               <div class="stat-card-top"><div class="stat-icon green">👁️</div><span class="stat-trend up" id="an-live-badge">● লাইভ</span></div>
               <div class="stat-info"><h3 id="an-live-users">—</h3><p>এখন সাইটে আছেন</p></div>
             </div>
@@ -1047,7 +1059,7 @@
             </div>
             <div class="stat-card card-orange">
               <div class="stat-card-top"><div class="stat-icon orange">⏱️</div></div>
-              <div class="stat-info"><h3 id="an-avg-time">—</h3><p>গড় সময় (সেকেন্ড)</p></div>
+              <div class="stat-info"><h3 id="an-avg-time">—</h3><p>গড় সময়</p></div>
             </div>
             <div class="stat-card card-teal">
               <div class="stat-card-top"><div class="stat-icon teal">📱</div></div>
@@ -1113,72 +1125,13 @@
             </div>
           </div>
 
-          <!-- ── Facebook Pixel সেটআপ ── -->
-          <div class="card" style="margin-top:20px">
-            <div class="card-header">
-              <div class="card-header-left"><h3>📘 Facebook Pixel</h3><span class="card-subtitle">Pixel ID দিলে index.html এ automatic কাজ করবে</span></div>
-              <div id="fb-badge" style="padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;background:var(--orange-bg);color:var(--orange)">ID দিন</div>
+          <!-- ── GA Direct Link ── -->
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text2);line-height:1.8;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+            <div>
+              <strong style="color:var(--text3)">📌 Google Analytics ড্যাশবোর্ড</strong><br/>
+              বিস্তারিত রিপোর্ট দেখতে সরাসরি Google Analytics এ যান।
             </div>
-            <div class="card-body" style="padding:20px">
-              <div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:flex-start">
-                <div class="field" style="margin:0">
-                  <label>Pixel ID</label>
-                  <input id="fb-pixel-id" placeholder="1234567890123456" style="font-family:monospace;letter-spacing:1px"/>
-                  <div style="font-size:11px;color:var(--text2);margin-top:5px">Facebook Events Manager → Data Sources → Pixels → Pixel ID (15-16 সংখ্যার)</div>
-                </div>
-                <div style="margin-top:22px">
-                  <button class="btn btn-primary" onclick="saveFbPixelOnly()">💾 সেভ</button>
-                </div>
-              </div>
-              <div id="fb-status-msg" style="display:none;margin-top:10px;padding:10px 14px;border-radius:var(--radius-sm);font-size:13px"></div>
-            </div>
-          </div>
-
-          <!-- ── GA Data সংগ্রহের নোট ── -->
-          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 18px;margin-top:16px;font-size:12px;color:var(--text2);line-height:1.8">
-            <strong style="color:var(--text3)">⚠️ দ্রষ্টব্য:</strong>
-            GA Reporting API সরাসরি browser থেকে অ্যাক্সেস করা যায় না (CORS + OAuth সীমাবদ্ধতা)।
-            তাই ডেটাগুলো server.js-এর <code style="background:var(--bg);padding:1px 5px;border-radius:3px">/api/admin/ga-report</code> endpoint এর মাধ্যমে আসে যা আপনার backend এ Google Analytics Data API v1 ব্যবহার করে।
-            নিচের <strong style="color:var(--primary)">Service Account JSON</strong> দিলে লাইভ ডেটা দেখা যাবে।
-            <br/><br/>
-            <strong style="color:var(--text3)">এখনই যা দেখাচ্ছে:</strong> index.html এ GA কোড সক্রিয় আছে (G-JPJ5Y9Z1T0), ট্র্যাকিং চলছে। ডেটা দেখতে নিচে Service Account সেটআপ করুন অথবা সরাসরি
-            <a href="https://analytics.google.com/analytics/web/#/p" target="_blank" style="color:var(--primary)">Google Analytics</a> এ দেখুন।
-          </div>
-
-          <!-- ── Service Account সেটআপ (optional advanced) ── -->
-          <div class="card" style="margin-top:16px">
-            <div class="card-header">
-              <div class="card-header-left"><h3>🔑 Google Service Account (Advanced)</h3><span class="card-subtitle">এটি দিলে ডেটা সরাসরি এখানে দেখাবে</span></div>
-              <span id="sa-badge" style="padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;background:var(--orange-bg);color:var(--orange)">সেটআপ করুন</span>
-            </div>
-            <div class="card-body" style="padding:20px">
-              <div class="row2">
-                <div class="field">
-                  <label>GA4 Property ID</label>
-                  <input id="ga-property-id" placeholder="123456789" style="font-family:monospace" oninput="saveGaPropertyId()"/>
-                  <div style="font-size:11px;color:var(--text2);margin-top:5px">Google Analytics → Admin → Property → Property ID (শুধু সংখ্যা)</div>
-                </div>
-                <div class="field">
-                  <label>Service Account Email</label>
-                  <input id="ga-sa-email" placeholder="xxx@project.iam.gserviceaccount.com" style="font-family:monospace;font-size:11px" oninput="saveGaPropertyId()"/>
-                </div>
-              </div>
-              <div class="field">
-                <label>Service Account Private Key (JSON key ফাইল থেকে private_key ভ্যালু)</label>
-                <textarea id="ga-sa-key" placeholder="-----BEGIN RSA PRIVATE KEY-----&#10;MIIEowIBAAKCAQEA...&#10;-----END RSA PRIVATE KEY-----" style="min-height:100px;font-family:monospace;font-size:11px" oninput="saveGaPropertyId()"></textarea>
-              </div>
-              <div style="display:flex;gap:10px;flex-wrap:wrap">
-                <button class="btn btn-primary" onclick="saveGaPropertyId(true)">💾 সংরক্ষণ করুন</button>
-                <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="loadAllAnalytics()">📊 ডেটা লোড করুন</button>
-              </div>
-              <div style="margin-top:14px;padding:12px 14px;background:var(--bg3);border-radius:var(--radius-sm);font-size:12px;color:var(--text3);line-height:1.8">
-                <strong style="color:var(--primary)">সেটআপ কীভাবে করবেন:</strong><br/>
-                ১. <a href="https://console.cloud.google.com" target="_blank" style="color:var(--blue)">Google Cloud Console</a> এ যান → APIs & Services → Credentials → Service Account তৈরি করুন<br/>
-                ২. JSON key ডাউনলোড করুন<br/>
-                ৩. <a href="https://analytics.google.com" target="_blank" style="color:var(--blue)">Google Analytics</a> → Admin → Property Access Management → Service Account Email যোগ করুন (Viewer role)<br/>
-                ৪. উপরে Property ID, Email ও Private Key বসিয়ে সেভ করুন
-              </div>
-            </div>
+            <a href="https://analytics.google.com/analytics/web/#/p" target="_blank" class="btn btn-edit" style="white-space:nowrap">📊 Google Analytics খুলুন →</a>
           </div>
         </div>
 
@@ -3746,25 +3699,44 @@ async function loadAllAnalytics() {
 // ── ১. Real-time লাইভ ব্যবহারকারী ──
 async function loadAnRealtime() {
   const el = document.getElementById('an-live-users');
+  const badge = document.getElementById('an-live-badge');
   if (el) el.textContent = '...';
   const data = await gaReport({ type: 'realtime' });
-  if (el) el.textContent = data && data.activeUsers !== undefined ? anFmt(data.activeUsers) : '—';
-  const badge = document.getElementById('an-live-badge');
-  if (badge) badge.style.animation = 'none';
+  if (data && data.activeUsers !== undefined && !data._demo) {
+    // Service Account আছে — সংখ্যা দেখাও
+    if (el) el.textContent = anFmt(data.activeUsers);
+    if (badge) { badge.style.animation = ''; badge.textContent = '● লাইভ'; }
+  } else {
+    // Service Account নেই — GA Realtime এ redirect করতে বলো
+    if (el) {
+      el.innerHTML = '<a href="https://analytics.google.com/analytics/web/#/p/realtime" target="_blank" style="color:var(--green);font-size:14px;text-decoration:none;font-weight:700">↗ GA দেখুন</a>';
+    }
+    if (badge) { badge.textContent = '● চলছে'; }
+  }
+  // Pulse dot
+  const dot = document.getElementById('an-live-dot');
+  if (dot) {
+    dot.style.transition = 'opacity 0.3s';
+    dot.style.opacity = '0.5';
+    setTimeout(() => { if(dot) dot.style.opacity = '1'; }, 300);
+  }
 }
 
 // ── ২. সারসংক্ষেপ স্ট্যাট ──
 async function loadAnSummary(days) {
   const data = await gaReport({ type: 'summary', days });
   const set = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
-  if (data) {
+  const setLink = (id) => {
+    const e = document.getElementById(id);
+    if (e) e.innerHTML = '<a href="https://analytics.google.com/analytics/web/" target="_blank" style="color:var(--text2);font-size:12px;text-decoration:none">↗ GA</a>';
+  };
+  if (data && !data._demo && data.totalUsers !== null) {
     set('an-total-users', anFmt(data.totalUsers));
     set('an-pageviews',   anFmt(data.screenPageViews));
     set('an-avg-time',    anTime(data.userEngagementDuration));
     set('an-new-users',   anFmt(data.newUsers));
   } else {
-    ['an-total-users','an-pageviews','an-avg-time','an-new-users'].forEach(id => set(id, 'N/A'));
-    showGaSetupHint();
+    ['an-total-users','an-pageviews','an-avg-time','an-new-users'].forEach(id => setLink(id));
   }
 }
 
@@ -3907,92 +3879,19 @@ async function loadAnCountries(days) {
     </div>`).join('');
 }
 
-// ── Service Account config সেভ ──
-async function saveGaPropertyId(showToast) {
-  const pid  = (document.getElementById('ga-property-id') || {}).value || '';
-  const email = (document.getElementById('ga-sa-email') || {}).value || '';
-  const key  = (document.getElementById('ga-sa-key') || {}).value || '';
-  try {
-    await api('POST', '/api/admin/analytics-config', {
-      gaId: GA_MEASUREMENT_ID,
-      propertyId: pid.trim(),
-      serviceAccountEmail: email.trim(),
-      serviceAccountKey: key.trim(),
-      enabled: true,
-    });
-    const badge = document.getElementById('sa-badge');
-    if (badge && pid) { badge.style.background='var(--green-bg)'; badge.style.color='var(--green)'; badge.textContent='সেটআপ সম্পন্ন ✓'; }
-    if (showToast) toast('✅ GA Config সংরক্ষিত — এখন "ডেটা লোড করুন" বাটন চাপুন');
-  } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
-}
-
-// ── Facebook Pixel শুধু সেভ ──
-async function saveFbPixelOnly() {
-  const pid = (document.getElementById('fb-pixel-id') || {}).value || '';
-  if (pid && !/^\d{10,20}$/.test(pid.trim())) {
-    toast('Pixel ID সঠিক নয় — ১০-২০ সংখ্যার হওয়া উচিত', 'error'); return;
-  }
-  try {
-    const cur = await api('GET', '/api/admin/analytics-config').catch(() => ({}));
-    await api('POST', '/api/admin/analytics-config', { ...cur, fbPixelId: pid.trim(), gaId: GA_MEASUREMENT_ID, enabled: true });
-    const badge = document.getElementById('fb-badge');
-    const msg   = document.getElementById('fb-status-msg');
-    if (badge && pid) { badge.style.background='var(--green-bg)'; badge.style.color='var(--green)'; badge.textContent='সক্রিয় ✓'; }
-    if (badge && !pid) { badge.style.background='var(--orange-bg)'; badge.style.color='var(--orange)'; badge.textContent='ID দিন'; }
-    if (msg) {
-      msg.style.display = 'block';
-      msg.style.background = pid ? 'var(--green-bg)' : 'var(--orange-bg)';
-      msg.style.color = pid ? 'var(--green)' : 'var(--orange)';
-      msg.textContent = pid ? '✅ Facebook Pixel সক্রিয় হয়েছে। index.html এ সাথে সাথে কাজ শুরু হবে।' : '⚠️ Pixel ID খালি রাখলে FB ট্র্যাকিং বন্ধ থাকবে।';
-    }
-    toast(pid ? '✅ Facebook Pixel সেভ হয়েছে' : 'Pixel ID খালি সংরক্ষিত');
-  } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
-}
-
 // ── Analytics পেজ লোড হলে ডেটা টানা ──
 async function loadAnalyticsConfig() {
-  // FB Pixel লোড
-  try {
-    const cfg = await api('GET', '/api/admin/analytics-config');
-    if (cfg.fbPixelId) {
-      const el = document.getElementById('fb-pixel-id');
-      if (el) el.value = cfg.fbPixelId;
-      const badge = document.getElementById('fb-badge');
-      if (badge) { badge.style.background='var(--green-bg)'; badge.style.color='var(--green)'; badge.textContent='সক্রিয় ✓'; }
-    }
-    if (cfg.propertyId) {
-      const el = document.getElementById('ga-property-id');
-      if (el) el.value = cfg.propertyId;
-      const badge = document.getElementById('sa-badge');
-      if (badge) { badge.style.background='var(--green-bg)'; badge.style.color='var(--green)'; badge.textContent='সেটআপ সম্পন্ন ✓'; }
-    }
-    if (cfg.serviceAccountEmail) {
-      const el = document.getElementById('ga-sa-email');
-      if (el) el.value = cfg.serviceAccountEmail;
-    }
-  } catch(_) {}
-  // ডেটা লোড
   loadAllAnalytics();
 }
 
-// ── GA Setup hint (Service Account নেই) ──
-function showGaSetupHint() {
-  ['an-total-users','an-pageviews','an-avg-time','an-new-users'].forEach(id => {
-    const e = document.getElementById(id);
-    if (e && e.textContent === 'N/A') e.textContent = '—';
-  });
-}
-
-// ── stub রাখি backward compat এর জন্য ──
+// ── backward compat stubs ──
 function updateAnalyticsToggleUI() {}
 function updateAnalyticsBanner() {}
-async function saveAnalyticsConfig() { await saveFbPixelOnly(); }
+async function saveAnalyticsConfig() {}
+async function saveFbPixelOnly() {}
+async function saveGaPropertyId() {}
 async function testAnalyticsConfig() {
-  try {
-    const r = await fetch(API + '/api/public/analytics-config');
-    const cfg = r.ok ? await r.json() : {};
-    toast('✅ API সংযোগ ঠিক আছে। GA: G-JPJ5Y9Z1T0 সক্রিয়।');
-  } catch(e) { toast('সংযোগ ব্যর্থ: ' + e.message, 'error'); }
+  toast('✅ GA: G-JPJ5Y9Z1T0 সক্রিয় — ট্র্যাকিং চলছে।');
 }
 
 // ── Auto-refresh: প্রতি ৩০ সেকেন্ডে লাইভ ভিজিটর আপডেট ──
