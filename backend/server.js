@@ -1815,7 +1815,7 @@ app.post('/api/admin/about-page', authMiddleware, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-const DEFAULT_CONTENT_BUNDLE = {heroSections:{home:{title:'ইবনে খালদুন ইনস্টিটিউট',subtitle:'অনলাইনে নতুন দক্ষতা অর্জন করুন',backgroundImage:''},courses:{title:'সকল কোর্সসমূহ',subtitle:'এক অক্ষর লিখলেই কোর্স রিকমেন্ডেশন দেখুন',backgroundImage:''},about:{title:'আমাদের সম্পর্কে',subtitle:'আমাদের উদ্দেশ্য, কাজ ও শিক্ষা দর্শন',backgroundImage:''},contact:{title:'যোগাযোগ করুন',subtitle:'আমরা আপনার পাশে আছি',backgroundImage:''}},about:{content:'<p>ইবনে খালদুন ইনস্টিটিউট অনলাইন শিক্ষার একটি নির্ভরযোগ্য প্ল্যাটফর্ম।</p>'},contact:{email:'info@ibnkhaldun.edu.bd',phone:'+880 1700-000000',address:'ঢাকা, বাংলাদেশ',content:'যে কোনো প্রশ্নে আমাদের সাথে যোগাযোগ করুন।'},faqs:[{question:'কোর্স কীভাবে শুরু করব?',answer:'পছন্দের কোর্স নির্বাচন করে এনরোল করুন।'}],promo:{title:'জনপ্রিয় কোর্স',subtitle:'সেরা কোর্সগুলো এক জায়গায়',buttonText:'কোর্স দেখুন',buttonLink:'#courses'},navLinks:[{name:'হোম',link:'#home'},{name:'কোর্সসমূহ',link:'#courses'},{name:'আমাদের সম্পর্কে',link:'#about'},{name:'যোগাযোগ',link:'#contact'}],categories:[{name:'কুরআন',slug:'quran',link:'quran'},{name:'আরবি',slug:'arabic',link:'arabic'}],sidebarBody:[{title:'কোর্স সহায়তা',body:'প্রয়োজনে অ্যাডমিনের সাথে যোগাযোগ করুন।'}]};
+const DEFAULT_CONTENT_BUNDLE = {heroSections:{home:{title:'ইবনে খালদুন ইনস্টিটিউট',subtitle:'অনলাইনে নতুন দক্ষতা অর্জন করুন',backgroundImage:''},courses:{title:'সকল কোর্সসমূহ',subtitle:'এক অক্ষর লিখলেই কোর্স রিকমেন্ডেশন দেখুন',backgroundImage:''},about:{title:'আমাদের সম্পর্কে',subtitle:'আমাদের উদ্দেশ্য, কাজ ও শিক্ষা দর্শন',backgroundImage:''},contact:{title:'যোগাযোগ করুন',subtitle:'আমরা আপনার পাশে আছি',backgroundImage:''}},about:{content:'<p>ইবনে খালদুন ইনস্টিটিউট অনলাইন শিক্ষার একটি নির্ভরযোগ্য প্ল্যাটফর্ম।</p>'},contact:{email:'info@ibnkhaldun.edu.bd',phone:'+880 1700-000000',address:'ঢাকা, বাংলাদেশ',content:'যে কোনো প্রশ্নে আমাদের সাথে যোগাযোগ করুন।'},faqs:[{question:'কোর্স কীভাবে শুরু করব?',answer:'পছন্দের কোর্স নির্বাচন করে এনরোল করুন।'}],promo:{title:'জনপ্রিয় কোর্স',subtitle:'সেরা কোর্সগুলো এক জায়গায়',buttonText:'কোর্স দেখুন',buttonLink:'#courses'},navLinks:[{name:'হোম',link:'#home'},{name:'কোর্সসমূহ',link:'#courses'},{name:'আমাদের সম্পর্কে',link:'#about'},{name:'যোগাযোগ',link:'#contact'}],categories:[{name:'কুরআন শিক্ষা',slug:'quran-education',link:'quran-education'},{name:'প্রোডাক্টিভিটি এবং লাইফ হ্যাকস',slug:'productivity-life-hacks',link:'productivity-life-hacks'},{name:'পারিবারিক জীবন',slug:'family-life',link:'family-life'},{name:'সীরাহ এবং ইতিহাস',slug:'seerah-and-history',link:'seerah-and-history'},{name:'সুন্নাহ এবং লাইফস্টাইল',slug:'sunnah-and-lifestyle',link:'sunnah-and-lifestyle'},{name:'ফিকাহ',slug:'fiqh',link:'fiqh'},{name:'হাদীস',slug:'hadith',link:'hadith'},{name:'হোমস্কুলিং এবং প্যারেন্টিং',slug:'homeschooling-and-parenting',link:'homeschooling-and-parenting'},{name:'ইসলামী বিশ্বাস ও মতবাদ',slug:'islamic-belief-and-ideology',link:'islamic-belief-and-ideology'}],sidebarBody:[{title:'কোর্স সহায়তা',body:'প্রয়োজনে অ্যাডমিনের সাথে যোগাযোগ করুন।'}]};
 async function getContentBundle(){const s=await Settings.findOne({key:'contentBundle'});return Object.assign({},DEFAULT_CONTENT_BUNDLE,s&&s.value?s.value:{})}
 app.get('/api/public-content-bundle',async(req,res)=>{try{res.json(await getContentBundle())}catch(e){res.status(500).json({error:e.message})}});
 app.get('/api/admin/content-bundle',authMiddleware,async(req,res)=>{try{res.json(await getContentBundle())}catch(e){res.status(500).json({error:e.message})}});
@@ -2216,217 +2216,287 @@ async function ensureDefaultContent() {
     // Check if we already have content
     const courseCount = await Course.countDocuments();
     const instructorCount = await Instructor.countDocuments();
-    
+    const categoryCount = await Category.countDocuments();
+
+    if (categoryCount === 0) {
+      console.log('🏷️ Creating default categories...');
+      const defaultCategories = [
+        {
+          name: 'কুরআন শিক্ষা', slug: 'quran-education', icon: '📖', order: 1, active: true,
+          subCategories: [
+            { name: 'জার্নি টু কুরআন (৪ মাসে কুরআন শরীফ)', slug: 'journey-to-quran', icon: '🕌', order: 1, active: true },
+            { name: 'মহিলাদের কুরআন যাত্রা', slug: 'womens-quran-journey', icon: '👩', order: 2, active: true },
+            { name: 'আল কোরআন ও বিজ্ঞান', slug: 'quran-and-science', icon: '🔬', order: 3, active: true },
+          ],
+        },
+        {
+          name: 'প্রোডাক্টিভিটি এবং লাইফ হ্যাকস', slug: 'productivity-life-hacks', icon: '⚡', order: 2, active: true,
+          subCategories: [
+            { name: 'এআই (AI) ব্যবহার', slug: 'ai-usage', icon: '🤖', order: 1, active: true },
+            { name: 'গবেষণা ও রিসার্চ কোর্স', slug: 'research-course', icon: '🔍', order: 2, active: true },
+          ],
+        },
+        {
+          name: 'পারিবারিক জীবন', slug: 'family-life', icon: '👨‍👩‍👧‍👦', order: 3, active: true,
+          subCategories: [
+            { name: 'বিবাহ ও দাম্পত্য জীবন', slug: 'marriage-and-conjugal-life', icon: '💍', order: 1, active: true },
+            { name: 'পরিবার ব্যবস্থা', slug: 'family-system', icon: '🏠', order: 2, active: true },
+          ],
+        },
+        {
+          name: 'সীরাহ এবং ইতিহাস', slug: 'seerah-and-history', icon: '📜', order: 4, active: true,
+          subCategories: [
+            { name: 'সিরাহ ও আপত্তির খণ্ডন', slug: 'seerah-refutation', icon: '🛡️', order: 1, active: true },
+            { name: 'ইসলামী ভূগোল ব্যবস্থা', slug: 'islamic-geography', icon: '🗺️', order: 2, active: true },
+            { name: 'সহজে ইসলামী ইতিহাস', slug: 'easy-islamic-history', icon: '🏛️', order: 3, active: true },
+          ],
+        },
+        {
+          name: 'সুন্নাহ এবং লাইফস্টাইল', slug: 'sunnah-and-lifestyle', icon: '🌙', order: 5, active: true,
+          subCategories: [
+            { name: 'হজ ও ওমরা প্রস্তুতি', slug: 'hajj-umrah-preparation', icon: '🕋', order: 1, active: true },
+            { name: 'মহিলাদের তাহারাত', slug: 'womens-taharah', icon: '💧', order: 2, active: true },
+          ],
+        },
+        {
+          name: 'ফিকাহ', slug: 'fiqh', icon: '⚖️', order: 6, active: true,
+          subCategories: [
+            { name: 'মাকাসিদে শরিয়াহ', slug: 'maqasid-al-shariah', icon: '📋', order: 1, active: true },
+            { name: 'আধুনিক রাষ্ট্র ব্যবস্থা', slug: 'modern-state-system', icon: '🏛️', order: 2, active: true },
+          ],
+        },
+        {
+          name: 'হাদীস', slug: 'hadith', icon: '📚', order: 7, active: true,
+          subCategories: [
+            { name: 'হাদিস অস্বীকারে ফেতনা (রিফিউটেশন)', slug: 'hadith-rejection-refutation', icon: '🛡️', order: 1, active: true },
+            { name: 'প্রাচ্যবাদ ও ইসলাম', slug: 'orientalism-and-islam', icon: '🌍', order: 2, active: true },
+          ],
+        },
+        {
+          name: 'হোমস্কুলিং এবং প্যারেন্টিং', slug: 'homeschooling-and-parenting', icon: '🏫', order: 8, active: true,
+          subCategories: [
+            { name: 'প্যারেন্টিং', slug: 'parenting', icon: '👶', order: 1, active: true },
+            { name: 'বিদেশে উচ্চ শিক্ষা', slug: 'higher-education-abroad', icon: '✈️', order: 2, active: true },
+          ],
+        },
+        {
+          name: 'ইসলামী বিশ্বাস ও মতবাদ', slug: 'islamic-belief-and-ideology', icon: '🌟', order: 9, active: true,
+          subCategories: [
+            { name: 'কাদিয়ানীয়াত', slug: 'qadianiyyat', icon: '❌', order: 1, active: true },
+            { name: 'আধুনিক মতবাদ', slug: 'modern-ideology', icon: '⚠️', order: 2, active: true },
+          ],
+        },
+      ];
+      await Category.insertMany(defaultCategories);
+      console.log('✅ Default categories created');
+    }
+
     if (courseCount === 0) {
       console.log('📚 Creating default courses...');
       
       const defaultCourses = [
-        // কুরআন শিক্ষা
+        // ১. কুরআন শিক্ষা
         {
-          title: 'কুরআন তাজবীদ সম্পূর্ণ কোর্স', slug: 'quran-tajweed', category: 'কুরআন শিক্ষা',
-          instructor: 'মাওলানা আব্দুর রহমান', price: 1500, originalPrice: 2000, discount: 25,
-          description: 'শুরু থেকে সঠিক তাজবীদসহ কুরআন পড়া শিখুন। মাখরাজ, সিফাত, মাদ্দ সহ সকল মূলনীতি বিস্তারিতভাবে শেখানো হবে। শিক্ষার্থীরা পবিত্র কুরআন শুদ্ধভাবে তেলাওয়াত করতে সক্ষম হবেন।',
-          shortDesc: 'সঠিক তাজবীদ সহ কুরআন পড়া শিখুন — মাখরাজ, সিফাত ও মাদ্দ সহ',
-          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৩ মাস', lessons: 24,
-          students: 856, rating: 4.9, level: 'শুরুর স্তর', featured: true,
-          tags: ['কুরআন', 'তাজবীদ', 'ইসলাম'],
-          curriculum: [
-            { sectionTitle: 'পরিচিতি ও মাখরাজ', lessons: [
-              { title: 'কোর্স পরিচিতি', duration: '৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'আরবি হরফ পরিচয়', duration: '১৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'মাখরাজ — মুখের অঙ্গ থেকে উচ্চারণ', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-            ]},
-            { sectionTitle: 'তাজবীদের মূলনীতি', lessons: [
-              { title: 'নুন সাকিন ও তানবীন', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'মাদ্দ ও কসর', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'ওয়াকফ ও ইবতিদা', duration: '১৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-            ]},
-          ],
-        },
-        {
-          title: 'কুরআন হিফজ প্রোগ্রাম', slug: 'quran-hifz', category: 'কুরআন শিক্ষা',
-          instructor: 'মাওলানা আব্দুর রহমান', price: 2500, originalPrice: 3000, discount: 17,
-          description: 'পদ্ধতিগতভাবে পবিত্র কুরআন হিফজ করুন। প্রতিদিনের পরিকল্পনা, মুরাজা পদ্ধতি এবং দোহরানোর কৌশল শিখুন।',
-          shortDesc: 'পদ্ধতিগতভাবে কুরআন হিফজ করুন — পরিকল্পনা ও কৌশলসহ',
-          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '১২ মাস', lessons: 48,
-          students: 345, rating: 4.8, level: 'সকলের জন্য', featured: true,
-          tags: ['কুরআন', 'হিফজ', 'মুখস্থ'],
-          curriculum: [
-            { sectionTitle: 'হিফজের প্রস্তুতি', lessons: [
-              { title: 'হিফজ পদ্ধতির পরিচয়', duration: '১০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'দৈনিক পরিকল্পনা তৈরি', duration: '১৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-            ]},
-            { sectionTitle: 'আমপারা থেকে শুরু', lessons: [
-              { title: 'সূরা আন-নাস', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'সূরা আল-ফালাক', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'সূরা আল-ইখলাস', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-            ]},
-          ],
-        },
-        // হাদিস শিক্ষা
-        {
-          title: 'হাদিস অধ্যয়ন — সহীহ বুখারি পরিচিতি', slug: 'hadith-bukhari', category: 'হাদিস শিক্ষা',
-          instructor: 'শায়খ মুহাম্মদ ইসমাইল', price: 2000, originalPrice: 2500, discount: 20,
-          description: 'সহীহ বুখারির নির্বাচিত হাদিস, সনদ ও মতন বিশ্লেষণ। হাদিসের পরিভাষা এবং উসুলুল হাদিস শিখুন বিস্তারিতভাবে।',
-          shortDesc: 'সহীহ বুখারির হাদিস, সনদ বিশ্লেষণ ও উসুলুল হাদিস',
+          title: 'জার্নি টু কুরআন — ৪ মাসে কুরআন শরীফ', slug: 'journey-to-quran', category: 'কুরআন শিক্ষা',
+          subCategory: 'জার্নি টু কুরআন (৪ মাসে কুরআন শরীফ)',
+          instructor: 'মাওলানা আব্দুর রহমান', price: 1800, originalPrice: 2500, discount: 28,
+          description: '৪ মাসের সুপরিকল্পিত প্রোগ্রামে শূন্য থেকে শুরু করে কুরআন শরীফ সঠিকভাবে পড়তে শিখুন। প্রতিটি ক্লাসে তাজবীদ, মাখরাজ ও বাস্তব অনুশীলন অন্তর্ভুক্ত। কোর্স শেষে শিক্ষার্থী আত্মবিশ্বাসের সাথে কুরআন তেলাওয়াত করতে পারবেন।',
+          shortDesc: '৪ মাসের প্রোগ্রামে শূন্য থেকে কুরআন পড়া সম্পন্ন করুন',
           thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৪ মাস', lessons: 32,
-          students: 498, rating: 4.9, level: 'মধ্যম স্তর', featured: true,
-          tags: ['হাদিস', 'বুখারি', 'সনদ'],
+          students: 1240, rating: 4.9, level: 'শুরুর স্তর', featured: true,
+          tags: ['কুরআন', 'তেলাওয়াত', 'তাজবীদ', 'শুরুর স্তর'],
           curriculum: [
-            { sectionTitle: 'হাদিস বিজ্ঞানের পরিচয়', lessons: [
-              { title: 'হাদিস কী ও কেন', duration: '১২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'সহীহ, হাসান, দঈফ হাদিস', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'সনদ ও মতন পরিচিতি', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            { sectionTitle: 'মাস ১ — হরফ ও হরকত', lessons: [
+              { title: 'কোর্স পরিচিতি ও লক্ষ্যমাত্রা', duration: '৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'আরবি হরফ পরিচয় (আলিফ থেকে ইয়া)', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'ফাতহা, কাসরা ও দাম্মা', duration: '১৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'সুকুন, শাদ্দা ও তানবীন', duration: '২২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
             ]},
-            { sectionTitle: 'সহীহ বুখারির নির্বাচিত হাদিস', lessons: [
-              { title: 'নিয়তের হাদিস ব্যাখ্যা', duration: '৩০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'ঈমানের হাদিস', duration: '২৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            { sectionTitle: 'মাস ২ — মাখরাজ ও সিফাত', lessons: [
+              { title: 'মাখরাজ — উচ্চারণস্থান পরিচিতি', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'সিফাতুল হুরুফ — হরফের বৈশিষ্ট্য', duration: '২৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            ]},
+            { sectionTitle: 'মাস ৩ ও ৪ — তাজবীদ ও তেলাওয়াত', lessons: [
+              { title: 'নুন সাকিন ও তানবীনের বিধান', duration: '৩০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'মাদ্দ ও কসরের বিধান', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'ওয়াকফ ও ইবতিদা', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'চূড়ান্ত তেলাওয়াত মূল্যায়ন', duration: '১৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
             ]},
           ],
         },
-        // ইসলামিক ফিকাহ
+        // ২. প্রোডাক্টিভিটি এবং লাইফ হ্যাকস
         {
-          title: 'ইসলামিক ফিকাহ — দৈনন্দিন বিধান', slug: 'islamic-fiqh-daily', category: 'ইসলামিক ফিকাহ',
-          instructor: 'মুফতি তাহের আলী', price: 1800, originalPrice: 2200, discount: 18,
-          description: 'নামাজ, রোজা, যাকাত, হজ্বসহ দৈনন্দিন জীবনের সকল ইসলামী বিধান বিস্তারিতভাবে শিখুন। হালাল-হারাম, লেনদেন ও পারিবারিক বিধান অন্তর্ভুক্ত।',
-          shortDesc: 'নামাজ, রোজা, যাকাত, হজ্ব — দৈনন্দিন ইসলামী বিধান',
-          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৩ মাস', lessons: 28,
-          students: 634, rating: 4.7, level: 'সকলের জন্য', featured: false,
-          tags: ['ফিকাহ', 'নামাজ', 'রোজা', 'যাকাত'],
+          title: 'এআই দিয়ে উৎপাদনশীল জীবন গড়ুন', slug: 'ai-productive-life', category: 'প্রোডাক্টিভিটি এবং লাইফ হ্যাকস',
+          subCategory: 'এআই (AI) ব্যবহার',
+          instructor: 'উস্তাদ ফারুক আহমেদ', price: 2200, originalPrice: 3000, discount: 27,
+          description: 'ChatGPT, Claude, Gemini সহ আধুনিক AI টুলস ব্যবহার করে দৈনন্দিন কাজকে সহজ ও দ্রুত করুন। ইসলামী দৃষ্টিকোণ থেকে AI এর সীমা ও সম্ভাবনা নিয়ে আলোচনা। গবেষণা, লেখালেখি ও শিক্ষায় AI প্রয়োগের ব্যবহারিক গাইড।',
+          shortDesc: 'AI টুলস ব্যবহার করে স্মার্টভাবে পড়াশোনা, গবেষণা ও কাজ করুন',
+          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '২ মাস', lessons: 20,
+          students: 876, rating: 4.8, level: 'সকলের জন্য', featured: true,
+          tags: ['AI', 'প্রোডাক্টিভিটি', 'ChatGPT', 'টেকনোলজি'],
           curriculum: [
-            { sectionTitle: 'ইবাদত — নামাজ', lessons: [
-              { title: 'ওযু ও পাকপবিত্রতার বিধান', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'নামাজের ফরজ ও ওয়াজিব', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'জামাআত ও জুমআর নামাজ', duration: '২২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            { sectionTitle: 'AI পরিচিতি ও ইসলামী দৃষ্টিভঙ্গি', lessons: [
+              { title: 'AI কী ও কীভাবে কাজ করে', duration: '১৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'ইসলামী দৃষ্টিকোণে AI — হালাল ও হারাম ব্যবহার', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
             ]},
-            { sectionTitle: 'রোজা ও যাকাতের বিধান', lessons: [
-              { title: 'রমজানের রোজার মাসআলা', duration: '২৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'যাকাতের নিসাব ও হিসাব', duration: '২৪ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            { sectionTitle: 'ব্যবহারিক AI টুলস', lessons: [
+              { title: 'ChatGPT দিয়ে গবেষণা ও লেখালেখি', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'কুরআন-হাদিস গবেষণায় AI', duration: '২২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'প্রতিদিনের কাজে AI দিয়ে সময় বাঁচান', duration: '১৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
             ]},
           ],
         },
-        // আরবি ভাষা
+        // ৩. পারিবারিক জীবন
         {
-          title: 'আরবি ভাষা — শূন্য থেকে শুরু', slug: 'arabic-beginner', category: 'আরবি ভাষা',
-          instructor: 'উস্তাদ ফারুক আহমেদ', price: 2500, originalPrice: 3000, discount: 17,
-          description: 'একদম শূন্য থেকে আরবি ভাষা শিখুন। আরবি হরফ, হরকত, শব্দভান্ডার, বাক্য গঠন এবং সহজ কথোপকথন শেখানো হবে।',
-          shortDesc: 'শূন্য থেকে আরবি শিখুন — হরফ, হরকত, শব্দ ও বাক্য গঠন',
-          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৬ মাস', lessons: 48,
-          students: 945, rating: 4.9, level: 'শুরুর স্তর', featured: true,
-          tags: ['আরবি', 'ভাষা', 'শিক্ষা'],
-          curriculum: [
-            { sectionTitle: 'আরবি হরফ ও হরকত', lessons: [
-              { title: 'আরবি হরফ পরিচয় (আলিফ-ইয়া)', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'ফাতহা, কাসরা, দাম্মা', duration: '১৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'সুকুন, শাদ্দা ও তানবীন', duration: '১৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-            ]},
-            { sectionTitle: 'শব্দভান্ডার ও বাক্য', lessons: [
-              { title: 'দৈনন্দিন শব্দ ১০০টি', duration: '৩০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'সহজ বাক্য গঠন', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-            ]},
-          ],
-        },
-        {
-          title: 'আরবি নাহু — ব্যাকরণ মাস্টারক্লাস', slug: 'arabic-nahw', category: 'আরবি ভাষা',
-          instructor: 'উস্তাদ ফারুক আহমেদ', price: 2200, originalPrice: 2800, discount: 21,
-          description: 'আরবি ব্যাকরণের মূলনীতি — ইসম, ফেল, হরফ, ই\'রাব, জুমলা ইসমিয়া ও জুমলা ফে\'লিয়া বিস্তারিত শিখুন।',
-          shortDesc: 'আরবি ইসম, ফেল, হরফ ও ই\'রাব — নাহু ব্যাকরণ',
-          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৪ মাস', lessons: 36,
-          students: 587, rating: 4.8, level: 'মধ্যম স্তর', featured: false,
-          tags: ['আরবি', 'নাহু', 'ব্যাকরণ'],
-          curriculum: [
-            { sectionTitle: 'নাহু পরিচয়', lessons: [
-              { title: 'কালাম ও তার প্রকারভেদ', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'ইসম পরিচয় ও প্রকার', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'ফে\'ল পরিচয় ও প্রকার', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-            ]},
-            { sectionTitle: 'ই\'রাব — শেষ হরকত', lessons: [
-              { title: 'রফা, নাসব, জর্র, জযম', duration: '৩০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'জুমলা ইসমিয়া — মুবতাদা ও খবর', duration: '২৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-            ]},
-          ],
-        },
-        // আকিদা
-        {
-          title: 'ইসলামী আকিদা — বিশ্বাসের মূলনীতি', slug: 'islamic-aqidah', category: 'আকিদা ও বিশ্বাস',
-          instructor: 'শায়খ মুহাম্মদ ইসমাইল', price: 1600, originalPrice: 2000, discount: 20,
-          description: 'ইসলামের মূল বিশ্বাস — তাওহীদ, রিসালাত, আখিরাত, ফেরেশতা ও তাকদীর বিষয়ে বিস্তারিত জানুন। আহলে সুন্নাহ ওয়াল জামাআতের আকিদা।',
-          shortDesc: 'তাওহীদ, রিসালাত, আখিরাত — ইসলামী আকিদার মূলনীতি',
+          title: 'ইসলামী বিবাহ ও সুখী দাম্পত্য জীবন', slug: 'islamic-marriage-life', category: 'পারিবারিক জীবন',
+          subCategory: 'বিবাহ ও দাম্পত্য জীবন',
+          instructor: 'মুফতি তাহের আলী', price: 1500, originalPrice: 2000, discount: 25,
+          description: 'ইসলামী শরিয়তের আলোকে বিবাহের প্রস্তুতি, বিয়ের বিধান, দাম্পত্য অধিকার ও দায়িত্ব এবং পারিবারিক শান্তি বজায় রাখার উপায় শিখুন। কুরআন ও হাদিসের নির্দেশনায় সুখী পারিবারিক জীবন গড়ুন।',
+          shortDesc: 'ইসলামী বিবাহ বিধান, দাম্পত্য অধিকার ও সুখী পরিবার গঠনের গাইড',
           thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৩ মাস', lessons: 24,
-          students: 423, rating: 4.8, level: 'সকলের জন্য', featured: true,
-          tags: ['আকিদা', 'তাওহীদ', 'ইসলাম'],
+          students: 945, rating: 4.8, level: 'সকলের জন্য', featured: true,
+          tags: ['বিবাহ', 'পারিবারিক জীবন', 'দাম্পত্য', 'ইসলাম'],
           curriculum: [
-            { sectionTitle: 'তাওহীদ — আল্লাহর একত্ব', lessons: [
-              { title: 'তাওহীদের পরিচয় ও প্রকার', duration: '২২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'তাওহীদুর রুবুবিয়্যাহ', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'তাওহীদুল উলুহিয়্যাহ', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            { sectionTitle: 'বিবাহের প্রস্তুতি ও বিধান', lessons: [
+              { title: 'বিবাহের গুরুত্ব ও উদ্দেশ্য', duration: '১৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'বর-কনে নির্বাচনের ইসলামী মানদণ্ড', duration: '২২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'মোহর, ওলিমা ও বিয়ের অনুষ্ঠান', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
             ]},
-            { sectionTitle: 'রিসালাত ও আখিরাত', lessons: [
-              { title: 'নবী-রাসুলগণের প্রতি ঈমান', duration: '২৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'পরকাল ও কিয়ামতের আলামত', duration: '৩০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            { sectionTitle: 'দাম্পত্য জীবনের বিধান', lessons: [
+              { title: 'স্বামী-স্ত্রীর পারস্পরিক অধিকার', duration: '৩০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'পারিবারিক সমস্যা সমাধানের ইসলামী পথ', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
             ]},
           ],
         },
-        // সীরাতুন নবী
+        // ৪. সীরাহ এবং ইতিহাস
         {
-          title: 'সীরাতুন নবী ﷺ — জীবনী কোর্স', slug: 'seerah-prophet', category: 'সীরাহ ও ইতিহাস',
-          instructor: 'মাওলানা আব্দুর রহমান', price: 1800, originalPrice: 2300, discount: 22,
-          description: 'রাসুলুল্লাহ ﷺ এর পূর্ণাঙ্গ জীবনী — জন্ম থেকে ওফাত পর্যন্ত। মক্কি জীবন, হিজরত, মদনি জীবন ও যুদ্ধাভিযান।',
-          shortDesc: 'রাসুলুল্লাহ ﷺ এর পূর্ণাঙ্গ জীবনী — মক্কা থেকে মদীনা',
+          title: 'সীরাতুন নবী ﷺ ও আপত্তির খণ্ডন', slug: 'seerah-refutation-course', category: 'সীরাহ এবং ইতিহাস',
+          subCategory: 'সিরাহ ও আপত্তির খণ্ডন',
+          instructor: 'মাওলানা আব্দুর রহমান', price: 2000, originalPrice: 2600, discount: 23,
+          description: 'রাসুলুল্লাহ ﷺ এর পূর্ণাঙ্গ জীবনী এবং ইসলাম-বিরোধীদের উত্থাপিত আপত্তির দলিলভিত্তিক খণ্ডন। মক্কি ও মদনি জীবন, যুদ্ধাভিযান এবং নবীজীর চরিত্র নিয়ে করা মিথ্যাচারের পর্দাফাঁস।',
+          shortDesc: 'নবীজীর জীবনী ও ইসলামবিরোধী আপত্তির দলিলভিত্তিক জবাব',
           thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৫ মাস', lessons: 40,
           students: 712, rating: 4.9, level: 'সকলের জন্য', featured: true,
-          tags: ['সীরাহ', 'নবী জীবনী', 'ইসলামী ইতিহাস'],
+          tags: ['সীরাহ', 'নবী জীবনী', 'খণ্ডন', 'ইতিহাস'],
           curriculum: [
             { sectionTitle: 'মক্কি জীবন', lessons: [
               { title: 'প্রাক-ইসলামী আরবের অবস্থা', duration: '১৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'জন্ম ও শৈশব', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'নবুওয়াত লাভ ও প্রথম ওহী', duration: '২৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'নবুওয়াত লাভ ও প্রথম ওহী', duration: '২৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'মক্কার নির্যাতন ও সাহাবীদের ধৈর্য', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
             ]},
-            { sectionTitle: 'হিজরত ও মদনি জীবন', lessons: [
-              { title: 'মদীনায় হিজরত', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'বদর ও উহুদের যুদ্ধ', duration: '৩৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'মক্কা বিজয়', duration: '৩০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            { sectionTitle: 'আপত্তির জবাব', lessons: [
+              { title: 'নবীজীর বিবাহ নিয়ে আপত্তির জবাব', duration: '৩৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'যুদ্ধাভিযান নিয়ে প্রশ্নের জবাব', duration: '৩২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
             ]},
           ],
         },
-        // তাফসীর
+        // ৫. সুন্নাহ এবং লাইফস্টাইল
         {
-          title: 'তাফসীর কোর্স — কুরআনের ব্যাখ্যা', slug: 'tafseer-quran', category: 'তাফসীর',
-          instructor: 'মুফতি তাহের আলী', price: 2200, originalPrice: 2800, discount: 21,
-          description: 'বিভিন্ন তাফসীর গ্রন্থের সাহায্যে কুরআনের বাছাই করা সূরা ও আয়াতের বিস্তারিত ব্যাখ্যা। তাফসীর ইবন কাসীর, তাফসীর জালালাইন রেফারেন্স।',
-          shortDesc: 'কুরআনের বাছাই সূরাগুলোর তাফসীর — আরবি ও বাংলায়',
+          title: 'হজ ও ওমরা সম্পূর্ণ প্রস্তুতি কোর্স', slug: 'hajj-umrah-complete', category: 'সুন্নাহ এবং লাইফস্টাইল',
+          subCategory: 'হজ ও ওমরা প্রস্তুতি',
+          instructor: 'মুফতি তাহের আলী', price: 1600, originalPrice: 2200, discount: 27,
+          description: 'হজ ও ওমরার সম্পূর্ণ বিধান, মানাসিক, দুআ ও আমলসহ ব্যবহারিক প্রস্তুতি গাইড। ইহরাম থেকে শুরু করে তাওয়াফ, সায়ী, মিনা, আরাফাত সবকিছু ধাপে ধাপে শিখুন। বাংলাদেশি হাজিদের জন্য বিশেষভাবে তৈরি।',
+          shortDesc: 'হজ ও ওমরার বিধান, মানাসিক ও দুআসহ সম্পূর্ণ প্রস্তুতি গাইড',
+          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '২ মাস', lessons: 22,
+          students: 1560, rating: 4.9, level: 'সকলের জন্য', featured: true,
+          tags: ['হজ', 'ওমরা', 'মক্কা', 'ইবাদত'],
+          curriculum: [
+            { sectionTitle: 'হজের বুনিয়াদি জ্ঞান', lessons: [
+              { title: 'হজের ফরজিয়াত ও ওয়াজিব', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'ইহরামের বিধান ও নিষিদ্ধ কাজ', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+            ]},
+            { sectionTitle: 'হজের মানাসিক', lessons: [
+              { title: 'তাওয়াফ ও সায়ীর পদ্ধতি', duration: '৩০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'আরাফাত, মুযদালিফা ও মিনার আমল', duration: '৩৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'ওমরার সম্পূর্ণ পদ্ধতি', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            ]},
+          ],
+        },
+        // ৬. ফিকাহ
+        {
+          title: 'মাকাসিদে শরিয়াহ — ইসলামী আইনের উদ্দেশ্য', slug: 'maqasid-al-shariah-course', category: 'ফিকাহ',
+          subCategory: 'মাকাসিদে শরিয়াহ',
+          instructor: 'মুফতি তাহের আলী', price: 2400, originalPrice: 3000, discount: 20,
+          description: 'ইসলামী শরিয়তের পাঁচটি মূল উদ্দেশ্য — দীন, জীবন, বুদ্ধি, বংশ ও সম্পদ রক্ষা — বিস্তারিতভাবে শিখুন। আধুনিক সমস্যায় ফিকাহর প্রয়োগ এবং ইজতিহাদের মূলনীতি। ইমাম শাতিবীর আল-মুওয়াফাকাত থেকে গ্রহণ করা বিষয়বস্তু।',
+          shortDesc: 'শরিয়তের পাঁচ মাকাসিদ ও আধুনিক সমস্যায় ফিকাহর প্রয়োগ',
           thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৪ মাস', lessons: 30,
-          students: 389, rating: 4.7, level: 'মধ্যম স্তর', featured: false,
-          tags: ['তাফসীর', 'কুরআন', 'ইলম'],
+          students: 456, rating: 4.8, level: 'উচ্চ স্তর', featured: false,
+          tags: ['ফিকাহ', 'মাকাসিদ', 'শরিয়াহ', 'উসুল'],
           curriculum: [
-            { sectionTitle: 'তাফসীর শাস্ত্রের পরিচয়', lessons: [
-              { title: 'তাফসীর কী ও তার প্রকার', duration: '১৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'তাফসীর বিল মাসুর ও তাফসীর বির রায়', duration: '২২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            { sectionTitle: 'মাকাসিদের পরিচয়', lessons: [
+              { title: 'মাকাসিদে শরিয়াহ — ভূমিকা ও ইতিহাস', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'দারুরিয়াত, হাজিয়াত ও তাহসিনিয়াত', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
             ]},
-            { sectionTitle: 'নির্বাচিত সূরার তাফসীর', lessons: [
-              { title: 'সূরা আল-ফাতিহার তাফসীর', duration: '৪০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'সূরা আল-বাকারার প্রথম রুকু', duration: '৪৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            { sectionTitle: 'পাঁচ মাকাসিদের বিস্তারিত', lessons: [
+              { title: 'দীনের সংরক্ষণ', duration: '২৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'জীবন ও বুদ্ধির সংরক্ষণ', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'আধুনিক বিষয়ে মাকাসিদের প্রয়োগ', duration: '৩০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
             ]},
           ],
         },
-        // দুআ ও যিকর
+        // ৭. হাদীস
         {
-          title: 'দুআ ও যিকর — দৈনন্দিন আমল', slug: 'dua-dhikr-daily', category: 'দুআ ও যিকর',
-          instructor: 'শায়খ মুহাম্মদ ইসমাইল', price: 1200, originalPrice: 1500, discount: 20,
-          description: 'সকাল-সন্ধ্যার দুআ, নামাজের পরের যিকর, ঘুমের আগে-পরের দুআ ও বিভিন্ন সময়ের আমল শিখুন সঠিক উচ্চারণ ও অর্থসহ।',
-          shortDesc: 'সকাল-সন্ধ্যার দুআ, যিকর ও দৈনন্দিন আমল — উচ্চারণ ও অর্থসহ',
-          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '২ মাস', lessons: 20,
-          students: 1234, rating: 4.9, level: 'সকলের জন্য', featured: true,
-          tags: ['দুআ', 'যিকর', 'আমল'],
+          title: 'হাদিস অস্বীকারকারীদের ফেতনা ও খণ্ডন', slug: 'hadith-rejection-refutation-course', category: 'হাদীস',
+          subCategory: 'হাদিস অস্বীকারে ফেতনা (রিফিউটেশন)',
+          instructor: 'শায়খ মুহাম্মদ ইসমাইল', price: 1800, originalPrice: 2400, discount: 25,
+          description: 'কুরআনমাত্রবাদী (Quranist) ও হাদিস অস্বীকারকারীদের যুক্তি খণ্ডন করুন দলিলের আলোকে। হাদিসের সংকলন ইতিহাস, সনদ পরীক্ষার পদ্ধতি এবং হাদিসের বিশুদ্ধতার প্রমাণ। মুসলিম তরুণদের জন্য বিশেষভাবে প্রয়োজনীয় কোর্স।',
+          shortDesc: 'হাদিস অস্বীকারকারীদের আপত্তির দলিলভিত্তিক জবাব ও সনদ বিজ্ঞান',
+          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৩ মাস', lessons: 26,
+          students: 634, rating: 4.9, level: 'মধ্যম স্তর', featured: true,
+          tags: ['হাদিস', 'রিফিউটেশন', 'সনদ', 'উসুলুল হাদিস'],
           curriculum: [
-            { sectionTitle: 'সকাল ও সন্ধ্যার আযকার', lessons: [
-              { title: 'সকালের ৫টি গুরুত্বপূর্ণ দুআ', duration: '১৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'সন্ধ্যার আযকার', duration: '১৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'ঘুমের আগে ও পরের দুআ', duration: '১৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            { sectionTitle: 'হাদিসের মর্যাদা ও সংরক্ষণ', lessons: [
+              { title: 'হাদিস কেন মানতে হবে — কুরআনের দলিল', duration: '২২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'হাদিস সংকলনের ইতিহাস', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
             ]},
-            { sectionTitle: 'নামাজের পরের যিকর', lessons: [
-              { title: 'তাসবিহ — সুবহানাল্লাহ ৩৩ বার', duration: '১২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'আয়াতুল কুরসি ও এর ফযিলত', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            { sectionTitle: 'আপত্তির খণ্ডন', lessons: [
+              { title: '"হাদিস মানুষের লেখা" — এই দাবির জবাব', duration: '৩০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'সনদ পরীক্ষার বৈজ্ঞানিক পদ্ধতি', duration: '২৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'বিখ্যাত হাদিস অস্বীকারকারীদের যুক্তি খণ্ডন', duration: '৩৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            ]},
+          ],
+        },
+        // ৮. হোমস্কুলিং এবং প্যারেন্টিং
+        {
+          title: 'ইসলামী প্যারেন্টিং — সন্তান গড়ার গাইড', slug: 'islamic-parenting-guide', category: 'হোমস্কুলিং এবং প্যারেন্টিং',
+          subCategory: 'প্যারেন্টিং',
+          instructor: 'ড. আয়েশা বেগম', price: 1600, originalPrice: 2200, discount: 27,
+          description: 'কুরআন ও সুন্নাহর আলোকে সন্তান লালন-পালন, মূল্যবোধ শিক্ষা এবং আধুনিক চ্যালেঞ্জ মোকাবেলার পথ। সন্তানের মানসিক বিকাশ, স্ক্রিন টাইম ম্যানেজমেন্ট এবং ইসলামী পরিবেশ তৈরির কৌশল। হোমস্কুলিং পদ্ধতি ও ইসলামী শিক্ষার সমন্বয়।',
+          shortDesc: 'কুরআন-সুন্নাহর আলোকে সন্তান গড়ার সম্পূর্ণ ইসলামী গাইড',
+          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৩ মাস', lessons: 24,
+          students: 892, rating: 4.8, level: 'সকলের জন্য', featured: true,
+          tags: ['প্যারেন্টিং', 'হোমস্কুলিং', 'শিশু শিক্ষা', 'পরিবার'],
+          curriculum: [
+            { sectionTitle: 'ইসলামী শিশু লালন-পালন', lessons: [
+              { title: 'সন্তান লালনে নবীজীর আদর্শ', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'শিশুর মানসিক বিকাশ ও ইসলামী দৃষ্টিভঙ্গি', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+            ]},
+            { sectionTitle: 'হোমস্কুলিং পদ্ধতি', lessons: [
+              { title: 'ঘরে কুরআন ও দীনী শিক্ষার পরিবেশ তৈরি', duration: '২২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'ডিজিটাল যুগে সন্তানকে রক্ষার উপায়', duration: '২৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'পুরস্কার ও শাস্তি — ইসলামী দৃষ্টিকোণ', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+            ]},
+          ],
+        },
+        // ৯. ইসলামী বিশ্বাস ও মতবাদ
+        {
+          title: 'কাদিয়ানীয়াত — পরিচয় ও খণ্ডন', slug: 'qadianiyyat-refutation', category: 'ইসলামী বিশ্বাস ও মতবাদ',
+          subCategory: 'কাদিয়ানীয়াত',
+          instructor: 'শায়খ মুহাম্মদ ইসমাইল', price: 1400, originalPrice: 2000, discount: 30,
+          description: 'কাদিয়ানী (আহমাদিয়া) মতবাদের উৎপত্তি, বিশ্বাস ও ইসলামের সাথে তার মৌলিক পার্থক্য। খতমে নবুওয়াতের দলিল এবং কাদিয়ানীদের দাবির কুরআন-হাদিস ভিত্তিক খণ্ডন। মুসলিম তরুণদের ঈমান রক্ষায় অপরিহার্য কোর্স।',
+          shortDesc: 'কাদিয়ানী মতবাদের পরিচয় ও কুরআন-হাদিস দিয়ে খণ্ডন',
+          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '২ মাস', lessons: 18,
+          students: 523, rating: 4.9, level: 'সকলের জন্য', featured: false,
+          tags: ['কাদিয়ানী', 'খতমে নবুওয়াত', 'রিফিউটেশন', 'আকিদা'],
+          curriculum: [
+            { sectionTitle: 'কাদিয়ানীয়াতের পরিচয়', lessons: [
+              { title: 'মির্জা গোলাম আহমদ — ইতিহাস ও দাবি', duration: '২২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+              { title: 'কাদিয়ানীদের মূল বিশ্বাস ও ইসলামের পার্থক্য', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
+            ]},
+            { sectionTitle: 'খতমে নবুওয়াতের দলিল', lessons: [
+              { title: 'কুরআন থেকে খতমে নবুওয়াতের প্রমাণ', duration: '৩০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'হাদিস থেকে খতমে নবুওয়াতের প্রমাণ', duration: '২৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
+              { title: 'কাদিয়ানীদের সাথে কথা বলার পদ্ধতি', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
             ]},
           ],
         },

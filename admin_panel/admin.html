@@ -1806,15 +1806,15 @@
       <div class="row2">
         <div class="field"><label>ক্যাটাগরি</label>
           <select id="fc-category">
-            <option value="quran">quran</option>
-            <option value="productivity">productivity</option>
-            <option value="family">family</option>
-            <option value="seerah">seerah</option>
-            <option value="sunnah">sunnah</option>
-            <option value="fiqh">fiqh</option>
-            <option value="arabic">arabic</option>
-            <option value="hadith">hadith</option>
-            <option value="aqidah">aqidah</option>
+            <option value="কুরআন শিক্ষা">📖 কুরআন শিক্ষা</option>
+            <option value="প্রোডাক্টিভিটি এবং লাইফ হ্যাকস">⚡ প্রোডাক্টিভিটি এবং লাইফ হ্যাকস</option>
+            <option value="পারিবারিক জীবন">👨‍👩‍👧‍👦 পারিবারিক জীবন</option>
+            <option value="সীরাহ এবং ইতিহাস">📜 সীরাহ এবং ইতিহাস</option>
+            <option value="সুন্নাহ এবং লাইফস্টাইল">🌙 সুন্নাহ এবং লাইফস্টাইল</option>
+            <option value="ফিকাহ">⚖️ ফিকাহ</option>
+            <option value="হাদীস">📚 হাদীস</option>
+            <option value="হোমস্কুলিং এবং প্যারেন্টিং">🏫 হোমস্কুলিং এবং প্যারেন্টিং</option>
+            <option value="ইসলামী বিশ্বাস ও মতবাদ">🌟 ইসলামী বিশ্বাস ও মতবাদ</option>
           </select>
         </div>
         <div class="field"><label>কোন ট্যাবে দেখাবে</label>
@@ -2807,14 +2807,14 @@ async function openCourseModal(course = null) {
       catSel.innerHTML = '<option value="">-- ক্যাটাগরি বাছুন --</option>' +
         allCats.map(c => `<option value="${c.slug||c.name}" ${course?.category === (c.slug||c.name) ? 'selected' : ''}>${c.icon || ''} ${c.name}</option>`).join('');
     } else {
-      catSel.innerHTML = '<option value="quran">Quran</option><option value="arabic">Arabic</option><option value="fiqh">Fiqh</option><option value="hadith">Hadith</option><option value="other">Other</option>';
+      catSel.innerHTML = '<option value="কুরআন শিক্ষা">কুরআন শিক্ষা</option><option value="প্রোডাক্টিভিটি এবং লাইফ হ্যাকস">প্রোডাক্টিভিটি এবং লাইফ হ্যাকস</option><option value="পারিবারিক জীবন">পারিবারিক জীবন</option><option value="সীরাহ এবং ইতিহাস">সীরাহ এবং ইতিহাস</option><option value="সুন্নাহ এবং লাইফস্টাইল">সুন্নাহ এবং লাইফস্টাইল</option><option value="ফিকাহ">ফিকাহ</option><option value="হাদীস">হাদীস</option><option value="হোমস্কুলিং এবং প্যারেন্টিং">হোমস্কুলিং এবং প্যারেন্টিং</option><option value="ইসলামী বিশ্বাস ও মতবাদ">ইসলামী বিশ্বাস ও মতবাদ</option>';
     }
     if (course?.category) catSel.value = course.category;
     // Load subcategories for selected category
     window._allCatsData = allCats;
     loadSubCatOptions(catSel.value, course?.subCategory);
   } catch(e) {
-    document.getElementById('c-category').innerHTML = '<option>Quran</option><option>Arabic</option><option>Fiqh</option><option>Hadith</option><option>Other</option>';
+    document.getElementById('c-category').innerHTML = '<option value="কুরআন শিক্ষা">কুরআন শিক্ষা</option><option value="প্রোডাক্টিভিটি এবং লাইফ হ্যাকস">প্রোডাক্টিভিটি এবং লাইফ হ্যাকস</option><option value="পারিবারিক জীবন">পারিবারিক জীবন</option><option value="সীরাহ এবং ইতিহাস">সীরাহ এবং ইতিহাস</option><option value="সুন্নাহ এবং লাইফস্টাইল">সুন্নাহ এবং লাইফস্টাইল</option><option value="ফিকাহ">ফিকাহ</option><option value="হাদীস">হাদীস</option><option value="হোমস্কুলিং এবং প্যারেন্টিং">হোমস্কুলিং এবং প্যারেন্টিং</option><option value="ইসলামী বিশ্বাস ও মতবাদ">ইসলামী বিশ্বাস ও মতবাদ</option>';
   }
 
   // Load course tabs
@@ -4455,13 +4455,13 @@ async function saveNavigation() {
 // HERO SECTION
 // ────────────────────────────────────────────
 let heroCardsData = [
-  {label:'QURAN',link:'#quran',img:''},
-  {label:'SEERAH',link:'#seerah',img:''},
-  {label:'FIQH',link:'#fiqh',img:''},
-  {label:'AQIDAH',link:'#aqidah',img:''},
-  {label:'ARABIC',link:'#arabic',img:''},
-  {label:'TAFSIR',link:'#tafsir',img:''},
-  {label:'HADITH',link:'#hadith',img:''}
+  {label:'কুরআন শিক্ষা',link:'#quran-education',img:''},
+  {label:'সীরাহ ও ইতিহাস',link:'#seerah-and-history',img:''},
+  {label:'ফিকাহ',link:'#fiqh',img:''},
+  {label:'ইসলামী বিশ্বাস ও মতবাদ',link:'#islamic-belief-and-ideology',img:''},
+  {label:'হাদীস',link:'#hadith',img:''},
+  {label:'পারিবারিক জীবন',link:'#family-life',img:''},
+  {label:'প্রোডাক্টিভিটি',link:'#productivity-life-hacks',img:''}
 ];
 
 async function loadHeroSection() {
@@ -4634,7 +4634,7 @@ function openFeaturedCourseModal(i = null) {
   document.getElementById('fc-rating').value = c.rating || '';
   document.getElementById('fc-students').value = c.students || '';
   document.getElementById('fc-price').value = c.price || '';
-  document.getElementById('fc-category').value = c.category || 'quran';
+  document.getElementById('fc-category').value = c.category || 'কুরআন শিক্ষা';
   document.getElementById('fc-tab').value = c.tab || 'top';
   openModal('featured-course-modal');
 }
@@ -4954,7 +4954,7 @@ async function saveWelcomePopup() {
 // FOOTER MANAGER
 // ────────────────────────────────────────────
 let footerLinksData = [{name:'হোম',link:'#home'},{name:'কোর্স',link:'#courses'},{name:'আমাদের সম্পর্কে',link:'#about'}];
-let footerCategoriesData = [{name:'কুরআন',link:'#quran'},{name:'আরবি',link:'#arabic'},{name:'ফিকহ',link:'#fiqh'}];
+let footerCategoriesData = [{name:'কুরআন শিক্ষা',link:'#quran-education'},{name:'প্রোডাক্টিভিটি এবং লাইফ হ্যাকস',link:'#productivity-life-hacks'},{name:'পারিবারিক জীবন',link:'#family-life'},{name:'সীরাহ এবং ইতিহাস',link:'#seerah-and-history'},{name:'সুন্নাহ এবং লাইফস্টাইল',link:'#sunnah-and-lifestyle'},{name:'ফিকাহ',link:'#fiqh'},{name:'হাদীস',link:'#hadith'},{name:'হোমস্কুলিং এবং প্যারেন্টিং',link:'#homeschooling-and-parenting'},{name:'ইসলামী বিশ্বাস ও মতবাদ',link:'#islamic-belief-and-ideology'}];
 
 async function loadFooter() {
   const defaults = {
@@ -5759,7 +5759,7 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
 });
 
 (function(){
-  const def={heroSections:{home:{title:'ইবনে খালদুন ইনস্টিটিউট',subtitle:'অনলাইনে নতুন দক্ষতা অর্জন করুন',backgroundImage:''},courses:{title:'সকল কোর্সসমূহ',subtitle:'এক অক্ষর লিখলেই কোর্স রিকমেন্ডেশন দেখুন',backgroundImage:''},about:{title:'আমাদের সম্পর্কে',subtitle:'আমাদের উদ্দেশ্য, কাজ ও শিক্ষা দর্শন',backgroundImage:''},contact:{title:'যোগাযোগ করুন',subtitle:'আমরা আপনার পাশে আছি',backgroundImage:''}},about:{content:'<p>ইবনে খালদুন ইনস্টিটিউট অনলাইন শিক্ষার একটি নির্ভরযোগ্য প্ল্যাটফর্ম।</p>'},contact:{email:'info@ibnkhaldun.edu.bd',phone:'+880 1700-000000',address:'ঢাকা, বাংলাদেশ',content:'যে কোনো প্রশ্নে আমাদের সাথে যোগাযোগ করুন।'},faqs:[{question:'কোর্স কীভাবে শুরু করব?',answer:'পছন্দের কোর্স নির্বাচন করে এনরোল করুন।'}],promo:{title:'জনপ্রিয় কোর্স',subtitle:'সেরা কোর্সগুলো এক জায়গায়',buttonText:'কোর্স দেখুন',buttonLink:'#courses'},navLinks:[{name:'হোম',link:'#home'},{name:'কোর্সসমূহ',link:'#courses'},{name:'আমাদের সম্পর্কে',link:'#about'},{name:'যোগাযোগ',link:'#contact'}],categories:[{name:'কুরআন',slug:'quran',link:'quran'},{name:'আরবি',slug:'arabic',link:'arabic'}],sidebarBody:[{title:'কোর্স সহায়তা',body:'প্রয়োজনে অ্যাডমিনের সাথে যোগাযোগ করুন।'}]};
+  const def={heroSections:{home:{title:'ইবনে খালদুন ইনস্টিটিউট',subtitle:'অনলাইনে নতুন দক্ষতা অর্জন করুন',backgroundImage:''},courses:{title:'সকল কোর্সসমূহ',subtitle:'এক অক্ষর লিখলেই কোর্স রিকমেন্ডেশন দেখুন',backgroundImage:''},about:{title:'আমাদের সম্পর্কে',subtitle:'আমাদের উদ্দেশ্য, কাজ ও শিক্ষা দর্শন',backgroundImage:''},contact:{title:'যোগাযোগ করুন',subtitle:'আমরা আপনার পাশে আছি',backgroundImage:''}},about:{content:'<p>ইবনে খালদুন ইনস্টিটিউট অনলাইন শিক্ষার একটি নির্ভরযোগ্য প্ল্যাটফর্ম।</p>'},contact:{email:'info@ibnkhaldun.edu.bd',phone:'+880 1700-000000',address:'ঢাকা, বাংলাদেশ',content:'যে কোনো প্রশ্নে আমাদের সাথে যোগাযোগ করুন।'},faqs:[{question:'কোর্স কীভাবে শুরু করব?',answer:'পছন্দের কোর্স নির্বাচন করে এনরোল করুন।'}],promo:{title:'জনপ্রিয় কোর্স',subtitle:'সেরা কোর্সগুলো এক জায়গায়',buttonText:'কোর্স দেখুন',buttonLink:'#courses'},navLinks:[{name:'হোম',link:'#home'},{name:'কোর্সসমূহ',link:'#courses'},{name:'আমাদের সম্পর্কে',link:'#about'},{name:'যোগাযোগ',link:'#contact'}],categories:[{name:'কুরআন শিক্ষা',slug:'quran-education',link:'quran-education'},{name:'প্রোডাক্টিভিটি এবং লাইফ হ্যাকস',slug:'productivity-life-hacks',link:'productivity-life-hacks'},{name:'পারিবারিক জীবন',slug:'family-life',link:'family-life'},{name:'সীরাহ এবং ইতিহাস',slug:'seerah-and-history',link:'seerah-and-history'},{name:'সুন্নাহ এবং লাইফস্টাইল',slug:'sunnah-and-lifestyle',link:'sunnah-and-lifestyle'},{name:'ফিকাহ',slug:'fiqh',link:'fiqh'},{name:'হাদীস',slug:'hadith',link:'hadith'},{name:'হোমস্কুলিং এবং প্যারেন্টিং',slug:'homeschooling-and-parenting',link:'homeschooling-and-parenting'},{name:'ইসলামী বিশ্বাস ও মতবাদ',slug:'islamic-belief-and-ideology',link:'islamic-belief-and-ideology'}],sidebarBody:[{title:'কোর্স সহায়তা',body:'প্রয়োজনে অ্যাডমিনের সাথে যোগাযোগ করুন।'}]};
   const pretty=v=>JSON.stringify(v||[],null,2),el=id=>document.getElementById(id),val=id=>el(id)?el(id).value:'',set=(id,v)=>{if(el(id))el(id).value=v||''};
   function json(id){try{return JSON.parse(val(id)||'[]')}catch(e){throw new Error(id+' ফিল্ডে সঠিক JSON দিন')}}
   function buildHeroCard(k){const label=k==='courses'?'কোর্স পেজ হিরো':k==='about'?'আমাদের সম্পর্কে হিরো':'যোগাযোগ পেজ হিরো';return`<div class="card" style="padding:16px;margin-bottom:14px;background:var(--bg3);border:1px solid var(--border)"><h4 style="margin-bottom:12px;color:var(--primary);font-size:14px">📄 ${label}</h4><div class="row2"><div class="field"><label>Title</label><input id="fc-${k}-title"></div><div class="field"><label>Subtitle</label><input id="fc-${k}-subtitle"></div></div><div class="field"><label>Background Image URL</label><div style="display:flex;gap:8px;align-items:center"><input id="fc-${k}-bg" placeholder="https://... বা আপলোড করুন" style="flex:1"/><button type="button" class="btn btn-edit btn-sm" onclick="pickFCBgImage('${k}')">📤 আপলোড</button></div><div id="fc-${k}-bg-preview-wrap" style="display:none;margin-top:8px"><img id="fc-${k}-bg-preview" src="" style="max-height:80px;border-radius:6px;border:1px solid var(--border)"/></div><div id="fc-${k}-bg-prog" style="display:none;margin-top:6px"><div style="height:3px;background:var(--bg);border-radius:2px;overflow:hidden"><div id="fc-${k}-bg-prog-bar" style="height:100%;background:var(--primary);width:0%;transition:width 0.3s"></div></div><div style="font-size:11px;color:var(--text2);margin-top:3px">আপলোড হচ্ছে...</div></div><input type="file" id="fc-${k}-bg-file" accept="image/*" style="display:none" onchange="uploadFCBgFile('${k}',this)"/></div></div>`}
