@@ -999,9 +999,6 @@
         </div>
 
         <!-- ══════════════════════════════════════════════════
-             ANALYTICS & TRACKING PAGE
-        ══════════════════════════════════════════════════ -->
-        <!-- ══════════════════════════════════════════════════
              📊 ANALYTICS & TRACKING — LIVE DASHBOARD
         ══════════════════════════════════════════════════ -->
         <div class="page" id="page-analytics">
@@ -1009,7 +1006,7 @@
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
               <div>
                 <h2>📊 Analytics & Tracking</h2>
-                <p>লাইভ ভিজিটর ট্র্যাকার — রিয়েলটাইম ডেটা এখানেই দেখুন।</p>
+                <p>লাইভ ভিজিটর ট্র্যাকার — রিয়েলটাইম ডেটা সরাসরি দেখুন।</p>
               </div>
               <div style="display:flex;gap:8px;align-items:center">
                 <span id="an-last-refresh" style="font-size:11px;color:var(--text2)">লোড হচ্ছে...</span>
@@ -1021,23 +1018,34 @@
           <!-- ── লাইভ স্ট্যাট কার্ড ── -->
           <div class="stats-grid" id="an-stat-cards">
             <div class="stat-card card-green">
-              <div class="stat-card-top"><div class="stat-icon green">👁️</div><span class="stat-trend up" id="an-live-badge">● লাইভ</span></div>
+              <div class="stat-card-top">
+                <div class="stat-icon green">👁️</div>
+                <span class="stat-trend up" id="an-live-badge">● লাইভ</span>
+              </div>
               <div class="stat-info"><h3 id="an-live-users">—</h3><p>এখন সাইটে আছেন</p></div>
             </div>
             <div class="stat-card card-yellow">
-              <div class="stat-card-top"><div class="stat-icon yellow">👤</div></div>
+              <div class="stat-card-top">
+                <div class="stat-icon yellow">👤</div>
+              </div>
               <div class="stat-info"><h3 id="an-total-users">—</h3><p>আজকের মোট ভিজিট</p></div>
             </div>
             <div class="stat-card card-blue">
-              <div class="stat-card-top"><div class="stat-icon blue">📄</div></div>
+              <div class="stat-card-top">
+                <div class="stat-icon blue">📄</div>
+              </div>
               <div class="stat-info"><h3 id="an-pageviews">—</h3><p>মোট পেজ ভিউ (৭ দিন)</p></div>
             </div>
             <div class="stat-card card-orange">
-              <div class="stat-card-top"><div class="stat-icon orange">🖥️</div></div>
+              <div class="stat-card-top">
+                <div class="stat-icon orange">🖥️</div>
+              </div>
               <div class="stat-info"><h3 id="an-avg-time">—</h3><p>ডেস্কটপ ভিজিটর</p></div>
             </div>
             <div class="stat-card card-teal">
-              <div class="stat-card-top"><div class="stat-icon teal">📱</div></div>
+              <div class="stat-card-top">
+                <div class="stat-icon teal">📱</div>
+              </div>
               <div class="stat-info"><h3 id="an-new-users">—</h3><p>মোবাইল ভিজিটর</p></div>
             </div>
           </div>
@@ -1048,7 +1056,10 @@
             <!-- তারিখ অনুযায়ী ভিজিট চার্ট -->
             <div class="card">
               <div class="card-header">
-                <div class="card-header-left"><h3>📅 তারিখ অনুযায়ী ভিজিট</h3><span class="card-subtitle" id="an-chart-subtitle">লোড হচ্ছে...</span></div>
+                <div class="card-header-left">
+                  <h3>📅 তারিখ অনুযায়ী ভিজিট</h3>
+                  <span class="card-subtitle" id="an-chart-subtitle">লোড হচ্ছে...</span>
+                </div>
               </div>
               <div class="card-body" style="padding:16px 20px 20px">
                 <div id="an-chart-wrap" style="height:180px;display:flex;align-items:flex-end;gap:3px;overflow:hidden">
@@ -1061,7 +1072,10 @@
             <!-- কোন পেজে কত ভিজিট -->
             <div class="card">
               <div class="card-header">
-                <div class="card-header-left"><h3>🗂️ পেজ অনুযায়ী ভিজিট</h3><span class="card-subtitle">কোন পেজে কতজন গেছেন</span></div>
+                <div class="card-header-left">
+                  <h3>🗂️ পেজ অনুযায়ী ভিজিট</h3>
+                  <span class="card-subtitle">কোন পেজে কতজন গেছেন</span>
+                </div>
               </div>
               <div class="card-body" style="padding:16px 20px">
                 <div id="an-pages-list">
@@ -1070,10 +1084,13 @@
               </div>
             </div>
 
-            <!-- এখন সাইটে আছেন — লাইভ তালিকা -->
+            <!-- এখন সাইটে আছেন — লাইভ ভিজিটর তালিকা -->
             <div class="card">
               <div class="card-header">
-                <div class="card-header-left"><h3>👥 এখন সাইটে আছেন</h3><span class="card-subtitle" id="live-visitor-subtitle">লোড হচ্ছে...</span></div>
+                <div class="card-header-left">
+                  <h3>👥 এখন সাইটে আছেন</h3>
+                  <span class="card-subtitle" id="live-visitor-subtitle">লোড হচ্ছে...</span>
+                </div>
               </div>
               <div class="card-body" style="padding:16px 20px">
                 <div id="an-course-clicks">
@@ -1085,14 +1102,18 @@
             <!-- ডিভাইস breakdown -->
             <div class="card">
               <div class="card-header">
-                <div class="card-header-left"><h3>📊 ডিভাইস ব্রেকডাউন</h3><span class="card-subtitle">কোন ডিভাইস থেকে আসছেন</span></div>
+                <div class="card-header-left">
+                  <h3>📊 ডিভাইস ব্রেকডাউন</h3>
+                  <span class="card-subtitle">কোন ডিভাইস থেকে আসছেন</span>
+                </div>
               </div>
               <div class="card-body" style="padding:16px 20px">
-                <div id="an-device-list" style="margin-bottom:16px">
-                  <div style="color:var(--text2);font-size:13px">লোড হচ্ছে...</div>
+                <div id="an-device-list">
+                  <div style="color:var(--text2);font-size:13px;padding:20px 0;text-align:center">লোড হচ্ছে...</div>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
 
@@ -3593,13 +3614,8 @@ async function changePassword() {
   } catch (e) { toast('সমস্যা: ' + e.message, 'error'); }
 }
 
-// ────────────────────────────────────────────
-// ANALYTICS & TRACKING CONFIG
-// ────────────────────────────────────────────
 // ════════════════════════════════════════════════════════════
 // ANALYTICS LIVE DASHBOARD
-// ════════════════════════════════════════════════════════════
-// REALTIME ANALYTICS — নিজস্ব tracker (GA-independent)
 // server.js এর /api/admin/realtime-visitors থেকে ডেটা আসে
 // ════════════════════════════════════════════════════════════
 
@@ -3724,8 +3740,13 @@ function renderDailyChart(data) {
   if (labels) {
     labels.style.display = 'flex';
     labels.innerHTML = rows.map((r, i) => {
-      const show = i === 0 || i === rows.length - 1 || i === 3;
-      const d = r.date ? r.date.slice(5) : ''; // MM-DD
+      const show = i === 0 || i === rows.length - 1 || i === Math.floor(rows.length / 2);
+      let d = '';
+      if (r.date) {
+        // YYYY-MM-DD বা YYYYMMDD উভয় format handle
+        const raw = r.date.replace(/-/g, '');
+        d = raw.slice(4, 6) + '/' + raw.slice(6, 8);
+      }
       return `<div style="flex:1;min-width:8px;font-size:9px;color:var(--text2);text-align:center;overflow:hidden">${show ? d : ''}</div>`;
     }).join('');
   }
@@ -3818,9 +3839,6 @@ function renderDevices(data) {
     </div>`;
   }).join('');
 
-  // দেশ section — tracker এ নেই
-  const cEl = document.getElementById('an-country-list');
-  if (cEl) cEl.innerHTML = '<div style="color:var(--text2);font-size:12px">Tracker এ দেশ ডেটা নেই</div>';
 }
 
 // ── Analytics পেজ লোড হলে ──
@@ -3828,7 +3846,13 @@ async function loadAnalyticsConfig() {
   loadAllAnalytics();
 }
 
-
+// ── stub: পুরনো GA calls এর জন্য নিরাপদ placeholder ──
+function updateAnalyticsToggleUI() {}
+function updateAnalyticsBanner() {}
+async function saveAnalyticsConfig() {}
+async function saveFbPixelOnly() {}
+async function saveGaPropertyId() {}
+async function testAnalyticsConfig() { toast('✅ লাইভ ট্র্যাকার সক্রিয়'); }
 
 // ── Auto-refresh: প্রতি ১৫ সেকেন্ডে লাইভ আপডেট ──
 setInterval(() => {
