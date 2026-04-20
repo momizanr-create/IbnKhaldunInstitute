@@ -1174,6 +1174,21 @@
             </div>
           </div>
 
+          <!-- ── সারি ৫: কোর্স ক্লিক ট্র্যাকার ── -->
+          <div class="card" style="margin-bottom:20px">
+            <div class="card-header">
+              <div class="card-header-left">
+                <h3>🖱️ কোর্স ক্লিক ট্র্যাকার</h3>
+                <span class="card-subtitle" id="an-course-click-subtitle">কোন কোর্সে কতবার ক্লিক হয়েছে (সার্ভার চালু থেকে)</span>
+              </div>
+            </div>
+            <div class="card-body" style="padding:16px 20px">
+              <div id="an-course-click-list">
+                <div style="color:var(--text2);font-size:13px;padding:20px 0;text-align:center">লোড হচ্ছে...</div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
 
@@ -3741,6 +3756,7 @@ async function loadAllAnalytics() {
   anRenderCoursePageList(data);
   anRenderDevices(data);
   anRenderSummary(data);
+  anRenderCourseClicks(data);
 
   const refreshEl = document.getElementById('an-last-refresh');
   if (refreshEl) refreshEl.textContent = 'আপডেট: ' + new Date().toLocaleTimeString('bn-BD');
@@ -4038,6 +4054,44 @@ function anRenderSummary(data) {
       </span>
       <strong style="font-size:14px;color:var(--text)">${r.value}</strong>
     </div>`).join('');
+}
+
+// ── ৯. COURSE CLICK TRACKER ──
+function anRenderCourseClicks(data) {
+  const el  = document.getElementById('an-course-click-list');
+  const sub = document.getElementById('an-course-click-subtitle');
+  if (!el) return;
+
+  const rows = data.courseClicks || [];
+  if (!rows.length) {
+    if (sub) sub.textContent = 'এখনো কোনো কোর্সে ক্লিক হয়নি';
+    el.innerHTML = '<div style="color:var(--text2);font-size:13px;text-align:center;padding:24px 0">কেউ কোর্সে ক্লিক করলে এখানে দেখাবে</div>';
+    return;
+  }
+
+  const total = rows.reduce((s, r) => s + r.count, 0);
+  if (sub) sub.textContent = 'মোট ' + anFmt(total) + ' ক্লিক — ' + rows.length + ' টি কোর্স';
+  const maxV   = rows[0]?.count || 1;
+  const colors = ['var(--primary)','var(--blue)','var(--green)','var(--orange)','var(--teal)'];
+
+  el.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px">' +
+    rows.map((r, i) => {
+      const pct   = Math.round((r.count / maxV) * 100);
+      const color = colors[i % colors.length];
+      return `<div style="padding:12px 14px;background:var(--bg3);border-radius:10px;border:1px solid var(--border)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+          <span style="font-size:13px;font-weight:600;color:var(--text);flex:1;margin-right:8px;line-height:1.4;word-break:break-word">${r.title}</span>
+          <span style="font-size:20px;font-weight:700;color:${color};flex-shrink:0">${anFmt(r.count)}</span>
+        </div>
+        <div style="height:5px;background:var(--bg4);border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:${color};border-radius:3px;transition:width 0.5s ease"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:5px">
+          <span style="font-size:10px;color:var(--text2)">${pct}% (সর্বোচ্চের তুলনায়)</span>
+          <span style="font-size:10px;color:var(--text2)">#${i+1}</span>
+        </div>
+      </div>`;
+    }).join('') + '</div>';
 }
 
 // ── Analytics পেজ লোড হলে ──

@@ -3303,6 +3303,15 @@
 
     function openCourseDetail(courseId) {
       currentLessonId = null;
+      // ── কোর্স ক্লিক ট্র্যাক ──
+      try {
+        var _trkTitle = (window.COURSES && window.COURSES[courseId]) ? (window.COURSES[courseId].title || courseId) : courseId;
+        fetch((typeof API_BASE !== 'undefined' ? API_BASE : 'https://ibnkhalduninstitute.onrender.com') + '/api/track/course-click', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ courseId: String(courseId), title: String(_trkTitle) })
+        }).catch(function(){});
+      } catch(e) {}
 
       // ── কোর্স খোঁজার ধাপ: slug বা _id যেকোনো একটি দিয়ে মেলানো ──
       var course = COURSES[courseId];

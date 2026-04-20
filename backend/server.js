@@ -334,6 +334,7 @@ setInterval(() => {
 
 // Page-wise stats (in-memory)
 const pageHits    = {};   // { pageName: count }
+const courseClicks = {};  // { courseId: { title, count } } — কোর্স ক্লিক ট্র্যাকার
 const hourlyHits  = [];   // [{ hour: "HH:00", count: N }] — শেষ ২৪ ঘণ্টা
 const deviceStats = {};   // { mobile: N, desktop: N, tablet: N }
 const dailyVisits = {};   // { "YYYY-MM-DD": count }
@@ -1877,6 +1878,18 @@ app.post('/api/public/visitor-heartbeat', (req, res) => {
   } catch(e) { res.json({ ok: false }); }
 });
 
+// ── কোর্স ক্লিক ট্র্যাকার — index.html থেকে call হয় ──
+app.post('/api/track/course-click', (req, res) => {
+  try {
+    const { courseId, title } = req.body;
+    if (!courseId) return res.json({ ok: false });
+    if (!courseClicks[courseId]) courseClicks[courseId] = { title: title || courseId, count: 0 };
+    else if (title) courseClicks[courseId].title = title;
+    courseClicks[courseId].count++;
+    res.json({ ok: true, count: courseClicks[courseId].count });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
 // ── Realtime Visitors — Admin Panel থেকে call হয় ──
 app.get('/api/admin/realtime-visitors', authMiddleware, (req, res) => {
   try {
@@ -1923,6 +1936,12 @@ app.get('/api/admin/realtime-visitors', authMiddleware, (req, res) => {
       .slice(0, 8)
       .map(([page, count]) => ({ page, count }));
 
+    // কোর্স ক্লিক — সর্বাধিক ক্লিক পাওয়া কোর্স আগে
+    const courseClickRows = Object.entries(courseClicks)
+      .map(([id, v]) => ({ id, title: v.title || id, count: v.count || 0 }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 20);
+
     res.json({
       activeCount:    visitors.length,
       visitors:       visitors.slice(0, 50),
@@ -1932,6 +1951,7 @@ app.get('/api/admin/realtime-visitors', authMiddleware, (req, res) => {
       hourlyHits:     hourlyRows,
       dailyVisits:    dailyRows,
       totalHits:      Object.values(pageHits).reduce((s, n) => s + n, 0),
+      courseClicks:   courseClickRows,
     });
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
