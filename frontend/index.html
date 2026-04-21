@@ -1679,9 +1679,11 @@
         display: flex;
         flex-direction: column;
         width: 100vw;
+        height: calc(100svh - var(--header-h, 70px));
         min-height: calc(100svh - var(--header-h, 70px));
         background: #fff;
         overflow: hidden;
+        position: relative;
       }
 
       /* ইমেজ র‍্যাপার — উপরের অর্ধেক */
@@ -2465,6 +2467,10 @@
       overflow-y: auto;
       background: rgba(255,255,255,0.97);
       padding: 10px 14px 24px;
+      display: none;
+    }
+    .mobile-search-results.has-results {
+      display: block;
     }
     .ms-result-item {
       display: flex; gap: 12px; align-items: center;
@@ -2507,7 +2513,8 @@
         background: linear-gradient(160deg, #1a1a1a 0%, #2a2a2a 60%, #1a1a1a 100%) !important;
         position: relative;
         padding: 0 !important;
-        min-height: auto !important;
+        height: calc(100svh - var(--header-h, 64px)) !important;
+        min-height: calc(100svh - var(--header-h, 64px)) !important;
       }
       .mobile-hero-section::before {
         content: '';
@@ -2520,17 +2527,22 @@
       .mobile-hero-img-wrap {
         padding: 22px 22px 0 !important;
         position: relative; z-index: 2;
+        flex: 1 1 auto;
+        display: flex;
+        align-items: center;
       }
       .mobile-hero-banner {
         border-radius: 16px;
         box-shadow: 0 14px 40px rgba(0,0,0,0.45), 0 0 0 1px rgba(245,197,24,0.25);
-        max-height: 240px;
+        max-height: 55vw;
+        width: 100%;
         object-fit: cover;
       }
       .mobile-hero-content {
         background: transparent !important;
-        padding: 26px 22px 34px !important;
+        padding: 22px 22px 32px !important;
         position: relative; z-index: 2;
+        flex: 0 0 auto;
       }
       .mobile-hero-eyebrow {
         display: inline-block;
@@ -2609,20 +2621,6 @@
         <button class="btn btn-ghost nav-signin-desktop" id="nav-signin-btn" onclick="navigate('auth')">সাইন ইন</button>
         <button class="btn btn-ghost nav-signin-desktop hidden" id="nav-logout-btn" onclick="navigate('dashboard')" style="border-color:var(--primary);color:var(--primary-dark)">📖 লার্নিং হাব</button>
   </div>
-
-  <!-- Mobile Search Overlay -->
-  <div class="mobile-search-overlay" id="mobile-search-overlay" onclick="if(event.target===this)closeMobileSearch()">
-    <div class="mobile-search-panel">
-      <div class="mobile-search-bar">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        <input type="text" id="mobile-search-input" placeholder="কোর্স খুঁজুন..." autocomplete="off" oninput="runMobileSearch(this.value)" />
-        <button class="mobile-search-close" onclick="closeMobileSearch()" aria-label="Close">×</button>
-      </div>
-    </div>
-    <div class="mobile-search-results" id="mobile-search-results">
-      <div class="ms-empty">কোর্সের নাম লিখে খোঁজা শুরু করুন</div>
-    </div>
-  </div>
       <button class="mobile-search-trigger" id="mobile-search-trigger" onclick="openMobileSearch()" aria-label="Search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
       </button>
@@ -2631,6 +2629,18 @@
       </button>
     </nav>
   </header>
+
+  <!-- Mobile Search Overlay — header এর বাইরে body-level এ -->
+  <div class="mobile-search-overlay" id="mobile-search-overlay" onclick="if(event.target===this)closeMobileSearch()">
+    <div class="mobile-search-panel">
+      <div class="mobile-search-bar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="mobile-search-input" placeholder="কোর্স খুঁজুন..." autocomplete="off" oninput="runMobileSearch(this.value)" />
+        <button class="mobile-search-close" onclick="closeMobileSearch()" aria-label="Close">×</button>
+      </div>
+    </div>
+    <div class="mobile-search-results" id="mobile-search-results"></div>
+  </div>
 
   <!-- Mobile Nav -->
   <div class="mobile-nav" id="mobile-nav">
@@ -2901,21 +2911,21 @@
 
         <div class="join-body fade-in">
           <!-- বাম: স্ট্যাট কার্ড গ্রিড -->
-          <div class="join-stats-grid">
+          <div class="join-stats-grid" id="join-stats-grid">
             <div class="join-stat-card join-stat-pink">
-              <div class="join-stat-num">৯,০০০+</div>
+              <div class="join-stat-num" data-target="9000" data-suffix="+">০</div>
               <div class="join-stat-label">মোট শিক্ষার্থী</div>
             </div>
             <div class="join-stat-card join-stat-green">
-              <div class="join-stat-num">১০+</div>
+              <div class="join-stat-num" data-target="10" data-suffix="+">০</div>
               <div class="join-stat-label">অভিজ্ঞ উস্তায/উস্তাযা</div>
             </div>
             <div class="join-stat-card join-stat-purple">
-              <div class="join-stat-num">১০০+</div>
+              <div class="join-stat-num" data-target="100" data-suffix="+">০</div>
               <div class="join-stat-label">স্টাডি ম্যাটেরিয়াল</div>
             </div>
             <div class="join-stat-card join-stat-yellow">
-              <div class="join-stat-num">২০০+</div>
+              <div class="join-stat-num" data-target="200" data-suffix="+">০</div>
               <div class="join-stat-label">লার্নিং কন্টেন্ট</div>
             </div>
           </div>
@@ -2949,7 +2959,63 @@
       </div>
     </section>
 
-    <style>
+  <!-- ══ Join Stats Count-Up Animation ══ -->
+  <script>
+  (function(){
+    /* বাংলা অঙ্কে রূপান্তর */
+    var BN = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+    function toBN(n) {
+      return String(n).replace(/\d/g, function(d){ return BN[+d]; });
+    }
+    /* সংখ্যার ফর্ম্যাট — হাজার হলে কমা যোগ */
+    function fmt(n) {
+      if (n >= 1000) {
+        var thousands = Math.floor(n / 1000);
+        var remainder = n % 1000;
+        if (remainder === 0) return toBN(thousands) + ',০০০';
+        return toBN(thousands) + ',' + toBN(String(remainder).padStart(3,'0'));
+      }
+      return toBN(n);
+    }
+
+    function animateCount(el) {
+      var target  = parseInt(el.getAttribute('data-target'), 10) || 0;
+      var suffix  = el.getAttribute('data-suffix') || '';
+      var duration = 1800; /* ms */
+      var start   = null;
+      /* easeOutQuart */
+      function ease(t){ return 1 - Math.pow(1 - t, 4); }
+
+      function step(ts) {
+        if (!start) start = ts;
+        var progress = Math.min((ts - start) / duration, 1);
+        var current  = Math.round(ease(progress) * target);
+        el.textContent = fmt(current) + suffix;
+        if (progress < 1) requestAnimationFrame(step);
+        else el.textContent = fmt(target) + suffix;
+      }
+      requestAnimationFrame(step);
+    }
+
+    var grid = document.getElementById('join-stats-grid');
+    if (!grid) return;
+
+    var triggered = false;
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting && !triggered) {
+          triggered = true;
+          obs.disconnect();
+          grid.querySelectorAll('.join-stat-num[data-target]').forEach(function(el){
+            animateCount(el);
+          });
+        }
+      });
+    }, { threshold: 0.35 });
+
+    obs.observe(grid);
+  })();
+  </script>
     /* ── Join Section ── */
     .join-section { padding: 72px 0; }
     .join-body {
@@ -7908,7 +7974,7 @@
         var inp = document.getElementById('mobile-search-input');
         if (inp) inp.value = '';
         var res = document.getElementById('mobile-search-results');
-        if (res) res.innerHTML = '<div class="ms-empty">কোর্সের নাম লিখে খোঁজা শুরু করুন</div>';
+        if (res) { res.classList.remove('has-results'); res.innerHTML = ''; }
       };
 
       function getAllCoursesForSearch(){
@@ -7921,16 +7987,17 @@
         var res = document.getElementById('mobile-search-results');
         if (!res) return;
         q = (q || '').trim().toLowerCase();
-        if (!q) { res.innerHTML = '<div class="ms-empty">কোর্সের নাম লিখে খোঁজা শুরু করুন</div>'; return; }
+        if (!q) { res.classList.remove('has-results'); res.innerHTML = ''; return; }
         var courses = getAllCoursesForSearch();
-        if (!courses.length) { res.innerHTML = '<div class="ms-empty">কোর্স লোড হচ্ছে... পরে আবার চেষ্টা করুন</div>'; return; }
+        if (!courses.length) { res.classList.add('has-results'); res.innerHTML = '<div class="ms-empty">কোর্স লোড হচ্ছে... পরে আবার চেষ্টা করুন</div>'; return; }
         var hits = courses.filter(function(c){
           var t = (c.title || c.name || '').toLowerCase();
           var cat = (c.category || c.categoryName || '').toLowerCase();
           var inst = (c.instructor || c.instructorName || '').toLowerCase();
           return t.indexOf(q) !== -1 || cat.indexOf(q) !== -1 || inst.indexOf(q) !== -1;
         }).slice(0, 12);
-        if (!hits.length) { res.innerHTML = '<div class="ms-empty">কোনো কোর্স পাওয়া যায়নি</div>'; return; }
+        if (!hits.length) { res.classList.add('has-results'); res.innerHTML = '<div class="ms-empty">কোনো কোর্স পাওয়া যায়নি</div>'; return; }
+        res.classList.add('has-results');
         res.innerHTML = hits.map(function(c){
           var id = c.id || c._id || c.slug || '';
           var title = c.title || c.name || 'কোর্স';
