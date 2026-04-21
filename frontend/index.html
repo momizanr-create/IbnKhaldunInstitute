@@ -1679,11 +1679,9 @@
         display: flex;
         flex-direction: column;
         width: 100vw;
-        height: calc(100svh - var(--header-h, 70px));
         min-height: calc(100svh - var(--header-h, 70px));
         background: #fff;
         overflow: hidden;
-        position: relative;
       }
 
       /* ইমেজ র‍্যাপার — উপরের অর্ধেক */
@@ -2467,10 +2465,6 @@
       overflow-y: auto;
       background: rgba(255,255,255,0.97);
       padding: 10px 14px 24px;
-      display: none;
-    }
-    .mobile-search-results.has-results {
-      display: block;
     }
     .ms-result-item {
       display: flex; gap: 12px; align-items: center;
@@ -2513,9 +2507,17 @@
         background: linear-gradient(160deg, #1a1a1a 0%, #2a2a2a 60%, #1a1a1a 100%) !important;
         position: relative;
         padding: 0 !important;
-        height: calc(100svh - var(--header-h, 64px)) !important;
-        min-height: calc(100svh - var(--header-h, 64px)) !important;
+        min-height: auto !important;
       }
+      @media (max-width: 768px) {
+  .mobile-search-trigger {
+    margin-left: auto;   /* ডান পাশে নিয়ে যাবে */
+    margin-right: 0;     /* ডান পাশের অতিরিক্ত দূরত্ব মুছে ফেলবে */
+  }
+  .hamburger {
+    margin-left: 0;      /* বাম পাশের গ্যাপ সরিয়ে ফেলবে */
+  }
+}
       .mobile-hero-section::before {
         content: '';
         position: absolute; inset: 0;
@@ -2527,22 +2529,17 @@
       .mobile-hero-img-wrap {
         padding: 22px 22px 0 !important;
         position: relative; z-index: 2;
-        flex: 1 1 auto;
-        display: flex;
-        align-items: center;
       }
       .mobile-hero-banner {
         border-radius: 16px;
         box-shadow: 0 14px 40px rgba(0,0,0,0.45), 0 0 0 1px rgba(245,197,24,0.25);
-        max-height: 55vw;
-        width: 100%;
+        max-height: 240px;
         object-fit: cover;
       }
       .mobile-hero-content {
         background: transparent !important;
-        padding: 22px 22px 32px !important;
+        padding: 26px 22px 34px !important;
         position: relative; z-index: 2;
-        flex: 0 0 auto;
       }
       .mobile-hero-eyebrow {
         display: inline-block;
@@ -2585,7 +2582,382 @@
       }
       .mobile-hero-btn-outline:active { background: rgba(255,255,255,0.08) !important; }
     }
-  </style>
+    /* ===== BASE MOBILE HERO STYLES (fallback) ===== */
+.mobile-hero-section {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* Hide original hero */
+  .hero {
+    display: none !important;
+  }
+
+  /* Mobile hero container — full screen */
+  .mobile-hero-section {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: calc(100svh - var(--header-h, 70px));
+    min-height: calc(100svh - var(--header-h, 70px));
+    background: #fff;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Image wrapper — upper half */
+  .mobile-hero-img-wrap {
+    width: 100%;
+    padding: 20px;
+    flex: 0 0 auto;
+    line-height: 0;
+    overflow: hidden;
+  }
+
+  .mobile-hero-banner {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+
+  /* Content block — fills remaining space */
+  .mobile-hero-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 22px 36px;
+    background: linear-gradient(170deg, #edfaf4 0%, #ffffff 55%);
+    text-align: center;
+  }
+
+  /* Large title */
+  .mobile-hero-title {
+    font-family: var(--font-heading, 'Hind Siliguri', sans-serif);
+    font-size: clamp(26px, 7.5vw, 36px);
+    font-weight: 900;
+    line-height: 1.2;
+    color: var(--Green, #066144);
+    margin-bottom: 16px;
+    letter-spacing: -0.3px;
+  }
+
+  /* Description */
+  .mobile-hero-desc {
+    font-family: var(--font-body, 'Hind Siliguri', sans-serif);
+    font-size: clamp(14px, 4vw, 17px);
+    color: #333;
+    line-height: 1.85;
+    margin-bottom: 28px;
+    max-width: 100%;
+  }
+
+  /* Button container */
+  .mobile-hero-btns {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  /* Base button */
+  .mobile-hero-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 0;
+    width: calc(50% - 7px);
+    max-width: 200px;
+    font-family: var(--font-nav, 'Hind Siliguri', sans-serif);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  /* Primary button */
+  .mobile-hero-btn-primary {
+    background: var(--Green, #066144);
+    color: #fff;
+    border-color: var(--Green, #066144);
+    box-shadow: 0 5px 18px rgba(6, 97, 68, 0.30);
+  }
+
+  /* Outline button */
+  .mobile-hero-btn-outline {
+    background: transparent;
+    color: var(--Green, #066144);
+    border-color: var(--Green, #066144);
+  }
+
+  /* Small mobile adjustments */
+  @media (max-width: 400px) {
+    .mobile-hero-content {
+      padding: 24px 16px 28px;
+    }
+    .mobile-hero-title {
+      font-size: clamp(23px, 7vw, 28px);
+    }
+    .mobile-hero-desc {
+      font-size: 13.5px;
+      line-height: 1.8;
+    }
+    .mobile-hero-btn {
+      font-size: 14px;
+      padding: 13px 0;
+    }
+  }
+}
+
+/* ===== NEW MOBILE HERO — YELLOW/DARK THEME OVERRIDES ===== */
+@media (max-width: 768px) {
+  .mobile-hero-section {
+    background: linear-gradient(160deg, #1a1a1a 0%, #2a2a2a 60%, #1a1a1a 100%) !important;
+    position: relative;
+    padding: 0 !important;
+    height: calc(100svh - var(--header-h, 64px)) !important;
+    min-height: calc(100svh - var(--header-h, 64px)) !important;
+  }
+
+  .mobile-hero-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 20% 15%, rgba(245,197,24,0.18), transparent 45%),
+      radial-gradient(circle at 85% 85%, rgba(245,197,24,0.12), transparent 50%);
+    pointer-events: none;
+  }
+
+  .mobile-hero-img-wrap {
+    padding: 22px 22px 0 !important;
+    position: relative;
+    z-index: 2;
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+  }
+
+  .mobile-hero-banner {
+    border-radius: 16px;
+    box-shadow: 0 14px 40px rgba(0,0,0,0.45), 0 0 0 1px rgba(245,197,24,0.25);
+    max-height: 55vw;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  .mobile-hero-content {
+    background: transparent !important;
+    padding: 22px 22px 32px !important;
+    position: relative;
+    z-index: 2;
+    flex: 0 0 auto;
+  }
+
+  .mobile-hero-eyebrow {
+    display: inline-block;
+    font-family: var(--font-nav, sans-serif);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--primary, #F5C518);
+    background: rgba(245,197,24,0.10);
+    border: 1px solid rgba(245,197,24,0.35);
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 16px;
+  }
+
+  .mobile-hero-title {
+    color: #fff !important;
+    font-size: clamp(24px, 7vw, 32px) !important;
+    line-height: 1.25 !important;
+    margin-bottom: 14px !important;
+  }
+
+  .mobile-hero-title .accent {
+    color: var(--primary, #F5C518);
+  }
+
+  .mobile-hero-desc {
+    color: rgba(255,255,255,0.72) !important;
+    font-size: 14px !important;
+    line-height: 1.75 !important;
+    margin-bottom: 24px !important;
+  }
+
+  .mobile-hero-btn-primary {
+    background: var(--primary, #F5C518) !important;
+    color: #1a1a1a !important;
+    border-color: var(--primary, #F5C518) !important;
+    box-shadow: 0 8px 22px rgba(245,197,24,0.35) !important;
+  }
+
+  .mobile-hero-btn-primary:active {
+    background: #e0b315 !important;
+  }
+
+  .mobile-hero-btn-outline {
+    background: transparent !important;
+    color: #fff !important;
+    border-color: rgba(255,255,255,0.30) !important;
+  }
+
+  .mobile-hero-btn-outline:active {
+    background: rgba(255,255,255,0.08) !important;
+  }
+}
+
+/* Mobile search icon (next to hamburger) */
+.mobile-search-trigger { display: none; }
+@media (max-width: 1024px) {
+  .mobile-search-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px; height: 40px;
+    margin-right: 0;
+    background: transparent;
+    border: 1.5px solid var(--border, #e6e6e6);
+    border-radius: 10px;
+    cursor: pointer;
+    color: #1a1a1a;
+    transition: all 0.18s ease;
+  }
+  .mobile-search-trigger:hover, .mobile-search-trigger:active {
+    background: rgba(245,197,24,0.14);
+    border-color: var(--primary, #F5C518);
+    color: var(--primary-dark, #b45309);
+  }
+  .mobile-search-trigger svg { width: 20px; height: 20px; }
+}
+
+/* Mobile search overlay */
+.mobile-search-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,15,15,0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 9999;
+  display: none;
+  flex-direction: column;
+  animation: msFade .2s ease;
+}
+.mobile-search-overlay.open { display: flex; }
+@keyframes msFade { from { opacity: 0 } to { opacity: 1 } }
+
+.mobile-search-panel {
+  background: #fff;
+  padding: 14px 14px 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+
+.mobile-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f5f5f5;
+  border: 2px solid var(--primary, #F5C518);
+  border-radius: 12px;
+  padding: 10px 14px;
+}
+.mobile-search-bar input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: var(--font-body, 'Hind Siliguri', sans-serif);
+  font-size: 15px;
+  color: #1a1a1a;
+}
+.mobile-search-bar input::placeholder { color: #999; }
+
+.mobile-search-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+  font-size: 22px;
+  line-height: 1;
+}
+.mobile-search-close:active { background: rgba(0,0,0,0.06); }
+
+.mobile-search-results {
+  flex: 1;
+  overflow-y: auto;
+  background: rgba(255,255,255,0.97);
+  padding: 10px 14px 24px;
+  display: none;
+}
+.mobile-search-results.has-results { display: block; }
+
+.ms-result-item {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background .15s ease;
+  border-bottom: 1px solid #f0f0f0;
+}
+.ms-result-item:active { background: rgba(245,197,24,0.10); }
+
+.ms-result-thumb {
+  width: 64px;
+  height: 48px;
+  border-radius: 8px;
+  background: #eee;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.ms-result-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.ms-result-title {
+  font-family: var(--font-heading, 'Hind Siliguri', sans-serif);
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ms-result-cat {
+  font-size: 11px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.ms-empty {
+  text-align: center;
+  padding: 40px 16px;
+  color: #888;
+  font-size: 14px;
+}
+  </style> 
 </head>
 <body>
 
@@ -2621,16 +2993,8 @@
         <button class="btn btn-ghost nav-signin-desktop" id="nav-signin-btn" onclick="navigate('auth')">সাইন ইন</button>
         <button class="btn btn-ghost nav-signin-desktop hidden" id="nav-logout-btn" onclick="navigate('dashboard')" style="border-color:var(--primary);color:var(--primary-dark)">📖 লার্নিং হাব</button>
   </div>
-      <button class="mobile-search-trigger" id="mobile-search-trigger" onclick="openMobileSearch()" aria-label="Search">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-      </button>
-      <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Toggle menu">
-        <span></span><span></span><span></span>
-      </button>
-    </nav>
-  </header>
 
-  <!-- Mobile Search Overlay — header এর বাইরে body-level এ -->
+  <!-- Mobile Search Overlay -->
   <div class="mobile-search-overlay" id="mobile-search-overlay" onclick="if(event.target===this)closeMobileSearch()">
     <div class="mobile-search-panel">
       <div class="mobile-search-bar">
@@ -2639,8 +3003,18 @@
         <button class="mobile-search-close" onclick="closeMobileSearch()" aria-label="Close">×</button>
       </div>
     </div>
-    <div class="mobile-search-results" id="mobile-search-results"></div>
+    <div class="mobile-search-results" id="mobile-search-results">
+      <div class="ms-empty">কোর্সের নাম লিখে খোঁজা শুরু করুন</div>
+    </div>
   </div>
+      <button class="mobile-search-trigger" id="mobile-search-trigger" onclick="openMobileSearch()" aria-label="Search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </button>
+      <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
 
   <!-- Mobile Nav -->
   <div class="mobile-nav" id="mobile-nav">
@@ -2911,21 +3285,21 @@
 
         <div class="join-body fade-in">
           <!-- বাম: স্ট্যাট কার্ড গ্রিড -->
-          <div class="join-stats-grid" id="join-stats-grid">
+          <div class="join-stats-grid">
             <div class="join-stat-card join-stat-pink">
-              <div class="join-stat-num" data-target="9000" data-suffix="+">০</div>
+              <div class="join-stat-num">৯,০০০+</div>
               <div class="join-stat-label">মোট শিক্ষার্থী</div>
             </div>
             <div class="join-stat-card join-stat-green">
-              <div class="join-stat-num" data-target="10" data-suffix="+">০</div>
+              <div class="join-stat-num">১০+</div>
               <div class="join-stat-label">অভিজ্ঞ উস্তায/উস্তাযা</div>
             </div>
             <div class="join-stat-card join-stat-purple">
-              <div class="join-stat-num" data-target="100" data-suffix="+">০</div>
+              <div class="join-stat-num">১০০+</div>
               <div class="join-stat-label">স্টাডি ম্যাটেরিয়াল</div>
             </div>
             <div class="join-stat-card join-stat-yellow">
-              <div class="join-stat-num" data-target="200" data-suffix="+">০</div>
+              <div class="join-stat-num">২০০+</div>
               <div class="join-stat-label">লার্নিং কন্টেন্ট</div>
             </div>
           </div>
@@ -2959,63 +3333,7 @@
       </div>
     </section>
 
-  <!-- ══ Join Stats Count-Up Animation ══ -->
-  <script>
-  (function(){
-    /* বাংলা অঙ্কে রূপান্তর */
-    var BN = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
-    function toBN(n) {
-      return String(n).replace(/\d/g, function(d){ return BN[+d]; });
-    }
-    /* সংখ্যার ফর্ম্যাট — হাজার হলে কমা যোগ */
-    function fmt(n) {
-      if (n >= 1000) {
-        var thousands = Math.floor(n / 1000);
-        var remainder = n % 1000;
-        if (remainder === 0) return toBN(thousands) + ',০০০';
-        return toBN(thousands) + ',' + toBN(String(remainder).padStart(3,'0'));
-      }
-      return toBN(n);
-    }
-
-    function animateCount(el) {
-      var target  = parseInt(el.getAttribute('data-target'), 10) || 0;
-      var suffix  = el.getAttribute('data-suffix') || '';
-      var duration = 1800; /* ms */
-      var start   = null;
-      /* easeOutQuart */
-      function ease(t){ return 1 - Math.pow(1 - t, 4); }
-
-      function step(ts) {
-        if (!start) start = ts;
-        var progress = Math.min((ts - start) / duration, 1);
-        var current  = Math.round(ease(progress) * target);
-        el.textContent = fmt(current) + suffix;
-        if (progress < 1) requestAnimationFrame(step);
-        else el.textContent = fmt(target) + suffix;
-      }
-      requestAnimationFrame(step);
-    }
-
-    var grid = document.getElementById('join-stats-grid');
-    if (!grid) return;
-
-    var triggered = false;
-    var obs = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        if (entry.isIntersecting && !triggered) {
-          triggered = true;
-          obs.disconnect();
-          grid.querySelectorAll('.join-stat-num[data-target]').forEach(function(el){
-            animateCount(el);
-          });
-        }
-      });
-    }, { threshold: 0.35 });
-
-    obs.observe(grid);
-  })();
-  </script>
+    <style>
     /* ── Join Section ── */
     .join-section { padding: 72px 0; }
     .join-body {
@@ -6773,6 +7091,13 @@
           fetch(API_BASE + '/api/contact-content').then(r => r.json()),
           fetch(API_BASE + '/api/course-tabs').then(r => r.json()),
           fetch(API_BASE + '/api/faqs').then(r => r.json()),
+          fetch(API_BASE + '/api/seo-settings').then(r => r.json()),
+          fetch(API_BASE + '/api/features-section').then(r => r.json()),
+          fetch(API_BASE + '/api/join-section').then(r => r.json()),
+          fetch(API_BASE + '/api/mobile-hero').then(r => r.json()),
+          fetch(API_BASE + '/api/section-titles').then(r => r.json()),
+          fetch(API_BASE + '/api/testimonials-config').then(r => r.json()),
+          fetch(API_BASE + '/api/payment-config').then(r => r.json()),
         ]);
 
         var siteSettings    = results[0].status === 'fulfilled' ? results[0].value : null;
@@ -6791,6 +7116,14 @@
         var contactData     = results[13].status === 'fulfilled' ? results[13].value : null;
         var apiCourseTabs   = results[14].status === 'fulfilled' ? results[14].value : null;
         var faqData         = results[15].status === 'fulfilled' ? results[15].value : null;
+        var seoSettings     = results[16].status === 'fulfilled' ? results[16].value : null;
+        var featuresData    = results[17].status === 'fulfilled' ? results[17].value : null;
+        var joinData        = results[18].status === 'fulfilled' ? results[18].value : null;
+        var mobileHeroData  = results[19].status === 'fulfilled' ? results[19].value : null;
+        var sectionTitles   = results[20].status === 'fulfilled' ? results[20].value : null;
+        var testiConfig     = results[21].status === 'fulfilled' ? results[21].value : null;
+        var paymentConfig   = results[22].status === 'fulfilled' ? results[22].value : null;
+
 
         // ── THEME / CSS Variables ──
         if (themeSettings && themeSettings.vars) {
@@ -6996,6 +7329,88 @@
         // ── FOOTER ──
         if (footerData && Object.keys(footerData).length > 0) {
           applyFooterData(footerData);
+        }
+
+        
+        // ── SEO SETTINGS ──
+        if (seoSettings && Object.keys(seoSettings).length > 0) {
+          if (seoSettings.title) document.title = seoSettings.title;
+          var metaDesc = document.querySelector('meta[name="description"]');
+          if (metaDesc && seoSettings.description) metaDesc.setAttribute('content', seoSettings.description);
+          var metaKeys = document.querySelector('meta[name="keywords"]');
+          if (metaKeys && seoSettings.keywords) metaKeys.setAttribute('content', seoSettings.keywords);
+          var ogTitle = document.querySelector('meta[property="og:title"]');
+          if (ogTitle && seoSettings.ogTitle) ogTitle.setAttribute('content', seoSettings.ogTitle);
+          var ogDesc = document.querySelector('meta[property="og:description"]');
+          if (ogDesc && seoSettings.ogDesc) ogDesc.setAttribute('content', seoSettings.ogDesc);
+          var ogImg = document.querySelector('meta[property="og:image"]');
+          if (ogImg && seoSettings.ogImage) ogImg.setAttribute('content', seoSettings.ogImage);
+          var twTitle = document.querySelector('meta[name="twitter:title"]');
+          if (twTitle && seoSettings.ogTitle) twTitle.setAttribute('content', seoSettings.ogTitle);
+          var twDesc = document.querySelector('meta[name="twitter:description"]');
+          if (twDesc && seoSettings.ogDesc) twDesc.setAttribute('content', seoSettings.ogDesc);
+          var twImg = document.querySelector('meta[name="twitter:image"]');
+          if (twImg && seoSettings.ogImage) twImg.setAttribute('content', seoSettings.ogImage);
+        }
+
+        // ── SECTION TITLES ──
+        if (sectionTitles && Object.keys(sectionTitles).length > 0) {
+          // কোর্স সেকশন শিরোনাম
+          var fst = document.querySelector('.featured-section-title');
+          if (fst && sectionTitles.coursesTitle) fst.textContent = sectionTitles.coursesTitle;
+          // ইন্সট্রাক্টর সেকশন
+          var instLabel = document.querySelector('.featured-instructors-section .section-label');
+          var instTitle = document.querySelector('.featured-instructors-section .section-title');
+          var instSub   = document.querySelector('.featured-instructors-section .section-sub');
+          if (instLabel && sectionTitles.instLabel) instLabel.textContent = sectionTitles.instLabel;
+          if (instTitle && sectionTitles.instTitle) instTitle.textContent = sectionTitles.instTitle;
+          if (instSub   && sectionTitles.instSub)   instSub.textContent   = sectionTitles.instSub;
+        }
+
+        // ── FEATURES / WHY CHOOSE US ──
+        if (featuresData && featuresData.cards && featuresData.cards.length > 0) {
+          var featGrid = document.querySelector('.features-grid');
+          if (featGrid) {
+            featGrid.innerHTML = featuresData.cards.map(function(c) {
+              return '<div class="feature-card"><div class="feature-icon">' + (c.icon || '📚') + '</div><div class="feature-title">' + (c.title || '') + '</div><div class="feature-desc">' + (c.desc || '') + '</div></div>';
+            }).join('');
+          }
+        }
+
+        // ── JOIN / STATS SECTION ──
+        if (joinData && joinData.stats && joinData.stats.length > 0) {
+          var joinGrid = document.querySelector('.join-stats-grid');
+          if (joinGrid) {
+            joinGrid.innerHTML = joinData.stats.map(function(s) {
+              var colorClass = 'join-stat-' + (s.color || 'pink');
+              return '<div class="join-stat-card ' + colorClass + '"><div class="join-stat-num">' + (s.num || '') + '</div><div class="join-stat-label">' + (s.label || '') + '</div></div>';
+            }).join('');
+          }
+          if (joinData.image) {
+            var joinImg = document.querySelector('.join-img img, .join-illustration img');
+            if (joinImg) joinImg.src = joinData.image;
+          }
+        }
+
+        // ── MOBILE HERO ──
+        if (mobileHeroData && Object.keys(mobileHeroData).length > 0) {
+          var mhEyebrow = document.querySelector('.mobile-hero-eyebrow');
+          var mhTitle = document.querySelector('.mobile-hero-title');
+          var mhDesc = document.querySelector('.mobile-hero-desc');
+          var mhBanner = document.querySelector('.mobile-hero-banner');
+          if (mhEyebrow && mobileHeroData.eyebrow) mhEyebrow.textContent = mobileHeroData.eyebrow;
+          if (mhTitle && mobileHeroData.title) mhTitle.innerHTML = mobileHeroData.title;
+          if (mhDesc && mobileHeroData.desc) mhDesc.textContent = mobileHeroData.desc;
+          if (mhBanner && mobileHeroData.image) mhBanner.src = mobileHeroData.image;
+          var mhBtns = document.querySelectorAll('.mobile-hero-btn');
+          if (mhBtns[0] && mobileHeroData.btn1Text) { mhBtns[0].textContent = mobileHeroData.btn1Text; if (mobileHeroData.btn1Link) mhBtns[0].setAttribute('onclick', "navigate('" + mobileHeroData.btn1Link + "')"); }
+          if (mhBtns[1] && mobileHeroData.btn2Text) { mhBtns[1].textContent = mobileHeroData.btn2Text; if (mobileHeroData.btn2Link) mhBtns[1].setAttribute('onclick', "navigate('" + mobileHeroData.btn2Link + "')"); }
+        }
+
+        // ── PAYMENT CONFIG ──
+        if (paymentConfig && paymentConfig.methods && paymentConfig.methods.length > 0) {
+          window._paymentMethods = paymentConfig.methods;
+          window._paymentInstructions = paymentConfig.instructions || '';
         }
 
         // ── WELCOME POPUP ──
@@ -7974,7 +8389,7 @@
         var inp = document.getElementById('mobile-search-input');
         if (inp) inp.value = '';
         var res = document.getElementById('mobile-search-results');
-        if (res) { res.classList.remove('has-results'); res.innerHTML = ''; }
+        if (res) res.innerHTML = '<div class="ms-empty">কোর্সের নাম লিখে খোঁজা শুরু করুন</div>';
       };
 
       function getAllCoursesForSearch(){
@@ -7987,17 +8402,16 @@
         var res = document.getElementById('mobile-search-results');
         if (!res) return;
         q = (q || '').trim().toLowerCase();
-        if (!q) { res.classList.remove('has-results'); res.innerHTML = ''; return; }
+        if (!q) { res.innerHTML = '<div class="ms-empty">কোর্সের নাম লিখে খোঁজা শুরু করুন</div>'; return; }
         var courses = getAllCoursesForSearch();
-        if (!courses.length) { res.classList.add('has-results'); res.innerHTML = '<div class="ms-empty">কোর্স লোড হচ্ছে... পরে আবার চেষ্টা করুন</div>'; return; }
+        if (!courses.length) { res.innerHTML = '<div class="ms-empty">কোর্স লোড হচ্ছে... পরে আবার চেষ্টা করুন</div>'; return; }
         var hits = courses.filter(function(c){
           var t = (c.title || c.name || '').toLowerCase();
           var cat = (c.category || c.categoryName || '').toLowerCase();
           var inst = (c.instructor || c.instructorName || '').toLowerCase();
           return t.indexOf(q) !== -1 || cat.indexOf(q) !== -1 || inst.indexOf(q) !== -1;
         }).slice(0, 12);
-        if (!hits.length) { res.classList.add('has-results'); res.innerHTML = '<div class="ms-empty">কোনো কোর্স পাওয়া যায়নি</div>'; return; }
-        res.classList.add('has-results');
+        if (!hits.length) { res.innerHTML = '<div class="ms-empty">কোনো কোর্স পাওয়া যায়নি</div>'; return; }
         res.innerHTML = hits.map(function(c){
           var id = c.id || c._id || c.slug || '';
           var title = c.title || c.name || 'কোর্স';

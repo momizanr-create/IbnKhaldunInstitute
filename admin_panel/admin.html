@@ -468,6 +468,15 @@
         <div class="nav-item" onclick="navTo('theme-settings')"><span class="icon">🎨</span> থিম / রঙ</div>
         <div class="nav-item" onclick="navTo('cta-section')"><span class="icon">📣</span> CTA সেকশন</div>
         
+        
+        <div class="nav-section">সেকশন কন্টেন্ট</div>
+        <div class="nav-item" onclick="navTo('features-section')"><span class="icon">✨</span> ফিচার্স সেকশন</div>
+        <div class="nav-item" onclick="navTo('join-section')"><span class="icon">📊</span> জয়েন সেকশন</div>
+        <div class="nav-item" onclick="navTo('mobile-hero')"><span class="icon">📱</span> মোবাইল হিরো</div>
+        <div class="nav-item" onclick="navTo('section-titles')"><span class="icon">🏷️</span> সেকশন শিরোনাম</div>
+        <div class="nav-item" onclick="navTo('payment-config')"><span class="icon">💳</span> পেমেন্ট কনফিগ</div>
+        <div class="nav-item" onclick="navTo('seo-settings')"><span class="icon">🔍</span> SEO সেটিংস</div>
+
         <div class="nav-section">ব্যবসা ও ব্যবহারকারী</div>
         <div class="nav-item" onclick="navTo('access-requests')"><span class="icon">🔐</span> অ্যাক্সেস রিকোয়েস্ট</div>
         <div class="nav-item" onclick="navTo('enrollments')"><span class="icon">📋</span> এনরোলমেন্ট</div>
@@ -2202,6 +2211,179 @@
     </div>
   </div>
 </div>
+
+
+        <!-- ══════════════════════════════════════════════════
+             SEO সেটিংস
+        ══════════════════════════════════════════════════ -->
+        <div class="page" id="page-seo-settings">
+          <div class="page-header"><h2>🔍 SEO সেটিংস</h2><p>মেটা ট্যাগ, OG ট্যাগ, Schema.org ডেটা নিয়ন্ত্রণ করুন</p></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+            <div class="card">
+              <div class="card-header"><h3>📝 মেটা ট্যাগ</h3></div>
+              <div class="card-body" style="padding:20px">
+                <div class="field"><label>পেজ টাইটেল</label><input id="seo-title" placeholder="ইবনে খালদুন ইনস্টিটিউট – অনলাইনে নতুন দক্ষতা অর্জন করুন"/></div>
+                <div class="field"><label>মেটা ডেস্ক্রিপশন</label><textarea id="seo-description" placeholder="ইবনে খালদুন ইনস্টিটিউট - বাংলাদেশের শীর্ষস্থানীয় অনলাইন শিক্ষা প্ল্যাটফর্ম।"></textarea></div>
+                <div class="field"><label>মেটা কিওয়ার্ড</label><textarea id="seo-keywords" placeholder="ইবনে খালদুন, অনলাইন কোর্স, কুরআন শিক্ষা"></textarea></div>
+                <div class="field"><label>Author</label><input id="seo-author" placeholder="ইবনে খালদুন ইনস্টিটিউট"/></div>
+                <div class="field"><label>ক্যানোনিক্যাল URL</label><input id="seo-canonical" placeholder="https://ibnkhalduninstitute.online/"/></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3>📱 OG / Social Media</h3></div>
+              <div class="card-body" style="padding:20px">
+                <div class="field"><label>OG Title</label><input id="seo-og-title" placeholder="ইবনে খালদুন ইনস্টিটিউট"/></div>
+                <div class="field"><label>OG Description</label><textarea id="seo-og-desc" placeholder="বাংলাদেশের শীর্ষস্থানীয় অনলাইন শিক্ষা প্ল্যাটফর্ম।"></textarea></div>
+                <div class="field"><label>OG Image URL</label><input id="seo-og-image" placeholder="https://..."/></div>
+                <div class="field"><label>OG URL</label><input id="seo-og-url" placeholder="https://ibnkhalduninstitute.online/"/></div>
+                <div class="field"><label>Twitter Card Type</label>
+                  <select id="seo-twitter-card"><option value="summary_large_image">Large Image</option><option value="summary">Summary</option></select>
+                </div>
+                <div class="field"><label>Google Analytics ID</label><input id="seo-ga-id" placeholder="G-XXXXXXXXXX"/></div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:16px;display:flex;gap:10px">
+            <button class="btn btn-primary" onclick="saveSEOSettings()">💾 সংরক্ষণ করুন</button>
+            <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="loadSEOSettings()">🔄 রিলোড</button>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════
+             ফিচার্স / কেন বেছে নেবেন সেকশন
+        ══════════════════════════════════════════════════ -->
+        <div class="page" id="page-features-section">
+          <div class="page-header"><h2>✨ কেন বেছে নেবেন সেকশন</h2><p>"আজই যুক্ত হোন" সেকশনের ফিচার কার্ড নিয়ন্ত্রণ করুন</p></div>
+          <div class="card">
+            <div class="card-header"><h3>📋 সেকশন শিরোনাম</h3></div>
+            <div class="card-body" style="padding:20px">
+              <div class="row2">
+                <div class="field"><label>সেকশন লেবেল</label><input id="feat-section-label" placeholder="কেন আমাদের বেছে নেবেন"/></div>
+                <div class="field"><label>সেকশন শিরোনাম</label><input id="feat-section-title" placeholder="আজই যুক্ত হোন"/></div>
+              </div>
+              <div class="field"><label>সেকশন সাবটাইটেল</label><input id="feat-section-sub" placeholder="দ্বীনি জ্ঞানার্জনের উন্মুক্ত প্ল্যাটফর্ম..."/></div>
+            </div>
+          </div>
+          <div id="features-cards-admin" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:16px"></div>
+          <div style="margin-top:12px"><button class="btn btn-sm btn-edit" onclick="addFeatureCard()">+ নতুন ফিচার কার্ড</button></div>
+          <div style="margin-top:16px;display:flex;gap:10px">
+            <button class="btn btn-primary" onclick="saveFeaturesSection()">💾 সংরক্ষণ করুন</button>
+            <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="loadFeaturesSection()">🔄 রিলোড</button>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════
+             জয়েন / স্ট্যাট সেকশন
+        ══════════════════════════════════════════════════ -->
+        <div class="page" id="page-join-section">
+          <div class="page-header"><h2>📊 জয়েন সেকশন</h2><p>"আজই যুক্ত হোন" সেকশনের পরিসংখ্যান ও ছবি নিয়ন্ত্রণ করুন</p></div>
+          <div class="card">
+            <div class="card-header"><h3>📊 স্ট্যাট কার্ড</h3></div>
+            <div class="card-body" style="padding:20px">
+              <div id="join-stats-admin" style="display:grid;grid-template-columns:1fr 1fr;gap:16px"></div>
+              <button class="btn btn-sm btn-edit" style="margin-top:12px" onclick="addJoinStat()">+ নতুন স্ট্যাট</button>
+            </div>
+          </div>
+          <div class="card" style="margin-top:16px">
+            <div class="card-header"><h3>🖼️ সেকশন ছবি</h3></div>
+            <div class="card-body" style="padding:20px">
+              <div class="field"><label>জয়েন সেকশনের ছবি URL</label><input id="join-image" placeholder="https://..."/></div>
+              <div class="field"><label>ছবি অল্ট টেক্সট</label><input id="join-image-alt" placeholder="ইবনে খালদুন ইনস্টিটিউট"/></div>
+            </div>
+          </div>
+          <div style="margin-top:16px;display:flex;gap:10px">
+            <button class="btn btn-primary" onclick="saveJoinSection()">💾 সংরক্ষণ করুন</button>
+            <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="loadJoinSection()">🔄 রিলোড</button>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════
+             মোবাইল হিরো সেকশন
+        ══════════════════════════════════════════════════ -->
+        <div class="page" id="page-mobile-hero">
+          <div class="page-header"><h2>📱 মোবাইল হিরো</h2><p>মোবাইলে দেখানো হিরো ব্যানার নিয়ন্ত্রণ করুন</p></div>
+          <div class="card">
+            <div class="card-body" style="padding:20px">
+              <div class="field"><label>Eyebrow টেক্সট</label><input id="mh-eyebrow" placeholder="Ibn Khaldun Institute"/></div>
+              <div class="field"><label>শিরোনাম (HTML সাপোর্ট)</label><input id="mh-title" placeholder="শিখুন দক্ষতা গড়ুন উজ্জ্বল ভবিষ্যৎ"/></div>
+              <div class="field"><label>বর্ণনা</label><textarea id="mh-desc" placeholder="বিশেষজ্ঞ শিক্ষকদের নেতৃত্বে..."></textarea></div>
+              <div class="row2">
+                <div class="field"><label>বাটন ১ টেক্সট</label><input id="mh-btn1-text" placeholder="কোর্স দেখুন"/></div>
+                <div class="field"><label>বাটন ১ লিঙ্ক</label><input id="mh-btn1-link" placeholder="courses"/></div>
+              </div>
+              <div class="row2">
+                <div class="field"><label>বাটন ২ টেক্সট</label><input id="mh-btn2-text" placeholder="আমাদের সম্পর্কে"/></div>
+                <div class="field"><label>বাটন ২ লিঙ্ক</label><input id="mh-btn2-link" placeholder="about"/></div>
+              </div>
+              <div class="field"><label>ব্যানার ইমেজ URL</label><input id="mh-image" placeholder="https://..."/></div>
+            </div>
+          </div>
+          <div style="margin-top:16px;display:flex;gap:10px">
+            <button class="btn btn-primary" onclick="saveMobileHero()">💾 সংরক্ষণ করুন</button>
+            <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="loadMobileHero()">🔄 রিলোড</button>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════
+             সেকশন টাইটেল ম্যানেজার
+        ══════════════════════════════════════════════════ -->
+        <div class="page" id="page-section-titles">
+          <div class="page-header"><h2>🏷️ সেকশন শিরোনাম</h2><p>হোমপেজের সকল সেকশনের শিরোনাম ও লেবেল নিয়ন্ত্রণ করুন</p></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div class="card">
+              <div class="card-header"><h3>📚 কোর্স সেকশন</h3></div>
+              <div class="card-body" style="padding:20px">
+                <div class="field"><label>সেকশন শিরোনাম</label><input id="st-courses-title" placeholder="আমাদের সেরা বিক্রেতা & নতুন কোর্স দেখুন"/></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3>👨‍🏫 ইন্সট্রাক্টর সেকশন</h3></div>
+              <div class="card-body" style="padding:20px">
+                <div class="field"><label>সেকশন লেবেল</label><input id="st-inst-label" placeholder="জনপ্রিয় শিক্ষক"/></div>
+                <div class="field"><label>সেকশন শিরোনাম</label><input id="st-inst-title" placeholder="আমাদের অভিজ্ঞ ও দক্ষ শিক্ষকবৃন্দ"/></div>
+                <div class="field"><label>সেকশন সাবটাইটেল</label><input id="st-inst-sub" placeholder="বিশেষজ্ঞ শিক্ষকদের সাথে পরিচিত হোন..."/></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3>💬 টেস্টিমোনিয়াল সেকশন</h3></div>
+              <div class="card-body" style="padding:20px">
+                <div class="field"><label>সেকশন লেবেল</label><input id="st-testi-label" placeholder="শিক্ষার্থীদের মতামত"/></div>
+                <div class="field"><label>সেকশন শিরোনাম</label><input id="st-testi-title" placeholder="তারা কি বলছেন"/></div>
+                <div class="field"><label>সেকশন সাবটাইটেল</label><input id="st-testi-sub" placeholder="আমাদের শিক্ষার্থীদের অভিজ্ঞতা..."/></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3>📣 CTA সেকশন</h3></div>
+              <div class="card-body" style="padding:20px">
+                <div class="field"><label>সেকশন শিরোনাম</label><input id="st-cta-title" placeholder="আজই শুরু করুন"/></div>
+                <div class="field"><label>সেকশন সাবটাইটেল</label><input id="st-cta-sub" placeholder="আমাদের সাথে যোগ দিন"/></div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:16px;display:flex;gap:10px">
+            <button class="btn btn-primary" onclick="saveSectionTitles()">💾 সংরক্ষণ করুন</button>
+            <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="loadSectionTitles()">🔄 রিলোড</button>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════
+             পেমেন্ট কনফিগ
+        ══════════════════════════════════════════════════ -->
+        <div class="page" id="page-payment-config">
+          <div class="page-header"><h2>💳 পেমেন্ট কনফিগ</h2><p>পেমেন্ট মেথড ও পেমেন্ট তথ্য নিয়ন্ত্রণ করুন</p></div>
+          <div class="card">
+            <div class="card-body" style="padding:20px">
+              <div id="payment-methods-admin"></div>
+              <button class="btn btn-sm btn-edit" style="margin-top:12px" onclick="addPaymentMethod()">+ নতুন পেমেন্ট মেথড</button>
+              <div class="field" style="margin-top:16px"><label>পেমেন্ট নির্দেশনা (HTML)</label><textarea id="pay-instructions" style="min-height:120px" placeholder="bKash/Nagad/Rocket এ পেমেন্ট করুন..."></textarea></div>
+            </div>
+          </div>
+          <div style="margin-top:16px;display:flex;gap:10px">
+            <button class="btn btn-primary" onclick="savePaymentConfig()">💾 সংরক্ষণ করুন</button>
+            <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="loadPaymentConfig()">🔄 রিলোড</button>
+          </div>
+        </div>
+
 
 <!-- Toast -->
 <div id="toast"></div>
