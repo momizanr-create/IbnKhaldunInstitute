@@ -467,16 +467,8 @@
         <div class="nav-item" onclick="navTo('footer-mgr')"><span class="icon">🦶</span> ফুটার</div>
         <div class="nav-item" onclick="navTo('theme-settings')"><span class="icon">🎨</span> থিম / রঙ</div>
         <div class="nav-item" onclick="navTo('cta-section')"><span class="icon">📣</span> CTA সেকশন</div>
+        <div class="nav-item" onclick="navTo('section-content')"><span class="icon">📋</span> সেকশন কন্টেন্ট</div>
         
-        
-        <div class="nav-section">সেকশন কন্টেন্ট</div>
-        <div class="nav-item" onclick="navTo('features-section')"><span class="icon">✨</span> ফিচার্স সেকশন</div>
-        <div class="nav-item" onclick="navTo('join-section')"><span class="icon">📊</span> জয়েন সেকশন</div>
-        <div class="nav-item" onclick="navTo('mobile-hero')"><span class="icon">📱</span> মোবাইল হিরো</div>
-        <div class="nav-item" onclick="navTo('section-titles')"><span class="icon">🏷️</span> সেকশন শিরোনাম</div>
-        <div class="nav-item" onclick="navTo('payment-config')"><span class="icon">💳</span> পেমেন্ট কনফিগ</div>
-        <div class="nav-item" onclick="navTo('seo-settings')"><span class="icon">🔍</span> SEO সেটিংস</div>
-
         <div class="nav-section">ব্যবসা ও ব্যবহারকারী</div>
         <div class="nav-item" onclick="navTo('access-requests')"><span class="icon">🔐</span> অ্যাক্সেস রিকোয়েস্ট</div>
         <div class="nav-item" onclick="navTo('enrollments')"><span class="icon">📋</span> এনরোলমেন্ট</div>
@@ -946,6 +938,138 @@
         </div>
 
         <!-- ── ACCESS REQUESTS ── -->
+        
+        <!-- ══ SECTION CONTENT MANAGER ══ -->
+        <div class="page" id="page-section-content">
+          <div class="page-header"><h2>📋 সেকশন কন্টেন্ট</h2><p>হোমপেজের সকল সেকশনের শিরোনাম, সাবটাইটেল ও কন্টেন্ট নিয়ন্ত্রণ করুন</p></div>
+          <div style="background:var(--green-bg);border:1px solid rgba(34,197,94,0.3);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--green)"><span>✅</span><strong>index.html এর সাথে সংযুক্ত</strong> — এখানে সেভ করলে ওয়েবসাইটে সাথে সাথে প্রতিফলিত হবে।</div>
+
+          <!-- Featured Courses Section -->
+          <div class="card">
+            <div class="card-header"><div class="card-header-left"><h3>⭐ ফিচার্ড কোর্স সেকশন</h3><span class="card-subtitle">হোমপেজের কোর্স এলাকার শিরোনাম</span></div></div>
+            <div class="card-body" style="padding:22px">
+              <div class="row2">
+                <div class="field"><label>সেকশন শিরোনাম</label><input id="sc-featured-title" placeholder="আমাদের সেরা বিক্রেতা & নতুন কোর্স দেখুন"/></div>
+                <div class="field"><label>সেকশন সাবটাইটেল</label><input id="sc-featured-sub" placeholder=""/></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Instructors Section -->
+          <div class="card" style="margin-top:16px">
+            <div class="card-header"><div class="card-header-left"><h3>👨‍🏫 ইন্সট্রাক্টর সেকশন</h3><span class="card-subtitle">শিক্ষকদের সেকশনের শিরোনাম</span></div></div>
+            <div class="card-body" style="padding:22px">
+              <div class="row2">
+                <div class="field"><label>সেকশন লেবেল</label><input id="sc-instr-label" placeholder="জনপ্রিয় শিক্ষক"/></div>
+                <div class="field"><label>সেকশন শিরোনাম</label><input id="sc-instr-title" placeholder="আমাদের অভিজ্ঞ ও দক্ষ শিক্ষকবৃন্দ"/></div>
+              </div>
+              <div class="field"><label>সেকশন সাবটাইটেল</label><input id="sc-instr-sub" placeholder="বিশেষজ্ঞ শিক্ষকদের সাথে পরিচিত হোন..."/></div>
+            </div>
+          </div>
+
+          <!-- Home FAQ Section -->
+          <div class="card" style="margin-top:16px">
+            <div class="card-header"><div class="card-header-left"><h3>❓ হোম FAQ সেকশন</h3><span class="card-subtitle">হোম পেজের FAQ এলাকার শিরোনাম</span></div></div>
+            <div class="card-body" style="padding:22px">
+              <div class="row2">
+                <div class="field"><label>সেকশন লেবেল</label><input id="sc-homefaq-label" placeholder="FAQ"/></div>
+                <div class="field"><label>সেকশন শিরোনাম</label><input id="sc-homefaq-title" placeholder="কোর্স সম্পর্কিত প্রশ্নোত্তর"/></div>
+              </div>
+              <div class="field"><label>সেকশন সাবটাইটেল</label><input id="sc-homefaq-sub" placeholder="কোর্সে ভর্তি, পেমেন্ট ও শেখার পদ্ধতি নিয়ে..."/></div>
+            </div>
+          </div>
+
+          <!-- Join Section -->
+          <div class="card" style="margin-top:16px">
+            <div class="card-header"><div class="card-header-left"><h3>🤝 আজই যুক্ত হোন সেকশন</h3><span class="card-subtitle">Join section — শিরোনাম, স্ট্যাট ও ভিডিও</span></div></div>
+            <div class="card-body" style="padding:22px">
+              <div class="row2">
+                <div class="field"><label>সেকশন শিরোনাম</label><input id="sc-join-title" placeholder="আজই যুক্ত হোন"/></div>
+                <div class="field"><label>সেকশন সাবটাইটেল</label><input id="sc-join-sub" placeholder="দ্বীনি জ্ঞানার্জনের উন্মুক্ত প্ল্যাটফর্ম..."/></div>
+              </div>
+              <div style="font-size:12px;font-weight:700;color:var(--primary);letter-spacing:0.5px;margin:16px 0 10px;text-transform:uppercase">📊 স্ট্যাটিস্টিক্স কার্ড</div>
+              <div class="row2">
+                <div class="field"><label>স্ট্যাট ১ — সংখ্যা</label><input id="sc-join-stat1-num" placeholder="৯,০০০+"/></div>
+                <div class="field"><label>স্ট্যাট ১ — লেবেল</label><input id="sc-join-stat1-label" placeholder="মোট শিক্ষার্থী"/></div>
+              </div>
+              <div class="row2">
+                <div class="field"><label>স্ট্যাট ২ — সংখ্যা</label><input id="sc-join-stat2-num" placeholder="১০+"/></div>
+                <div class="field"><label>স্ট্যাট ২ — লেবেল</label><input id="sc-join-stat2-label" placeholder="অভিজ্ঞ উস্তায/উস্তাযা"/></div>
+              </div>
+              <div class="row2">
+                <div class="field"><label>স্ট্যাট ৩ — সংখ্যা</label><input id="sc-join-stat3-num" placeholder="১০০+"/></div>
+                <div class="field"><label>স্ট্যাট ৩ — লেবেল</label><input id="sc-join-stat3-label" placeholder="স্টাডি ম্যাটেরিয়াল"/></div>
+              </div>
+              <div class="row2">
+                <div class="field"><label>স্ট্যাট ৪ — সংখ্যা</label><input id="sc-join-stat4-num" placeholder="২০০+"/></div>
+                <div class="field"><label>স্ট্যাট ৪ — লেবেল</label><input id="sc-join-stat4-label" placeholder="লার্নিং কন্টেন্ট"/></div>
+              </div>
+              <div style="font-size:12px;font-weight:700;color:var(--primary);letter-spacing:0.5px;margin:16px 0 10px;text-transform:uppercase">🎬 YouTube ভিডিও</div>
+              <div class="row2">
+                <div class="field"><label>YouTube Video ID</label><input id="sc-join-video-id" placeholder="LXb3EKWsInQ"/></div>
+                <div class="field"><label>ভিডিও শিরোনাম</label><input id="sc-join-video-title" placeholder="দ্বীনি জ্ঞানার্জনের পথে..."/></div>
+              </div>
+              <div class="field"><label>চ্যানেল নাম</label><input id="sc-join-channel" placeholder="ইবনে খালদুন ইনস্টিটিউট"/></div>
+            </div>
+          </div>
+
+          <!-- Testimonials Section -->
+          <div class="card" style="margin-top:16px">
+            <div class="card-header"><div class="card-header-left"><h3>💬 টেস্টিমোনিয়াল সেকশন</h3><span class="card-subtitle">শিক্ষার্থীদের রিভিউ এলাকার শিরোনাম</span></div></div>
+            <div class="card-body" style="padding:22px">
+              <div class="row2">
+                <div class="field"><label>সেকশন লেবেল</label><input id="sc-testi-label" placeholder="শিক্ষার্থীদের গল্প"/></div>
+                <div class="field"><label>সেকশন শিরোনাম</label><input id="sc-testi-title" placeholder="হাজারো শিক্ষার্থীর ভালোবাসা"/></div>
+              </div>
+              <div class="field"><label>সেকশন সাবটাইটেল</label><input id="sc-testi-sub" placeholder="বাস্তব শিক্ষার্থীদের বাস্তব অভিজ্ঞতা..."/></div>
+            </div>
+          </div>
+
+          <!-- Previous Courses Section -->
+          <div class="card" style="margin-top:16px">
+            <div class="card-header"><div class="card-header-left"><h3>📚 পূর্ববর্তী কোর্স সেকশন</h3><span class="card-subtitle">Previous courses সেকশনের শিরোনাম</span></div></div>
+            <div class="card-body" style="padding:22px">
+              <div class="row2">
+                <div class="field"><label>সেকশন লেবেল</label><input id="sc-prev-label" placeholder="পূর্ববর্তী কোর্স"/></div>
+                <div class="field"><label>সেকশন শিরোনাম</label><input id="sc-prev-title" placeholder="আমাদের পূর্ববর্তী কোর্সসমূহ"/></div>
+              </div>
+              <div class="field"><label>সেকশন সাবটাইটেল</label><input id="sc-prev-sub" placeholder="আপনার সুবিধামত যে কোনো কোর্স বেছে নিন..."/></div>
+            </div>
+          </div>
+
+          <!-- Page Heroes -->
+          <div class="card" style="margin-top:16px">
+            <div class="card-header"><div class="card-header-left"><h3>🏷️ পেজ হিরো শিরোনাম</h3><span class="card-subtitle">কোর্স, ইন্সট্রাক্টর, ব্লগ পেজের হিরো টেক্সট</span></div></div>
+            <div class="card-body" style="padding:22px">
+              <div style="font-size:12px;font-weight:700;color:var(--primary);letter-spacing:0.5px;margin-bottom:10px;text-transform:uppercase">📚 কোর্স পেজ</div>
+              <div class="row2">
+                <div class="field"><label>লেবেল</label><input id="sc-courses-page-label" placeholder="সকল কোর্স"/></div>
+                <div class="field"><label>শিরোনাম</label><input id="sc-courses-page-title" placeholder="সব কোর্স দেখুন"/></div>
+              </div>
+              <div class="field"><label>সাবটাইটেল</label><input id="sc-courses-page-sub" placeholder="২০০+ বিশেষজ্ঞ-নেতৃত্বাধীন কোর্স থেকে..."/></div>
+
+              <div style="font-size:12px;font-weight:700;color:var(--primary);letter-spacing:0.5px;margin:16px 0 10px;text-transform:uppercase">👨‍🏫 ইন্সট্রাক্টর পেজ</div>
+              <div class="row2">
+                <div class="field"><label>লেবেল</label><input id="sc-instr-page-label" placeholder="আমাদের শিক্ষক মণ্ডলী"/></div>
+                <div class="field"><label>শিরোনাম</label><input id="sc-instr-page-title" placeholder="👨‍🏫 ইন্সট্রাক্টরগণ"/></div>
+              </div>
+              <div class="field"><label>সাবটাইটেল</label><input id="sc-instr-page-sub" placeholder="বিশ্বমানের বিশেষজ্ঞ শিক্ষকদের সাথে..."/></div>
+
+              <div style="font-size:12px;font-weight:700;color:var(--primary);letter-spacing:0.5px;margin:16px 0 10px;text-transform:uppercase">📝 ব্লগ পেজ</div>
+              <div class="row2">
+                <div class="field"><label>লেবেল</label><input id="sc-blog-page-label" placeholder="জ্ঞান ও অনুপ্রেরণা"/></div>
+                <div class="field"><label>শিরোনাম</label><input id="sc-blog-page-title" placeholder="📝 ব্লগ"/></div>
+              </div>
+              <div class="field"><label>সাবটাইটেল</label><input id="sc-blog-page-sub" placeholder="ইসলামিক জ্ঞান, শিক্ষা ও অনুপ্রেরণামূলক লেখা..."/></div>
+            </div>
+          </div>
+
+          <div style="margin-top:20px;display:flex;gap:10px">
+            <button class="btn btn-primary" onclick="saveSectionContent()">💾 সংরক্ষণ করুন</button>
+            <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="loadSectionContent()">🔄 রিলোড</button>
+          </div>
+        </div>
+
         <div class="page" id="page-access-requests">
           <div class="card">
             <div class="card-header">
@@ -2212,179 +2336,6 @@
   </div>
 </div>
 
-
-        <!-- ══════════════════════════════════════════════════
-             SEO সেটিংস
-        ══════════════════════════════════════════════════ -->
-        <div class="page" id="page-seo-settings">
-          <div class="page-header"><h2>🔍 SEO সেটিংস</h2><p>মেটা ট্যাগ, OG ট্যাগ, Schema.org ডেটা নিয়ন্ত্রণ করুন</p></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-            <div class="card">
-              <div class="card-header"><h3>📝 মেটা ট্যাগ</h3></div>
-              <div class="card-body" style="padding:20px">
-                <div class="field"><label>পেজ টাইটেল</label><input id="seo-title" placeholder="ইবনে খালদুন ইনস্টিটিউট – অনলাইনে নতুন দক্ষতা অর্জন করুন"/></div>
-                <div class="field"><label>মেটা ডেস্ক্রিপশন</label><textarea id="seo-description" placeholder="ইবনে খালদুন ইনস্টিটিউট - বাংলাদেশের শীর্ষস্থানীয় অনলাইন শিক্ষা প্ল্যাটফর্ম।"></textarea></div>
-                <div class="field"><label>মেটা কিওয়ার্ড</label><textarea id="seo-keywords" placeholder="ইবনে খালদুন, অনলাইন কোর্স, কুরআন শিক্ষা"></textarea></div>
-                <div class="field"><label>Author</label><input id="seo-author" placeholder="ইবনে খালদুন ইনস্টিটিউট"/></div>
-                <div class="field"><label>ক্যানোনিক্যাল URL</label><input id="seo-canonical" placeholder="https://ibnkhalduninstitute.online/"/></div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header"><h3>📱 OG / Social Media</h3></div>
-              <div class="card-body" style="padding:20px">
-                <div class="field"><label>OG Title</label><input id="seo-og-title" placeholder="ইবনে খালদুন ইনস্টিটিউট"/></div>
-                <div class="field"><label>OG Description</label><textarea id="seo-og-desc" placeholder="বাংলাদেশের শীর্ষস্থানীয় অনলাইন শিক্ষা প্ল্যাটফর্ম।"></textarea></div>
-                <div class="field"><label>OG Image URL</label><input id="seo-og-image" placeholder="https://..."/></div>
-                <div class="field"><label>OG URL</label><input id="seo-og-url" placeholder="https://ibnkhalduninstitute.online/"/></div>
-                <div class="field"><label>Twitter Card Type</label>
-                  <select id="seo-twitter-card"><option value="summary_large_image">Large Image</option><option value="summary">Summary</option></select>
-                </div>
-                <div class="field"><label>Google Analytics ID</label><input id="seo-ga-id" placeholder="G-XXXXXXXXXX"/></div>
-              </div>
-            </div>
-          </div>
-          <div style="margin-top:16px;display:flex;gap:10px">
-            <button class="btn btn-primary" onclick="saveSEOSettings()">💾 সংরক্ষণ করুন</button>
-            <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="loadSEOSettings()">🔄 রিলোড</button>
-          </div>
-        </div>
-
-        <!-- ══════════════════════════════════════════════════
-             ফিচার্স / কেন বেছে নেবেন সেকশন
-        ══════════════════════════════════════════════════ -->
-        <div class="page" id="page-features-section">
-          <div class="page-header"><h2>✨ কেন বেছে নেবেন সেকশন</h2><p>"আজই যুক্ত হোন" সেকশনের ফিচার কার্ড নিয়ন্ত্রণ করুন</p></div>
-          <div class="card">
-            <div class="card-header"><h3>📋 সেকশন শিরোনাম</h3></div>
-            <div class="card-body" style="padding:20px">
-              <div class="row2">
-                <div class="field"><label>সেকশন লেবেল</label><input id="feat-section-label" placeholder="কেন আমাদের বেছে নেবেন"/></div>
-                <div class="field"><label>সেকশন শিরোনাম</label><input id="feat-section-title" placeholder="আজই যুক্ত হোন"/></div>
-              </div>
-              <div class="field"><label>সেকশন সাবটাইটেল</label><input id="feat-section-sub" placeholder="দ্বীনি জ্ঞানার্জনের উন্মুক্ত প্ল্যাটফর্ম..."/></div>
-            </div>
-          </div>
-          <div id="features-cards-admin" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:16px"></div>
-          <div style="margin-top:12px"><button class="btn btn-sm btn-edit" onclick="addFeatureCard()">+ নতুন ফিচার কার্ড</button></div>
-          <div style="margin-top:16px;display:flex;gap:10px">
-            <button class="btn btn-primary" onclick="saveFeaturesSection()">💾 সংরক্ষণ করুন</button>
-            <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="loadFeaturesSection()">🔄 রিলোড</button>
-          </div>
-        </div>
-
-        <!-- ══════════════════════════════════════════════════
-             জয়েন / স্ট্যাট সেকশন
-        ══════════════════════════════════════════════════ -->
-        <div class="page" id="page-join-section">
-          <div class="page-header"><h2>📊 জয়েন সেকশন</h2><p>"আজই যুক্ত হোন" সেকশনের পরিসংখ্যান ও ছবি নিয়ন্ত্রণ করুন</p></div>
-          <div class="card">
-            <div class="card-header"><h3>📊 স্ট্যাট কার্ড</h3></div>
-            <div class="card-body" style="padding:20px">
-              <div id="join-stats-admin" style="display:grid;grid-template-columns:1fr 1fr;gap:16px"></div>
-              <button class="btn btn-sm btn-edit" style="margin-top:12px" onclick="addJoinStat()">+ নতুন স্ট্যাট</button>
-            </div>
-          </div>
-          <div class="card" style="margin-top:16px">
-            <div class="card-header"><h3>🖼️ সেকশন ছবি</h3></div>
-            <div class="card-body" style="padding:20px">
-              <div class="field"><label>জয়েন সেকশনের ছবি URL</label><input id="join-image" placeholder="https://..."/></div>
-              <div class="field"><label>ছবি অল্ট টেক্সট</label><input id="join-image-alt" placeholder="ইবনে খালদুন ইনস্টিটিউট"/></div>
-            </div>
-          </div>
-          <div style="margin-top:16px;display:flex;gap:10px">
-            <button class="btn btn-primary" onclick="saveJoinSection()">💾 সংরক্ষণ করুন</button>
-            <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="loadJoinSection()">🔄 রিলোড</button>
-          </div>
-        </div>
-
-        <!-- ══════════════════════════════════════════════════
-             মোবাইল হিরো সেকশন
-        ══════════════════════════════════════════════════ -->
-        <div class="page" id="page-mobile-hero">
-          <div class="page-header"><h2>📱 মোবাইল হিরো</h2><p>মোবাইলে দেখানো হিরো ব্যানার নিয়ন্ত্রণ করুন</p></div>
-          <div class="card">
-            <div class="card-body" style="padding:20px">
-              <div class="field"><label>Eyebrow টেক্সট</label><input id="mh-eyebrow" placeholder="Ibn Khaldun Institute"/></div>
-              <div class="field"><label>শিরোনাম (HTML সাপোর্ট)</label><input id="mh-title" placeholder="শিখুন দক্ষতা গড়ুন উজ্জ্বল ভবিষ্যৎ"/></div>
-              <div class="field"><label>বর্ণনা</label><textarea id="mh-desc" placeholder="বিশেষজ্ঞ শিক্ষকদের নেতৃত্বে..."></textarea></div>
-              <div class="row2">
-                <div class="field"><label>বাটন ১ টেক্সট</label><input id="mh-btn1-text" placeholder="কোর্স দেখুন"/></div>
-                <div class="field"><label>বাটন ১ লিঙ্ক</label><input id="mh-btn1-link" placeholder="courses"/></div>
-              </div>
-              <div class="row2">
-                <div class="field"><label>বাটন ২ টেক্সট</label><input id="mh-btn2-text" placeholder="আমাদের সম্পর্কে"/></div>
-                <div class="field"><label>বাটন ২ লিঙ্ক</label><input id="mh-btn2-link" placeholder="about"/></div>
-              </div>
-              <div class="field"><label>ব্যানার ইমেজ URL</label><input id="mh-image" placeholder="https://..."/></div>
-            </div>
-          </div>
-          <div style="margin-top:16px;display:flex;gap:10px">
-            <button class="btn btn-primary" onclick="saveMobileHero()">💾 সংরক্ষণ করুন</button>
-            <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="loadMobileHero()">🔄 রিলোড</button>
-          </div>
-        </div>
-
-        <!-- ══════════════════════════════════════════════════
-             সেকশন টাইটেল ম্যানেজার
-        ══════════════════════════════════════════════════ -->
-        <div class="page" id="page-section-titles">
-          <div class="page-header"><h2>🏷️ সেকশন শিরোনাম</h2><p>হোমপেজের সকল সেকশনের শিরোনাম ও লেবেল নিয়ন্ত্রণ করুন</p></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-            <div class="card">
-              <div class="card-header"><h3>📚 কোর্স সেকশন</h3></div>
-              <div class="card-body" style="padding:20px">
-                <div class="field"><label>সেকশন শিরোনাম</label><input id="st-courses-title" placeholder="আমাদের সেরা বিক্রেতা & নতুন কোর্স দেখুন"/></div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header"><h3>👨‍🏫 ইন্সট্রাক্টর সেকশন</h3></div>
-              <div class="card-body" style="padding:20px">
-                <div class="field"><label>সেকশন লেবেল</label><input id="st-inst-label" placeholder="জনপ্রিয় শিক্ষক"/></div>
-                <div class="field"><label>সেকশন শিরোনাম</label><input id="st-inst-title" placeholder="আমাদের অভিজ্ঞ ও দক্ষ শিক্ষকবৃন্দ"/></div>
-                <div class="field"><label>সেকশন সাবটাইটেল</label><input id="st-inst-sub" placeholder="বিশেষজ্ঞ শিক্ষকদের সাথে পরিচিত হোন..."/></div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header"><h3>💬 টেস্টিমোনিয়াল সেকশন</h3></div>
-              <div class="card-body" style="padding:20px">
-                <div class="field"><label>সেকশন লেবেল</label><input id="st-testi-label" placeholder="শিক্ষার্থীদের মতামত"/></div>
-                <div class="field"><label>সেকশন শিরোনাম</label><input id="st-testi-title" placeholder="তারা কি বলছেন"/></div>
-                <div class="field"><label>সেকশন সাবটাইটেল</label><input id="st-testi-sub" placeholder="আমাদের শিক্ষার্থীদের অভিজ্ঞতা..."/></div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header"><h3>📣 CTA সেকশন</h3></div>
-              <div class="card-body" style="padding:20px">
-                <div class="field"><label>সেকশন শিরোনাম</label><input id="st-cta-title" placeholder="আজই শুরু করুন"/></div>
-                <div class="field"><label>সেকশন সাবটাইটেল</label><input id="st-cta-sub" placeholder="আমাদের সাথে যোগ দিন"/></div>
-              </div>
-            </div>
-          </div>
-          <div style="margin-top:16px;display:flex;gap:10px">
-            <button class="btn btn-primary" onclick="saveSectionTitles()">💾 সংরক্ষণ করুন</button>
-            <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="loadSectionTitles()">🔄 রিলোড</button>
-          </div>
-        </div>
-
-        <!-- ══════════════════════════════════════════════════
-             পেমেন্ট কনফিগ
-        ══════════════════════════════════════════════════ -->
-        <div class="page" id="page-payment-config">
-          <div class="page-header"><h2>💳 পেমেন্ট কনফিগ</h2><p>পেমেন্ট মেথড ও পেমেন্ট তথ্য নিয়ন্ত্রণ করুন</p></div>
-          <div class="card">
-            <div class="card-body" style="padding:20px">
-              <div id="payment-methods-admin"></div>
-              <button class="btn btn-sm btn-edit" style="margin-top:12px" onclick="addPaymentMethod()">+ নতুন পেমেন্ট মেথড</button>
-              <div class="field" style="margin-top:16px"><label>পেমেন্ট নির্দেশনা (HTML)</label><textarea id="pay-instructions" style="min-height:120px" placeholder="bKash/Nagad/Rocket এ পেমেন্ট করুন..."></textarea></div>
-            </div>
-          </div>
-          <div style="margin-top:16px;display:flex;gap:10px">
-            <button class="btn btn-primary" onclick="savePaymentConfig()">💾 সংরক্ষণ করুন</button>
-            <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="loadPaymentConfig()">🔄 রিলোড</button>
-          </div>
-        </div>
-
-
 <!-- Toast -->
 <div id="toast"></div>
 
@@ -2621,7 +2572,7 @@ function navTo(page) {
     enrollments: loadEnrollments, categories: loadCategories,
     'course-tabs': loadCourseTabs, 'hero-courses': loadHeroCourses,
     'access-requests': loadAccessRequests, users: loadUsers,
-    'blog-posts': loadBlogPosts, 'contact-content': loadContactContent,
+    'blog-posts': loadBlogPosts, 'contact-content': loadContactContent, 'section-content': loadSectionContent,
     faqs: loadFaqs, 'about-page': loadAboutPageContent,
     analytics: loadAnalyticsConfig,
   };
@@ -4337,6 +4288,7 @@ window.navTo = function(section) {
     if (section === 'footer-mgr') loadFooter();
     if (section === 'theme-settings') loadThemeSettings();
     if (section === 'analytics') loadAnalyticsConfig();
+    if (section === 'section-content') loadSectionContent();
     if (window.innerWidth <= 768) {
       document.getElementById('sidebar').classList.remove('open');
     }
@@ -5940,6 +5892,101 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
   });
 });
 
+
+// ══ SECTION CONTENT FUNCTIONS ══
+async function loadSectionContent() {
+  try {
+    var d = await api('GET', '/api/admin/section-content');
+    // Featured
+    el('sc-featured-title').value = d.featuredTitle || '';
+    el('sc-featured-sub').value = d.featuredSub || '';
+    // Instructors
+    el('sc-instr-label').value = d.instrLabel || '';
+    el('sc-instr-title').value = d.instrTitle || '';
+    el('sc-instr-sub').value = d.instrSub || '';
+    // Home FAQ
+    el('sc-homefaq-label').value = d.homeFaqLabel || '';
+    el('sc-homefaq-title').value = d.homeFaqTitle || '';
+    el('sc-homefaq-sub').value = d.homeFaqSub || '';
+    // Join
+    el('sc-join-title').value = d.joinTitle || '';
+    el('sc-join-sub').value = d.joinSub || '';
+    el('sc-join-stat1-num').value = (d.joinStats && d.joinStats[0] && d.joinStats[0].num) || '';
+    el('sc-join-stat1-label').value = (d.joinStats && d.joinStats[0] && d.joinStats[0].label) || '';
+    el('sc-join-stat2-num').value = (d.joinStats && d.joinStats[1] && d.joinStats[1].num) || '';
+    el('sc-join-stat2-label').value = (d.joinStats && d.joinStats[1] && d.joinStats[1].label) || '';
+    el('sc-join-stat3-num').value = (d.joinStats && d.joinStats[2] && d.joinStats[2].num) || '';
+    el('sc-join-stat3-label').value = (d.joinStats && d.joinStats[2] && d.joinStats[2].label) || '';
+    el('sc-join-stat4-num').value = (d.joinStats && d.joinStats[3] && d.joinStats[3].num) || '';
+    el('sc-join-stat4-label').value = (d.joinStats && d.joinStats[3] && d.joinStats[3].label) || '';
+    el('sc-join-video-id').value = d.joinVideoId || '';
+    el('sc-join-video-title').value = d.joinVideoTitle || '';
+    el('sc-join-channel').value = d.joinChannel || '';
+    // Testimonials
+    el('sc-testi-label').value = d.testiLabel || '';
+    el('sc-testi-title').value = d.testiTitle || '';
+    el('sc-testi-sub').value = d.testiSub || '';
+    // Previous courses
+    el('sc-prev-label').value = d.prevLabel || '';
+    el('sc-prev-title').value = d.prevTitle || '';
+    el('sc-prev-sub').value = d.prevSub || '';
+    // Page heroes
+    el('sc-courses-page-label').value = d.coursesPageLabel || '';
+    el('sc-courses-page-title').value = d.coursesPageTitle || '';
+    el('sc-courses-page-sub').value = d.coursesPageSub || '';
+    el('sc-instr-page-label').value = d.instrPageLabel || '';
+    el('sc-instr-page-title').value = d.instrPageTitle || '';
+    el('sc-instr-page-sub').value = d.instrPageSub || '';
+    el('sc-blog-page-label').value = d.blogPageLabel || '';
+    el('sc-blog-page-title').value = d.blogPageTitle || '';
+    el('sc-blog-page-sub').value = d.blogPageSub || '';
+    toast('✅ সেকশন কন্টেন্ট লোড হয়েছে');
+  } catch(e) { console.log('Section content not found, using defaults'); }
+}
+
+async function saveSectionContent() {
+  var data = {
+    featuredTitle: val('sc-featured-title'),
+    featuredSub: val('sc-featured-sub'),
+    instrLabel: val('sc-instr-label'),
+    instrTitle: val('sc-instr-title'),
+    instrSub: val('sc-instr-sub'),
+    homeFaqLabel: val('sc-homefaq-label'),
+    homeFaqTitle: val('sc-homefaq-title'),
+    homeFaqSub: val('sc-homefaq-sub'),
+    joinTitle: val('sc-join-title'),
+    joinSub: val('sc-join-sub'),
+    joinStats: [
+      { num: val('sc-join-stat1-num'), label: val('sc-join-stat1-label') },
+      { num: val('sc-join-stat2-num'), label: val('sc-join-stat2-label') },
+      { num: val('sc-join-stat3-num'), label: val('sc-join-stat3-label') },
+      { num: val('sc-join-stat4-num'), label: val('sc-join-stat4-label') },
+    ],
+    joinVideoId: val('sc-join-video-id'),
+    joinVideoTitle: val('sc-join-video-title'),
+    joinChannel: val('sc-join-channel'),
+    testiLabel: val('sc-testi-label'),
+    testiTitle: val('sc-testi-title'),
+    testiSub: val('sc-testi-sub'),
+    prevLabel: val('sc-prev-label'),
+    prevTitle: val('sc-prev-title'),
+    prevSub: val('sc-prev-sub'),
+    coursesPageLabel: val('sc-courses-page-label'),
+    coursesPageTitle: val('sc-courses-page-title'),
+    coursesPageSub: val('sc-courses-page-sub'),
+    instrPageLabel: val('sc-instr-page-label'),
+    instrPageTitle: val('sc-instr-page-title'),
+    instrPageSub: val('sc-instr-page-sub'),
+    blogPageLabel: val('sc-blog-page-label'),
+    blogPageTitle: val('sc-blog-page-title'),
+    blogPageSub: val('sc-blog-page-sub'),
+  };
+  try {
+    await api('POST', '/api/admin/section-content', data);
+    toast('✅ সেকশন কন্টেন্ট সংরক্ষিত হয়েছে — index.html এ প্রতিফলিত হবে');
+  } catch(e) { toast('সমস্যা: ' + e.message, 'error'); }
+}
+
 (function(){
   const def={heroSections:{home:{title:'ইবনে খালদুন ইনস্টিটিউট',subtitle:'অনলাইনে নতুন দক্ষতা অর্জন করুন',backgroundImage:''},courses:{title:'সকল কোর্সসমূহ',subtitle:'এক অক্ষর লিখলেই কোর্স রিকমেন্ডেশন দেখুন',backgroundImage:''},about:{title:'আমাদের সম্পর্কে',subtitle:'আমাদের উদ্দেশ্য, কাজ ও শিক্ষা দর্শন',backgroundImage:''},contact:{title:'যোগাযোগ করুন',subtitle:'আমরা আপনার পাশে আছি',backgroundImage:''}},about:{content:'<p>ইবনে খালদুন ইনস্টিটিউট অনলাইন শিক্ষার একটি নির্ভরযোগ্য প্ল্যাটফর্ম।</p>'},contact:{email:'info@ibnkhaldun.edu.bd',phone:'+880 1700-000000',address:'ঢাকা, বাংলাদেশ',content:'যে কোনো প্রশ্নে আমাদের সাথে যোগাযোগ করুন।'},faqs:[{question:'কোর্স কীভাবে শুরু করব?',answer:'পছন্দের কোর্স নির্বাচন করে এনরোল করুন।'}],promo:{title:'জনপ্রিয় কোর্স',subtitle:'সেরা কোর্সগুলো এক জায়গায়',buttonText:'কোর্স দেখুন',buttonLink:'#courses'},navLinks:[{name:'হোম',link:'#home'},{name:'কোর্সসমূহ',link:'#courses'},{name:'আমাদের সম্পর্কে',link:'#about'},{name:'যোগাযোগ',link:'#contact'}],categories:[{name:'কুরআন শিক্ষা',slug:'quran-education',link:'quran-education'},{name:'প্রোডাক্টিভিটি এবং লাইফ হ্যাকস',slug:'productivity-life-hacks',link:'productivity-life-hacks'},{name:'পারিবারিক জীবন',slug:'family-life',link:'family-life'},{name:'সীরাহ এবং ইতিহাস',slug:'seerah-and-history',link:'seerah-and-history'},{name:'সুন্নাহ এবং লাইফস্টাইল',slug:'sunnah-and-lifestyle',link:'sunnah-and-lifestyle'},{name:'ফিকাহ',slug:'fiqh',link:'fiqh'},{name:'হাদীস',slug:'hadith',link:'hadith'},{name:'হোমস্কুলিং এবং প্যারেন্টিং',slug:'homeschooling-and-parenting',link:'homeschooling-and-parenting'},{name:'ইসলামী বিশ্বাস ও মতবাদ',slug:'islamic-belief-and-ideology',link:'islamic-belief-and-ideology'}],sidebarBody:[{title:'কোর্স সহায়তা',body:'প্রয়োজনে অ্যাডমিনের সাথে যোগাযোগ করুন।'}]};
   const pretty=v=>JSON.stringify(v||[],null,2),el=id=>document.getElementById(id),val=id=>el(id)?el(id).value:'',set=(id,v)=>{if(el(id))el(id).value=v||''};
@@ -5990,7 +6037,7 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
   }
   window.loadFullContentBundle=async function(){ensurePage();try{fill(await api('GET','/api/admin/content-bundle'))}catch(e){try{let s=await api('GET','/api/settings');fill(s.contentBundle||def)}catch(_){fill(def)}}};
   window.saveFullContentBundle=async function(){try{let b={heroSections:{courses:{title:val('fc-courses-title'),subtitle:val('fc-courses-subtitle'),backgroundImage:val('fc-courses-bg')},about:{title:val('fc-about-title'),subtitle:val('fc-about-subtitle'),backgroundImage:val('fc-about-bg')},contact:{title:val('fc-contact-title'),subtitle:val('fc-contact-subtitle'),backgroundImage:val('fc-contact-bg')}},about:{content:val('fc-about-content')},contact:{email:val('fc-contact-email'),phone:val('fc-contact-phone'),address:val('fc-contact-address'),content:val('fc-contact-content')},promo:{title:val('fc-promo-title'),subtitle:val('fc-promo-subtitle'),buttonText:val('fc-promo-button'),buttonLink:val('fc-promo-link')},faqs:json('fc-faqs'),navLinks:json('fc-navlinks'),categories:json('fc-categories'),sidebarBody:json('fc-sidebar')};await api('POST','/api/admin/content-bundle',b).catch(()=>api('POST','/api/admin/settings',{contentBundle:b}));toast('✅ সম্পূর্ণ কনটেন্ট সেভ হয়েছে — index.html এ প্রতিফলিত হবে')}catch(e){toast('সমস্যা: '+e.message,'error')}};
-  const old=window.navTo;window.navTo=function(page){try{localStorage.setItem('activeAdminNav',page)}catch(e){}old(page);if(page==='full-content')loadFullContentBundle()};pageTitles['full-content']='সম্পূর্ণ কনটেন্ট';window.addEventListener('load',()=>{ensurePage();let a=localStorage.getItem('activeAdminNav');if(a&&a!=='dashboard')setTimeout(()=>navTo(a),250)})
+  const old=window.navTo;window.navTo=function(page){try{localStorage.setItem('activeAdminNav',page)}catch(e){}old(page);if(page==='full-content')loadFullContentBundle()};pageTitles['section-content']='সেকশন কন্টেন্ট';pageTitles['full-content']='সম্পূর্ণ কনটেন্ট';window.addEventListener('load',()=>{ensurePage();let a=localStorage.getItem('activeAdminNav');if(a&&a!=='dashboard')setTimeout(()=>navTo(a),250)})
 })();
 </script>   
 </body>
