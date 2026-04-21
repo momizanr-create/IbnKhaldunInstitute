@@ -417,7 +417,7 @@
       min-height: calc(100vh - var(--header-h));
       max-height: calc(100svh - var(--header-h));
       display: flex; align-items: stretch;
-      overflow: hidden;
+      overflow: visible;
     }
     .hero-bg-img {
       position: absolute; inset: 0; z-index: 0;
@@ -438,8 +438,8 @@
     .hero-inner {
       position: relative; z-index: 2;
       width: 100%; display: flex;
-      align-items: center; justify-content: space-between;
-      gap: 32px; padding: 56px 24px 40px;
+      align-items: center;
+      gap: 32px; padding: 56px 0 40px 24px;
       max-width: 1200px; margin: 0 auto;
     }
 
@@ -491,46 +491,63 @@
     .hero-slide-line { flex: 1; height: 1px; background: rgba(255,255,255,0.22); margin: 0 4px; }
     .hero-slide-num { color: #fff; font-size: 18px; font-weight: 700; min-width: 28px; text-align: right; }
 
-    /* ── right cards area ── */
+    /* ── right cards area — hero এর ডান প্রান্তে absolute ── */
     .hero-cards-outer {
-      flex: 1; display: flex; flex-direction: column;
-      align-items: flex-end; gap: 10px; overflow: hidden;
-      max-height: calc(100vh - var(--header-h) - 96px);
+      position: absolute;
+      right: 0; top: 0; bottom: 0;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: flex-end; gap: 12px;
+      overflow: visible;
+      pointer-events: none;
+      z-index: 3;
     }
     .hero-dot-grid {
-      display: grid; grid-template-columns: repeat(6, 6px); gap: 6px;
-      align-self: flex-start; padding-left: 16px;
+      display: grid; grid-template-columns: repeat(6, 5px); gap: 5px;
+      align-self: flex-start; padding-left: 0;
+      flex-shrink: 0;
+      pointer-events: auto;
     }
-    .hero-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.45); }
+    .hero-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.45); }
 
+    /* ── hero-track-wrap: hero ডান প্রান্ত থেকে flush — কোনো ফাঁকা নেই ── */
     .hero-track-wrap {
-      position: relative; overflow: hidden; width: 100%; flex: 1;
+      position: relative;
+      width: 670px;
+      height: 180px;
+      overflow: hidden;
+      border-radius: 10px 0 0 10px;
       cursor: grab; user-select: none;
+      flex-shrink: 0;
+      pointer-events: auto;
     }
     .hero-track-wrap:active { cursor: grabbing; }
     .hero-track {
-      display: flex; gap: 14px; align-items: flex-end;
+      display: flex; gap: 12px; align-items: flex-start;
       height: 100%; width: max-content; will-change: transform;
     }
     .hero-track.animated {
-      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
     }
+
+    /* ── dest-card: YouTube thumbnail 16:9 → 320×180px ── */
     .dest-card {
-      border-radius: 22px; overflow: hidden; position: relative;
+      width: 320px !important;
+      height: 180px !important;
+      border-radius: 10px; overflow: hidden; position: relative;
       flex-shrink: 0; pointer-events: auto; cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: box-shadow 0.2s ease;
     }
-    .dest-card:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 8px 28px rgba(0,0,0,0.45); }
+    .dest-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.55); }
     .dest-card::after {
       content: ''; position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.58) 0%, transparent 52%);
-      border-radius: 22px;
+      background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.10) 55%, transparent 100%);
+      border-radius: 18px;
     }
     .dest-card-label {
-      position: absolute; bottom: 14px; left: 14px;
-      color: #fff; font-size: 14px; font-weight: 800;
-      letter-spacing: 1px; text-shadow: 0 2px 8px rgba(0,0,0,0.5); z-index: 2;
-      font-family: var(--font-nav);
+      position: absolute; bottom: 10px; left: 12px; right: 12px;
+      color: #fff; font-size: 13px; font-weight: 700;
+      letter-spacing: 0.3px; text-shadow: 0 1px 6px rgba(0,0,0,0.85); z-index: 2;
+      font-family: var(--font-nav); line-height: 1.3;
     }
     /* Course-related images for hero cards */
     .dc-1 { background: url('https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=500&q=80') center/cover no-repeat; } /* Quran */
@@ -555,12 +572,12 @@
     }
     @media (min-width: 901px) {
       .hero { height: calc(100svh - var(--header-h)); }
-      .hero-inner { padding-top: 28px; padding-bottom: 28px; gap: 24px; }
+      .hero-inner { padding-top: 28px; padding-bottom: 28px; padding-right: 0; gap: 24px; }
       .hero h1 { font-size: clamp(31px, 3.25vw, 48px); margin-bottom: 14px; }
       .hero-sub { margin-bottom: 20px; line-height: 1.6; }
       .hero-slide-nav { margin-top: 24px; }
-      .hero-cards-outer { max-height: calc(100svh - var(--header-h) - 56px); }
-      .dest-card { max-height: calc(100svh - var(--header-h) - 112px); }
+      .hero-cards-outer { overflow: visible; }
+      .dest-card { max-height: none; width: 320px !important; height: 180px !important; }
     }
     @media (max-width: 768px) {
       .hero-inner { padding: 48px 20px 36px; }
@@ -1609,6 +1626,131 @@
     @media(max-width: 768px) {
       .ik-mobile-fullscreen { display: inline-flex; }
     }
+
+    /* ══════════════════════════════════════════════
+       MOBILE-ONLY HERO SECTION
+    ══════════════════════════════════════════════ */
+
+    /* Desktop/tablet: hide mobile hero, show original */
+    .mobile-hero-section { display: none; }
+
+    /* Mobile: hide original hero, show mobile hero fullscreen */
+    @media (max-width: 768px) {
+      /* মূল হিরো লুকাও */
+      .hero { display: none !important; }
+
+      /* মোবাইল হিরো — ফুল স্ক্রিন */
+      .mobile-hero-section {
+        display: flex;
+        flex-direction: column;
+        width: 100vw;
+        min-height: calc(100svh - var(--header-h, 70px));
+        background: #fff;
+        overflow: hidden;
+      }
+
+      /* ইমেজ র‍্যাপার — উপরের অর্ধেক */
+      .mobile-hero-img-wrap {
+        width: 100%;
+        padding: 20px;
+        flex: 0 0 auto;
+        line-height: 0;
+        overflow: hidden;
+      }
+
+      .mobile-hero-banner {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: cover;
+      }
+
+      /* কনটেন্ট ব্লক — বাকি স্ক্রিন পূরণ করে */
+      .mobile-hero-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 22px 36px;
+        background: linear-gradient(170deg, #edfaf4 0%, #ffffff 55%);
+        /* border-top: 4px solid var(--primary, #F5C518); */
+        text-align: center;
+      }
+
+      /* বড় টাইটেল */
+      .mobile-hero-title {
+        font-family: var(--font-heading, 'Hind Siliguri', sans-serif);
+        font-size: clamp(26px, 7.5vw, 36px);
+        font-weight: 900;
+        line-height: 1.2;
+        color: var(--Green, #066144);
+        margin-bottom: 16px;
+        letter-spacing: -0.3px;
+      }
+
+      /* বর্ণনা */
+      .mobile-hero-desc {
+        font-family: var(--font-body, 'Hind Siliguri', sans-serif);
+        font-size: clamp(14px, 4vw, 17px);
+        color: #333;
+        line-height: 1.85;
+        margin-bottom: 28px;
+        max-width: 100%;
+      }
+
+      /* বাটন কন্টেইনার */
+      .mobile-hero-btns {
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
+      }
+
+      /* বাটন বেস */
+      .mobile-hero-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 15px 0;
+        width: calc(50% - 7px);
+        max-width: 200px;
+        font-family: var(--font-nav, 'Hind Siliguri', sans-serif);
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        border-radius: 8px;
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      /* প্রাইমারি */
+      .mobile-hero-btn-primary {
+        background: var(--Green, #066144);
+        color: #fff;
+        border-color: var(--Green, #066144);
+        box-shadow: 0 5px 18px rgba(6, 97, 68, 0.30);
+      }
+      .mobile-hero-btn-primary:active { background: #044d35; transform: translateY(1px); }
+
+      /* আউটলাইন */
+      .mobile-hero-btn-outline {
+        background: transparent;
+        color: var(--Green, #066144);
+        border-color: var(--Green, #066144);
+      }
+      .mobile-hero-btn-outline:active { background: rgba(6,97,68,0.08); }
+    }
+
+    /* ছোট মোবাইল (≤400px) */
+    @media (max-width: 400px) {
+      .mobile-hero-content { padding: 24px 16px 28px; }
+      .mobile-hero-title { font-size: clamp(23px, 7vw, 28px); }
+      .mobile-hero-desc { font-size: 13.5px; line-height: 1.8; }
+      .mobile-hero-btn { font-size: 14px; padding: 13px 0; }
+    }
   </style>
 </head>
 <body>
@@ -1704,7 +1846,7 @@
 
           <div class="hero-track-wrap" id="heroTrackWrap">
             <div class="hero-track animated" id="heroTrack">
-              <div style="width:150px;height:250px;display:flex;align-items:center;justify-content:center;color:var(--text-mid);font-size:13px">কার্ড লোড হচ্ছে...</div>
+              <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.6);font-size:13px;background:rgba(255,255,255,0.08);border-radius:18px;">কার্ড লোড হচ্ছে...</div>
             </div>
           </div>
         </div>
@@ -1712,24 +1854,49 @@
       </div>
     </section>
 
+    <!-- ══════════════════════════════════════════════
+         MOBILE-ONLY HERO — শুধু মোবাইলে দেখায়
+    ══════════════════════════════════════════════ -->
+    <section class="mobile-hero-section">
+      <div class="mobile-hero-img-wrap">
+        <img src="images/hero.png" alt="তাহযিব ইনস্টিটিউট" class="mobile-hero-banner" onerror="this.src='https://ibnkhalduninstitute.online/images/mobile-hero-banner.png'" />
+      </div>
+      <div class="mobile-hero-content">
+        <h1 class="mobile-hero-title">দ্বীনি জ্ঞানার্জনের <br> উন্মুক্ত প্লাটফর্ম</h1>
+        <p class="mobile-hero-desc">
+          দ্বীনি জ্ঞানার্জনের বিশেষায়িত অনলাইন প্লাটফর্ম 'তাহযিব ইনস্টিটিউট'।
+          ইসলামী জ্ঞানের সকল চাহিদা পূরণে তাহযিব ইনস্টিটিউট আছে আপনার পাশে।
+          ঘরে বসে ইসলামের যে কোনো বিষয়ে জ্ঞানার্জন করতে তাহযিব ইনস্টিটিউটের সাথেই থাকুন।
+        </p>
+        <div class="mobile-hero-btns">
+          <button class="mobile-hero-btn mobile-hero-btn-primary" onclick="navigate('courses')">কোর্সসমূহ</button>
+          <button class="mobile-hero-btn mobile-hero-btn-outline" onclick="navigate('about')">আমাদের সম্পর্কে</button>
+        </div>
+      </div>
+    </section>
+
     <script>
-    /* ── Hero Cards Carousel ── */
+    /* ── Hero Cards Carousel — বড় কার্ড, একটি একটি করে ── */
     (function(){
-      var CARD_W   = 150 + 14;
       var TOTAL    = 7;
-      var LOOP_W   = TOTAL * CARD_W;
-      var INTERVAL = 2400;
-      var TRANS    = 600;
+      var INTERVAL = 3200;
+      var TRANS    = 650;
 
       var track   = document.getElementById('heroTrack');
       var wrap    = document.getElementById('heroTrackWrap');
       var numEl   = document.getElementById('hero-slide-num');
       if (!track || !wrap || !numEl) return;
 
+      /* card width = 320px fixed, gap = 12px */
+      function getCardW() { return 320; }
+      function getGap()   { return 12; }
+
       var pos     = 0;
       var cardIdx = 0;
       var paused  = false;
       var timer   = null;
+
+      function cardStep() { return getCardW() + getGap(); }
 
       function setPos(x, animate) {
         if (!animate) {
@@ -1745,14 +1912,15 @@
       function updateNum() {
         numEl.textContent = String((((cardIdx % TOTAL) + TOTAL) % TOTAL) + 1).padStart(2,'0');
       }
+      function loopW() { return TOTAL * cardStep(); }
       function step(dir) {
-        pos   -= dir * CARD_W;
+        pos   -= dir * cardStep();
         cardIdx += dir;
         setPos(pos, true);
         updateNum();
         setTimeout(function(){
-          if (pos <= -LOOP_W) { pos += LOOP_W; setPos(pos, false); }
-          else if (pos > 0)   { pos -= LOOP_W; setPos(pos, false); }
+          if (pos <= -loopW()) { pos += loopW(); setPos(pos, false); }
+          else if (pos > 0)    { pos -= loopW(); setPos(pos, false); }
         }, TRANS + 20);
       }
       function startAuto() { stopAuto(); timer = setInterval(function(){ if (!paused) step(1); }, INTERVAL); }
@@ -1778,8 +1946,8 @@
       wrap.addEventListener('touchend', function(){
         drag=false; track.classList.add('animated');
         if(Math.abs(delta)>40){
-          var d=delta<0?1:-1; pos-=d*CARD_W; cardIdx+=d;
-          if(pos<=-LOOP_W) pos+=LOOP_W; if(pos>0) pos-=LOOP_W;
+          var d=delta<0?1:-1; pos-=d*cardStep(); cardIdx+=d;
+          if(pos<=-loopW()) pos+=loopW(); if(pos>0) pos-=loopW();
           track.style.transform='translateX('+pos+'px)'; updateNum();
         } else { track.style.transform='translateX('+pos+'px)'; }
         setTimeout(function(){paused=false;},300);
@@ -1791,7 +1959,7 @@
       window.addEventListener('mousemove',function(e){if(!md)return;mdelta=e.clientX-ms;if(Math.abs(mdelta)>5)wasDrag=true;track.style.transform='translateX('+(pos+mdelta)+'px)';});
       window.addEventListener('mouseup',function(){
         if(!md)return;md=false;track.classList.add('animated');
-        if(Math.abs(mdelta)>40){var d=mdelta<0?1:-1;pos-=d*CARD_W;cardIdx+=d;if(pos<=-LOOP_W)pos+=LOOP_W;if(pos>0)pos-=LOOP_W;track.style.transform='translateX('+pos+'px)';updateNum();}
+        if(Math.abs(mdelta)>40){var d=mdelta<0?1:-1;pos-=d*cardStep();cardIdx+=d;if(pos<=-loopW())pos+=loopW();if(pos>0)pos-=loopW();track.style.transform='translateX('+pos+'px)';updateNum();}
         else{track.style.transform='translateX('+pos+'px)';}
       });
       /* prevent click after drag */
@@ -1799,6 +1967,14 @@
 
       setPos(0, false);
       startAuto();
+
+      /* window resize এ card width আপডেট */
+      window.addEventListener('resize', function(){
+        setPos(pos, false);
+      });
+
+      /* applyHeroCards এর জন্য global expose */
+      window._heroCarousel = { cardStep: cardStep };
     })();
     </script>
 
@@ -5724,10 +5900,10 @@
         var rawLink = c.link || '';
         var img = c.img || c.thumbnail || '';
         var bg = img ? "background-image:url('" + img + "');background-size:cover;background-position:center;" : '';
-        var h = c.height || 250;
         var cls = 'dest-card dc-' + ((i % 7) + 1);
         var onclick = c.courseId ? "openHeroCardCourse('" + c.courseId + "')" : (rawLink ? "navigate('" + rawLink.replace('#','') + "')" : "navigate('courses')");
-        return '<div class="' + cls + '" style="width:150px;height:' + h + 'px;' + bg + '" onclick="' + onclick + '"><span class="dest-card-label">' + label + '</span></div>';
+        /* width/height CSS থেকে আসবে (.dest-card { width:140px; height:190px }) */
+        return '<div class="' + cls + '" style="' + bg + '" onclick="' + onclick + '"><span class="dest-card-label">' + label + '</span></div>';
       };
       track.innerHTML = activeCards.map(render).join('') + activeCards.map(render).join('');
     }
