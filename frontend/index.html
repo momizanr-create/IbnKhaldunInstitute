@@ -1751,6 +1751,579 @@
       .mobile-hero-desc { font-size: 13.5px; line-height: 1.8; }
       .mobile-hero-btn { font-size: 14px; padding: 13px 0; }
     }
+
+    /* ═══════════════════════════════════════════════════
+       📱 MOBILE DESIGN REFINEMENT — COMPREHENSIVE UPDATE
+       সমস্ত মোবাইল ভিউ উন্নত করা হয়েছে
+    ═══════════════════════════════════════════════════ */
+
+    @media (max-width: 768px) {
+
+      /* ── Header ── */
+      :root { --header-h: 64px; }
+
+      header {
+        border-bottom: 2.5px solid var(--primary);
+        box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+      }
+
+      .nav-inner { padding: 0 16px; }
+
+      .hamburger {
+        display: flex;
+        margin-left: auto;
+        padding: 8px;
+        background: rgba(245,197,24,0.08);
+        border-radius: 8px;
+        border: 1.5px solid rgba(245,197,24,0.25);
+        transition: background 0.2s;
+      }
+      .hamburger:active { background: rgba(245,197,24,0.22); }
+      .hamburger span { width: 20px; height: 2px; background: #1a1a1a; }
+
+      .nav-links { display: none; }
+
+      /* ── Mobile Nav Drawer ── */
+      .mobile-nav {
+        top: var(--header-h);
+        padding: 10px 14px 18px;
+        border-bottom: 3px solid var(--primary);
+        box-shadow: 0 12px 36px rgba(0,0,0,0.14);
+        gap: 2px;
+        animation: slideDown 0.22s ease forwards;
+      }
+
+      @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-8px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      .mobile-nav a {
+        padding: 13px 16px;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        text-transform: none;
+        border-radius: 10px;
+        font-weight: 600;
+        border-left: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: background 0.18s, color 0.18s;
+      }
+
+      .mobile-nav a:hover,
+      .mobile-nav a:active {
+        background: rgba(245,197,24,0.12);
+        color: #066144;
+        border-left: none;
+        padding-left: 16px;
+      }
+
+      /* ── Mobile Hero (already shown above, polish here) ── */
+      .mobile-hero-section {
+        box-shadow: none;
+      }
+
+      .mobile-hero-img-wrap {
+        padding: 16px 16px 8px;
+        background: linear-gradient(160deg, #edfaf4 0%, #f0fdf8 100%);
+      }
+
+      .mobile-hero-banner {
+        border-radius: 16px;
+        box-shadow: 0 8px 28px rgba(6,97,68,0.15);
+        width: 100%;
+        height: auto;
+      }
+
+      .mobile-hero-content {
+        padding: 28px 20px 36px;
+        background: linear-gradient(170deg, #edfaf4 0%, #ffffff 60%);
+        border-top: none;
+        position: relative;
+      }
+
+      .mobile-hero-content::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 20px; right: 20px;
+        height: 2px;
+        background: linear-gradient(to right, transparent, var(--primary), transparent);
+        opacity: 0.6;
+      }
+
+      .mobile-hero-title {
+        font-size: clamp(24px, 7.2vw, 34px);
+        margin-bottom: 14px;
+        letter-spacing: -0.5px;
+      }
+
+      .mobile-hero-desc {
+        font-size: 14.5px;
+        line-height: 1.9;
+        color: #444;
+        margin-bottom: 26px;
+        max-width: 340px;
+      }
+
+      .mobile-hero-btns {
+        gap: 12px;
+        width: 100%;
+        max-width: 340px;
+      }
+
+      .mobile-hero-btn {
+        flex: 1;
+        min-width: 130px;
+        max-width: none;
+        padding: 15px 12px;
+        font-size: 14.5px;
+        border-radius: 10px;
+        letter-spacing: 0.2px;
+      }
+
+      .mobile-hero-btn-primary {
+        box-shadow: 0 6px 20px rgba(6,97,68,0.28);
+      }
+
+      /* ── Sections ── */
+      .section { padding: 52px 0; }
+      .section-alt { padding: 52px 0; }
+      .container { padding: 0 18px; }
+
+      .section-head { margin-bottom: 32px; }
+      .section-title { font-size: clamp(22px, 6vw, 30px); }
+      .section-sub { font-size: 14px; margin-top: 10px; }
+      .section-label { font-size: 10px; padding: 3px 12px; }
+
+      /* ── Course Cards: 2-column grid on mobile ── */
+      .courses-grid,
+      .courses-grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .course-card {
+        border-radius: 10px;
+        border: 1px solid #eaeaea;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+        overflow: hidden;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .course-card:active {
+        transform: scale(0.97);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      }
+
+      .course-thumb { height: 130px; }
+      .course-thumb img { object-fit: cover; }
+
+      .card-body { padding: 10px 12px 0; }
+      .card-title { font-size: 12.5px; -webkit-line-clamp: 2; margin-bottom: 6px; }
+      .card-rating-row { margin-bottom: 5px; gap: 4px; }
+      .card-stars { font-size: 11px; }
+      .card-students { font-size: 10px; }
+      .card-instructor { font-size: 11px; }
+      .card-footer-mobe {
+        padding: 8px 12px 10px;
+        margin-top: 8px;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      .card-price-mobe { font-size: 14px; }
+      .vacation-points { font-size: 10px; }
+      .badge-bestseller { font-size: 9px; padding: 4px 7px 10px; }
+
+      /* ── Featured Tabs ── */
+      .featured-tabs, .category-filter-tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        justify-content: flex-start;
+        scrollbar-width: none;
+        gap: 0;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 0;
+      }
+      .featured-tabs::-webkit-scrollbar,
+      .category-filter-tabs::-webkit-scrollbar { display: none; }
+
+      .courses-tab {
+        flex-shrink: 0;
+        padding: 10px 18px;
+        font-size: 11.5px;
+        letter-spacing: 0.8px;
+      }
+
+      .featured-section-title {
+        font-size: clamp(20px, 5.5vw, 26px);
+        margin-bottom: 8px;
+      }
+
+      .featured-title-underline { margin-bottom: 28px; }
+
+      /* ── Instructors Grid ── */
+      .instructors-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .instructor-card {
+        padding: 24px 14px 18px;
+        border-radius: 12px;
+        border: 1px solid #eee;
+        border-bottom: 3px solid var(--primary);
+      }
+
+      .instructor-photo-wrap { width: 72px; height: 72px; }
+      .instructor-photo { width: 72px; height: 72px; }
+      .instructor-name { font-size: 13px; }
+      .instructor-bio { font-size: 11.5px; line-height: 1.55; }
+      .instructor-cap { font-size: 28px; margin-bottom: 10px; }
+
+      /* ── Features (Why Choose Us) ── */
+      .features-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .feature-card {
+        padding: 24px 20px;
+        border-radius: 12px;
+        border-top: 3px solid var(--primary);
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+      }
+
+      .feature-icon {
+        flex-shrink: 0;
+        margin-bottom: 0;
+        width: 48px; height: 48px;
+        border-radius: 10px;
+      }
+
+      .feature-title { font-size: 14.5px; margin-bottom: 6px; }
+      .feature-desc { font-size: 13.5px; }
+
+      /* ── Testimonials ── */
+      .testi-page {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        padding: 4px 2px 6px;
+      }
+
+      .testimonial-card {
+        padding: 18px 18px 14px;
+        border-radius: 14px;
+      }
+
+      .testi-text { font-size: 13px; }
+      .testi-name { font-size: 12px; }
+      .testi-nav { margin-top: 22px; }
+
+      /* ── Section Instructors ── */
+      .section-instructors { padding: 52px 0; }
+      .instructors-title { font-size: clamp(20px, 5.5vw, 28px); margin-bottom: 8px; }
+      .instructors-underline { margin-bottom: 28px; }
+
+      /* ── Page Hero ── */
+      .page-hero { padding: 40px 0 30px; }
+      .page-hero h1 { font-size: clamp(22px, 6vw, 32px); }
+      .page-hero p { font-size: 13.5px; }
+
+      /* ── Course Filters ── */
+      .courses-filters {
+        gap: 8px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 4px;
+      }
+      .courses-filters::-webkit-scrollbar { display: none; }
+
+      .filter-btn {
+        flex-shrink: 0;
+        padding: 8px 16px;
+        font-size: 10.5px;
+        letter-spacing: 0.8px;
+        border-radius: 20px;
+        white-space: nowrap;
+      }
+
+      .courses-count { font-size: 13px; margin-bottom: 16px; }
+
+      /* ── Detail Page ── */
+      .detail-layout {
+        grid-template-columns: 1fr;
+        padding: 20px 0 40px;
+        gap: 24px;
+      }
+
+      .detail-title { font-size: clamp(20px, 5.5vw, 28px); }
+      .detail-meta-row { gap: 14px; flex-wrap: wrap; }
+      .detail-stat { font-size: 13px; }
+
+      .detail-tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        border-bottom: 2px solid #eee;
+      }
+      .detail-tabs::-webkit-scrollbar { display: none; }
+      .detail-tab { flex-shrink: 0; padding: 10px 16px; font-size: 11px; }
+
+      .detail-sidebar { position: static; width: 100%; }
+      .sidebar-card {
+        max-width: 100%;
+        border-radius: 14px;
+        border-top: 3px solid var(--primary);
+      }
+      .sidebar-body { padding: 20px; }
+      .sidebar-price { font-size: 26px; }
+      .sidebar-preview { max-height: 210px; }
+
+      /* ── Lesson Groups ── */
+      .lesson-group-title { font-size: 12px; padding: 11px 14px; }
+      .lesson-item { padding: 10px 14px; font-size: 13px; gap: 10px; }
+
+      /* ── Dashboard ── */
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+        padding: 16px 0 40px;
+        gap: 18px;
+      }
+      .dash-sidebar {
+        position: static;
+        border-radius: 12px;
+        padding: 18px;
+      }
+      .dash-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .dash-stat-card { padding: 16px 14px; border-radius: 10px; }
+      .dash-stat-num { font-size: 26px; }
+      .dash-welcome { padding: 22px 18px; border-radius: 10px; margin-bottom: 20px; }
+      .dash-welcome h2 { font-size: 18px; }
+
+      .enrolled-card {
+        padding: 16px 14px;
+        gap: 14px;
+        border-radius: 10px;
+        align-items: center;
+      }
+      .enrolled-thumb { width: 64px; height: 64px; font-size: 28px; border-radius: 8px; }
+      .enrolled-title { font-size: 13.5px; }
+
+      /* ── Auth Page ── */
+      .auth-wrap { padding: 36px 18px; }
+      .auth-card { padding: 32px 22px; border-radius: 16px; }
+      .auth-title { font-size: 22px; }
+
+      /* ── Footer ── */
+      .footer-topbar { padding: 14px 0; }
+      .footer-topbar-inner { flex-direction: column; gap: 12px; align-items: flex-start; }
+      .footer-contact-items { gap: 18px; flex-wrap: wrap; }
+      .footer-follow { flex-wrap: wrap; }
+      .footer-payments { flex-wrap: wrap; gap: 5px; }
+
+      .footer-main { padding: 36px 0 28px; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px 20px; }
+      .footer-desc { max-width: 100%; font-size: 13.5px; }
+      .footer-col h4 { font-size: 11px; margin-bottom: 14px; }
+      .footer-col ul { gap: 8px; }
+      .footer-col ul a { font-size: 13px; }
+
+      .footer-bottom {
+        padding: 16px 0;
+        flex-direction: column;
+        gap: 6px;
+        text-align: center;
+      }
+      .footer-bottom p { font-size: 12px; }
+      .footer-socials { gap: 8px; margin-top: 12px; }
+      .social-btn { width: 34px; height: 34px; font-size: 15px; border-radius: 8px; }
+
+      /* ── Payment Modal ── */
+      .modal-overlay { padding: 0; align-items: flex-end; }
+      .modal-box {
+        border-radius: 20px 20px 0 0;
+        max-height: 88vh;
+        overflow-y: auto;
+        width: 100%;
+        margin: 0;
+        padding: 28px 20px 36px;
+        -webkit-overflow-scrolling: touch;
+      }
+      .modal-box h3 { font-size: 20px; }
+
+      /* ── Instructor Profile ── */
+      .instructor-profile-hero { padding: 44px 0 36px; }
+      .instructor-profile-hero-inner { flex-direction: column; gap: 20px; align-items: flex-start; }
+      .instructor-profile-photo { width: 100px; height: 100px; }
+      .instructor-profile-info h1 { font-size: 24px; }
+      .instructor-profile-stats { gap: 20px; flex-wrap: wrap; }
+      .instructor-profile-body { padding: 36px 0; }
+
+      /* ── Comments ── */
+      .comment-item { gap: 12px; }
+      .comment-avatar { width: 36px; height: 36px; font-size: 14px; }
+      .comment-text { font-size: 13.5px; }
+      .comment-form { padding: 16px; border-radius: 12px; }
+
+      /* ── Browse More Button ── */
+      .browse-more-btn {
+        padding: 14px 36px;
+        font-size: 12px;
+        letter-spacing: 1.5px;
+        margin-top: 32px;
+        border-radius: 8px;
+        width: auto;
+        max-width: 280px;
+      }
+
+      /* ── Top Banner ── */
+      .top-banner { font-size: 12px; padding: 8px 14px; }
+
+      /* ── WhatsApp Button ── */
+      .whatsapp-float {
+        width: 52px; height: 52px;
+        bottom: 18px; right: 16px;
+        box-shadow: 0 4px 18px rgba(37,211,102,0.45);
+      }
+
+      /* ── Search Bar ── */
+      .ik-course-search-wrap {
+        max-width: 100%;
+        margin: 14px 0 18px;
+      }
+      .ik-course-search-wrap input {
+        padding: 12px 18px;
+        font-size: 14.5px;
+        border-radius: 50px;
+      }
+      .ik-course-suggestions { border-radius: 16px; }
+      .ik-course-suggestion { padding: 10px 14px; }
+
+      /* ── Section Featured Courses ── */
+      .section-featured-courses { padding: 52px 0; }
+    }
+
+    /* ── Small Mobile ≤ 480px ── */
+    @media (max-width: 480px) {
+      :root { --header-h: 60px; }
+      .container { padding: 0 14px; }
+
+      .section { padding: 44px 0; }
+      .section-title { font-size: 21px; }
+      .section-head { margin-bottom: 26px; }
+
+      .courses-grid,
+      .courses-grid-4 {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      .course-thumb { height: 180px; }
+      .card-body { padding: 12px 14px 0; }
+      .card-title { font-size: 13.5px; }
+      .card-footer-mobe { padding: 10px 14px 12px; }
+      .card-price-mobe { font-size: 15px; }
+
+      .instructors-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      .instructor-photo-wrap { width: 64px; height: 64px; }
+      .instructor-photo { width: 64px; height: 64px; }
+      .instructor-name { font-size: 12.5px; }
+
+      .footer-grid { grid-template-columns: 1fr; gap: 22px; }
+
+      .dash-stats { grid-template-columns: 1fr 1fr; }
+      .dash-stat-num { font-size: 22px; }
+
+      .mobile-hero-title { font-size: clamp(22px, 7vw, 30px); }
+      .mobile-hero-desc { font-size: 14px; line-height: 1.85; }
+    }
+
+    /* ── Tiny Mobile ≤ 360px ── */
+    @media (max-width: 360px) {
+      :root { --header-h: 56px; }
+      .container { padding: 0 12px; }
+
+      .mobile-hero-title { font-size: 21px; }
+      .mobile-hero-btn { font-size: 13.5px; padding: 12px 0; border-radius: 9px; }
+
+      .section { padding: 38px 0; }
+      .section-title { font-size: 19px; }
+
+      .courses-grid, .courses-grid-4 { gap: 12px; }
+      .course-thumb { height: 160px; }
+
+      .instructors-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .instructor-card { padding: 18px 10px 14px; }
+
+      .feature-card { padding: 18px 16px; gap: 12px; }
+
+      .auth-card { padding: 22px 14px; }
+      .auth-title { font-size: 19px; }
+
+      .btn { padding: 8px 14px; font-size: 10.5px; letter-spacing: 1px; }
+      .btn-lg { padding: 11px 18px; font-size: 11px; }
+
+      .toast { font-size: 11.5px; padding: 9px 12px; bottom: 8px; right: 8px; left: 8px; }
+      .modal-box { padding: 22px 14px 32px; }
+    }
+
+    /* ── Touch device animations & tap states ── */
+    @media (hover: none) and (pointer: coarse) {
+      .course-card:hover { box-shadow: none; transform: none; }
+      .course-card:hover .thumb-overlay { opacity: 0; }
+      .course-card:hover .course-thumb img { transform: none; }
+      .course-card:active { box-shadow: 0 4px 18px rgba(0,0,0,0.14); transform: scale(0.97); }
+
+      .instructor-card:hover { box-shadow: none; transform: none; }
+      .instructor-card:active { box-shadow: var(--shadow-sm); transform: scale(0.97); }
+
+      .feature-card:hover { box-shadow: none; transform: none; }
+      .feature-card:active { box-shadow: var(--shadow-sm); }
+
+      .btn-primary:hover { transform: none; }
+      .btn-primary:active { background: var(--primary-dark); transform: scale(0.97); }
+
+      .testimonial-card:hover { box-shadow: none; transform: none; }
+      .testimonial-card:active { box-shadow: 0 4px 14px rgba(0,0,0,0.1); }
+
+      .mobile-hero-btn-primary:hover { background: var(--Green, #066144); }
+      .mobile-hero-btn-outline:hover { background: transparent; }
+    }
+
+    /* ── Smooth scroll & overscroll for mobile ── */
+    @media (max-width: 768px) {
+      html { -webkit-text-size-adjust: 100%; overscroll-behavior-y: contain; }
+      body { -webkit-font-smoothing: antialiased; }
+
+      /* Better tap targets */
+      .mobile-nav a, .filter-btn, .courses-tab, .detail-tab {
+        -webkit-tap-highlight-color: rgba(245,197,24,0.15);
+        min-height: 44px;
+      }
+
+      /* Prevent horizontal overflow */
+      .section, .container, .courses-grid, .courses-grid-4 {
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+
+      .courses-filters, .featured-tabs, .category-filter-tabs, .detail-tabs {
+        max-width: 100vw;
+      }
+    }
   </style>
 </head>
 <body>
