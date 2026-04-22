@@ -157,18 +157,6 @@ const noticeSchema = new mongoose.Schema({
 });
 const Notice = mongoose.model('Notice', noticeSchema);
 
-// ── Feature (বিশেষত্ব) Model ──
-const featureSchema = new mongoose.Schema({
-  icon: { type: String, default: '✨' },
-  title: { type: String, required: true },
-  desc: String,
-  order: { type: Number, default: 0 },
-  active: { type: Boolean, default: true },
-  createdAt: { type: Date, default: Date.now },
-});
-const Feature = mongoose.model('Feature', featureSchema);
-
-
 const blogPostSchema = new mongoose.Schema({
   title:      { type: String, required: true },
   slug:       { type: String, unique: true },
@@ -2606,64 +2594,6 @@ mongoose.connect(process.env.MONGODB_URI)
     console.log('✅ MongoDB connected');
     await ensureAdminExists();
     await ensureDefaultContent();
-    
-// ============================================================
-// FEATURES (বিশেষত্ব) — Public + Admin
-// ============================================================
-app.get('/api/features', async (req, res) => {
-  try {
-    const list = await Feature.find({ active: true }).sort({ order: 1, createdAt: 1 });
-    res.json(list);
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.get('/api/admin/features', authMiddleware, async (req, res) => {
-  try {
-    const list = await Feature.find().sort({ order: 1, createdAt: 1 });
-    res.json(list);
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.post('/api/admin/features', authMiddleware, async (req, res) => {
-  try {
-    const data = req.body || {};
-    if (!data.title) return res.status(400).json({ error: 'Title is required' });
-    const item = await Feature.create({
-      icon: data.icon || '✨',
-      title: data.title,
-      desc: data.desc || '',
-      order: Number(data.order || 0),
-      active: data.active !== false,
-    });
-    res.json(item);
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.put('/api/admin/features/:id', authMiddleware, async (req, res) => {
-  try {
-    const data = req.body || {};
-    const item = await Feature.findByIdAndUpdate(req.params.id, {
-      $set: {
-        ...(data.icon !== undefined ? { icon: data.icon } : {}),
-        ...(data.title !== undefined ? { title: data.title } : {}),
-        ...(data.desc !== undefined ? { desc: data.desc } : {}),
-        ...(data.order !== undefined ? { order: Number(data.order) } : {}),
-        ...(data.active !== undefined ? { active: data.active === true || data.active === 'true' } : {}),
-      }
-    }, { new: true });
-    if (!item) return res.status(404).json({ error: 'Not found' });
-    res.json(item);
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.delete('/api/admin/features/:id', authMiddleware, async (req, res) => {
-  try {
-    await Feature.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Deleted' });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-
-app.listen(PORT, () => console.log(`🚀 Server: http://localhost:${PORT}`));
+    app.listen(PORT, () => console.log(`🚀 Server: http://localhost:${PORT}`));
   })
   .catch(err => console.error('❌ MongoDB error:', err));

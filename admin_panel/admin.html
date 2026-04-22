@@ -446,7 +446,6 @@
         <div class="nav-section">টিম ও কন্টেন্ট</div>
         <div class="nav-item" onclick="navTo('instructors')"><span class="icon">👨‍🏫</span> ইন্সট্রাক্টর</div>
         <div class="nav-item" onclick="navTo('testimonials')"><span class="icon">💬</span> রিভিউ</div>
-        <div class="nav-item" onclick="navTo('features')"><span class="icon">⭐</span> বিশেষত্ব</div>
         <div class="nav-item" onclick="navTo('blog-posts')"><span class="icon">📝</span> ব্লগ</div>
         
         <div class="nav-section">হোমপেজ কন্টেন্ট</div>
@@ -641,21 +640,6 @@
         </div>
 
         <!-- ── NOTICES ── -->
-        <div class="page" id="page-features">
-          <div class="card">
-            <div class="card-header">
-              <h3>⭐ বিশেষত্ব (Features)</h3>
-              <button class="btn btn-primary" onclick="openFeatureModal()">+ নতুন বিশেষত্ব</button>
-            </div>
-            <div class="card-body">
-              <table class="data-table" id="features-table">
-                <thead><tr><th>আইকন</th><th>শিরোনাম</th><th>বিবরণ</th><th>অর্ডার</th><th>সক্রিয়</th><th>অ্যাকশন</th></tr></thead>
-                <tbody id="features-tbody"><tr><td colspan="6" style="text-align:center;color:var(--text2);padding:20px">লোড হচ্ছে...</td></tr></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
         <div class="page" id="page-notices">
           <div class="card">
             <div class="card-header">
@@ -6056,86 +6040,5 @@ async function saveSectionContent() {
   const old=window.navTo;window.navTo=function(page){try{localStorage.setItem('activeAdminNav',page)}catch(e){}old(page);if(page==='full-content')loadFullContentBundle()};pageTitles['section-content']='সেকশন কন্টেন্ট';pageTitles['full-content']='সম্পূর্ণ কনটেন্ট';window.addEventListener('load',()=>{ensurePage();let a=localStorage.getItem('activeAdminNav');if(a&&a!=='dashboard')setTimeout(()=>navTo(a),250)})
 })();
 </script>   
-
-    <!-- Feature Modal -->
-    <div class="modal" id="feature-modal" style="display:none">
-      <div class="modal-content" style="max-width:520px">
-        <div class="modal-header">
-          <h3 id="feature-modal-title">নতুন বিশেষত্ব</h3>
-          <button class="modal-close" onclick="closeFeatureModal()">×</button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" id="f-id"/>
-          <div class="field"><label>আইকন (ইমোজি) *</label><input id="f-icon" placeholder="✨" maxlength="4"/></div>
-          <div class="field"><label>শিরোনাম *</label><input id="f-title" placeholder="বিশেষজ্ঞ শিক্ষক"/></div>
-          <div class="field"><label>বিবরণ</label><textarea id="f-desc" rows="3" placeholder="অভিজ্ঞ ও দক্ষ শিক্ষকদের সরাসরি ক্লাস ও মেন্টরশিপ।"></textarea></div>
-          <div class="field"><label>অর্ডার</label><input id="f-order" type="number" value="0"/></div>
-          <div class="field"><label><input type="checkbox" id="f-active" checked/> সক্রিয়</label></div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-ghost" onclick="closeFeatureModal()">বাতিল</button>
-          <button class="btn btn-primary" onclick="saveFeature()">সংরক্ষণ</button>
-        </div>
-      </div>
-    </div>
-    <script>
-    (function(){
-      var TOKEN = function(){return localStorage.getItem('adminToken')||''};
-      var API = (window.API_BASE||'https://ibnkhalduninstitute.onrender.com');
-      function esc(s){return String(s||'').replace(/[<>&"]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]})}
-      window.loadFeatures = async function(){
-        var tb = document.getElementById('features-tbody'); if(!tb) return;
-        try{
-          var r = await fetch(API+'/api/admin/features',{headers:{Authorization:'Bearer '+TOKEN()}});
-          var list = await r.json();
-          if(!list.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text2);padding:20px">কোনো বিশেষত্ব নেই</td></tr>';return}
-          tb.innerHTML = list.map(function(f){
-            return '<tr><td style="font-size:22px">'+esc(f.icon||'✨')+'</td>'+
-              '<td><b>'+esc(f.title)+'</b></td>'+
-              '<td style="color:var(--text2);font-size:13px">'+esc((f.desc||'').slice(0,80))+'</td>'+
-              '<td>'+(f.order||0)+'</td>'+
-              '<td>'+(f.active!==false?'<span style="color:var(--green)">✓</span>':'<span style="color:var(--red)">✗</span>')+'</td>'+
-              '<td><button class="btn btn-sm" onclick="editFeature(\''+f._id+'\')">✏️</button> <button class="btn btn-sm btn-danger" onclick="deleteFeature(\''+f._id+'\')">🗑️</button></td></tr>';
-          }).join('');
-          window._features = list;
-        }catch(e){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--red)">লোড করতে সমস্যা</td></tr>'}
-      };
-      window.openFeatureModal = function(){
-        document.getElementById('feature-modal-title').textContent='নতুন বিশেষত্ব';
-        document.getElementById('f-id').value='';document.getElementById('f-icon').value='✨';
-        document.getElementById('f-title').value='';document.getElementById('f-desc').value='';
-        document.getElementById('f-order').value='0';document.getElementById('f-active').checked=true;
-        document.getElementById('feature-modal').style.display='flex';
-      };
-      window.closeFeatureModal = function(){document.getElementById('feature-modal').style.display='none'};
-      window.editFeature = function(id){
-        var f = (window._features||[]).find(function(x){return x._id===id}); if(!f) return;
-        document.getElementById('feature-modal-title').textContent='বিশেষত্ব সম্পাদনা';
-        document.getElementById('f-id').value=f._id;document.getElementById('f-icon').value=f.icon||'✨';
-        document.getElementById('f-title').value=f.title||'';document.getElementById('f-desc').value=f.desc||'';
-        document.getElementById('f-order').value=f.order||0;document.getElementById('f-active').checked=f.active!==false;
-        document.getElementById('feature-modal').style.display='flex';
-      };
-      window.saveFeature = async function(){
-        var id = document.getElementById('f-id').value;
-        var body = {icon:document.getElementById('f-icon').value,title:document.getElementById('f-title').value,
-          desc:document.getElementById('f-desc').value,order:Number(document.getElementById('f-order').value)||0,
-          active:document.getElementById('f-active').checked};
-        if(!body.title){alert('শিরোনাম প্রয়োজন');return}
-        var url = id?(API+'/api/admin/features/'+id):(API+'/api/admin/features');
-        await fetch(url,{method:id?'PUT':'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+TOKEN()},body:JSON.stringify(body)});
-        closeFeatureModal();loadFeatures();
-      };
-      window.deleteFeature = async function(id){
-        if(!confirm('মুছে ফেলবেন?')) return;
-        await fetch(API+'/api/admin/features/'+id,{method:'DELETE',headers:{Authorization:'Bearer '+TOKEN()}});
-        loadFeatures();
-      };
-      // Hook into navTo
-      var _origNav = window.navTo;
-      window.navTo = function(p){if(_origNav) _origNav(p); if(p==='features') loadFeatures()};
-    })();
-    </script>
-
 </body>
 </html>
