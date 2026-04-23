@@ -4778,7 +4778,8 @@
         var navEl1 = document.getElementById('nav-' + page);
         if (navEl1) navEl1.classList.add('active');
       }
-      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
       setTimeout(runFadeIn, 50);
       if (page === 'detail') { setTimeout(updateLessonAccess, 100); updateSidebarEnrollBtn(); updateSidebarImage(); }
       if (page === 'courses') { loadCoursesPage(); }
@@ -4802,7 +4803,8 @@
 
     function navigateHomeTop() {
       navigate('home');
-      window.scrollTo({top:0, behavior:'instant'});
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
       return false;
     }
 
@@ -5720,7 +5722,11 @@
       lsSet('currentUser', null);
       setLoginState(false);
       showToast('👋 লগআউট সফল!');
-      setTimeout(function() { navigate('home'); }, 800);
+      setTimeout(function() {
+        navigate('home');
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+      }, 800);
     }
 
     // ===========================
@@ -8498,19 +8504,21 @@
             sessionStorage.setItem('ik_scroll_' + (window.currentPage || 'home'), String(window.scrollY || 0));
             localStorage.setItem('ik_active_nav', page);
           } catch(e) {}
-          // currentPage ট্র্যাক করা
           window.currentPage = page;
           originalNavigate(page);
           setActivePublicNav(page);
-          // ── Analytics: SPA Page View Tracking ──
           if (typeof window.ikTrackPageView === 'function') {
             window.ikTrackPageView(page);
           }
           setTimeout(function() {
-            var savedScroll = sessionStorage.getItem('ik_scroll_' + page);
-            if (savedScroll) window.scrollTo(0, parseInt(savedScroll, 10) || 0);
-            // 'detail' পেজে applyManagedContent চালালে openCourseDetail-এর
-            // DOM আপডেট মুছে যেতে পারে, তাই detail পেজ বাদ দিই
+            // home পেজে সবসময় instant top — scroll restore নেই
+            if (page === 'home') {
+              document.documentElement.scrollTop = 0;
+              document.body.scrollTop = 0;
+            } else {
+              var savedScroll = sessionStorage.getItem('ik_scroll_' + page);
+              if (savedScroll) window.scrollTo(0, parseInt(savedScroll, 10) || 0);
+            }
             if (page !== 'detail') {
               applyManagedContent(managedBundle);
             }
