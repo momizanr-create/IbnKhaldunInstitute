@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- [OK] পুরনো link-based reset token rescue script সরানো হয়েছে — এখন OTP-based system -->
+  <!-- <i class="fas fa-check-circle"></i> পুরনো link-based reset token rescue script সরানো হয়েছে — এখন OTP-based system -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ইবনে খালদুন ইনস্টিটিউট – অনলাইনে নতুন দক্ষতা অর্জন করুন</title>
@@ -224,7 +224,6 @@
   </script>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600;700;800&family=Lato:wght@300;400;700;900&family=Open+Sans:wght@300;400;500;600&family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -725,6 +724,66 @@
     .instructor-card { cursor: pointer; }
     .instructor-card:hover { cursor: pointer; }
 
+
+    /* INSTRUCTOR STATS - improved styling */
+    .instructor-stats {
+      display: flex;
+      gap: 14px;
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--text-mid);
+      flex-wrap: wrap;
+    }
+    .instructor-stats span {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--bg-soft);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 600;
+      font-family: var(--font-nav);
+      color: var(--text-mid);
+      border: 1px solid var(--border);
+      transition: all var(--transition);
+    }
+    .instructor-stats span:hover {
+      border-color: var(--primary);
+      color: var(--primary-dark);
+      background: var(--primary-light);
+    }
+    .instructor-stats span i {
+      font-size: 11px;
+      color: var(--primary);
+    }
+    .instructor-info {
+      text-align: center;
+    }
+    .instructor-title {
+      font-size: 12px;
+      color: var(--text-mid);
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    /* Footer categories scroll */
+    #footer-categories-list {
+      max-height: 160px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+    #footer-categories-list::-webkit-scrollbar { width: 3px; }
+    #footer-categories-list::-webkit-scrollbar-thumb { background: #444; border-radius: 2px; }
+    .footer-main {
+      max-height: 380px;
+      overflow: hidden;
+    }
+
+    /* Course card image fallback */
+    .course-thumb img, .ccard-img img {
+      background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+    }
     /* COMMENT SYSTEM */
     .comments-section { margin-top: 0; }
     .comments-section h3 { font-family: var(--font-heading); font-size: 18px; font-weight: 700; margin-bottom: 20px; color: var(--text-dark); }
@@ -1789,7 +1848,7 @@
     }
 
     /* ═══════════════════════════════════════════════════
-       [MOBILE] MOBILE DESIGN REFINEMENT — COMPREHENSIVE UPDATE
+       <i class="fas fa-mobile-alt"></i> MOBILE DESIGN REFINEMENT — COMPREHENSIVE UPDATE
        সমস্ত মোবাইল ভিউ উন্নত করা হয়েছে
     ═══════════════════════════════════════════════════ */
 
@@ -2959,6 +3018,7 @@
   font-size: 14px;
 }
   </style> 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
 
@@ -2992,7 +3052,7 @@
       </ul>
       <div class="nav-actions">
         <button class="btn btn-ghost nav-signin-desktop" id="nav-signin-btn" onclick="navigate('auth')">সাইন ইন</button>
-        <button class="btn btn-ghost nav-signin-desktop hidden" id="nav-logout-btn" onclick="navigate('dashboard')" style="border-color:var(--primary);color:var(--primary-dark)"><i class="fa-solid fa-graduation-cap"></i> লার্নিং হাব</button>
+        <button class="btn btn-ghost nav-signin-desktop hidden" id="nav-logout-btn" onclick="navigate('dashboard')" style="border-color:var(--primary);color:var(--primary-dark)"><i class="fas fa-book-open"></i> লার্নিং হাব</button>
   </div>
 
   <!-- Mobile Search Overlay -->
@@ -3019,15 +3079,15 @@
 
   <!-- Mobile Nav -->
   <div class="mobile-nav" id="mobile-nav">
-    <a href="#" onclick="navigateHomeTop(); toggleMobileNav(); return false;"><i class="fa-solid fa-house"></i> হোম</a>
-    <a href="#" onclick="navigate('courses'); toggleMobileNav(); return false;"><i class="fa-solid fa-book-open"></i> ক্যাটাগরি</a>
-    <a href="#" onclick="navigate('instructors'); toggleMobileNav(); return false;"><i class="fa-solid fa-chalkboard-user"></i> ইন্সট্রাক্টর</a>
-    <a href="#" onclick="navigate('blog'); toggleMobileNav(); return false;"><i class="fa-solid fa-pen-to-square"></i> ব্লগ</a>
-    <a href="#" onclick="navigate('about'); toggleMobileNav(); return false;"><i class="fa-solid fa-circle-info"></i> আমাদের সম্পর্কে</a>
-    <a href="#" onclick="navigate('contact'); toggleMobileNav(); return false;"><i class="fa-solid fa-phone"></i> যোগাযোগ</a>
-    <a href="#" id="mobile-nav-hub" class="hidden" onclick="navigate('dashboard'); toggleMobileNav(); return false;"><i class="fa-solid fa-graduation-cap"></i> লার্নিং হাব</a>
-    <a href="#" id="mobile-nav-login" onclick="navigate('auth'); toggleMobileNav(); return false;"><i class="fa-solid fa-right-to-bracket"></i> লগইন / রেজিস্টার</a>
-    <a href="#" id="mobile-nav-logout" class="hidden" style="color:#F5C518" onclick="logoutAction(); toggleMobileNav(); return false;"><i class="fa-solid fa-right-from-bracket"></i> লগ আউট</a>
+    <a href="#" onclick="navigateHomeTop(); toggleMobileNav(); return false;"><i class="fas fa-home"></i> হোম</a>
+    <a href="#" onclick="navigate('courses'); toggleMobileNav(); return false;"><i class="fas fa-book"></i> ক্যাটাগরি</a>
+    <a href="#" onclick="navigate('instructors'); toggleMobileNav(); return false;"><i class="fas fa-chalkboard-teacher"></i> ইন্সট্রাক্টর</a>
+    <a href="#" onclick="navigate('blog'); toggleMobileNav(); return false;"><i class="fas fa-pen"></i> ব্লগ</a>
+    <a href="#" onclick="navigate('about'); toggleMobileNav(); return false;"><i class="fas fa-info-circle"></i> আমাদের সম্পর্কে</a>
+    <a href="#" onclick="navigate('contact'); toggleMobileNav(); return false;"><i class="fas fa-phone"></i> যোগাযোগ</a>
+    <a href="#" id="mobile-nav-hub" class="hidden" onclick="navigate('dashboard'); toggleMobileNav(); return false;"><i class="fas fa-book-open"></i> লার্নিং হাব</a>
+    <a href="#" id="mobile-nav-login" onclick="navigate('auth'); toggleMobileNav(); return false;"><i class="fas fa-user-lock"></i> লগইন / রেজিস্টার</a>
+    <a href="#" id="mobile-nav-logout" class="hidden" style="color:#F5C518" onclick="logoutAction(); toggleMobileNav(); return false;"><i class="fas fa-sign-out-alt"></i> লগ আউট</a>
   </div>
 
   <!-- ===================== HOME PAGE ===================== -->
@@ -3203,7 +3263,7 @@
     </script>
 
     <!-- ═══════════════════════════════════════════════════════════
-         [HOME] HOME PAGE — ৭টি নতুন Section (Admin Panel এর সাথে কানেক্টেড)
+         <i class="fas fa-home"></i> HOME PAGE — ৭টি নতুন Section (Admin Panel এর সাথে কানেক্টেড)
          1. সব কোর্স / জনপ্রিয় / নতুন
          2. কোর্স প্রশ্ন (FAQ)
          3. শিক্ষার্থীদের ভালোবাসা (5 floating)
@@ -3389,8 +3449,8 @@
 
         <div class="ctabs-wrap fade-in">
           <button class="ctab active" data-tab="all" onclick="hcSwitchTab(this,'all')">সব কোর্স</button>
-          <button class="ctab" data-tab="popular" onclick="hcSwitchTab(this,'popular')"><i class="fa-solid fa-fire"></i> জনপ্রিয় কোর্স</button>
-          <button class="ctab" data-tab="new" onclick="hcSwitchTab(this,'new')"><i class="fa-solid fa-star"></i> নতুন কোর্স</button>
+          <button class="ctab" data-tab="popular" onclick="hcSwitchTab(this,'popular')"><i class="fas fa-fire"></i> জনপ্রিয় কোর্স</button>
+          <button class="ctab" data-tab="new" onclick="hcSwitchTab(this,'new')"><i class="fas fa-sparkles"></i> নতুন কোর্স</button>
         </div>
 
         <div id="hc-courses-grid" class="courses-grid-2 fade-in">
@@ -3472,7 +3532,7 @@
       <div class="container">
         <div class="head fade-in">
           <span class="lbl">বিশেষ অফার</span>
-          <h2><i class="fa-solid fa-box-open"></i> বান্ডেল কোর্সসমূহ</h2>
+          <h2><i class="fas fa-box"></i> বান্ডেল কোর্সসমূহ</h2>
           <div class="ul"></div>
           <p class="sub">একাধিক কোর্স একসাথে কিনে সাশ্রয়ী মূল্যে শিখুন। সীমিত সময়ের জন্য বিশেষ ছাড়।</p>
         </div>
@@ -3487,30 +3547,69 @@
       </div>
     </section>
 
-    <!-- ━━━━━━━━━ 7. আজই যুক্ত হন ━━━━━━━━━ -->
-    <section class="home-section">
+    <!-- ━━━━━━━━━ 7. আজই যুক্ত হন — Stats Counter ━━━━━━━━━ -->
+    <section class="home-section section" style="padding:60px 0;background:#fff;">
       <div class="container">
-        <div class="join-cta fade-in">
-          <div class="join-cta-inner">
-            <span class="join-cta-eyebrow">আজই শুরু করুন</span>
-            <h2>আজই যুক্ত হন <em>ইবনে খালদুন</em><br>ইনস্টিটিউটের পরিবারে</h2>
-            <p>হাজার হাজার শিক্ষার্থীর সাথে জ্ঞানার্জনের যাত্রা শুরু করুন। বিশেষজ্ঞ শিক্ষক, লাইফটাইম অ্যাক্সেস এবং সার্টিফিকেট — সব এক জায়গায়।</p>
-
-            <div class="join-cta-actions">
-              <button class="join-cta-btn-primary" onclick="navigate('courses')">কোর্স ব্রাউজ করুন</button>
-              <button class="join-cta-btn-ghost" onclick="(window.openSignupModal||function(){navigate('courses')})()">ফ্রি সাইন আপ</button>
+        <div style="text-align:center;margin-bottom:36px;">
+          <h2 style="font-family:var(--font-heading);font-size:clamp(24px,4vw,34px);font-weight:800;color:var(--text-dark);">আজই যুক্ত হোন</h2>
+          <p style="font-size:14px;color:var(--text-mid);max-width:600px;margin:12px auto 0;line-height:1.7;">দীনি জ্ঞানার্জনের উন্মুক্ত প্ল্যাটফর্ম, তাহযীব ইনস্টিটিউটের বৃহৎ পরিবারে আজই যুক্ত হোন।</p>
+        </div>
+        <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:stretch;">
+          <!-- Stats Grid -->
+          <div style="flex:1;min-width:300px;display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="ik-stat-counter-card" style="background:#fef3f2;border-radius:12px;padding:28px 20px;text-align:center;">
+              <div class="ik-counter-num" data-target="9000" style="font-family:var(--font-heading);font-size:clamp(28px,4vw,38px);font-weight:900;color:var(--text-dark);">0+</div>
+              <div style="font-size:13px;color:var(--text-mid);font-weight:600;margin-top:6px;">মোট শিক্ষার্থী</div>
             </div>
-
-            <div class="join-cta-stats" id="hc-join-stats">
-              <div><div class="join-cta-stat-num" id="jcs-students">৯,০০০+</div><div class="join-cta-stat-label">শিক্ষার্থী</div></div>
-              <div><div class="join-cta-stat-num" id="jcs-courses">৫০+</div><div class="join-cta-stat-label">কোর্স</div></div>
-              <div><div class="join-cta-stat-num" id="jcs-instructors">২০+</div><div class="join-cta-stat-label">শিক্ষক</div></div>
-              <div><div class="join-cta-stat-num">৪.৯ <i class="fa-solid fa-star" style="color:#F5C518"></i></div><div class="join-cta-stat-label">রেটিং</div></div>
+            <div class="ik-stat-counter-card" style="background:#f0fdf4;border-radius:12px;padding:28px 20px;text-align:center;">
+              <div class="ik-counter-num" data-target="10" style="font-family:var(--font-heading);font-size:clamp(28px,4vw,38px);font-weight:900;color:var(--text-dark);">0+</div>
+              <div style="font-size:13px;color:var(--text-mid);font-weight:600;margin-top:6px;">অভিজ্ঞ উস্তায/উস্তাযা</div>
             </div>
+            <div class="ik-stat-counter-card" style="background:#fefce8;border-radius:12px;padding:28px 20px;text-align:center;">
+              <div class="ik-counter-num" data-target="100" style="font-family:var(--font-heading);font-size:clamp(28px,4vw,38px);font-weight:900;color:var(--text-dark);">0+</div>
+              <div style="font-size:13px;color:var(--text-mid);font-weight:600;margin-top:6px;">স্টাডি ম্যাটেরিয়াল</div>
+            </div>
+            <div class="ik-stat-counter-card" style="background:#f5f3ff;border-radius:12px;padding:28px 20px;text-align:center;">
+              <div class="ik-counter-num" data-target="200" style="font-family:var(--font-heading);font-size:clamp(28px,4vw,38px);font-weight:900;color:var(--text-dark);">0+</div>
+              <div style="font-size:13px;color:var(--text-mid);font-weight:600;margin-top:6px;">লার্নিং কন্টেন্ট</div>
+            </div>
+          </div>
+          <!-- YouTube Video -->
+          <div style="flex:1;min-width:300px;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.12);">
+            <iframe width="100%" height="100%" style="min-height:280px;border:none;" src="https://www.youtube.com/embed/LXb3EKWsInQ?rel=0&modestbranding=1" title="ইবনে খালদুন ইনস্টিটিউট" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe>
           </div>
         </div>
       </div>
     </section>
+    <script>
+    // Stats Counter Animation
+    (function(){
+      var bn=function(n){return String(n).replace(/[0-9]/g,function(c){return '\u09E6\u09E7\u09E8\u09E9\u09EA\u09EB\u09EC\u09ED\u09EE\u09EF'[c]})};
+      var counters=document.querySelectorAll('.ik-counter-num');
+      var animated=false;
+      function animateCounters(){
+        if(animated)return;animated=true;
+        counters.forEach(function(el){
+          var target=parseInt(el.getAttribute('data-target'))||0;
+          var dur=2000,start=0,startTime=null;
+          function step(ts){
+            if(!startTime)startTime=ts;
+            var p=Math.min((ts-startTime)/dur,1);
+            var eased=1-Math.pow(1-p,3);
+            var val=Math.floor(eased*target);
+            el.textContent=bn(val)+'+';
+            if(p<1)requestAnimationFrame(step);
+            else el.textContent=bn(target)+'+';
+          }
+          requestAnimationFrame(step);
+        });
+      }
+      var obs=new IntersectionObserver(function(entries){
+        entries.forEach(function(e){if(e.isIntersecting)animateCounters()});
+      },{threshold:0.3});
+      counters.forEach(function(el){obs.observe(el)});
+    })();
+    </script>
 
     <!-- ━━━━━━━━━ HOME SECTIONS — JS ━━━━━━━━━ -->
     <script>
@@ -3532,18 +3631,18 @@
           var price = (c.price===0||c.price==null) ? '<span class="ccard-price free">ফ্রি</span>' :
                       '<span class="ccard-price">৳'+bn(c.price)+(c.originalPrice && c.originalPrice>c.price ? '<span class="old">৳'+bn(c.originalPrice)+'</span>' : '')+'</span>';
           var badge = '';
-          if(c.tabKey === 'বান্ডেল কোর্সসমূহ' || c.tabKey==='bundle') badge = '<div class="ccard-badge"><i class="fa-solid fa-box-open"></i> বান্ডেল</div>';
-          else if(c.featured) badge = '<div class="ccard-badge hot"><i class="fa-solid fa-fire"></i> ফিচার্ড</div>';
+          if(c.tabKey === 'বান্ডেল কোর্সসমূহ' || c.tabKey==='bundle') badge = '<div class="ccard-badge"><i class="fas fa-box"></i> বান্ডেল</div>';
+          else if(c.featured) badge = '<div class="ccard-badge hot"><i class="fas fa-fire"></i> ফিচার্ড</div>';
           else if(c.tabKey==='popular' || c.tabKey==='জনপ্রিয় কোর্সসমূহ') badge = '<div class="ccard-badge hot">জনপ্রিয়</div>';
-          else if(c.tabKey==='new' || c.tabKey==='নতুন কোর্সসমূহ') badge = '<div class="ccard-badge new"><i class="fa-solid fa-star"></i> নতুন</div>';
+          else if(c.tabKey==='new' || c.tabKey==='নতুন কোর্সসমূহ') badge = '<div class="ccard-badge new"><i class="fas fa-sparkles"></i> নতুন</div>';
           return '<div class="ccard" onclick="(window.openCourseDetail||function(){location.hash=\'#courses\'})(\''+esc(c.slug||c._id)+'\')">'+
             '<div class="ccard-img"><img src="'+esc(thumb)+'" alt="'+esc(c.title)+'" loading="lazy" onerror="this.src=\'https://placehold.co/400x250/F5C518/1a1a1a?text=Course\'">'+badge+'</div>'+
             '<div class="ccard-body">'+
               (c.category ? '<div class="ccard-cat">'+esc(c.category)+'</div>' : '')+
               '<div class="ccard-title">'+esc(c.title||'কোর্স')+'</div>'+
               '<div class="ccard-meta">'+
-                '<span><i class="fa-solid fa-users"></i> '+bn(c.students||0)+' শিক্ষার্থী</span>'+
-                '<span class="star"><i class="fa-solid fa-star" style="color:#F5C518"></i> '+bn(c.rating||4.5)+'</span>'+
+                '<span><i class="fas fa-users"></i> '+bn(c.students||0)+' শিক্ষার্থী</span>'+
+                '<span class="star"><i class="fas fa-star"></i> '+bn(c.rating||4.5)+'</span>'+
               '</div>'+
               '<div class="ccard-foot">'+price+'<button class="ccard-btn" onclick="event.stopPropagation();navigate(\'courses\')">দেখুন</button></div>'+
             '</div>'+
@@ -3613,7 +3712,7 @@
         if(!list || !list.length){ el.innerHTML = '<div style="color:var(--text-mid)">কোনো মতামত নেই</div>'; return; }
         var top5 = list.slice(0,5);
         el.innerHTML = top5.map(function(t){
-          var stars = '<i class="fa-solid fa-star" style="color:#F5C518"></i>'.repeat(Math.round(t.rating||5));
+          var stars = '<i class="fas fa-star"></i>'.repeat(Math.round(t.rating||5));
           var initial = (t.name||'?').trim().charAt(0);
           var avatar = t.avatar ? '<img src="'+esc(t.avatar)+'" alt="">' : initial;
           return '<div class="testi-float">'+
@@ -3643,12 +3742,12 @@
           }).join('') : '<div style="font-size:12px;color:var(--text-light);padding:6px 12px">কোনো সাব-ক্যাটাগরি নেই</div>';
           return '<div class="cat-card" data-i="'+i+'" onclick="hcToggleCat('+i+')">'+
             '<div class="cat-head">'+
-              '<div class="cat-icon">'+esc(c.icon||'')+'</div>'+
+              '<div class="cat-icon">'+esc(c.icon||'<i class="fas fa-book"></i>')+'</div>'+
               '<div class="cat-info">'+
                 '<div class="cat-name">'+esc(c.name)+'</div>'+
                 '<div class="cat-count"><b>'+bn(cnt)+'</b> টি কোর্স • '+bn(subs.length)+' টি সাব-বিভাগ</div>'+
               '</div>'+
-              '<div class="cat-arrow"><i class="fa-solid fa-chevron-down"></i></div>'+
+              '<div class="cat-arrow">▼</div>'+
             '</div>'+
             '<div class="cat-subs">'+subsHtml+'</div>'+
           '</div>';
@@ -3673,19 +3772,19 @@
 
       // ── 5. FEATURES ──
       var DEFAULT_FEATS = [
-        {icon:'<i class="fa-solid fa-chalkboard-user"></i>',title:'বিশেষজ্ঞ শিক্ষক',desc:'অভিজ্ঞ ও দক্ষ শিক্ষকদের সরাসরি ক্লাস ও মেন্টরশিপ।'},
-        {icon:'<i class="fa-solid fa-infinity"></i>',title:'লাইফটাইম অ্যাক্সেস',desc:'একবার কিনলে সারাজীবনের জন্য কোর্সে প্রবেশাধিকার।'},
-        {icon:'<i class="fa-solid fa-trophy"></i>',title:'সার্টিফিকেট',desc:'কোর্স সম্পন্ন করলে পাবেন স্বীকৃত সার্টিফিকেট।'},
-        {icon:'<i class="fa-solid fa-mobile-screen-button"></i>',title:'যেকোনো ডিভাইস',desc:'মোবাইল, ট্যাব বা কম্পিউটার — যেকোনো জায়গা থেকে শিখুন।'},
-        {icon:'<i class="fa-solid fa-headset"></i>',title:'২৪/৭ সাপোর্ট',desc:'যেকোনো সমস্যায় আমাদের সাপোর্ট টিম সর্বদা প্রস্তুত।'},
-        {icon:'<i class="fa-solid fa-shield-halved"></i>',title:'১০০% সন্তুষ্টি',desc:'মানসম্পন্ন কন্টেন্ট ও মানি-ব্যাক গ্যারান্টি।'},
+        {icon:'<i class="fas fa-chalkboard-teacher"></i>',title:'বিশেষজ্ঞ শিক্ষক',desc:'অভিজ্ঞ ও দক্ষ শিক্ষকদের সরাসরি ক্লাস ও মেন্টরশিপ।'},
+        {icon:'<i class="fas fa-infinity"></i>',title:'লাইফটাইম অ্যাক্সেস',desc:'একবার কিনলে সারাজীবনের জন্য কোর্সে প্রবেশাধিকার।'},
+        {icon:'<i class="fas fa-trophy"></i>',title:'সার্টিফিকেট',desc:'কোর্স সম্পন্ন করলে পাবেন স্বীকৃত সার্টিফিকেট।'},
+        {icon:'<i class="fas fa-mobile-alt"></i>',title:'যেকোনো ডিভাইস',desc:'মোবাইল, ট্যাব বা কম্পিউটার — যেকোনো জায়গা থেকে শিখুন।'},
+        {icon:'<i class="fas fa-comments"></i>',title:'২৪/৭ সাপোর্ট',desc:'যেকোনো সমস্যায় আমাদের সাপোর্ট টিম সর্বদা প্রস্তুত।'},
+        {icon:'<i class="fas fa-check-double"></i>',title:'১০০% সন্তুষ্টি',desc:'মানসম্পন্ন কন্টেন্ট ও মানি-ব্যাক গ্যারান্টি।'},
       ];
       function renderFeats(list){
         var el = document.getElementById('hc-feats-grid'); if(!el) return;
         if(!list || !list.length) list = DEFAULT_FEATS;
         el.innerHTML = list.slice(0,8).map(function(f){
           return '<div class="feat-card">'+
-            '<div class="feat-icon">'+esc(f.icon||'')+'</div>'+
+            '<div class="feat-icon">'+esc(f.icon||'<i class="fas fa-sparkles"></i>')+'</div>'+
             '<div class="feat-title">'+esc(f.title||'')+'</div>'+
             '<div class="feat-desc">'+esc(f.desc||f.description||'')+'</div>'+
           '</div>';
@@ -3709,15 +3808,15 @@
           var price = (c.price===0||c.price==null) ? '<div class="bundle-price">ফ্রি</div>' :
                       '<div class="bundle-price">৳'+bn(c.price)+(c.originalPrice && c.originalPrice>c.price ? '<span class="old">৳'+bn(c.originalPrice)+'</span>' : '')+'</div>';
           return '<div class="bundle-card" onclick="(window.openCourseDetail||function(){location.hash=\'#courses\'})(\''+esc(c.slug||c._id)+'\')">'+
-            '<div class="bundle-tag"><i class="fa-solid fa-box-open"></i> BUNDLE</div>'+
+            '<div class="bundle-tag"><i class="fas fa-box"></i> BUNDLE</div>'+
             '<div class="bundle-img"><img src="'+esc(thumb)+'" alt="'+esc(c.title)+'" loading="lazy" onerror="this.src=\'https://placehold.co/600x340/066144/F5C518?text=Bundle\'"></div>'+
             '<div class="bundle-body">'+
               '<div class="bundle-title">'+esc(c.title||'বান্ডেল')+'</div>'+
               '<div class="bundle-desc">'+esc(c.shortDesc || c.description ? (c.shortDesc || c.description.replace(/<[^>]*>/g,'').slice(0,120)) : '')+'</div>'+
               '<div class="bundle-stats">'+
-                '<span><i class="fa-solid fa-book"></i> <b>'+bn(c.lessons||0)+'</b> লেসন</span>'+
-                '<span><i class="fa-regular fa-clock"></i> <b>'+esc(c.duration||'-')+'</b></span>'+
-                '<span><i class="fa-solid fa-users"></i> <b>'+bn(c.students||0)+'</b></span>'+
+                '<span><i class="fas fa-book"></i> <b>'+bn(c.lessons||0)+'</b> লেসন</span>'+
+                '<span><i class="fas fa-clock"></i>️ <b>'+esc(c.duration||'-')+'</b></span>'+
+                '<span><i class="fas fa-users"></i> <b>'+bn(c.students||0)+'</b></span>'+
               '</div>'+
               '<div class="bundle-foot">'+price+'<button class="bundle-btn" onclick="event.stopPropagation();navigate(\'courses\')">এনরোল করুন</button></div>'+
             '</div>'+
@@ -3799,7 +3898,7 @@
     <div class="page-hero">
       <div class="container">
         <div class="section-label">আমাদের শিক্ষক মণ্ডলী</div>
-        <h1><i class="fa-solid fa-chalkboard-user"></i> ইন্সট্রাক্টরগণ</h1>
+        <h1><i class="fas fa-chalkboard-teacher"></i> ইন্সট্রাক্টরগণ</h1>
         <p>বিশ্বমানের বিশেষজ্ঞ শিক্ষকদের সাথে আপনার শেখার যাত্রা শুরু করুন</p>
       </div>
     </div>
@@ -3821,7 +3920,7 @@
     <div class="page-hero">
       <div class="container">
         <div class="section-label">জ্ঞান ও অনুপ্রেরণা</div>
-        <h1><i class="fa-solid fa-pen-to-square"></i> ব্লগ</h1>
+        <h1><i class="fas fa-pen"></i> ব্লগ</h1>
         <p>ইসলামিক জ্ঞান, শিক্ষা ও অনুপ্রেরণামূলক লেখা পড়ুন</p>
       </div>
     </div>
@@ -3851,18 +3950,18 @@
           <div class="section-label" style="margin-top:24px">ডেভেলপমেন্ট</div>
           <h1 class="detail-title">ফুল-স্ট্যাক ওয়েব ডেভেলপমেন্ট বুটক্যাম্প</h1>
           <div class="detail-meta-row">
-            <div class="detail-rating"><span class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span><strong>৪.৯</strong><span>(২,৮৪৭ রিভিউ)</span></div>
-            <div class="detail-stat"><i class="fa-solid fa-users"></i> ১২,৪০০ শিক্ষার্থী ভর্তি</div>
-            <div class="detail-stat"><i class="fa-regular fa-clock"></i> ৪২ ঘণ্টার কন্টেন্ট</div>
-            <div class="detail-stat"><i class="fa-solid fa-trophy"></i> সার্টিফিকেট</div>
+            <div class="detail-rating"><span class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></span><strong>৪.৯</strong><span>(২,৮৪৭ রিভিউ)</span></div>
+            <div class="detail-stat"><i class="fas fa-users"></i> ১২,৪০০ শিক্ষার্থী ভর্তি</div>
+            <div class="detail-stat">🕐 ৪২ ঘণ্টার কন্টেন্ট</div>
+            <div class="detail-stat"><i class="fas fa-trophy"></i> সার্টিফিকেট</div>
           </div>
           <div class="detail-instructor-row" id="detail-instructor-row">
-            <div class="instructor-avatar"><i class="fa-solid fa-user-tie" style="font-size:22px;color:#fff"></i></div>
+            <div class="instructor-avatar">👨‍💻</div>
             <div><div class="instructor-name">আলেক্স জনসন</div><div class="instructor-title">সিনিয়র ফুল-স্ট্যাক ইঞ্জিনিয়ার, মেটা • ১০+ বছরের অভিজ্ঞতা</div></div>
           </div>
           <!-- Free Video Banner -->
           <div id="free-video-banner" style="background:linear-gradient(90deg,rgba(245,197,24,0.12),rgba(245,197,24,0.04));border:1px solid rgba(245,197,24,0.35);border-left:4px solid var(--primary);border-radius:4px;padding:12px 16px;margin:16px 0 8px;display:flex;align-items:center;gap:10px">
-            <span style="font-size:20px"><i class="fa-solid fa-gift" style="color:var(--primary)"></i></span>
+            <span style="font-size:20px">🎁</span>
             <div>
               <div style="font-family:var(--font-nav);font-size:13px;font-weight:700;color:var(--primary);letter-spacing:0.5px">বিনামূল্যে ২টি ভিডিও দেখুন!</div>
               <div style="font-size:12px;color:var(--text-mid);margin-top:2px">নিচের Curriculum ট্যাব থেকে <strong style="color:var(--text-dark)">"বিনামূল্যে"</strong> ট্যাগ দেওয়া লেসনগুলো এখনই দেখুন — কোনো একাউন্ট ছাড়াই।</div>
@@ -3872,7 +3971,7 @@
             <div class="video-thumbnail-overlay" id="video-thumbnail-overlay" onclick="playYoutubeVideo()">
               <img src="https://img.youtube.com/vi/LXb3EKWsInQ/maxresdefault.jpg" alt="Course Preview" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" onerror="this.style.display='none'" />
               <div style="position:absolute;inset:0;background:rgba(0,0,0,0.45);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px">
-                <div class="play-btn-big"><i class="fa-solid fa-play"></i></div>
+                <div class="play-btn-big">▶</div>
                 <div class="video-preview-label">কোর্স প্রিভিউ দেখুন • ৩:২৪</div>
               </div>
             </div>
@@ -3884,9 +3983,9 @@
                   <div class="yt-progress-bar" id="yt-progress-bar"></div>
                 </div>
                 <span class="yt-time" id="yt-time">0:00</span>
-                <button class="yt-ctrl-btn" onclick="ytToggleMute()" id="yt-mute-btn"><i class="fa-solid fa-volume-high"></i></button>
+                <button class="yt-ctrl-btn" onclick="ytToggleMute()" id="yt-mute-btn">🔊</button>
                 <input type="range" min="0" max="100" value="100" class="yt-volume" id="yt-volume" oninput="ytSetVolume(this.value)" />
-                <button class="yt-ctrl-btn" onclick="ytToggleFullscreen()"><i class="fa-solid fa-expand"></i></button>
+                <button class="yt-ctrl-btn" onclick="ytToggleFullscreen()">⛶</button>
               </div>
               <div id="yt-player"></div>
               <!-- YouTube লোগো ও চ্যানেল লিঙ্কে যাওয়া বন্ধ করার invisible overlay -->
@@ -3899,7 +3998,7 @@
             <button class="detail-tab active" onclick="switchTab(this,'desc')">সংক্ষিপ্ত বিবরণ</button>
             <button class="detail-tab" onclick="switchTab(this,'curriculum')">কারিকুলাম</button>
             <button class="detail-tab" onclick="switchTab(this,'instructor')">ইন্সট্রাক্টর</button>
-            <button class="detail-tab" onclick="switchTab(this,'comments');renderComments(currentCourseId)"><i class="fa-solid fa-comments"></i> মন্তব্য</button>
+            <button class="detail-tab" onclick="switchTab(this,'comments');renderComments(currentCourseId)"><i class="fas fa-comments"></i> মন্তব্য</button>
           </div>
           <div id="tab-desc" class="tab-content active">
             <div class="description-text" id="course-description-content">
@@ -3915,33 +4014,33 @@
                 <div class="lesson-list">
                   <!-- Free/Unlocked Videos -->
                   <div class="lesson-item lesson-clickable" onclick="playLessonVideo('LXb3EKWsInQ','কুরআন পরিচিতি ও গুরুত্ব','12:30')">
-                    <span class="lesson-icon li-play"><i class="fa-solid fa-play"></i></span>
+                    <span class="lesson-icon li-play">▶</span>
                     <span class="lesson-name">কুরআন পরিচিতি ও গুরুত্ব <span style="color:var(--primary);font-size:11px;margin-left:6px">বিনামূল্যে</span></span>
                     <span class="lesson-dur">১২:৩০</span>
                   </div>
                   <div class="lesson-item lesson-clickable" onclick="playLessonVideo('YE7VzlLtp-4','আরবি হরফ ও উচ্চারণ','18:45')">
-                    <span class="lesson-icon li-play"><i class="fa-solid fa-play"></i></span>
+                    <span class="lesson-icon li-play">▶</span>
                     <span class="lesson-name">আরবি হরফ ও উচ্চারণ <span style="color:var(--primary);font-size:11px;margin-left:6px">বিনামূল্যে</span></span>
                     <span class="lesson-dur">১৮:৪৫</span>
                   </div>
                   <!-- Locked Videos -->
                   <div class="lesson-item lesson-locked" onclick="showPaymentModal()">
-                    <span class="lesson-icon li-lock"><i class="fa-solid fa-lock"></i></span>
+                    <span class="lesson-icon li-lock"><i class="fas fa-lock"></i></span>
                     <span class="lesson-name">মাখারিজুল হুরুফ: উচ্চারণস্থান</span>
                     <span class="lesson-dur">২৪:০০</span>
                   </div>
                   <div class="lesson-item lesson-locked" onclick="showPaymentModal()">
-                    <span class="lesson-icon li-lock"><i class="fa-solid fa-lock"></i></span>
+                    <span class="lesson-icon li-lock"><i class="fas fa-lock"></i></span>
                     <span class="lesson-name">তাশদিদ ও সাকিন এর নিয়ম</span>
                     <span class="lesson-dur">২১:১৫</span>
                   </div>
                   <div class="lesson-item lesson-locked" onclick="showPaymentModal()">
-                    <span class="lesson-icon li-lock"><i class="fa-solid fa-lock"></i></span>
+                    <span class="lesson-icon li-lock"><i class="fas fa-lock"></i></span>
                     <span class="lesson-name">মদ্দ: টানার নিয়মাবলি</span>
                     <span class="lesson-dur">৩০:০০</span>
                   </div>
                   <div class="lesson-item lesson-locked" onclick="showPaymentModal()">
-                    <span class="lesson-icon li-lock"><i class="fa-solid fa-lock"></i></span>
+                    <span class="lesson-icon li-lock"><i class="fas fa-lock"></i></span>
                     <span class="lesson-name">ওয়াকফ ও ইবতিদার নিয়ম</span>
                     <span class="lesson-dur">২৮:৩০</span>
                   </div>
@@ -3952,22 +4051,22 @@
                 <div class="lesson-group-title">সেকশন ২: নুন সাকিন ও তানওয়ীনের বিধান <span>৮ লেসন • ৩ঘ ১০মি</span></div>
                 <div class="lesson-list">
                   <div class="lesson-item lesson-locked" onclick="showPaymentModal()">
-                    <span class="lesson-icon li-lock"><i class="fa-solid fa-lock"></i></span>
+                    <span class="lesson-icon li-lock"><i class="fas fa-lock"></i></span>
                     <span class="lesson-name">ইযহার: পরিষ্কার উচ্চারণ</span>
                     <span class="lesson-dur">২২:০০</span>
                   </div>
                   <div class="lesson-item lesson-locked" onclick="showPaymentModal()">
-                    <span class="lesson-icon li-lock"><i class="fa-solid fa-lock"></i></span>
+                    <span class="lesson-icon li-lock"><i class="fas fa-lock"></i></span>
                     <span class="lesson-name">ইদগাম: মিলিয়ে পড়ার নিয়ম</span>
                     <span class="lesson-dur">২৬:২০</span>
                   </div>
                   <div class="lesson-item lesson-locked" onclick="showPaymentModal()">
-                    <span class="lesson-icon li-lock"><i class="fa-solid fa-lock"></i></span>
+                    <span class="lesson-icon li-lock"><i class="fas fa-lock"></i></span>
                     <span class="lesson-name">ইখফা: গোপন করার নিয়ম</span>
                     <span class="lesson-dur">৩১:০০</span>
                   </div>
                   <div class="lesson-item lesson-locked" onclick="showPaymentModal()">
-                    <span class="lesson-icon li-lock"><i class="fa-solid fa-lock"></i></span>
+                    <span class="lesson-icon li-lock"><i class="fas fa-lock"></i></span>
                     <span class="lesson-name">ইকলাব: পরিবর্তনের নিয়ম</span>
                     <span class="lesson-dur">১৮:৪৫</span>
                   </div>
@@ -3978,12 +4077,12 @@
                 <div class="lesson-group-title">সেকশন ৩: কুরআন তিলাওয়াত অনুশীলন <span>১০ লেসন • ৪ঘ ৫০মি</span></div>
                 <div class="lesson-list">
                   <div class="lesson-item lesson-locked" onclick="showPaymentModal()">
-                    <span class="lesson-icon li-lock"><i class="fa-solid fa-lock"></i></span>
+                    <span class="lesson-icon li-lock"><i class="fas fa-lock"></i></span>
                     <span class="lesson-name">সূরা ফাতিহা বিশদ অনুশীলন</span>
                     <span class="lesson-dur">৪৫:০০</span>
                   </div>
                   <div class="lesson-item lesson-locked" onclick="showPaymentModal()">
-                    <span class="lesson-icon li-lock"><i class="fa-solid fa-lock"></i></span>
+                    <span class="lesson-icon li-lock"><i class="fas fa-lock"></i></span>
                     <span class="lesson-name">সূরা বাকারার প্রথম রুকু</span>
                     <span class="lesson-dur">৫২:১৫</span>
                   </div>
@@ -3997,29 +4096,29 @@
             <!-- Payment Modal -->
             <div id="payment-modal" class="modal-overlay hidden" onclick="closePaymentModal(event)">
               <div class="modal-box" style="max-width:460px">
-                <button class="modal-close" onclick="closePaymentModal()"><i class="fa-solid fa-xmark"></i></button>
+                <button class="modal-close" onclick="closePaymentModal()"><i class="fas fa-times"></i></button>
                 <div style="text-align:center;margin-bottom:20px">
-                  <div style="font-size:48px;margin-bottom:10px"><i class="fa-solid fa-lock" style="font-size:28px;color:#066144;"></i></div>
+                  <div style="font-size:48px;margin-bottom:10px"><i class="fas fa-lock"></i></div>
                   <h3 style="color:#fff;margin-bottom:8px" id="pm-locked-title">এই লেসনটি লকড</h3>
                   <p style="color:#888;font-size:14px">এই ভিডিওটি দেখতে লগইন করুন এবং কোর্সে এনরোল করুন।</p>
                 </div>
                 <div id="payment-login-required" class="">
                   <!-- কোর্স প্যাকেজ তথ্য -->
                   <div style="background:#111;border:1px solid #2a2a2a;border-radius:8px;padding:16px;margin-bottom:16px">
-                    <div style="font-family:var(--font-nav);font-size:11px;font-weight:700;color:var(--primary);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px"><i class="fa-solid fa-heart" style="color:var(--primary)"></i> কোর্স প্যাকেজ</div>
+                    <div style="font-family:var(--font-nav);font-size:11px;font-weight:700;color:var(--primary);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">🧡 কোর্স প্যাকেজ</div>
                     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
                       <span class="payment-course-name" style="color:#fff;font-size:14px;font-weight:700;line-height:1.4;flex:1;margin-right:10px">Quran Tajweed সম্পূর্ণ কোর্স</span>
                       <span class="payment-course-price" style="font-size:20px;font-weight:800;color:var(--primary);flex-shrink:0">৳১,২০০</span>
                     </div>
                     <div style="font-size:12px;color:#555;text-decoration:line-through" id="pm-old-price">নিয়মিত মূল্য: ৳২,৫০০</div>
-                    <div style="font-size:11px;color:#16a34a;margin-top:4px;font-weight:700" id="pm-discount-badge"><i class="fa-solid fa-circle-check" style="color:#16a34a"></i> ৫২% ছাড় — সীমিত সময়ের অফার!</div>
+                    <div style="font-size:11px;color:#16a34a;margin-top:4px;font-weight:700" id="pm-discount-badge"><i class="fas fa-check-circle"></i> ৫২% ছাড় — সীমিত সময়ের অফার!</div>
                   </div>
 
                   <div style="display:flex;flex-direction:column;gap:10px">
                     <!-- Step 1: Login check -->
                     <div id="payment-step1" class="">
                       <p style="font-size:13px;color:#888;text-align:center;margin-bottom:12px">পেমেন্ট করতে প্রথমে লগইন করুন</p>
-                      <button class="btn btn-primary btn-lg" style="width:100%" onclick="startPaymentFlow()"><i class="fa-solid fa-right-to-bracket"></i> লগইন করে পেমেন্ট করুন →</button>
+                      <button class="btn btn-primary btn-lg" style="width:100%" onclick="startPaymentFlow()"><i class="fas fa-user-lock"></i> লগইন করে পেমেন্ট করুন →</button>
                     </div>
 
                     <!-- Step 2: Payment method + details -->
@@ -4028,19 +4127,19 @@
                       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
                         <button onclick="selectPayment(this)" data-method="bKash"
                           class="pay-method-btn" style="padding:14px 8px;border:1.5px solid #333;border-radius:8px;background:#111;color:#aaa;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px">
-                          <span><i class="fa-solid fa-mobile-screen-button" style="font-size:18px;color:#E2136E"></i></span> bKash
+                          <span style="font-size:18px"><i class="fas fa-mobile-alt"></i></span> bKash
                         </button>
                         <button onclick="selectPayment(this)" data-method="Nagad"
                           class="pay-method-btn" style="padding:14px 8px;border:1.5px solid #333;border-radius:8px;background:#111;color:#aaa;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px">
-                          <span><i class="fa-solid fa-wallet" style="font-size:18px;color:#F05A28"></i></span> Nagad
+                          <span style="font-size:18px">💳</span> Nagad
                         </button>
                         <button onclick="selectPayment(this)" data-method="Rocket"
                           class="pay-method-btn" style="padding:14px 8px;border:1.5px solid #333;border-radius:8px;background:#111;color:#aaa;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px">
-                          <span><i class="fa-solid fa-building-columns" style="font-size:18px;color:#8B1FA8"></i></span> রকেট
+                          <span style="font-size:18px">🏦</span> রকেট
                         </button>
                         <button onclick="selectPayment(this)" data-method="Card"
                           class="pay-method-btn" style="padding:14px 8px;border:1.5px solid #333;border-radius:8px;background:#111;color:#aaa;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px">
-                          <span><i class="fa-solid fa-credit-card" style="font-size:18px"></i></span> কার্ড
+                          <span style="font-size:18px">💴</span> কার্ড
                         </button>
                       </div>
 
@@ -4070,10 +4169,10 @@
 
 </div>
 
-                      <button class="btn btn-primary btn-lg" style="width:100%;font-size:14px" onclick="confirmPayment()"><i class="fa-solid fa-circle-check"></i> পেমেন্ট নিশ্চিত করুন →</button>
+                      <button class="btn btn-primary btn-lg" style="width:100%;font-size:14px" onclick="confirmPayment()"><i class="fas fa-check-circle"></i> পেমেন্ট নিশ্চিত করুন →</button>
                     </div>
                   </div>
-                  <div style="margin-top:14px;font-size:11px;text-align:center;color:#555"><i class="fa-solid fa-shield-halved"></i> ৩০ দিনের মানি-ব্যাক গ্যারান্টি • নিরাপদ পেমেন্ট</div>
+                  <div style="margin-top:14px;font-size:11px;text-align:center;color:#555"><i class="fas fa-lock"></i> ৩০ দিনের মানি-ব্যাক গ্যারান্টি • নিরাপদ পেমেন্ট</div>
                 </div>
               </div>
             </div>
@@ -4085,31 +4184,40 @@
           </div>
           <div id="tab-instructor" class="tab-content">
             <div style="display:flex;gap:20px;align-items:flex-start;margin-bottom:20px">
-              <div class="instructor-avatar" style="width:72px;height:72px;font-size:32px;flex-shrink:0"><i class="fa-solid fa-graduation-cap" style="font-size:28px;color:#fff"></i></div>
+              <div class="instructor-avatar" style="width:72px;height:72px;font-size:32px;flex-shrink:0"><i class="fas fa-graduation-cap"></i></div>
               <div>
                 <div style="font-family:var(--font-heading);font-size:20px;font-weight:700;margin-bottom:4px" id="detail-instructor-name">শায়েখ আব্দুল্লাহ</div>
                 <div style="color:var(--text-mid);font-size:14px;margin-bottom:12px" id="detail-instructor-tagline">কুরআন ও তাজওয়িদ বিশেষজ্ঞ | তাফসির গবেষক</div>
-                <div style="display:flex;gap:20px;font-size:13.5px;color:var(--text-mid)" id="detail-instructor-stats"><span><i class="fa-solid fa-star" style="color:#F5C518"></i> ৪.৯ রেটিং</span><span><i class="fa-solid fa-users"></i> ১০,৫০০ শিক্ষার্থী</span><span><i class="fa-solid fa-book"></i> ২টি কোর্স</span></div>
+                <div style="display:flex;gap:20px;font-size:13.5px;color:var(--text-mid)" id="detail-instructor-stats"><span><i class="fas fa-star"></i> ৪.৯ রেটিং</span><span><i class="fas fa-users"></i> ১০,৫০০ শিক্ষার্থী</span><span><i class="fas fa-book"></i> ২টি কোর্স</span></div>
               </div>
             </div>
             <p style="font-size:14.5px;color:var(--text-mid);line-height:1.75" id="detail-instructor-bio">শায়েখ আব্দুল্লাহ বাংলাদেশের অন্যতম বিশিষ্ট কুরআন বিশেষজ্ঞ। মদিনা বিশ্ববিদ্যালয় থেকে কুরআনিক সায়েন্সে উচ্চতর ডিগ্রি অর্জনের পর বিশ বছরেরও বেশি সময় ধরে তাজওয়িদ ও তাফসির বিষয়ে শিক্ষকতা করে আসছেন। তাঁর তত্ত্বাবধানে দশ হাজারেরও বেশি শিক্ষার্থী কুরআন শুদ্ধভাবে পড়তে শিখেছেন।</p>
           </div>
         </div>
+
+          <!-- Certificate Preview -->
+          <div id="tab-certificate-preview" style="margin-top:36px;padding:28px;background:#fafaf8;border:1px solid var(--border);border-radius:var(--radius);text-align:center;">
+            <h3 style="font-family:var(--font-heading);font-size:18px;font-weight:700;margin-bottom:8px;color:var(--text-dark);"><i class="fas fa-certificate" style="color:var(--primary);margin-right:6px;"></i>কোর্স সম্পন্ন করলে পাবেন সার্টিফিকেট</h3>
+            <p style="font-size:13.5px;color:var(--text-mid);margin-bottom:18px;line-height:1.6;">সফলভাবে কোর্স সম্পন্ন করলে আপনি ইবনে খালদুন ইনস্টিটিউট থেকে একটি অফিশিয়াল সার্টিফিকেট পাবেন।</p>
+            <div style="max-width:520px;margin:0 auto;border-radius:8px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.12);border:1px solid #e0d9c8;">
+              <img src="images/certificate-sample.png" alt="ইবনে খালদুন ইনস্টিটিউট সার্টিফিকেট" style="width:100%;display:block;" loading="lazy" onerror="this.parentElement.parentElement.style.display='none'"/>
+            </div>
+          </div>
         <div class="detail-sidebar">
           <div class="sidebar-card">
             <div class="sidebar-preview" style="padding:0;overflow:hidden;position:relative">
               <img src="https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&h=220&fit=crop" id="sidebar-course-img" alt="Course Preview" style="width:100%;height:100%;object-fit:cover;display:block;" />
               <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.5));display:flex;align-items:flex-end;padding:12px">
-                <span id="sidebar-course-emoji" style="font-size:28px"><i class="fa-solid fa-book-open"></i></span>
+                <span id="sidebar-course-emoji" style="font-size:28px"><i class="fas fa-book-open"></i></span>
               </div>
             </div>
             <div class="sidebar-body">
               <ul class="course-stats-list">
-                <li><span class="cs-ic"><i class="fa-solid fa-user"></i></span><span class="cs-lb">শিক্ষার্থী</span><span class="cs-vl" id="cs-students">২৬৩</span></li>
-                <li><span class="cs-ic">⏱</span><span class="cs-lb">Video Lesson</span><span class="cs-vl" id="cs-videos">০০ : ৪৬ : ৪১</span></li>
-                <li><span class="cs-ic"><i class="fa-solid fa-gauge"></i></span><span class="cs-lb">লেভেল</span><span class="cs-vl" id="cs-level">Beginner</span></li>
-                <li><span class="cs-ic"><i class="fa-regular fa-calendar"></i></span><span class="cs-lb">মেয়াদকাল</span><span class="cs-vl" id="cs-duration">১ মাস</span></li>
-                <li><span class="cs-ic"><i class="fa-solid fa-graduation-cap"></i></span><span class="cs-lb">সার্টিফিকেট</span><span class="cs-vl" id="cs-cert">হ্যাঁ</span></li>
+                <li><span class="cs-ic"><i class="fas fa-user"></i></span><span class="cs-lb">শিক্ষার্থী</span><span class="cs-vl" id="cs-students">২৬৩</span></li>
+                <li><span class="cs-ic"><i class="fas fa-clock"></i></span><span class="cs-lb">Video Lesson</span><span class="cs-vl" id="cs-videos">০০ : ৪৬ : ৪১</span></li>
+                <li><span class="cs-ic"><i class="fas fa-signal"></i></span><span class="cs-lb">লেভেল</span><span class="cs-vl" id="cs-level">Beginner</span></li>
+                <li><span class="cs-ic"><i class="fas fa-calendar"></i></span><span class="cs-lb">মেয়াদকাল</span><span class="cs-vl" id="cs-duration">১ মাস</span></li>
+                <li><span class="cs-ic"><i class="fas fa-graduation-cap"></i></span><span class="cs-lb">সার্টিফিকেট</span><span class="cs-vl" id="cs-cert">হ্যাঁ</span></li>
               </ul>
               <div class="course-share-row">
                 <span class="cs-share-label">শেয়ার :</span>
@@ -4162,7 +4270,7 @@
     <div class="instructor-profile-body">
       <div class="container">
         <div class="instructor-profile-about" id="profile-about"></div>
-        <div class="instructor-courses-title"><i class="fa-solid fa-book"></i> এই ইন্সট্রাক্টরের কোর্সসমূহ</div>
+        <div class="instructor-courses-title"><i class="fas fa-book"></i> এই ইন্সট্রাক্টরের কোর্সসমূহ</div>
         <div class="courses-grid" id="profile-courses-grid" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr))"></div>
       </div>
     </div>
@@ -4174,22 +4282,22 @@
       <div class="dashboard-layout">
         <div class="dash-sidebar">
           <div class="dash-user">
-            <div class="dash-avatar"><i class="fa-solid fa-user" style="font-size:24px"></i></div>
+            <div class="dash-avatar"><i class="fas fa-user"></i></div>
             <div class="dash-username">Alex Student</div>
             <div class="dash-useremail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="543538312c143139353d387a373b39">[email&#160;protected]</a></div>
           </div>
           <div class="dash-nav">
-            <button class="dash-nav-item active"><i class="fa-solid fa-graduation-cap"></i> আমার শেখা</button>
-            <button class="dash-nav-item"><i class="fa-solid fa-trophy"></i> সার্টিফিকেট</button>
-            <button class="dash-nav-item"><i class="fa-solid fa-heart"></i> উইশলিস্ট</button>
-            <button class="dash-nav-item"><i class="fa-solid fa-gear"></i> সেটিংস</button>
-            <button class="dash-nav-item" onclick="navigate('about')"><i class="fa-solid fa-circle-info"></i> আমাদের সম্পর্কে</button>
-            <button class="dash-nav-item" onclick="navigate('contact')"><i class="fa-solid fa-phone"></i> যোগাযোগ</button>
-            <button class="dash-nav-item" style="color:#F5C518;margin-top:8px;border-top:1px solid var(--border);padding-top:14px" onclick="logoutAction()"><i class="fa-solid fa-right-from-bracket"></i> লগ আউট</button>
+            <button class="dash-nav-item active"><i class="fas fa-book"></i> আমার শেখা</button>
+            <button class="dash-nav-item"><i class="fas fa-trophy"></i> সার্টিফিকেট</button>
+            <button class="dash-nav-item">❤️ উইশলিস্ট</button>
+            <button class="dash-nav-item">⚙️ সেটিংস</button>
+            <button class="dash-nav-item" onclick="navigate('about')"><i class="fas fa-info-circle"></i> আমাদের সম্পর্কে</button>
+            <button class="dash-nav-item" onclick="navigate('contact')"><i class="fas fa-phone"></i> যোগাযোগ</button>
+            <button class="dash-nav-item" style="color:#F5C518;margin-top:8px;border-top:1px solid var(--border);padding-top:14px" onclick="logoutAction()"><i class="fas fa-sign-out-alt"></i> লগ আউট</button>
           </div>
         </div>
         <div class="dash-main">
-          <div class="dash-welcome"><h2>স্বাগতম, আলেক্স! <i class="fa-solid fa-hand-wave"></i></h2><p>আপনি টানা ৭ দিন শিখছেন। চালিয়ে যান!</p></div>
+          <div class="dash-welcome"><h2>স্বাগতম, আলেক্স! 👋</h2><p>আপনি টানা ৭ দিন শিখছেন। চালিয়ে যান!</p></div>
           <div class="dash-stats">
             <div class="dash-stat-card"><div class="dash-stat-num" id="stat-enrolled">০</div><div class="dash-stat-label">ভর্তি কোর্স</div></div>
             <div class="dash-stat-card"><div class="dash-stat-num" id="stat-completed">০</div><div class="dash-stat-label">সম্পন্ন</div></div>
@@ -4199,7 +4307,7 @@
           <div class="enrolled-list" id="dashboard-enrolled-list">
             <!-- Dynamically populated by renderDashboard() -->
             <div id="no-courses-msg" style="text-align:center;padding:48px 20px;color:var(--text-mid)">
-              <div style="font-size:48px;margin-bottom:16px"><i class="fa-solid fa-book fa-2x" style="color:var(--text-light)"></i></div>
+              <div style="font-size:48px;margin-bottom:16px"><i class="fas fa-book"></i></div>
               <div style="font-size:16px;font-weight:600;margin-bottom:8px">এখনো কোনো কোর্স কেনা হয়নি</div>
               <div style="font-size:14px;margin-bottom:20px">আপনার পছন্দের কোর্স কিনুন এবং শেখা শুরু করুন!</div>
               <button class="btn btn-primary" onclick="navigate('courses')">কোর্স দেখুন →</button>
@@ -4230,14 +4338,14 @@
           <div class="about-goals-grid">
             <div>
               <div class="feature-card" style="height:100%">
-                <div class="feature-icon" id="about-goal-icon-el"><i class="fa-solid fa-bullseye" style="font-size:24px"></i></div>
+                <div class="feature-icon" id="about-goal-icon-el"><i class="fas fa-bullseye"></i></div>
                 <div class="feature-title" id="about-goal-title-el">আমাদের লক্ষ্য</div>
                 <div class="feature-desc" id="about-goal-desc-el">বিশ্বের প্রতিটি মুসলিম পরিবারের কাছে মানসম্পন্ন ইসলামিক ও পেশাদার শিক্ষা পৌঁছে দেওয়া। আমরা বিশ্বাস করি জ্ঞান অর্জন প্রতিটি মুসলিমের জন্য ফরজ।</div>
               </div>
             </div>
             <div>
               <div class="feature-card" style="height:100%">
-                <div class="feature-icon" id="about-vision-icon-el"><i class="fa-solid fa-star" style="font-size:24px;color:#F5C518"></i></div>
+                <div class="feature-icon" id="about-vision-icon-el"><i class="fas fa-star"></i></div>
                 <div class="feature-title" id="about-vision-title-el">আমাদের দৃষ্টিভঙ্গি</div>
                 <div class="feature-desc" id="about-vision-desc-el">ইসলামিক মূল্যবোধের আলোকে আধুনিক প্রযুক্তি ও পেশাদার দক্ষতা অর্জনের সুযোগ তৈরি করা। আমরা ঐতিহ্য ও আধুনিকতার মেলবন্ধন ঘটাই।</div>
               </div>
@@ -4312,11 +4420,11 @@
             id="auth-logo-img"
             src="images/ইবনে খলদুন.png"
             alt="Ibn Khaldun Institute"
-            style="height:64px;width:auto;display:inline-block;object-fit:contain;"
+            style="height:48px;width:auto;display:inline-block;object-fit:contain;max-width:200px;"
             onerror="this.style.display='none'; document.getElementById('auth-logo-fallback').style.display='flex';"
           />
           <div id="auth-logo-fallback" style="display:none;justify-content:center;align-items:center;gap:8px;font-size:22px;">
-            <span style="width:28px;height:28px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;"><i class="fa-solid fa-graduation-cap"></i></span>
+            <span style="width:28px;height:28px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;"><i class="fas fa-graduation-cap"></i></span>
             Ibn Khaldun <span>Institute</span>
           </div>
         </div>
@@ -4345,7 +4453,7 @@
                 <input class="form-input" type="email" id="reg-email" placeholder="আপনার ইমেইল" style="flex:1;min-width:0" />
                 <button type="button" id="otp-send-btn" onclick="sendRegisterOTP()"
                   style="flex-shrink:0;white-space:nowrap;padding:10px 14px;background:var(--Green);color:#fff;border:none;border-radius:var(--radius);font-family:var(--font-nav);font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;gap:5px">
-                  <i class="fa-solid fa-envelope"></i>&nbsp;OTP পাঠান
+                  <span><i class="fas fa-envelope"></i></span>&nbsp;OTP পাঠান
                 </button>
               </div>
               <div id="otp-status" style="display:none;margin-top:6px;font-size:12px;font-weight:600;font-family:var(--font-nav)"></div>
@@ -4360,7 +4468,7 @@
                   style="flex:1;font-size:22px;font-weight:700;letter-spacing:10px;text-align:center;padding:10px 14px" />
                 <button type="button" onclick="verifyRegisterOTP()"
                   style="flex-shrink:0;padding:10px 16px;background:var(--primary);color:#1a1a1a;border:none;border-radius:var(--radius);font-family:var(--font-nav);font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer">
-                  <i class="fa-solid fa-check"></i> যাচাই
+                  ✔ যাচাই
                 </button>
               </div>
               <div style="display:flex;justify-content:space-between;margin-top:5px">
@@ -4388,14 +4496,14 @@
           <div class="footer-topbar-inner">
             <div class="footer-contact-items">
               <div class="footer-contact-item">
-                <div class="footer-contact-icon"><i class="fa-solid fa-phone"></i></div>
+                <div class="footer-contact-icon"><i class="fas fa-phone"></i></div>
                 <div>
                   <div class="footer-contact-label">কল করুন ২৪/৭</div>
                   <div class="footer-contact-value">+880 1700-000000</div>
                 </div>
               </div>
               <div class="footer-contact-item">
-                <div class="footer-contact-icon"><i class="fa-solid fa-envelope"></i></div>
+                <div class="footer-contact-icon">✉️</div>
                 <div>
                   <div class="footer-contact-label">ইমেইল করুন</div>
                   <div class="footer-contact-value"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="70191e161f3019121e1b18111c14051e5e131f1d">[email&#160;protected]</a></div>
@@ -4405,9 +4513,9 @@
                 <div class="footer-follow-label">ফলো করুন</div>
                 <div class="footer-follow-icons">
                   <a href="#" title="Facebook">f</a>
-                  <a href="#" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
-                  <a href="#" title="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
-                  <a href="#" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                  <a href="#" title="YouTube">▶</a>
+                  <a href="#" title="Twitter">𝕏</a>
+                  <a href="#" title="Instagram">◉</a>
                 </div>
               </div>
             </div>
@@ -4437,7 +4545,7 @@
                   onerror="this.style.display='none';document.getElementById('footer-logo-fallback').style.display='flex';"
                 />
                 <span id="footer-logo-fallback" style="display:none;align-items:center;gap:8px;">
-                  <span style="width:32px;height:32px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0"><i class="fa-solid fa-graduation-cap"></i></span>
+                  <span style="width:32px;height:32px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0"><i class="fas fa-graduation-cap"></i></span>
                   <span style="color:#fff;font-size:18px;font-weight:900;">Ibn Khaldun <span style="color:var(--primary)">Institute</span></span>
                 </span>
                 <input type="file" id="footer-logo-upload" accept="image/png,image/jpeg,image/svg+xml,image/webp"
@@ -4488,15 +4596,15 @@
             <div class="footer-col">
               <h4>ক্যাটাগরি</h4>
               <ul id="footer-categories-list">
-                <li><a href="#" onclick="navigate('courses'); return false;"><i class="fa-solid fa-book-quran"></i> কুরআন শিক্ষা</a></li>
-                <li><a href="#" onclick="navigate('courses'); return false;"><i class="fa-solid fa-bolt"></i> প্রোডাক্টিভিটি এবং লাইফ হ্যাকস</a></li>
-                <li><a href="#" onclick="navigate('courses'); return false;"><i class="fa-solid fa-people-group"></i> পারিবারিক জীবন</a></li>
-                <li><a href="#" onclick="navigate('courses'); return false;"><i class="fa-solid fa-scroll"></i> সীরাহ এবং ইতিহাস</a></li>
-                <li><a href="#" onclick="navigate('courses'); return false;"><i class="fa-solid fa-moon"></i> সুন্নাহ এবং লাইফস্টাইল</a></li>
-                <li><a href="#" onclick="navigate('courses'); return false;"><i class="fa-solid fa-scale-balanced"></i> ফিকাহ</a></li>
-                <li><a href="#" onclick="navigate('courses'); return false;"><i class="fa-solid fa-book"></i> হাদীস</a></li>
-                <li><a href="#" onclick="navigate('courses'); return false;"><i class="fa-solid fa-house-chimney"></i> হোমস্কুলিং এবং প্যারেন্টিং</a></li>
-                <li><a href="#" onclick="navigate('courses'); return false;"><i class="fa-solid fa-star-and-crescent"></i> ইসলামী বিশ্বাস ও মতবাদ</a></li>
+                <li><a href="#" onclick="navigate('courses'); return false;"><i class="fas fa-book-open"></i> কুরআন শিক্ষা</a></li>
+                <li><a href="#" onclick="navigate('courses'); return false;"><i class="fas fa-bolt"></i> প্রোডাক্টিভিটি এবং লাইফ হ্যাকস</a></li>
+                <li><a href="#" onclick="navigate('courses'); return false;"><i class="fas fa-users"></i> পারিবারিক জীবন</a></li>
+                <li><a href="#" onclick="navigate('courses'); return false;"><i class="fas fa-scroll"></i> সীরাহ এবং ইতিহাস</a></li>
+                <li><a href="#" onclick="navigate('courses'); return false;"><i class="fas fa-moon"></i> সুন্নাহ এবং লাইফস্টাইল</a></li>
+                <li><a href="#" onclick="navigate('courses'); return false;"><i class="fas fa-balance-scale"></i> ফিকাহ</a></li>
+                <li><a href="#" onclick="navigate('courses'); return false;"><i class="fas fa-book"></i> হাদীস</a></li>
+                <li><a href="#" onclick="navigate('courses'); return false;"><i class="fas fa-school"></i> হোমস্কুলিং এবং প্যারেন্টিং</a></li>
+                <li><a href="#" onclick="navigate('courses'); return false;"><i class="fas fa-star"></i> ইসলামী বিশ্বাস ও মতবাদ</a></li>
               </ul>
             </div>
           </div>
@@ -4512,12 +4620,12 @@
     </footer>
 
   <!-- Toast -->
-  <div class="toast" id="toast"><span id="toast-msg"><i class="fa-solid fa-circle-check"></i> Success!</span></div>
+  <div class="toast" id="toast"><span id="toast-msg"><i class="fas fa-check-circle"></i> Success!</span></div>
 
   <!-- Certificate Modal -->
   <div id="cert-modal" class="modal-overlay hidden" onclick="if(event.target===this)this.classList.add('hidden')">
     <div class="modal-box" style="max-width:700px;width:95%;background:#fff;border:none;padding:0;overflow:hidden">
-      <button class="modal-close" style="position:absolute;top:12px;right:16px;z-index:10;color:#333;font-size:24px" onclick="document.getElementById('cert-modal').classList.add('hidden')"><i class="fa-solid fa-xmark"></i></button>
+      <button class="modal-close" style="position:absolute;top:12px;right:16px;z-index:10;color:#333;font-size:24px" onclick="document.getElementById('cert-modal').classList.add('hidden')"><i class="fas fa-times"></i></button>
       <div id="cert-canvas-wrap" style="position:relative;width:100%;min-height:200px">
         <div id="cert-loading" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#f0f0f0;z-index:2;">
           <span style="font-size:16px;color:#555;">সার্টিফিকেট লোড হচ্ছে...</span>
@@ -4525,7 +4633,7 @@
         <canvas id="cert-canvas" style="width:100%;display:block;position:relative;z-index:1"></canvas>
       </div>
       <div style="padding:16px;display:flex;gap:10px;justify-content:center;background:#f5f5f5;border-top:1px solid #ddd">
-        <button class="btn btn-primary btn-lg" onclick="downloadCertificate()"><i class="fa-solid fa-download"></i> সার্টিফিকেট ডাউনলোড করুন</button>
+        <button class="btn btn-primary btn-lg" onclick="downloadCertificate()"><i class="fas fa-download"></i> সার্টিফিকেট ডাউনলোড করুন</button>
         <button class="btn btn-ghost" style="color:#333;border-color:#ccc" onclick="document.getElementById('cert-modal').classList.add('hidden')">বন্ধ করুন</button>
       </div>
     </div>
@@ -4648,6 +4756,13 @@
         setActivePublicNav(page);
       } else {
         document.querySelectorAll('.nav-links a, .mobile-nav a').forEach(function(a){ a.classList.remove('active'); });
+        // Mobile nav active state
+        var mobileNavLinks = document.querySelectorAll('.mobile-nav a');
+        mobileNavLinks.forEach(function(a) {
+          var txt = a.textContent.trim().toLowerCase();
+          var pageMap = {'home':'হোম','courses':'ক্যাটাগরি','instructors':'ইন্সট্রাক্টর','blog':'ব্লগ','about':'আমাদের সম্পর্কে','contact':'যোগাযোগ'};
+          if (pageMap[page] && txt.indexOf(pageMap[page]) !== -1) a.classList.add('active');
+        });
         var navEl1 = document.getElementById('nav-' + page);
         if (navEl1) navEl1.classList.add('active');
       }
@@ -4675,7 +4790,7 @@
 
     function navigateHomeTop() {
       navigate('home');
-      setTimeout(function() { window.scrollTo(0, 0); }, 30);
+      window.scrollTo({top:0, behavior:'instant'});
       return false;
     }
 
@@ -4772,16 +4887,16 @@
       return `<div class="course-card" data-cat="${catVal}" data-subcat="${subCatVal}" data-tab="${tabVal}" data-course-id="${slug}">
         <div class="course-thumb">
           <img src="${img}" alt="${c.title}" loading="lazy"/>
-          ${c.featured ? '<div class="badge-bestseller"><i class="fa-solid fa-fire"></i> সেরা</div>' : ''}
+          ${c.featured ? '<div class="badge-bestseller"><i class="fas fa-fire"></i> সেরা</div>' : ''}
           <div class="thumb-overlay"><span class="thumb-overlay-text">কোর্সটি দেখুন</span></div>
         </div>
         <div class="card-body">
           <div class="card-rating-row">
-            <span class="card-stars"><i class=\"fa-solid fa-star\" style=\"color:#F5C518\"></i><//span>
-            <span class="card-students"><i class="fa-solid fa-users"></i> ${c.students||0}</span>
+            <span class="card-stars">${'<i class="fas fa-star"></i>'.repeat(Math.round(c.rating||4.5))}${'☆'.repeat(5-Math.round(c.rating||4.5))}</span>
+            <span class="card-students"><i class="fas fa-users"></i> ${c.students||0}</span>
           </div>
           <div class="card-title">${c.title}</div>
-          <div class="card-instructor"><i class="fa-solid fa-graduation-cap"></i> ${c.instructor||''} ${c.duration ? '• ' + c.duration : ''}</div>
+          <div class="card-instructor"><i class="fas fa-graduation-cap"></i> ${c.instructor||''} ${c.duration ? '• ' + c.duration : ''}</div>
         </div>
         <div class="card-footer-mobe">
           <div class="vacation-points">ক্যাটাগরি: <strong>${catVal}</strong></div>
@@ -4891,7 +5006,7 @@
       if (!container) return;
 
       if (!filtered.length) {
-        container.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px 0;color:var(--text-mid)"><div style="font-size:48px;margin-bottom:12px"><i class="fa-solid fa-magnifying-glass"></i></div><div>এই ক্যাটাগরিতে কোনো কোর্স নেই</div></div>';
+        container.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px 0;color:var(--text-mid)"><div style="font-size:48px;margin-bottom:12px">🔍</div><div>এই ক্যাটাগরিতে কোনো কোর্স নেই</div></div>';
         if (countEl) countEl.textContent = '০টি কোর্স পাওয়া গেছে';
         return;
       }
@@ -4945,7 +5060,7 @@
         if (otpInput) otpInput.value = '';
         if (timerEl) timerEl.textContent = '';
         if (resendBtn) resendBtn.style.display = 'none';
-        if (sendBtn) { sendBtn.disabled = false; sendBtn.style.background = 'var(--Green)'; sendBtn.innerHTML = '<i class="fa-solid fa-envelope"></i>&nbsp;OTP পাঠান'; }
+        if (sendBtn) { sendBtn.disabled = false; sendBtn.style.background = 'var(--Green)'; sendBtn.innerHTML = '<span><i class="fas fa-envelope"></i></span>&nbsp;OTP পাঠান'; }
         if (emailInput) { emailInput.readOnly = false; emailInput.value = ''; }
       }
     }
@@ -5053,7 +5168,7 @@
             level: apiCourse.level || 'সকলের জন্য',
             language: apiCourse.language || 'বাংলা',
             tags: apiCourse.tags || [],
-            emoji: '<i class="fa-solid fa-book"></i>',
+            emoji: '<i class="fas fa-book"></i>',
             gradient: 'linear-gradient(135deg,#1a1a2e,#16213e)',
             learns: [],
             certDesc: [],
@@ -5085,7 +5200,7 @@
           if (c2) { openCourseDetail(courseId); clearInterval(retryTimer); return; }
           if (retryCount >= 10) {
             clearInterval(retryTimer);
-            showToast('<i class="fa-solid fa-triangle-exclamation"></i> কোর্স লোড হয়নি, পুনরায় চেষ্টা করুন।');
+            showToast('⚠️ কোর্স লোড হয়নি, পুনরায় চেষ্টা করুন।');
           }
         }, 500);
         return;
@@ -5111,7 +5226,7 @@
         // API desc বা hardcoded desc যেটাই থাকুক
         var courseDesc = course.description || course.desc || '';
         var learnItems = (course.learns || []).map(function(l) {
-          return '<li style="margin-bottom:6px"><i class="fa-solid fa-circle-check" style="color:#16a34a"></i> ' + l + '</li>';
+          return '<li style="margin-bottom:6px"><i class="fas fa-check-circle"></i> ' + l + '</li>';
         }).join('');
         if (courseDesc || learnItems) {
           descEl.innerHTML =
@@ -5156,10 +5271,10 @@
             'onclick="openInstructorProfile(\'' + course.instructorId + '\')" ' +
             'onmouseover="this.style.color=\'var(--primary)\'" onmouseout="this.style.color=\'var(--text-dark)\'">' + instData.name + '</div>' +
             '<div style="color:var(--text-mid);font-size:13px;margin-bottom:12px">' + instData.tagline + '</div>' +
-            '<div style="display:flex;gap:20px;font-size:13.5px;color:var(--text-mid)"><span><i class="fa-solid fa-star" style="color:#F5C518"></i> ' + instData.rating + ' রেটিং</span><span><i class="fa-solid fa-users"></i> ' + instData.students + ' শিক্ষার্থী</span><span><i class="fa-solid fa-book"></i> ' + instData.courses.length + 'টি কোর্স</span></div>' +
+            '<div style="display:flex;gap:20px;font-size:13.5px;color:var(--text-mid)"><span><i class="fas fa-star"></i> ' + instData.rating + ' রেটিং</span><span><i class="fas fa-users"></i> ' + instData.students + ' শিক্ষার্থী</span><span><i class="fas fa-book"></i> ' + instData.courses.length + 'টি কোর্স</span></div>' +
             '</div></div>' +
             '<p style="font-size:14.5px;color:var(--text-mid);line-height:1.75">' + instData.bio + '</p>' +
-            '<div style="margin-top:14px"><button class="btn btn-outline" style="font-size:12px;padding:8px 20px" onclick="openInstructorProfile(\'' + course.instructorId + '\')"><i class="fa-solid fa-user"></i> সম্পূর্ণ প্রোফাইল দেখুন →</button></div>';
+            '<div style="margin-top:14px"><button class="btn btn-outline" style="font-size:12px;padding:8px 20px" onclick="openInstructorProfile(\'' + course.instructorId + '\')"><i class="fas fa-user"></i> সম্পূর্ণ প্রোফা  �ল দেখুন →</button></div>';
         }
       }
 
@@ -5216,7 +5331,7 @@
       // API thumbnail কে অগ্রাধিকার দিই, না থাকলে hardcoded COURSE_IMAGES ব্যবহার করি
       var thumbUrl = (c && (c.thumbnail || c.img)) || COURSE_IMAGES[currentCourseId];
       if (img && thumbUrl) img.src = thumbUrl;
-      if (emoji && c) emoji.innerHTML = c.emoji || '<i class="fa-solid fa-book"></i>';
+      if (emoji && c) emoji.textContent = c.emoji || '<i class="fas fa-book"></i>';
     }
 
     // Render dynamic curriculum with lock/unlock
@@ -5232,7 +5347,7 @@
 
       if (isUnlocked) {
         var iconClass = isDone ? 'li-done' : 'li-play';
-        var iconChar  = isDone ? '<i class="fa-solid fa-check"></i>' : '<i class="fa-solid fa-play"></i>';
+        var iconChar  = isDone ? '✓' : '▶';
         var freeTag   = (lesson.free || lesson.isFree) && !enrolled
           ? '<span style="color:var(--primary);font-size:11px;margin-left:6px;font-family:var(--font-nav);font-weight:700">বিনামূল্যে</span>' : '';
         var clickFn   = 'playLessonVideoById(\'' + lesson.id + '\',\'' + lesson.title.replace(/'/g,'') + '\',\'' + dur + '\',\'' + (lesson.videoId||'') + '\',\'' + courseId + '\')';
@@ -5240,7 +5355,7 @@
           '<div class="curriculum-thumb" onclick="event.stopPropagation();' + clickFn + '" style="position:relative;width:96px;min-width:96px;height:56px;border-radius:6px;overflow:hidden;cursor:pointer;flex-shrink:0;border:2px solid transparent;transition:border-color 0.2s" onmouseover="this.style.borderColor=\'var(--primary)\'" onmouseout="this.style.borderColor=\'transparent\'">' +
             '<img src="' + thumb + '" alt="' + lesson.title + '" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.src=\'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=200&h=112&fit=crop\'" />' +
             '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.38);display:flex;align-items:center;justify-content:center">' +
-              '<div style="width:26px;height:26px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#111;padding-left:2px;box-shadow:0 2px 8px rgba(245,197,24,0.5)"><i class="fa-solid fa-play"></i></div>' +
+              '<div style="width:26px;height:26px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#111;padding-left:2px;box-shadow:0 2px 8px rgba(245,197,24,0.5)">▶</div>' +
             '</div>' +
             '<div style="position:absolute;bottom:4px;right:5px;background:rgba(0,0,0,0.75);color:#fff;font-size:9px;font-family:var(--font-nav);font-weight:700;padding:1px 5px;border-radius:3px">' + dur + '</div>' +
           '</div>' +
@@ -5250,9 +5365,9 @@
               '<span class="lesson-name" style="font-size:13.5px;font-weight:600;line-height:1.4">' + lesson.title + freeTag + '</span>' +
             '</div>' +
             '<div style="display:flex;align-items:center;gap:12px;font-size:11px;color:var(--text-light);font-family:var(--font-nav)">' +
-              '<span><i class="fa-solid fa-film"></i> ভিডিও লেসন</span>' +
-              '<span>⏱ ' + dur + '</span>' +
-              (isDone ? '<span style="color:#16a34a;font-weight:700"><i class="fa-solid fa-circle-check"></i> সম্পন্ন</span>' : '') +
+              '<span>🎬 ভিডিও লেসন</span>' +
+              '<span><i class="fas fa-clock"></i> ' + dur + '</span>' +
+              (isDone ? '<span style="color:#16a34a;font-weight:700"><i class="fas fa-check-circle"></i> সম্পন্ন</span>' : '') +
             '</div>' +
           '</div></div>';
       } else {
@@ -5260,17 +5375,17 @@
           '<div style="position:relative;width:96px;min-width:96px;height:56px;border-radius:6px;overflow:hidden;flex-shrink:0;cursor:pointer">' +
             '<img src="' + thumb + '" alt="locked" style="width:100%;height:100%;object-fit:cover;display:block;filter:blur(3px) brightness(0.5)" onerror="this.src=\'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=200&h=112&fit=crop\'" />' +
             '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center">' +
-              '<div style="width:26px;height:26px;background:#444;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px"><i class="fa-solid fa-lock" style="font-size:28px;color:#066144;"></i></div>' +
+              '<div style="width:26px;height:26px;background:#444;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px"><i class="fas fa-lock"></i></div>' +
             '</div>' +
           '</div>' +
           '<div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;padding-top:2px">' +
             '<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">' +
-              '<span class="lesson-icon li-lock" style="flex-shrink:0"><i class="fa-solid fa-lock"></i></span>' +
+              '<span class="lesson-icon li-lock" style="flex-shrink:0"><i class="fas fa-lock"></i></span>' +
               '<span class="lesson-name" style="font-size:13.5px;font-weight:600;line-height:1.4;color:var(--text-mid)">' + lesson.title + '</span>' +
             '</div>' +
             '<div style="display:flex;align-items:center;gap:12px;font-size:11px;color:var(--text-light);font-family:var(--font-nav)">' +
-              '<span><i class="fa-solid fa-film"></i> ভিডিও লেসন</span>' +
-              '<span>⏱ ' + dur + '</span>' +
+              '<span>🎬 ভিডিও লেসন</span>' +
+              '<span><i class="fas fa-clock"></i> ' + dur + '</span>' +
               '<span style="color:var(--primary);font-weight:700;cursor:pointer">কিনুন →</span>' +
             '</div>' +
           '</div></div>';
@@ -5413,7 +5528,7 @@
       var passInput  = document.querySelector('#auth-login .form-input[type="password"]');
       var email = emailInput ? emailInput.value.trim() : '';
       var pass  = passInput  ? passInput.value.trim()  : '';
-      if (!email || !pass) { showToast('<i class="fa-solid fa-triangle-exclamation"></i> ইমেইল ও পাসওয়ার্ড দিন'); return; }
+      if (!email || !pass) { showToast('⚠️ ইমেইল ও পাসওয়ার্ড দিন'); return; }
 
       var btn = document.querySelector('#auth-login .btn-primary');
       if (btn) { btn.disabled = true; btn.textContent = 'লগইন হচ্ছে...'; }
@@ -5425,12 +5540,12 @@
         body: JSON.stringify({ email: email, password: pass })
       }).then(function(r) { return r.json(); }).then(function(data) {
         if (btn) { btn.disabled = false; btn.textContent = 'লগইন করুন →'; }
-        if (data.error) { showToast('<i class="fa-solid fa-circle-xmark"></i> ' + data.error); return; }
+        if (data.error) { showToast('❌ ' + data.error); return; }
         currentUser = data.user || data;
         lsSet('userToken', data.token);
         lsSet('currentUser', currentUser);
         lsSet('currentUserEmail', email);
-        showToast('<i class="fa-solid fa-hand-wave"></i> স্বাগতম ' + (currentUser.name || '') + '!');
+        showToast('👋 স্বাগতম ' + (currentUser.name || '') + '!');
         setTimeout(function() {
           setLoginState(true);
           updateLessonAccess();
@@ -5442,11 +5557,11 @@
         // Fallback to localStorage
         var users = lsGet('registeredUsers', []);
         var user = users.find(function(u) { return u.email === email && u.pass === pass; });
-        if (!user) { showToast('<i class="fa-solid fa-circle-xmark"></i> ইমেইল বা পাসওয়ার্ড সঠিক নয়।'); return; }
+        if (!user) { showToast('❌ ইমেইল বা পাসওয়ার্ড সঠিক নয়।'); return; }
         currentUser = user;
         lsSet('currentUser', user);
         lsSet('currentUserEmail', email);
-        showToast('<i class="fa-solid fa-hand-wave"></i> স্বাগতম ' + user.name + '!');
+        showToast('👋 স্বাগতম ' + user.name + '!');
         setTimeout(function() { setLoginState(true); updateLessonAccess(); renderDashboard(); navigate('dashboard'); }, 800);
       });
     }
@@ -5456,7 +5571,7 @@
       var email = (document.getElementById('reg-email') || {}).value;
       if (!email) email = '';
       email = email.trim();
-      if (!email || !email.includes('@')) { showToast('<i class="fa-solid fa-triangle-exclamation"></i> আগে সঠিক ইমেইল লিখুন'); return; }
+      if (!email || !email.includes('@')) { showToast('⚠️ আগে সঠিক ইমেইল লিখুন'); return; }
 
       var btn = document.getElementById('otp-send-btn');
       var statusEl = document.getElementById('otp-status');
@@ -5471,15 +5586,15 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email })
       }).then(function(r) { return r.json(); }).then(function(data) {
-        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-envelope"></i>&nbsp;আবার পাঠান'; }
+        if (btn) { btn.disabled = false; btn.innerHTML = '<span><i class="fas fa-envelope"></i></span>&nbsp;আবার পাঠান'; }
         if (data.error) {
-          showToast('<i class="fa-solid fa-circle-xmark"></i> ' + data.error);
-          if (statusEl) { statusEl.style.display = 'block'; statusEl.style.color = '#e74c3c'; statusEl.textContent = '<i class="fa-solid fa-circle-xmark"></i> ' + data.error; }
+          showToast('❌ ' + data.error);
+          if (statusEl) { statusEl.style.display = 'block'; statusEl.style.color = '#e74c3c'; statusEl.textContent = '❌ ' + data.error; }
           return;
         }
-        showToast('<i class="fa-solid fa-envelope"></i> OTP পাঠানো হয়েছে! ইমেইল চেক করুন');
+        showToast('<i class="fas fa-envelope"></i> OTP পাঠানো হয়েছে! ইমেইল চেক করুন');
         if (inputGroup) inputGroup.style.display = 'block';
-        if (statusEl) { statusEl.style.display = 'block'; statusEl.style.color = '#066144'; statusEl.textContent = '[OK] ' + email + '-এ OTP পাঠানো হয়েছে'; }
+        if (statusEl) { statusEl.style.display = 'block'; statusEl.style.color = '#066144'; statusEl.textContent = '<i class="fas fa-check-circle"></i> ' + email + '-এ OTP পাঠানো হয়েছে'; }
         _otpEmailVerified = false;
         // ১০ মিনিট কাউন্টডাউন
         if (_otpTimerInterval) clearInterval(_otpTimerInterval);
@@ -5498,8 +5613,8 @@
           }
         }, 1000);
       }).catch(function(err) {
-        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-envelope"></i>&nbsp;OTP পাঠান'; }
-        showToast('<i class="fa-solid fa-circle-xmark"></i> সার্ভারে সমস্যা হয়েছে');
+        if (btn) { btn.disabled = false; btn.innerHTML = '<span><i class="fas fa-envelope"></i></span>&nbsp;OTP পাঠান'; }
+        showToast('❌ সার্ভারে সমস্যা হয়েছে');
       });
     }
 
@@ -5510,7 +5625,7 @@
       var otp = (document.getElementById('reg-otp') || {}).value;
       if (!otp) otp = '';
       otp = otp.trim();
-      if (!otp || otp.length !== 4) { showToast('<i class="fa-solid fa-triangle-exclamation"></i> ৪ সংখ্যার OTP লিখুন'); return; }
+      if (!otp || otp.length !== 4) { showToast('⚠️ ৪ সংখ্যার OTP লিখুন'); return; }
 
       var statusEl = document.getElementById('otp-status');
       fetch(API_BASE + '/api/user/verify-otp', {
@@ -5519,21 +5634,21 @@
         body: JSON.stringify({ email: email, otp: otp })
       }).then(function(r) { return r.json(); }).then(function(data) {
         if (data.error) {
-          showToast('<i class="fa-solid fa-circle-xmark"></i> ' + data.error);
-          if (statusEl) { statusEl.style.display = 'block'; statusEl.style.color = '#e74c3c'; statusEl.textContent = '<i class="fa-solid fa-circle-xmark"></i> ' + data.error; }
+          showToast('❌ ' + data.error);
+          if (statusEl) { statusEl.style.display = 'block'; statusEl.style.color = '#e74c3c'; statusEl.textContent = '❌ ' + data.error; }
           return;
         }
         _otpEmailVerified = true;
         if (_otpTimerInterval) clearInterval(_otpTimerInterval);
-        showToast('<i class="fa-solid fa-circle-check"></i> ইমেইল যাচাই সফল!');
-        if (statusEl) { statusEl.style.display = 'block'; statusEl.style.color = '#066144'; statusEl.textContent = 'ইমেইল সফলভাবে যাচাই হয়েছে'; }
+        showToast('<i class="fas fa-check-circle"></i> ইমেইল যাচাই সফল!');
+        if (statusEl) { statusEl.style.display = 'block'; statusEl.style.color = '#066144'; statusEl.textContent = '<i class="fas fa-check-circle"></i> ইমেইল সফলভাবে যাচাই হয়েছে'; }
         var inputGroup = document.getElementById('otp-input-group');
         if (inputGroup) inputGroup.style.display = 'none';
         var sendBtn = document.getElementById('otp-send-btn');
-        if (sendBtn) { sendBtn.disabled = true; sendBtn.style.background = '#27ae60'; sendBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> যাচাই হয়েছে'; }
+        if (sendBtn) { sendBtn.disabled = true; sendBtn.style.background = '#27ae60'; sendBtn.innerHTML = '<i class="fas fa-check-circle"></i> যাচাই হয়েছে'; }
         var emailInput = document.getElementById('reg-email');
         if (emailInput) emailInput.readOnly = true;
-      }).catch(function() { showToast('<i class="fa-solid fa-circle-xmark"></i> সার্ভারে সমস্যা হয়েছে'); });
+      }).catch(function() { showToast('❌ সার্ভারে সমস্যা হয়েছে'); });
     }
 
     function registerAction() {
@@ -5543,11 +5658,11 @@
       var conf  = (document.getElementById('reg-pass-confirm') || {}).value || '';
       name = name.trim(); email = email.trim(); pass = pass.trim(); conf = conf.trim();
 
-      if (!name)  { showToast('<i class="fa-solid fa-triangle-exclamation"></i> আপনার নাম লিখুন'); return; }
-      if (!email || !email.includes('@')) { showToast('<i class="fa-solid fa-triangle-exclamation"></i> সঠিক ইমেইল দিন'); return; }
-      if (!_otpEmailVerified) { showToast('<i class="fa-solid fa-triangle-exclamation"></i> আগে OTP দিয়ে ইমেইল যাচাই করুন'); return; }
-      if (pass.length < 6) { showToast('<i class="fa-solid fa-triangle-exclamation"></i> পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে'); return; }
-      if (pass !== conf) { showToast('<i class="fa-solid fa-triangle-exclamation"></i> পাসওয়ার্ড মিলছে না'); return; }
+      if (!name)  { showToast('⚠️ আপনার নাম লিখুন'); return; }
+      if (!email || !email.includes('@')) { showToast('⚠️ সঠিক ইমেইল দিন'); return; }
+      if (!_otpEmailVerified) { showToast('⚠️ আগে OTP দিয়ে ইমেইল যাচাই করুন'); return; }
+      if (pass.length < 6) { showToast('⚠️ পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে'); return; }
+      if (pass !== conf) { showToast('⚠️ পাসওয়ার্ড মিলছে না'); return; }
 
       var btn = document.querySelector('#auth-register .btn-primary');
       if (btn) { btn.disabled = true; btn.textContent = 'তৈরি হচ্ছে...'; }
@@ -5559,24 +5674,24 @@
         body: JSON.stringify({ name: name, email: email, password: pass })
       }).then(function(r) { return r.json(); }).then(function(data) {
         if (btn) { btn.disabled = false; btn.textContent = 'একাউন্ট তৈরি করুন →'; }
-        if (data.error) { showToast('<i class="fa-solid fa-triangle-exclamation"></i> ' + data.error); return; }
+        if (data.error) { showToast('⚠️ ' + data.error); return; }
         currentUser = data.user || { name: name, email: email, enrolledCourses: [] };
         lsSet('userToken', data.token);
         lsSet('currentUser', currentUser);
         lsSet('currentUserEmail', email);
-        showToast('<i class="fa-solid fa-party-horn"></i> অ্যাকাউন্ট তৈরি হয়েছে! স্বাগতম ' + name + '!');
+        showToast('🎉 অ্যাকাউন্ট তৈরি হয়েছে! স্বাগতম ' + name + '!');
         setTimeout(function() { setLoginState(true); renderDashboard(); navigate('dashboard'); }, 800);
       }).catch(function() {
         if (btn) { btn.disabled = false; btn.textContent = 'একাউন্ট তৈরি করুন →'; }
         // Fallback
         var users = lsGet('registeredUsers', []);
-        if (users.find(function(u) { return u.email === email; })) { showToast('<i class="fa-solid fa-triangle-exclamation"></i> এই ইমেইলে ইতিমধ্যে অ্যাকাউন্ট আছে'); return; }
+        if (users.find(function(u) { return u.email === email; })) { showToast('⚠️ এই ইমেইলে ইতিমধ্যে অ্যাকাউন্ট আছে'); return; }
         var newUser = { name: name, email: email, pass: pass, enrolledCourses: [] };
         users.push(newUser); lsSet('registeredUsers', users);
         currentUser = newUser;
         lsSet('currentUser', newUser);
         lsSet('currentUserEmail', email);
-        showToast('<i class="fa-solid fa-party-horn"></i> অ্যাকাউন্ট তৈরি হয়েছে!');
+        showToast('🎉 অ্যাকাউন্ট তৈরি হয়েছে!');
         setTimeout(function() { setLoginState(true); renderDashboard(); navigate('dashboard'); }, 800);
       });
     }
@@ -5588,7 +5703,7 @@
       lsSet('userToken', null);
       lsSet('currentUser', null);
       setLoginState(false);
-      showToast('<i class="fa-solid fa-hand-wave"></i> লগআউট সফল!');
+      showToast('👋 লগআউট সফল!');
       setTimeout(function() { navigate('home'); }, 800);
     }
 
@@ -5598,7 +5713,7 @@
     function renderDashboard() {
       if (!currentUser) return;
       var wel = document.querySelector('.dash-welcome h2');
-      if (wel) wel.textContent = 'স্বাগতম, ' + currentUser.name + '!';
+      if (wel) wel.textContent = 'স্বাগতম, ' + currentUser.name + '! 👋';
       var usernameEl  = document.querySelector('.dash-username');
       var useremailEl = document.querySelector('.dash-useremail');
       if (usernameEl)  usernameEl.textContent  = currentUser.name;
@@ -5643,7 +5758,7 @@
             '<div class="enrolled-thumb" style="background:' + (c.gradient||'#1a1a1a') + ';overflow:hidden;padding:0">' +
               (thumb
                 ? '<img src="' + thumb + '" alt="' + title + '" style="width:100%;height:100%;object-fit:cover;display:block"/>'
-                : '<span>' + (c.emoji || '<i class="fa-solid fa-book"></i>') + '</span>') +
+                : '<span>' + (c.emoji || '<i class="fas fa-book"></i>') + '</span>') +
             '</div>' +
             '<div class="enrolled-info">' +
               '<div class="enrolled-title">' + title + '</div>' +
@@ -5655,7 +5770,7 @@
             '</div>' +
             '<div class="enrolled-actions">' +
               (pct >= 100
-                ? '<button class="btn btn-primary" onclick="showCertificate(\'' + cid + '\')"><i class="fa-solid fa-trophy"></i> সার্টিফিকেট →</button>'
+                ? '<button class="btn btn-primary" onclick="showCertificate(\'' + cid + '\')"><i class="fas fa-trophy"></i> সার্টিফিকেট →</button>'
                 : '<button class="btn btn-primary" onclick="continueLearning(\'' + cid + '\')">শেখা চালিয়ে যান →</button>') +
             '</div>';
           list.insertBefore(card, noMsg);
@@ -5698,10 +5813,10 @@
       if (!btn) return;
       var cid = currentCourseId;
       if (isLoggedIn && isEnrolled(cid)) {
-        btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> কোর্সে এনরোল হয়েছে';
+        btn.textContent = '<i class="fas fa-check-circle"></i> কোর্সে এনরোল হয়েছে';
         btn.disabled = true; btn.style.opacity = '0.7'; btn.onclick = null;
       } else if (!isLoggedIn) {
-        btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> লগইন করে এনরোল করুন';
+        btn.textContent = '<i class="fas fa-user-lock"></i> লগইন করে এনরোল করুন';
         btn.disabled = false; btn.style.opacity = '1';
         btn.onclick = function() { navigate('auth'); };
       } else {
@@ -5732,8 +5847,8 @@
     // PAYMENT MODAL
     // ===========================
     function showPaymentModal() {
-      if (!isLoggedIn) { showToast('<i class="fa-solid fa-lock"></i> প্রথমে লগইন করুন...'); setTimeout(() => navigate('auth'), 1200); return; }
-      if (isEnrolled(currentCourseId)) { showToast('<i class="fa-solid fa-circle-check"></i> আপনি এই কোর্সে ইতিমধ্যে এনরোল হয়েছেন'); return; }
+      if (!isLoggedIn) { showToast('<i class="fas fa-user-lock"></i> প্রথমে লগইন করুন...'); setTimeout(() => navigate('auth'), 1200); return; }
+      if (isEnrolled(currentCourseId)) { showToast('<i class="fas fa-check-circle"></i> আপনি এই কোর্সে ইতিমধ্যে এনরোল হয়েছেন'); return; }
       var modal = document.getElementById('payment-modal');
       if (!modal) return;
       modal.classList.remove('hidden');
@@ -5749,7 +5864,7 @@
         var oldPriceEl = document.getElementById('pm-old-price');
         if (oldPriceEl && c.originalPrice) oldPriceEl.textContent = 'নিয়মিত মূল্য: ৳' + c.originalPrice;
         var discEl = document.getElementById('pm-discount-badge');
-        if (discEl && c.discount) discEl.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + c.discount + '% ছাড় — সীমিত সময়ের অফার!';
+        if (discEl && c.discount) discEl.textContent = '<i class="fas fa-check-circle"></i> ' + c.discount + '% ছাড় — সীমিত সময়ের অফার!';
       }
     }
     function closePaymentModal(e) {
@@ -5759,7 +5874,7 @@
       modal.classList.add('hidden');
     }
     function startPaymentFlow() {
-      if (!isLoggedIn) { document.getElementById('payment-modal').classList.add('hidden'); showToast('<i class="fa-solid fa-lock"></i> প্রথমে লগইন করুন...'); setTimeout(() => navigate('auth'), 1200); return; }
+      if (!isLoggedIn) { document.getElementById('payment-modal').classList.add('hidden'); showToast('<i class="fas fa-user-lock"></i> প্রথমে লগইন করুন...'); setTimeout(() => navigate('auth'), 1200); return; }
       document.getElementById('payment-step1').classList.add('hidden');
       document.getElementById('payment-step2').classList.remove('hidden');
     }
@@ -5781,8 +5896,8 @@
       document.querySelectorAll('.pay-method-btn').forEach(function(b) {
         if (b.classList.contains('selected')) method = b.dataset.method || b.textContent.trim();
       });
-      if (!phone || !trx) { showToast('<i class="fa-solid fa-triangle-exclamation"></i> নম্বর ও Transaction ID দিন'); return; }
-      if (!method) { showToast('<i class="fa-solid fa-triangle-exclamation"></i> পেমেন্ট পদ্ধতি বেছে নিন'); return; }
+      if (!phone || !trx) { showToast('⚠️ নম্বর ও Transaction ID দিন'); return; }
+      if (!method) { showToast('⚠️ পেমেন্ট পদ্ধতি বেছে নিন'); return; }
 
       document.getElementById('payment-modal').classList.add('hidden');
 
@@ -5805,16 +5920,16 @@
           })
         }).then(r => r.json()).then(function(data) {
           if (data.error) {
-            showToast('<i class="fa-solid fa-triangle-exclamation"></i> ' + data.error);
+            showToast('⚠️ ' + data.error);
           } else {
-            showToast('<i class="fa-solid fa-paper-plane"></i> পেমেন্ট তথ্য অ্যাডমিনকে পাঠানো হয়েছে! অনুমোদনের পর অ্যাক্সেস পাবেন।');
+            showToast('📩 পেN��েন্ট তথ্য অ্যাডমিনকে পাঠানো হয়েছে! অনুমোদনের পর অ্যাক্সেস পাবেন।');
           }
         }).catch(function() {
           // Fallback: if API unavailable, show toast anyway
-          showToast('<i class="fa-solid fa-paper-plane"></i> আপনার অনুরোধ পাঠানো হয়েছে। অনুমোদনের জন্য অপেক্ষা করুন।');
+          showToast('📩 আপনার অনুরোধ পাঠানো হয়েছে। অনুমোদনের জন্য অপেক্ষা করুন।');
         });
       } else {
-        showToast('<i class="fa-solid fa-lock"></i> অ্যাক্সেস অনুরোধ পাঠাতে লগইন করুন।');
+        showToast('<i class="fas fa-user-lock"></i> অ্যাক্সেস অনুরোধ পাঠাতে লগইন করুন।');
         setTimeout(() => navigate('auth'), 1500);
       }
     }
@@ -5868,12 +5983,12 @@
               if (endBlocker) endBlocker.classList.remove('active');
             }
             else if (e.data === YT.PlayerState.ENDED) {
-              btn.innerHTML = '<i class="fa-solid fa-play"></i>';
+              btn.textContent = '▶';
               clearInterval(ytProgressInterval);
               // ভিডিও শেষে recommended ভিডিও / চ্যানেল লিঙ্ক ব্লক করো
               if (endBlocker) endBlocker.classList.add('active');
               onVideoComplete();
-            } else { btn.innerHTML = '<i class="fa-solid fa-play"></i>'; clearInterval(ytProgressInterval); }
+            } else { btn.textContent = '▶'; clearInterval(ytProgressInterval); }
           }
         }
       });
@@ -5903,14 +6018,14 @@
     function onVideoComplete() {
       if (_activeLessonId && _activeCourseId) {
         saveProgress(_activeCourseId, _activeLessonId, 100, 0);
-        showToast('<i class="fa-solid fa-party-horn"></i> লেসন সম্পূর্ণ হয়েছে!');
+        showToast('🎉 লেসন সম্পূর্ণ হয়েছে!');
         updateDashboardProgress();
         renderCurriculum(_activeCourseId);
         // Check if entire course completed
         var overall = getOverallCourseProgress(_activeCourseId);
         if (overall >= 100) {
           setTimeout(function() {
-            showToast('<i class="fa-solid fa-trophy"></i> কোর্স সম্পূর্ণ! সার্টিফিকেট পাঠানো হচ্ছে...');
+            showToast('<i class="fas fa-trophy"></i> কোর্স সম্পূর্ণ! সার্টিফিকেট পাঠানো হচ্ছে...');
             sendCertificateEmail(_activeCourseId);
             setTimeout(function() { showCertificate(_activeCourseId); }, 2000);
           }, 1000);
@@ -5934,7 +6049,7 @@
             if (pctEl) pctEl.textContent = pct + '%';
             // Update button if completed
             if (pct >= 100 && btn.textContent.includes('Continue')) {
-              btn.innerHTML = '<i class="fa-solid fa-trophy"></i> সার্টিফিকেট →';
+              btn.textContent = '<i class="fas fa-trophy"></i> সার্টিফিকেট →';
               btn.setAttribute('onclick', 'showCertificate(\'' + cid + '\')');
             }
           }
@@ -5958,14 +6073,14 @@
     }
     function ytToggleMute() {
       if (!ytPlayer) return;
-      if (ytPlayer.isMuted()) { ytPlayer.unMute(); document.getElementById('yt-mute-btn').innerHTML = '<i class="fa-solid fa-volume-high"></i>'; }
-      else { ytPlayer.mute(); document.getElementById('yt-mute-btn').innerHTML = '<i class="fa-solid fa-volume-xmark"></i>'; }
+      if (ytPlayer.isMuted()) { ytPlayer.unMute(); document.getElementById('yt-mute-btn').textContent = '🔊'; }
+      else { ytPlayer.mute(); document.getElementById('yt-mute-btn').textContent = '🔇'; }
     }
     function ytSetVolume(v) {
       if (!ytPlayer) return;
       ytPlayer.setVolume(v);
-      if (v == 0) { ytPlayer.mute(); document.getElementById('yt-mute-btn').innerHTML = '<i class="fa-solid fa-volume-xmark"></i>'; }
-      else { ytPlayer.unMute(); document.getElementById('yt-mute-btn').innerHTML = '<i class="fa-solid fa-volume-high"></i>'; }
+      if (v == 0) { ytPlayer.mute(); document.getElementById('yt-mute-btn').textContent = '🔇'; }
+      else { ytPlayer.unMute(); document.getElementById('yt-mute-btn').textContent = '🔊'; }
     }
     function ytSeek(e) {
       if (!ytPlayer) return;
@@ -6011,7 +6126,7 @@
       document.getElementById('yt-player-wrap').classList.remove('hidden');
 
       const label = document.getElementById('now-playing-label');
-      if (label) { label.innerHTML = '<i class="fa-solid fa-play"></i> ' + title + ' — ⏱ ' + dur; label.classList.remove('hidden'); }
+      if (label) { label.textContent = '▶ ' + title + ' — <i class="fas fa-clock"></i> ' + dur; label.classList.remove('hidden'); }
 
       // Resume from saved position if < 95% (don't resume at very end)
       var startAt = (savedTime > 0 && getCourseProgress(_activeCourseId, lessonId) < 95) ? savedTime : 0;
@@ -6045,7 +6160,7 @@
       var c = COURSES[courseId];
       var email = currentUser ? currentUser.email : '';
       console.log('Certificate email sent to', email, 'for course', c ? c.title : courseId);
-      showToast('<i class="fa-solid fa-envelope"></i> সার্টিফিকেট ' + email + ' ঠিকানায় পাঠানো হয়েছে!');
+      showToast('<i class="fas fa-envelope"></i> সার্টিফিকেট ' + email + ' ঠিকানায় পাঠানো হয়েছে!');
     }
 
     function showCertificate(courseId) {
@@ -6218,7 +6333,7 @@
         name: 'উস্তাদ রাশেদ',
         tagline: 'ইসলামিক প্রোডাক্টিভিটি বিশেষজ্ঞ | মোটিভেশনাল স্পিকার',
         photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=160&h=160&fit=crop&crop=face',
-        bio: 'উস্তাদ রাশেদ ইসলামিক প্রোডাক্টিভিটি ও লাইফস্টাইল ম্যানেজমেন্টের ক্ষেত্রে বাংলাদেশের একজন পথিকৃৎ। কুরআন ও সুন্নাহর আলোকে সময় ব্যবস্থাপনা, লক্ষ্য নির্ধারণ ও সফলতার পথ বিষয়ে একাধিক বই লিখেছেন যা লক্ষাধিক পাঠক পড়েছেন।',
+        bio: 'উস্তাদ রাশেদ ইসলামিক প্রোডাক্টিভিটি ও লাইফস্টাইল ম্যানেজমেন্টের ক্ষেত্রে বাংলাদেশের একজন পথিকৃৎ। কুরআন ও সুন্নাহর <��লোকে সময় ব্যবস্থাপনা, লক্ষ্য নির্ধারণ ও সফলতার পথ বিষয়ে একাধিক বই লিখেছেন যা লক্ষাধিক পাঠক পড়েছেন।',
         about: 'উস্তাদ রাশেদের শিক্ষণ শৈলী প্র্যাকটিক্যাল ও অনুপ্রেরণামূলক। তিনি দেখান কীভাবে নবীজি ﷺ-এর জীবনপদ্ধতি অনুসরণ করে একজন মুসলিম দুনিয়া ও আখিরাত উভয় ক্ষেত্রে সফল হতে পারেন। তাঁর সেমিনার ও কোর্সে অংশ নিয়ে হাজারো তরুণ নতুনভাবে জীবন সাজিয়েছেন।',
         rating: '4.8', students: '৬,২০০', reviews: '১.৫K',
         courses: ['islamic-productivity', 'sunnah-life']
@@ -6242,7 +6357,7 @@
         setTxt('profile-bio', apiInst.bio || '');
         setTxt('profile-about', apiInst.bio || '');
         setTxt('profile-breadcrumb', apiInst.name);
-        setTxt('profile-rating', apiInst.rating || '৪.৯ <i class="fa-solid fa-star" style="color:#F5C518"></i>');
+        setTxt('profile-rating', apiInst.rating || '৪.৯<i class="fas fa-star"></i>');
         setTxt('profile-students', apiInst.students ? (apiInst.students + '+') : '');
         setTxt('profile-reviews', apiInst.reviews || '');
 
@@ -6266,7 +6381,7 @@
               card.onclick = function() { openCourseDetail(slug); };
               var priceStr = c.price ? '৳' + c.price : 'বিনামূল্যে';
               card.innerHTML = '<div class="course-thumb"><img src="' + (c.thumbnail || c.thumb || '') + '" alt="' + (c.title || '') + '" style="width:100%;height:100%;object-fit:cover" /><div class="thumb-overlay"><span class="thumb-overlay-text">কোর্সটি দেখুন</span></div></div>' +
-                '<div class="card-body"><div class="card-rating-row"><span class="card-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span></div><div class="card-title">' + (c.title || '') + '</div><div class="card-instructor"><i class="fa-solid fa-graduation-cap"></i> ' + (apiInst.name || '') + '</div></div>' +
+                '<div class="card-body"><div class="card-rating-row"><span class="card-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></span></div><div class="card-title">' + (c.title || '') + '</div><div class="card-instructor"><i class="fas fa-graduation-cap"></i> ' + (apiInst.name || '') + '</div></div>' +
                 '<div class="card-footer-mobe"><div class="vacation-points">ক্যাটাগরি: <strong>' + (c.category || '') + '</strong></div><div class="card-price-mobe">' + priceStr + '</div></div>';
               grid.appendChild(card);
             });
@@ -6301,8 +6416,8 @@
         card.setAttribute('data-course-id', cid);
         card.onclick = function() { openCourseDetail(cid); };
         card.innerHTML = '<div class="course-thumb"><img src="' + (c.img || '') + '" alt="' + c.title + '" style="width:100%;height:100%;object-fit:cover" /><div class="thumb-overlay"><span class="thumb-overlay-text">কোর্সটি দেখুন</span></div></div>' +
-          '<div class="card-body"><div class="card-rating-row"><span class="card-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span></div><div class="card-title">' + c.title + '</div><div class="card-instructor"><i class="fa-solid fa-graduation-cap"></i> ' + c.instructor + '</div></div>' +
-          '<div class="card-footer-mobe"><div class="vacation-points">⏱ <strong>' + c.hours + ' ঘণ্টা</strong></div><div class="card-price-mobe">' + c.price + '</div></div>';
+          '<div class="card-body"><div class="card-rating-row"><span class="card-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></span></div><div class="card-title">' + c.title + '</div><div class="card-instructor"><i class="fas fa-graduation-cap"></i> ' + c.instructor + '</div></div>' +
+          '<div class="card-footer-mobe"><div class="vacation-points"><i class="fas fa-clock"></i> <strong>' + c.hours + ' ঘণ্টা</strong></div><div class="card-price-mobe">' + c.price + '</div></div>';
         grid.appendChild(card);
       });
       navigate('instructor');
@@ -6319,9 +6434,9 @@
       var enrolled = isLoggedIn && isEnrolled(courseId);
 
       if (!enrolled) {
-        container.innerHTML = '<h3><i class="fa-solid fa-comments"></i> কোর্স মন্তব্য</h3>' +
+        container.innerHTML = '<h3><i class="fas fa-comments"></i> কোর্স মন্তব্য</h3>' +
           '<div class="comment-locked-msg">' +
-          '<div class="lock-icon"><i class="fa-solid fa-lock" style="font-size:28px;color:#066144;"></i></div>' +
+          '<div class="lock-icon"><i class="fas fa-lock"></i></div>' +
           '<p style="font-weight:700;font-size:15px;margin-bottom:6px">মন্তব্য দেখতে বা লিখতে কোর্সটি কিনুন</p>' +
           '<p>শুধুমাত্র যারা এই কোর্সটি কিনেছেন তারাই মন্তব্য করতে এবং দেখতে পারবেন।</p>' +
           '<button class="btn btn-primary" style="margin-top:16px" onclick="showPaymentModal()">এখনই কিনুন →</button>' +
@@ -6330,7 +6445,7 @@
       }
 
       var comments = lsGet(getCommentsKey(courseId), []);
-      var html = '<h3><i class="fa-solid fa-comments"></i> কোর্স মন্তব্য (' + comments.length + ')</h3>';
+      var html = '<h3><i class="fas fa-comments"></i> কোর্স মন্তব্য (' + comments.length + ')</h3>';
       html += '<div class="comment-form">' +
         '<textarea id="comment-input-' + courseId + '" placeholder="আপনার মন্তব্য লিখুন..."></textarea>' +
         '<div class="comment-form-footer"><button class="btn btn-primary" onclick="submitComment(\'' + courseId + '\')">মন্তব্য পাঠান →</button></div>' +
@@ -6357,15 +6472,15 @@
     }
 
     function submitComment(courseId) {
-      if (!isLoggedIn || !isEnrolled(courseId)) { showToast('<i class="fa-solid fa-triangle-exclamation"></i> কোর্স কিনুন মন্তব্য করতে'); return; }
+      if (!isLoggedIn || !isEnrolled(courseId)) { showToast('⚠️ কোর্স কিনুন মন্তব্য করতে'); return; }
       var input = document.getElementById('comment-input-' + courseId);
       if (!input) return;
       var text = input.value.trim();
-      if (!text) { showToast('<i class="fa-solid fa-triangle-exclamation"></i> মন্তব্য লিখুন'); return; }
+      if (!text) { showToast('⚠️ মন্তব্য লিখুন'); return; }
       var comments = lsGet(getCommentsKey(courseId), []);
       comments.push({ author: currentUser.name, text: text, timestamp: Date.now() });
       lsSet(getCommentsKey(courseId), comments);
-      showToast('<i class="fa-solid fa-circle-check"></i> মন্তব্য যোগ হয়েছে!');
+      showToast('<i class="fas fa-check-circle"></i> মন্তব্য যোগ হয়েছে!');
       renderComments(courseId);
     }
 
@@ -6394,7 +6509,7 @@
         var qs = window.location.search + window.location.hash;
         if (qs && (qs.indexOf('reset_token') !== -1 || qs.indexOf('reset-password') !== -1)) {
           window.history.replaceState({}, '', window.location.pathname);
-          showToast('<i class="fa-solid fa-triangle-exclamation"></i> পুরনো রিসেট লিংক আর কাজ করে না। OTP দিয়ে পাসওয়ার্ড রিসেট করুন।');
+          showToast('⚠️ পুরনো রিসেট লিংক আর কাজ করে না। OTP দিয়ে পাসওয়ার্ড রিসেট করুন।');
           showForgotPassword();
         }
       } catch(_) {}
@@ -6413,10 +6528,10 @@
       modal.className = 'modal-overlay';
       modal.innerHTML = `
         <div class="modal-box" style="max-width:420px">
-          <button class="modal-close" onclick="document.getElementById('forgot-modal').remove()"><i class="fa-solid fa-xmark"></i></button>
+          <button class="modal-close" onclick="document.getElementById('forgot-modal').remove()"><i class="fas fa-times"></i></button>
 
           <div style="text-align:center;margin-bottom:22px">
-            <div style="width:60px;height:60px;background:var(--primary-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:28px"><i class="fa-solid fa-key" style="font-size:28px;color:var(--primary-dark)"></i></div>
+            <div style="width:60px;height:60px;background:var(--primary-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:28px">🔑</div>
             <h3 style="margin:0 0 6px;font-family:var(--font-heading);font-size:20px">পাসওয়ার্ড ভুলে গেছেন?</h3>
             <p style="color:var(--text-mid);font-size:13px;margin:0">আপনার নিবন্ধিত ইমেইলে ৪ ডিজিটের OTP পাঠানো হবে</p>
           </div>
@@ -6439,7 +6554,7 @@
             </div>
             <div id="forgot-msg" style="display:none;padding:10px 14px;border-radius:4px;font-size:13px;font-weight:600;margin-bottom:10px"></div>
             <button id="forgot-submit-btn" class="btn btn-primary btn-lg" style="width:100%;margin-top:4px" onclick="submitForgotOtp()">
-              <i class="fa-solid fa-paper-plane"></i> OTP পাঠান →
+              📨 OTP পাঠান →
             </button>
           </div>
 
@@ -6457,7 +6572,7 @@
     // ── ধাপ ১: OTP পাঠানো ──
     function submitForgotOtp() {
       var email = ((document.getElementById('forgot-email') || {}).value || '').trim();
-      if (!email || !email.includes('@')) { showToast('<i class="fa-solid fa-triangle-exclamation"></i> সঠিক ইমেইল দিন'); return; }
+      if (!email || !email.includes('@')) { showToast('⚠️ সঠিক ইমেইল দিন'); return; }
 
       var btn   = document.getElementById('forgot-submit-btn');
       var msgEl = document.getElementById('forgot-msg');
@@ -6469,18 +6584,18 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email })
       }).then(function(r) { return r.json(); }).then(function(data) {
-        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> OTP পাঠান →'; }
+        if (btn) { btn.disabled = false; btn.textContent = '📨 OTP পাঠান →'; }
         if (data.error) {
-          if (msgEl) { msgEl.style.display='block'; msgEl.style.background='#ffeaea'; msgEl.style.color='#c0392b'; msgEl.textContent=''+data.error; }
-          showToast('<i class="fa-solid fa-circle-xmark"></i> ' + data.error);
+          if (msgEl) { msgEl.style.display='block'; msgEl.style.background='#ffeaea'; msgEl.style.color='#c0392b'; msgEl.textContent='❌ '+data.error; }
+          showToast('❌ ' + data.error);
           return;
         }
-        showToast('<i class="fa-solid fa-envelope"></i> OTP পাঠানো হয়েছে! ইনবক্স চেক করুন।');
+        showToast('📨 OTP পাঠানো হয়েছে! ইনবক্স চেক করুন।');
         // ধাপ ২ তে যাও
         showOtpVerifyStep(email);
       }).catch(function() {
-        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> OTP পাঠান →'; }
-        showToast('<i class="fa-solid fa-circle-xmark"></i> সার্ভারে সমস্যা হয়েছে');
+        if (btn) { btn.disabled = false; btn.textContent = '📨 OTP পাঠান →'; }
+        showToast('❌ সার্ভারে সমস্যা হয়েছে');
       });
     }
 
@@ -6495,17 +6610,17 @@
       modal.className = 'modal-overlay';
       modal.innerHTML = `
         <div class="modal-box" style="max-width:420px">
-          <button class="modal-close" onclick="document.getElementById('otp-verify-modal').remove();showForgotPassword()"><i class="fa-solid fa-xmark"></i></button>
+          <button class="modal-close" onclick="document.getElementById('otp-verify-modal').remove();showForgotPassword()"><i class="fas fa-times"></i></button>
 
           <div style="text-align:center;margin-bottom:22px">
-            <div style="width:60px;height:60px;background:rgba(6,97,68,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:28px"><i class="fa-solid fa-envelope" style="font-size:28px;color:#066144;"></i></div>
+            <div style="width:60px;height:60px;background:rgba(6,97,68,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:28px">📨</div>
             <h3 style="margin:0 0 6px;font-family:var(--font-heading);font-size:20px">OTP যাচাই করুন</h3>
             <p style="color:var(--text-mid);font-size:13px;margin:0"><strong>${email}</strong>-এ ৪ ডিজিটের কোড পাঠানো হয়েছে</p>
           </div>
 
           <!-- Step indicator -->
           <div style="display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:22px">
-            <div style="width:28px;height:28px;border-radius:50%;background:#066144;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center"><i class="fa-solid fa-check"></i></div>
+            <div style="width:28px;height:28px;border-radius:50%;background:#066144;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center">✓</div>
             <div style="flex:1;height:2px;background:var(--primary);max-width:48px"></div>
             <div style="width:28px;height:28px;border-radius:50%;background:var(--primary);color:#1a1a1a;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center">২</div>
             <div style="flex:1;height:2px;background:var(--border);max-width:48px"></div>
@@ -6541,7 +6656,7 @@
             <div id="otp-msg" style="display:none;padding:10px 14px;border-radius:4px;font-size:13px;font-weight:600;margin-bottom:10px"></div>
 
             <button id="otp-verify-btn" class="btn btn-primary btn-lg" style="width:100%;margin-top:4px" onclick="submitOtpVerify('${email}')">
-              <i class="fa-solid fa-circle-check"></i> OTP যাচাই করুন →
+              <i class="fas fa-check-circle"></i> OTP যাচাই করুন →
             </button>
           </div>
 
@@ -6598,7 +6713,7 @@
         }
         var m = Math.floor(remaining / 60);
         var s = remaining % 60;
-        timerEl.textContent = '⏱ ' + m + ':' + (s < 10 ? '0' : '') + s + ' পরে মেয়াদ শেষ';
+        timerEl.textContent = '<i class="fas fa-clock"></i> ' + m + ':' + (s < 10 ? '0' : '') + s + ' পরে মেয়াদ শেষ';
         timerEl.style.display = 'inline';
         if (resendEl) resendEl.style.display = 'none';
         remaining--;
@@ -6612,12 +6727,12 @@
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email })
       }).then(function(r) { return r.json(); }).then(function(data) {
-        if (data.error) { showToast('<i class="fa-solid fa-circle-xmark"></i> ' + data.error); return; }
-        showToast('<i class="fa-solid fa-envelope"></i> নতুন OTP পাঠানো হয়েছে!');
+        if (data.error) { showToast('❌ ' + data.error); return; }
+        showToast('📨 নতুন OTP পাঠানো হয়েছে!');
         ['otp-d1','otp-d2','otp-d3','otp-d4'].forEach(function(id) { var e=document.getElementById(id); if(e) e.value=''; });
         startOtpTimer(600);
         setTimeout(function() { var el = document.getElementById('otp-d1'); if (el) el.focus(); }, 100);
-      }).catch(function() { showToast('<i class="fa-solid fa-circle-xmark"></i> সার্ভারে সমস্যা হয়েছে'); });
+      }).catch(function() { showToast('❌ সার্ভারে সমস্যা হয়েছে'); });
     }
 
     // ── ধাপ ২: OTP যাচাই submit ──
@@ -6627,7 +6742,7 @@
       });
       var otp = digits.join('');
       if (otp.length < 4 || !/^\d{4}$/.test(otp)) {
-        showToast('<i class="fa-solid fa-triangle-exclamation"></i> ৪ ডিজিটের OTP কোড দিন');
+        showToast('⚠️ ৪ ডিজিটের OTP কোড দিন');
         // shake animation
         var wrap = document.getElementById('otp-boxes-wrap');
         if (wrap) { wrap.style.animation='none'; setTimeout(function(){wrap.style.animation='shake 0.4s';},10); }
@@ -6644,8 +6759,8 @@
         body: JSON.stringify({ email: email, otp: otp })
       }).then(function(r) { return r.json(); }).then(function(data) {
         if (data.error) {
-          if (btn) { btn.disabled = false; btn.textContent = '<i class="fa-solid fa-circle-check"></i> OTP যাচাই করুন →'; }
-          if (msgEl) { msgEl.style.display='block'; msgEl.style.background='#ffeaea'; msgEl.style.color='#c0392b'; msgEl.textContent=''+data.error; }
+          if (btn) { btn.disabled = false; btn.textContent = '<i class="fas fa-check-circle"></i> OTP যাচাই করুন →'; }
+          if (msgEl) { msgEl.style.display='block'; msgEl.style.background='#ffeaea'; msgEl.style.color='#c0392b'; msgEl.textContent='❌ '+data.error; }
           // বক্সগুলো লাল করো
           ['otp-d1','otp-d2','otp-d3','otp-d4'].forEach(function(id) {
             var e = document.getElementById(id);
@@ -6656,19 +6771,19 @@
               var e=document.getElementById(id); if(e){e.style.borderColor='';e.style.background='';}
             });
           }, 2000);
-          showToast('<i class="fa-solid fa-circle-xmark"></i> ' + data.error);
+          showToast('❌ ' + data.error);
           return;
         }
-        // [OK] OTP সঠিক — সবুজ করো এবং ধাপ ৩ তে যাও
+        // <i class="fas fa-check-circle"></i> OTP সঠিক — সবুজ করো এবং ধাপ ৩ তে যাও
         ['otp-d1','otp-d2','otp-d3','otp-d4'].forEach(function(id) {
           var e = document.getElementById(id);
           if (e) { e.style.borderColor='#066144'; e.style.background='#f0faf4'; }
         });
-        showToast('<i class="fa-solid fa-circle-check"></i> OTP সঠিক! নতুন পাসওয়ার্ড দিন।');
+        showToast('<i class="fas fa-check-circle"></i> OTP সঠিক! নতুন পাসওয়ার্ড দিন।');
         setTimeout(function() { showNewPasswordStep(email, otp); }, 400);
       }).catch(function() {
-        if (btn) { btn.disabled = false; btn.textContent = '<i class="fa-solid fa-circle-check"></i> OTP যাচাই করুন →'; }
-        showToast('<i class="fa-solid fa-circle-xmark"></i> সার্ভারে সমস্যা হয়েছে');
+        if (btn) { btn.disabled = false; btn.textContent = '<i class="fas fa-check-circle"></i> OTP যাচাই করুন →'; }
+        showToast('❌ সার্ভারে সমস্যা হয়েছে');
       });
     }
 
@@ -6685,19 +6800,19 @@
       modal.dataset.otp   = otp;
       modal.innerHTML = `
         <div class="modal-box" style="max-width:420px">
-          <button class="modal-close" onclick="document.getElementById('new-pass-modal').remove()"><i class="fa-solid fa-xmark"></i></button>
+          <button class="modal-close" onclick="document.getElementById('new-pass-modal').remove()"><i class="fas fa-times"></i></button>
 
           <div style="text-align:center;margin-bottom:22px">
-            <div style="width:60px;height:60px;background:rgba(6,97,68,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:28px"><i class="fa-solid fa-lock" style="font-size:28px;color:#066144;"></i></div>
+            <div style="width:60px;height:60px;background:rgba(6,97,68,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:28px"><i class="fas fa-lock"></i></div>
             <h3 style="margin:0 0 6px;font-family:var(--font-heading);font-size:20px">নতুন পাসওয়ার্ড সেট করুন</h3>
             <p style="color:var(--text-mid);font-size:13px;margin:0">শক্তিশালী পাসওয়ার্ড ব্যবহার করুন</p>
           </div>
 
           <!-- Step indicator -->
           <div style="display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:22px">
-            <div style="width:28px;height:28px;border-radius:50%;background:#066144;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center"><i class="fa-solid fa-check"></i></div>
+            <div style="width:28px;height:28px;border-radius:50%;background:#066144;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center">✓</div>
             <div style="flex:1;height:2px;background:#066144;max-width:48px"></div>
-            <div style="width:28px;height:28px;border-radius:50%;background:#066144;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center"><i class="fa-solid fa-check"></i></div>
+            <div style="width:28px;height:28px;border-radius:50%;background:#066144;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center">✓</div>
             <div style="flex:1;height:2px;background:var(--primary);max-width:48px"></div>
             <div style="width:28px;height:28px;border-radius:50%;background:var(--primary);color:#1a1a1a;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center">৩</div>
           </div>
@@ -6710,7 +6825,7 @@
                 <input class="form-input" type="password" id="np-pass1" placeholder="নতুন পাসওয়ার্ড লিখুন"
                   style="padding-right:48px" oninput="newPassStrength(this.value)" onkeydown="if(event.key==='Enter')document.getElementById('np-pass2').focus()" />
                 <button type="button" onclick="togglePassVis2('np-pass1',this)"
-                  style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:17px;color:#666;padding:4px;line-height:1"><i class="fa-solid fa-eye"></i></button>
+                  style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:17px;color:#666;padding:4px;line-height:1">👁</button>
               </div>
               <!-- strength bar -->
               <div style="height:4px;background:#e8e8e8;border-radius:4px;margin-top:6px;overflow:hidden">
@@ -6726,14 +6841,14 @@
                 <input class="form-input" type="password" id="np-pass2" placeholder="একই পাসওয়ার্ড আবার লিখুন"
                   style="padding-right:48px" onkeydown="if(event.key==='Enter')submitNewPasswordOtp()" />
                 <button type="button" onclick="togglePassVis2('np-pass2',this)"
-                  style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:17px;color:#666;padding:4px;line-height:1"><i class="fa-solid fa-eye"></i></button>
+                  style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:17px;color:#666;padding:4px;line-height:1">👁</button>
               </div>
             </div>
 
             <div id="np-msg" style="display:none;padding:10px 14px;border-radius:4px;font-size:13px;font-weight:600;margin-bottom:10px"></div>
 
             <button id="np-submit-btn" class="btn btn-primary btn-lg" style="width:100%;margin-top:4px" onclick="submitNewPasswordOtp()">
-              <i class="fa-solid fa-key"></i> পাসওয়ার্ড সেট করুন ও লগইন করুন →
+              🔑 পাসওয়ার্ড সেট করুন ও লগইন করুন →
             </button>
           </div>
         </div>`;
@@ -6746,8 +6861,8 @@
     function togglePassVis2(inputId, btn) {
       var inp = document.getElementById(inputId);
       if (!inp) return;
-      if (inp.type === 'password') { inp.type = 'text'; btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i>'; }
-      else { inp.type = 'password'; btn.innerHTML = '<i class="fa-solid fa-eye"></i>'; }
+      if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+      else { inp.type = 'password'; btn.textContent = '👁'; }
     }
 
     function newPassStrength(val) {
@@ -6762,10 +6877,10 @@
       if (/[^A-Za-z0-9]/.test(val)) score++;
       var map = [
         { pct: '0%',   bg: '#e0e0e0', txt: '' },
-        { pct: '25%',  bg: '#e53935', txt: '<i class="fa-solid fa-face-frown"></i> দুর্বল' },
-        { pct: '50%',  bg: '#ff9800', txt: '<i class="fa-solid fa-face-meh"></i> মাঝারি' },
-        { pct: '75%',  bg: '#43a047', txt: '<i class="fa-solid fa-thumbs-up"></i> ভালো' },
-        { pct: '100%', bg: '#1b5e20', txt: '<i class="fa-solid fa-shield-halved"></i> শক্তিশালী' },
+        { pct: '25%',  bg: '#e53935', txt: '😟 দুর্বল' },
+        { pct: '50%',  bg: '#ff9800', txt: '🙂 মাঝারি' },
+        { pct: '75%',  bg: '#43a047', txt: '💪 ভালো' },
+        { pct: '100%', bg: '#1b5e20', txt: '<i class="fas fa-lock"></i> শক্তিশালী' },
       ];
       var s = map[Math.min(score, 4)];
       fill.style.width = s.pct; fill.style.background = s.bg;
@@ -6783,18 +6898,18 @@
       var msgEl = document.getElementById('np-msg');
 
       if (!pass || pass.length < 6) {
-        showToast('<i class="fa-solid fa-triangle-exclamation"></i> পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে');
+        showToast('⚠️ পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে');
         var inp = document.getElementById('np-pass1');
         if (inp) { inp.style.borderColor='#e53935'; inp.focus(); setTimeout(function(){inp.style.borderColor='';},2000); }
         return;
       }
       if (pass !== conf) {
-        showToast('<i class="fa-solid fa-triangle-exclamation"></i> পাসওয়ার্ড দুটি মিলছে না');
+        showToast('⚠️ পাসওয়ার্ড দুটি মিলছে না');
         var inp2 = document.getElementById('np-pass2');
         if (inp2) { inp2.style.borderColor='#e53935'; inp2.focus(); setTimeout(function(){inp2.style.borderColor='';},2000); }
         return;
       }
-      if (!email || !otp) { showToast('<i class="fa-solid fa-circle-xmark"></i> সেশন মেয়াদ শেষ। আবার চেষ্টা করুন।'); modal.remove(); showForgotPassword(); return; }
+      if (!email || !otp) { showToast('❌ সেশন মেয়াদ শেষ। আবার চেষ্টা করুন।'); modal.remove(); showForgotPassword(); return; }
 
       if (btn) { btn.disabled = true; btn.textContent = '⏳ পরিবর্তন হচ্ছে...'; }
       if (msgEl) msgEl.style.display = 'none';
@@ -6804,15 +6919,15 @@
         body: JSON.stringify({ email: email, otp: otp, password: pass })
       }).then(function(r) { return r.json(); }).then(function(data) {
         if (data.error) {
-          if (btn) { btn.disabled = false; btn.textContent = '<i class="fa-solid fa-key"></i> পাসওয়ার্ড সেট করুন ও লগইন করুন →'; }
-          if (msgEl) { msgEl.style.display='block'; msgEl.style.background='#ffeaea'; msgEl.style.color='#c0392b'; msgEl.textContent=''+data.error; }
-          showToast('<i class="fa-solid fa-circle-xmark"></i> ' + data.error);
+          if (btn) { btn.disabled = false; btn.textContent = '🔑 পাসওয়ার্ড সেট করুন ও লগইন করুন →'; }
+          if (msgEl) { msgEl.style.display='block'; msgEl.style.background='#ffeaea'; msgEl.style.color='#c0392b'; msgEl.textContent='❌ '+data.error; }
+          showToast('❌ ' + data.error);
           return;
         }
-        // [সফল]
-        if (msgEl) { msgEl.style.display='block'; msgEl.style.background='#f0faf4'; msgEl.style.color='#066144'; msgEl.textContent='<i class="fa-solid fa-circle-check"></i> পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে! লগইন হচ্ছে...'; }
-        if (btn) { btn.textContent='সফল! ড্যাশবোর্ডে যাচ্ছেন...'; btn.style.background='#066144'; btn.style.color='#fff'; }
-        showToast('<i class="fa-solid fa-party-horn"></i> পাসওয়ার্ড পরিবর্তন সফল!');
+        // <i class="fas fa-check-circle"></i> সফল
+        if (msgEl) { msgEl.style.display='block'; msgEl.style.background='#f0faf4'; msgEl.style.color='#066144'; msgEl.textContent='🎉 পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে! লগইন হচ্ছে...'; }
+        if (btn) { btn.textContent='<i class="fas fa-check-circle"></i> সফল! ড্যাশবোর্ডে যাচ্ছেন...'; btn.style.background='#066144'; btn.style.color='#fff'; }
+        showToast('🎉 পাসওয়ার্ড পরিবর্তন সফল!');
 
         if (data.token && data.user) {
           currentUser = data.user;
@@ -6833,8 +6948,8 @@
           }, 1200);
         }
       }).catch(function() {
-        if (btn) { btn.disabled = false; btn.textContent = '<i class="fa-solid fa-key"></i> পাসওয়ার্ড সেট করুন ও লগইন করুন →'; }
-        showToast('<i class="fa-solid fa-circle-xmark"></i> সার্ভারে সমস্যা হয়েছে');
+        if (btn) { btn.disabled = false; btn.textContent = '🔑 পাসওয়ার্ড সেট করুন ও লগইন করুন →'; }
+        showToast('❌ সার্ভারে সমস্যা হয়েছে');
       });
     }
 
@@ -6852,9 +6967,9 @@
       var email   = document.getElementById('contact-email')   ? document.getElementById('contact-email').value.trim()   : '';
       var subject = document.getElementById('contact-subject') ? document.getElementById('contact-subject').value.trim() : '';
       var message = document.getElementById('contact-message') ? document.getElementById('contact-message').value.trim() : '';
-      if (!name)    { showToast('<i class="fa-solid fa-triangle-exclamation"></i> আপনার নাম লিখুন'); return; }
-      if (!email || !email.includes('@')) { showToast('<i class="fa-solid fa-triangle-exclamation"></i> সঠিক ইমেইল দিন'); return; }
-      if (!message) { showToast('<i class="fa-solid fa-triangle-exclamation"></i> বার্তা লিখুন'); return; }
+      if (!name)    { showToast('⚠️ আপনার নাম লিখুন'); return; }
+      if (!email || !email.includes('@')) { showToast('⚠️ সঠিক ইমেইল দিন'); return; }
+      if (!message) { showToast('⚠️ বার্তা লিখুন'); return; }
       try {
         var res = await fetch(API_BASE + '/api/contact-messages', {
           method: 'POST',
@@ -6867,9 +6982,9 @@
         document.getElementById('contact-email').value   = '';
         document.getElementById('contact-subject').value = '';
         document.getElementById('contact-message').value = '';
-        showToast('<i class="fa-solid fa-circle-check"></i> আপনার বার্তা সফলভাবে পাঠানো হয়েছে!');
+        showToast('<i class="fas fa-check-circle"></i> আপনার বার্তা সফলভাবে পাঠানো হয়েছে!');
       } catch (err) {
-        showToast('<i class="fa-solid fa-circle-xmark"></i> বার্তা পাঠানো যায়নি: ' + err.message);
+        showToast('❌ বার্তা পাঠানো যায়নি: ' + err.message);
       }
     }
 
@@ -6930,7 +7045,7 @@
         var dataUrl = e.target.result;
         applyLogo(dataUrl);
         localStorage.setItem('site_logo_img', dataUrl);
-        showToast('<i class="fa-solid fa-circle-check"></i> লোগো আপডেট হয়েছে!');
+        showToast('<i class="fas fa-check-circle"></i> লোগো আপডেট হয়েছে!');
       };
       reader.readAsDataURL(file);
       event.target.value = '';
@@ -6977,7 +7092,7 @@
         // Sync with header logo too
         applyLogo(dataUrl);
         localStorage.setItem('site_logo_img', dataUrl);
-        showToast('<i class="fa-solid fa-circle-check"></i> লোগো আপডেট হয়েছে!');
+        showToast('<i class="fas fa-check-circle"></i> লোগো আপডেট হয়েছে!');
       };
       reader.readAsDataURL(file);
       event.target.value = '';
@@ -7055,9 +7170,9 @@
     var DEFAULT_COURSE_TABS = [
       { key: 'top', label: 'সেরা বিক্রেতা', icon: '', active: true, order: 1 },
       { key: 'new', label: 'নতুন কোর্সসমূহ', icon: '', active: true, order: 2 },
-      { key: 'free', label: 'ফ্রি কোর্সসমূহ', icon: '<i class="fa-solid fa-gift"></i>', active: true, order: 3 },
-      { key: 'popular', label: 'জনপ্রিয় কোর্সসমূহ', icon: '<i class="fa-solid fa-fire"></i>', active: true, order: 4 },
-      { key: 'bundle', label: 'বান্ডেল কোর্সসমূহ', icon: '<i class="fa-solid fa-box-open"></i>', active: true, order: 5 }
+      { key: 'free', label: 'ফ্রি কোর্সসমূহ', icon: '🆓', active: true, order: 3 },
+      { key: 'popular', label: 'জনপ্রিয় কোর্সসমূহ', icon: '<i class="fas fa-fire"></i>', active: true, order: 4 },
+      { key: 'bundle', label: 'বান্ডেল কোর্সসমূহ', icon: '<i class="fas fa-box"></i>', active: true, order: 5 }
     ];
     var DEFAULT_HOME_FAQS = [
       { question: 'কোর্সে কীভাবে ভর্তি হব?', answer: 'পছন্দের কোর্স খুলে এনরোল বা অ্যাক্সেস রিকোয়েস্ট পাঠান। অনুমোদনের পর আপনার লার্নিং হাবে কোর্সটি দেখা যাবে।' },
@@ -7579,7 +7694,7 @@
           level: c.level || 'সকলের জন্য',
           language: c.language || 'বাংলা',
           tags: c.tags || [],
-          emoji: (COURSES[key] && COURSES[key].emoji) || '<i class="fa-solid fa-book"></i>',
+          emoji: (COURSES[key] && COURSES[key].emoji) || '<i class="fas fa-book"></i>',
           gradient: (COURSES[key] && COURSES[key].gradient) || 'linear-gradient(135deg,#1a1a2e,#16213e)',
           learns: (COURSES[key] && COURSES[key].learns) || [],
           certDesc: (COURSES[key] && COURSES[key].certDesc) || [],
@@ -7596,19 +7711,19 @@
         var discount = c.originalPrice && c.price ? Math.round((1 - c.price / c.originalPrice) * 100) : (c.discount || 0);
         return '<div class="course-card" data-course-id="' + escapeHtml(key) + '" style="cursor:pointer">' +
           '<div class="course-thumb"><img src="' + thumb + '" alt="' + (c.title||'') + '" loading="lazy"/>' +
-          '<div class="thumb-overlay"><span class="play-btn"><i class="fa-solid fa-play"></i></span></div>' +
+          '<div class="thumb-overlay"><span class="play-btn">▶</span></div>' +
           (discount > 0 ? '<span style="position:absolute;top:10px;left:10px;background:var(--primary);color:#1a1a1a;font-size:10px;font-weight:800;padding:3px 9px;border-radius:3px;font-family:var(--font-nav);letter-spacing:1px">' + discount + '% ছাড়</span>' : '') +
           (c.featured ? '<span style="position:absolute;top:10px;right:10px;background:#066144;color:#fff;font-size:10px;font-weight:800;padding:3px 9px;border-radius:3px;font-family:var(--font-nav)">Featured</span>' : '') +
           '</div>' +
           '<div class="card-body">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
           '<span style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--primary);font-family:var(--font-nav)">' + (c.category||'') + '</span>' +
-          '<span style="font-size:12px;color:var(--text-mid)"><i class="fa-solid fa-star" style="color:#F5C518"></i> ' + (c.rating||4.5) + '</span>' +
+          '<span style="font-size:12px;color:var(--text-mid)"><i class="fas fa-star"></i> ' + (c.rating||4.5) + '</span>' +
           '</div>' +
           '<div class="card-title">' + (c.title||'') + '</div>' +
           '<div style="display:flex;gap:12px;font-size:12px;color:var(--text-mid);margin-top:6px">' +
-          '<span><i class="fa-solid fa-chalkboard-user"></i> ' + (c.instructor||'') + '</span>' +
-          (c.duration ? '<span>⏱ ' + c.duration + '</span>' : '') +
+          '<span><i class="fas fa-chalkboard-teacher"></i> ' + (c.instructor||'') + '</span>' +
+          (c.duration ? '<span><i class="fas fa-clock"></i> ' + c.duration + '</span>' : '') +
           '</div>' +
           '<div class="card-footer" style="margin-top:10px;display:flex;align-items:center;gap:8px">' +
           '<span class="card-price" style="font-size:17px;font-weight:800;color:var(--primary)">৳' + (c.price||0) + '</span>' +
@@ -7670,7 +7785,7 @@
       var avClasses = ['av1','av2','av3','av4','av5','av6'];
       track.innerHTML = pages.map(function(page) {
         var items = page.map(function(t, idx) {
-          var stars = '<i class="fa-solid fa-star" style="color:#F5C518"></i>'.repeat(t.rating || 5);
+          var stars = '<i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>'.slice(0, t.rating || 5);
           var avatarContent = t.avatar
             ? '<img src="' + t.avatar + '" alt="' + (t.name||'') + '"/>'
             : (t.name||'?')[0].toUpperCase();
@@ -7717,9 +7832,9 @@
           '<div class="instructor-name">' + (inst.name||'') + '</div>' +
           '<div class="instructor-title">' + (inst.title||specs) + '</div>' +
           '<div class="instructor-stats">' +
-          '<span><i class="fa-solid fa-users"></i> ' + (inst.students||0) + '</span>' +
-          '<span><i class="fa-solid fa-star" style="color:#F5C518"></i> ' + (inst.rating||4.8) + '</span>' +
-          '<span><i class="fa-solid fa-book"></i> ' + (inst.courses||0) + '</span>' +
+          '<span><i class="fas fa-users"></i> ' + (inst.students||0) + '</span>' +
+          '<span><i class="fas fa-star"></i> ' + (inst.rating||4.8) + '</span>' +
+          '<span><i class="fas fa-book"></i> ' + (inst.courses||0) + '</span>' +
           '</div></div></div>';
       }).join('');
       
@@ -7735,7 +7850,7 @@
           var specs = (inst.specializations || []).slice(0, 2).join(' · ') || inst.title || '';
           return '<div class="instructor-card fade-in visible" onclick="openInstructorProfile(\'' + key + '\')" style="cursor:pointer">' +
             '<div class="instructor-photo-wrap"><img src="' + photo + '" alt="' + (inst.name||'') + '" class="instructor-photo" loading="lazy"/></div>' +
-            '<div class="instructor-info"><div class="instructor-name">' + (inst.name||'') + ' <span style="font-size:11px;color:var(--primary)"><i class="fa-solid fa-star" style="color:#F5C518"></i></span></div><div class="instructor-title">' + (inst.title||specs) + '</div><div class="instructor-stats"><span><i class="fa-solid fa-users"></i> ' + (inst.students||0) + '</span><span><i class="fa-solid fa-star" style="color:#F5C518"></i> ' + (inst.rating||4.8) + '</span><span><i class="fa-solid fa-book"></i> ' + (inst.courses||0) + '</span></div></div></div>';
+            '<div class="instructor-info"><div class="instructor-name">' + (inst.name||'') + ' <span style="font-size:11px;color:var(--primary)"><i class="fas fa-star"></i></span></div><div class="instructor-title">' + (inst.title||specs) + '</div><div class="instructor-stats"><span><i class="fas fa-users"></i> ' + (inst.students||0) + '</span><span><i class="fas fa-star"></i> ' + (inst.rating||4.8) + '</span><span><i class="fas fa-book"></i> ' + (inst.courses||0) + '</span></div></div></div>';
         }).join('');
       }
       
@@ -7745,7 +7860,7 @@
         var specs = (inst.specializations || []).slice(0, 2).join(' · ') || inst.title || '';
         return '<div class="instructor-card fade-in" onclick="openInstructorProfile(\'' + key + '\')" style="cursor:pointer">' +
           '<div class="instructor-photo-wrap"><img src="' + photo + '" alt="' + (inst.name||'') + '" class="instructor-photo" loading="lazy"/></div>' +
-          '<div class="instructor-info"><div class="instructor-name">' + (inst.name||'') + (inst.featured ? ' <span style="font-size:11px;color:var(--primary)"><i class="fa-solid fa-star" style="color:#F5C518"></i></span>' : '') + '</div><div class="instructor-title">' + (inst.title||specs) + '</div><div class="instructor-stats"><span><i class="fa-solid fa-users"></i> ' + (inst.students||0) + '</span><span><i class="fa-solid fa-star" style="color:#F5C518"></i> ' + (inst.rating||4.8) + '</span><span><i class="fa-solid fa-book"></i> ' + (inst.courses||0) + '</span></div></div></div>';
+          '<div class="instructor-info"><div class="instructor-name">' + (inst.name||'') + (inst.featured ? ' <span style="font-size:11px;color:var(--primary)"><i class="fas fa-star"></i></span>' : '') + '</div><div class="instructor-title">' + (inst.title||specs) + '</div><div class="instructor-stats"><span><i class="fas fa-users"></i> ' + (inst.students||0) + '</span><span><i class="fas fa-star"></i> ' + (inst.rating||4.8) + '</span><span><i class="fas fa-book"></i> ' + (inst.courses||0) + '</span></div></div></div>';
       }).join('');
       if (pageGrid) pageGrid.innerHTML = html;
 
@@ -7824,7 +7939,7 @@
           '<div style="font-size:11px;font-weight:700;color:var(--primary);font-family:var(--font-nav);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">' + (p.category || 'ব্লগ') + '</div>' +
           '<h3 style="font-family:var(--font-heading);font-size:18px;font-weight:700;margin-bottom:10px;line-height:1.4">' + (p.title || '') + '</h3>' +
           '<p style="font-size:13.5px;color:var(--text-mid);line-height:1.7;margin-bottom:16px">' + (p.excerpt || p.content || '') + '</p>' +
-          '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><span style="font-size:12px;color:var(--text-light);font-family:var(--font-nav)"><i class="fa-solid fa-graduation-cap"></i> ' + (p.author || 'ইবনে খালদুন') + (p.readTime ? ' • ' + p.readTime : '') + '</span>' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><span style="font-size:12px;color:var(--text-light);font-family:var(--font-nav)"><i class="fas fa-graduation-cap"></i> ' + (p.author || 'ইবনে খালদুন') + (p.readTime ? ' • ' + p.readTime : '') + '</span>' +
           '<button class="btn btn-outline" style="padding:6px 14px;font-size:11px" onclick="showToast(\'পোস্টটি পেজে যুক্ত হয়েছে\')">পড়ুন →</button></div>' +
           '</div></article>';
       }).join('');
@@ -7846,9 +7961,9 @@
       var list = document.getElementById('contact-info-list');
       if (!list) return;
       var items = [
-        ['<i class="fa-solid fa-envelope"></i>', 'ইমেইল', d.email, d.email ? 'mailto:' + d.email : ''],
-        ['<i class="fa-solid fa-phone"></i>', 'ফোন', d.phone, d.phone ? 'tel:' + d.phone : ''],
-        ['<i class="fa-solid fa-location-dot"></i>', 'ঠিকানা', d.address, ''],
+        ['<i class="fas fa-envelope"></i>', 'ইমেইল', d.email, d.email ? 'mailto:' + d.email : ''],
+        ['<i class="fas fa-phone"></i>', 'ফোন', d.phone, d.phone ? 'tel:' + d.phone : ''],
+        ['📍', 'ঠিকানা', d.address, ''],
         ['⏰', 'সাপোর্ট সময়', d.hours, '']
       ].filter(function(x) { return x[2]; });
       list.innerHTML = items.length ? items.map(function(item) {
@@ -7916,7 +8031,7 @@
           var imgClose = d.popupImageLink ? '</a>' : '</div>';
           popup.innerHTML = '<div style="position:relative;max-width:520px;width:100%">' +
             imgEl + '<img src="' + d.popupImageUrl + '" alt="popup" style="width:100%;border-radius:12px;display:block;box-shadow:0 20px 60px rgba(0,0,0,0.6)"/>' + imgClose +
-            '<button onclick="document.getElementById(\'welcome-popup\').remove()" style="position:absolute;top:-14px;right:-14px;width:34px;height:34px;border-radius:50%;background:#fff;border:none;cursor:pointer;font-size:18px;line-height:1;box-shadow:0 4px 12px rgba(0,0,0,0.3)"><i class="fa-solid fa-xmark"></i></button>' +
+            '<button onclick="document.getElementById(\'welcome-popup\').remove()" style="position:absolute;top:-14px;right:-14px;width:34px;height:34px;border-radius:50%;background:#fff;border:none;cursor:pointer;font-size:18px;line-height:1;box-shadow:0 4px 12px rgba(0,0,0,0.3)"><i class="fas fa-times"></i></button>' +
             '</div>';
           document.body.appendChild(popup);
           return;
@@ -7926,7 +8041,7 @@
           var courseImg = d.courseImg || 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=120&h=80&fit=crop';
           courseSection = '<div style="padding:20px 28px;display:flex;gap:16px;align-items:center;border-bottom:1px solid #2a2a2a">' +
             '<img src="' + courseImg + '" alt="কোর্স" style="width:100px;height:68px;object-fit:cover;border-radius:8px;flex-shrink:0"/>' +
-            '<div><div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--primary);margin-bottom:4px"><i class="fa-solid fa-fire"></i> সেরা বিক্রেতা কোর্স</div>' +
+            '<div><div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--primary);margin-bottom:4px"><i class="fas fa-fire"></i> সেরা বিক্রেতা কোর্স</div>' +
             '<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;line-height:1.3">' + d.courseName + '</div>' +
             '<div style="display:flex;align-items:center;gap:10px">' +
             (d.price ? '<span style="font-size:18px;font-weight:800;color:var(--primary)">৳' + d.price + '</span>' : '') +
@@ -7948,7 +8063,7 @@
         var btn1Link = d.btnLink || d.btn1Link || '';
         popup.innerHTML = '<div style="background:#1e1e1e;border-radius:16px;max-width:520px;width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.6);position:relative;border:1px solid #333">' +
           '<div style="background:linear-gradient(135deg,#2a1a00,#1a1a1a);padding:28px 28px 20px;border-bottom:2px solid var(--primary);text-align:center">' +
-          '<div style="font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--primary);margin-bottom:8px">' + (d.label || '<i class="fa-solid fa-party-horn"></i> বিশেষ স্বাগত অফার') + '</div>' +
+          '<div style="font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--primary);margin-bottom:8px">' + (d.label || '🎉 বিশেষ স্বাগত অফার') + '</div>' +
           '<h2 style="font-family:var(--font-heading);font-size:clamp(20px,4vw,28px);font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px">' + (d.title || '') + '</h2>' +
           '<p style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;max-width:400px;margin:0 auto">' + (d.subtitle || d.subtext || '') + '</p>' +
           '</div>' + courseSection + statsSection +
@@ -7957,7 +8072,7 @@
           (d.btn2Text ? '<button onclick="document.getElementById(\'welcome-popup\').remove()" style="width:100%;padding:12px;background:transparent;color:#aaa;border:1.5px solid #444;border-radius:8px;font-family:var(--font-nav);font-size:12px;font-weight:700;cursor:pointer">' + d.btn2Text + '</button>' : '<button onclick="document.getElementById(\'welcome-popup\').remove()" style="width:100%;padding:12px;background:transparent;color:#aaa;border:1.5px solid #444;border-radius:8px;font-family:var(--font-nav);font-size:12px;font-weight:700;cursor:pointer">সব কোর্স দেখুন</button>') +
           (d.note ? '<p style="text-align:center;font-size:11px;color:#555;margin-top:12px">' + d.note + '</p>' : '') +
           '</div>' +
-          '<button onclick="document.getElementById(\'welcome-popup\').remove()" style="position:absolute;top:12px;right:14px;background:rgba(255,255,255,0.08);border:none;color:#aaa;width:30px;height:30px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="fa-solid fa-xmark"></i></button>' +
+          '<button onclick="document.getElementById(\'welcome-popup\').remove()" style="position:absolute;top:12px;right:14px;background:rgba(255,255,255,0.08);border:none;color:#aaa;width:30px;height:30px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="fas fa-times"></i></button>' +
           '</div>';
         document.body.appendChild(popup);
       }, d.delay || 1200);
@@ -8036,7 +8151,7 @@
         var targetPage = internalPageFromLink(href);
         var anchor = document.createElement('a');
         anchor.href = href;
-        anchor.textContent = item.name || item.label || 'লি ক';
+        anchor.textContent = item.name || item.label || 'লি ��ক';
         if (targetPage) {
           anchor.id = 'nav-' + targetPage;
           anchor.addEventListener('click', function(event) {
@@ -8537,7 +8652,7 @@
             + '<div class="card-body">'
             + '<div class="card-cat">' + cat + '</div>'
             + '<div class="card-title">' + title + '</div>'
-            + (inst ? '<div class="card-instructor" style="font-size:12px;color:var(--text-mid);margin:6px 0"><i class="fa-solid fa-chalkboard-user"></i> ' + inst + '</div>' : '')
+            + (inst ? '<div class="card-instructor" style="font-size:12px;color:var(--text-mid);margin:6px 0"><i class="fas fa-chalkboard-teacher"></i> ' + inst + '</div>' : '')
             + '<div class="card-price" style="font-weight:800;color:var(--primary-dark)">' + price + '</div>'
             + '</div></div>';
         }).join('');
@@ -8556,7 +8671,7 @@
   </script>
   
   <!-- WhatsApp Floating Button -->
-  <a id="whatsapp-float-btn" class="whatsapp-float" href="https://wa.me/8801700000000" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp Contact" title="WhatsApp এ যোগাযোগ করুন">
+  <a id="whatsapp-float-btn" class="whatsapp-float" href="https://wa.me/8801700000000" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp Contact" title="WhatsApp এ যোগাযোগ করুন"><i class="fab fa-whatsapp"></i>
     <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
     </svg>
