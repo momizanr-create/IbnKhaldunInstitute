@@ -2364,6 +2364,38 @@
 // ────────────────────────────────────────────
 const API = 'https://ibnkhalduninstitute.onrender.com';
 
+// ⚡ Global fetch wrapper — যেকোন admin POST/PUT/DELETE সফল হলে
+// frontend bundle cache invalidate করে যাতে index.html এ
+// সাথে সাথে নতুন data দেখায়।
+(function(){
+  var _origFetch = window.fetch.bind(window);
+  var _invalidating = false;
+  function maybeInvalidate(url, method, ok) {
+    if (!ok) return;
+    if (_invalidating) return;
+    if (!/\/api\/admin\//.test(url)) return;
+    if (/\/invalidate-bundle$/.test(url)) return;
+    var m = (method || 'GET').toUpperCase();
+    if (m !== 'POST' && m !== 'PUT' && m !== 'DELETE' && m !== 'PATCH') return;
+    _invalidating = true;
+    try {
+      var tok = localStorage.getItem('admin_token') || localStorage.getItem('adminToken') || '';
+      _origFetch(API + '/api/admin/invalidate-bundle', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + tok }
+      }).catch(function(){}).finally(function(){ _invalidating = false; });
+    } catch(e){ _invalidating = false; }
+  }
+  window.fetch = function(input, init) {
+    var url = typeof input === 'string' ? input : (input && input.url) || '';
+    var method = (init && init.method) || (typeof input === 'object' && input && input.method) || 'GET';
+    return _origFetch(input, init).then(function(resp){
+      try { maybeInvalidate(url, method, resp && resp.ok); } catch(e){}
+      return resp;
+    });
+  };
+})();
+
 // ── Storage helpers ──
 const getToken    = () => localStorage.getItem('admin_token');
 const getUsername = () => localStorage.getItem('admin_username');

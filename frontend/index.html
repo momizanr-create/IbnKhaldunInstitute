@@ -7373,44 +7373,46 @@
     // ===========================
     async function loadSiteDataFromAPI() {
       try {
-        // Run all API calls in parallel
-        var results = await Promise.allSettled([
-          fetch(API_BASE + '/api/site-settings').then(r => r.json()),
-          fetch(API_BASE + '/api/theme-settings').then(r => r.json()),
-          fetch(API_BASE + '/api/hero-section').then(r => r.json()),
-          fetch(API_BASE + '/api/navigation').then(r => r.json()),
-          fetch(API_BASE + '/api/footer').then(r => r.json()),
-          fetch(API_BASE + '/api/welcome-popup').then(r => r.json()),
-          fetch(API_BASE + '/api/cta-section').then(r => r.json()),
-          fetch(API_BASE + '/api/featured-courses-config').then(r => r.json()),
-          fetch(API_BASE + '/api/courses').then(r => r.json()),
-          fetch(API_BASE + '/api/testimonials').then(r => r.json()),
-          fetch(API_BASE + '/api/instructors').then(r => r.json()),
-          fetch(API_BASE + '/api/notices').then(r => r.json()),
-          fetch(API_BASE + '/api/blog').then(r => r.json()),
-          fetch(API_BASE + '/api/contact-content').then(r => r.json()),
-          fetch(API_BASE + '/api/course-tabs').then(r => r.json()),
-          fetch(API_BASE + '/api/faqs').then(r => r.json()),
-          fetch(API_BASE + '/api/section-content').then(r => r.json()),
-        ]);
+        // ⚡ SINGLE BUNDLE CALL — সব data এক request এ
+        // Server এ in-memory cache (60s) আছে, তাই দ্রুত response পাবে।
+        // 8 second timeout — Render cold-start এ block করবে না।
+        var ctrl = new AbortController();
+        var to = setTimeout(function(){ ctrl.abort(); }, 8000);
+        var bundle;
+        try {
+          var resp = await fetch(API_BASE + '/api/public/initial-bundle', { signal: ctrl.signal });
+          clearTimeout(to);
+          bundle = await resp.json();
+          // Cache for instant next-load
+          try { localStorage.setItem('_siteDataCache', JSON.stringify({ t: Date.now(), d: bundle })); } catch(e){}
+        } catch(bundleErr) {
+          clearTimeout(to);
+          console.warn('Bundle fetch failed:', bundleErr && bundleErr.message);
+          // fallback: cached data যদি থাকে
+          try {
+            var cached = localStorage.getItem('_siteDataCache');
+            if (cached) bundle = JSON.parse(cached).d;
+          } catch(e){}
+          if (!bundle) throw bundleErr;
+        }
 
-        var siteSettings    = results[0].status === 'fulfilled' ? results[0].value : null;
-        var themeSettings   = results[1].status === 'fulfilled' ? results[1].value : null;
-        var heroData        = results[2].status === 'fulfilled' ? results[2].value : null;
-        var navData         = results[3].status === 'fulfilled' ? results[3].value : null;
-        var footerData      = results[4].status === 'fulfilled' ? results[4].value : null;
-        var popupData       = results[5].status === 'fulfilled' ? results[5].value : null;
-        var ctaData         = results[6].status === 'fulfilled' ? results[6].value : null;
-        var fcConfig        = results[7].status === 'fulfilled' ? results[7].value : null;
-        var apiCourses      = results[8].status === 'fulfilled' ? results[8].value : null;
-        var apiTestimonials = results[9].status === 'fulfilled' ? results[9].value : null;
-        var apiInstructors  = results[10].status === 'fulfilled' ? results[10].value : null;
-        var apiNotices      = results[11].status === 'fulfilled' ? results[11].value : null;
-        var apiBlogPosts    = results[12].status === 'fulfilled' ? results[12].value : null;
-        var contactData     = results[13].status === 'fulfilled' ? results[13].value : null;
-        var apiCourseTabs   = results[14].status === 'fulfilled' ? results[14].value : null;
-        var faqData         = results[15].status === 'fulfilled' ? results[15].value : null;
-        var sectionContent  = results[16].status === 'fulfilled' ? results[16].value : null;
+        var siteSettings    = bundle.siteSettings    || null;
+        var themeSettings   = bundle.themeSettings   || null;
+        var heroData        = bundle.heroSection     || null;
+        var navData         = bundle.navigation      || null;
+        var footerData      = bundle.footer          || null;
+        var popupData       = bundle.welcomePopup    || null;
+        var ctaData         = bundle.ctaSection      || null;
+        var fcConfig        = bundle.featuredCoursesConfig || null;
+        var apiCourses      = bundle.courses         || null;
+        var apiTestimonials = bundle.testimonials    || null;
+        var apiInstructors  = bundle.instructors     || null;
+        var apiNotices      = bundle.notices         || null;
+        var apiBlogPosts    = bundle.blog            || null;
+        var contactData     = bundle.contactContent  || null;
+        var apiCourseTabs   = bundle.courseTabs      || null;
+        var faqData         = bundle.faqs            || null;
+        var sectionContent  = bundle.sectionContent  || null;
 
         // ── THEME / CSS Variables ──
         if (themeSettings && themeSettings.vars) {
@@ -8183,6 +8185,51 @@
     applyFAQContent({});
     renderDefaultHomepageContent();
     renderDefaultInstructors();
+
+    // ⚡ INSTANT RENDER from localStorage cache (০ms)
+    // আগের visit এর data থাকলে সাথে সাথে দেখাবে — কোনো delay নেই।
+    // তারপর background এ fresh data fetch হবে।
+    (function applyCachedBundleInstantly(){
+      try {
+        var raw = localStorage.getItem('_siteDataCache');
+        if (!raw) return;
+        var parsed = JSON.parse(raw);
+        var bundle = parsed && parsed.d;
+        if (!bundle) return;
+        // Theme + site settings — visual stuff
+        if (bundle.themeSettings && bundle.themeSettings.vars) {
+          Object.entries(bundle.themeSettings.vars).forEach(function(kv){
+            document.documentElement.style.setProperty(kv[0], kv[1]);
+          });
+        }
+        var ss = bundle.siteSettings;
+        if (ss) {
+          if (ss.title) document.title = ss.title;
+          if (ss.primaryColor)     document.documentElement.style.setProperty('--primary', ss.primaryColor);
+          if (ss.greenColor)       document.documentElement.style.setProperty('--Green', ss.greenColor);
+          if (ss.primaryDarkColor) document.documentElement.style.setProperty('--primary-dark', ss.primaryDarkColor);
+          if (typeof applyLogo === 'function' && ss.logoHeader) applyLogo(ss.logoHeader);
+          if (typeof applyFooterLogo === 'function' && ss.logoFooter) applyFooterLogo(ss.logoFooter);
+          if (typeof applyTopBanner === 'function') applyTopBanner(ss);
+        }
+        // Courses + instructors — main visible content
+        if (bundle.courses && bundle.courses.length) {
+          window._allCoursesData = bundle.courses;
+          window._apiCourses = bundle.courses;
+          if (typeof renderAPICoursesOnHomepage === 'function') {
+            renderAPICoursesOnHomepage(bundle.courses, bundle.courseTabs);
+          }
+        }
+        if (bundle.instructors && bundle.instructors.length) {
+          window._apiInstructors = bundle.instructors;
+          if (typeof renderAPIInstructors === 'function') renderAPIInstructors(bundle.instructors);
+        }
+        if (bundle.testimonials && bundle.testimonials.length && typeof renderAPITestimonials === 'function') {
+          renderAPITestimonials(bundle.testimonials);
+        }
+        if (bundle.footer && typeof applyFooterData === 'function') applyFooterData(bundle.footer);
+      } catch(e){ /* silent */ }
+    })();
 
     // ── Init: load API data then check popup ──
     loadSiteDataFromAPI().then(function() {
