@@ -368,19 +368,46 @@
     /* ── MOBILE ── */
     .hamburger { display: none; background: none; border: none; color: var(--text); font-size: 22px; cursor: pointer; padding: 4px; }
     @media (max-width: 768px) {
-      .sidebar { transform: translateX(-100%); }
-      .sidebar.open { transform: translateX(0); }
+      .sidebar { transform: translateX(-100%); z-index: 200; }
+      .sidebar.open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,0.5); }
       .main { margin-left: 0; }
       .hamburger { display: block; }
       .stats-grid { grid-template-columns: 1fr 1fr; }
       .row2 { grid-template-columns: 1fr; }
       .hide-mobile { display: none !important; }
       .topbar-greeting { font-size: 15px; }
+      .topbar { padding: 0 14px 0 60px; }
+      .content { padding: 14px; }
+      .modal { border-radius: 14px; max-height: 95vh; }
+      .modal-header { padding: 16px 18px 14px; }
+      .modal-body { padding: 16px 18px; }
+      .modal-footer { padding: 12px 18px; flex-wrap: wrap; gap: 8px; }
+      .modal-footer .btn { flex: 1; min-width: 120px; justify-content: center; }
+      .modal-overlay { padding: 10px; align-items: flex-end; }
+      table { font-size: 12px; }
+      th, td { padding: 10px 10px; }
+      .card-header { padding: 14px 16px; flex-wrap: wrap; gap: 8px; }
+      .dashboard-grid { grid-template-columns: 1fr !important; }
+      .btn { padding: 9px 14px; font-size: 13px; }
+      .topbar-sub { display: none; }
+      .topbar-uname { display: none; }
+      .page-header h2 { font-size: 17px; }
     }
     @media (max-width: 480px) {
       .stats-grid { grid-template-columns: 1fr; }
-      .content { padding: 16px; }
+      .content { padding: 10px; }
+      .modal-overlay { padding: 0; align-items: flex-end; }
+      .modal { border-radius: 18px 18px 0 0; max-height: 92vh; width: 100%; }
+      .card-header h3 { font-size: 14px; }
+      .field label { font-size: 11px; }
+      .field input, .field textarea, .field select { font-size: 13px; padding: 10px 11px; }
     }
+    /* Sidebar overlay backdrop on mobile */
+    .sidebar-backdrop {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      z-index: 199; backdrop-filter: blur(2px);
+    }
+    .sidebar-backdrop.show { display: block; }
 
   /* ── Thumbnail Drag & Drop ── */
   #thumb-drop-zone { transition: border-color 0.2s, background 0.2s; }
@@ -489,6 +516,104 @@
       z-index: 1000;
     }
 
+  /* ══════════════════════════════════════════════
+     📱 MOBILE FRIENDLY — সম্পূর্ণ মোবাইল অপটিমাইজেশন
+     ══════════════════════════════════════════════ */
+
+  /* Modal — মোবাইলে নিচ থেকে স্লাইড আপ */
+  @media (max-width: 600px) {
+    .modal-overlay {
+      align-items: flex-end;
+      padding: 0;
+    }
+    .modal {
+      max-width: 100%;
+      width: 100%;
+      max-height: 92vh;
+      border-radius: 20px 20px 0 0;
+      animation: modalSlideUp 0.3s cubic-bezier(0.34,1.2,0.64,1);
+    }
+    @keyframes modalSlideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to   { transform: translateY(0);   opacity: 1; }
+    }
+    .modal-header { padding: 18px 18px 14px; }
+    .modal-body   { padding: 16px 18px; }
+    .modal-footer { padding: 14px 18px; flex-wrap: wrap; gap: 8px; }
+    .modal-footer .btn { flex: 1; justify-content: center; min-width: 0; }
+    .modal::before {
+      content: '';
+      display: block;
+      width: 40px; height: 4px;
+      background: var(--border2);
+      border-radius: 4px;
+      margin: 10px auto 0;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .topbar { padding: 0 12px 0 62px; height: 56px; }
+    .topbar-greeting { font-size: 14px; }
+    .topbar-sub { display: none; }
+    .topbar-uname { display: none; }
+    .topbar-actions { gap: 6px; }
+    .topbar-user { padding: 5px; border-radius: 50%; }
+  }
+
+  @media (max-width: 600px) {
+    .content { padding: 12px; }
+    .page-header h2 { font-size: 17px; }
+    .page-header p { font-size: 12px; }
+    .card-header { padding: 14px 14px; flex-wrap: wrap; gap: 8px; }
+    .card-header h3 { font-size: 14px; }
+    th { padding: 9px 10px; font-size: 10px; }
+    td { padding: 10px 10px; font-size: 13px; }
+    .card-body { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { min-width: 480px; }
+    .field input, .field textarea, .field select { font-size: 16px; }
+  }
+
+  @media (max-width: 400px) {
+    .stats-grid { grid-template-columns: 1fr; gap: 10px; }
+    .stat-card { padding: 16px 14px; }
+    .stat-info h3 { font-size: 24px; }
+  }
+
+  @media (max-width: 768px) {
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55); z-index: 49;
+      backdrop-filter: blur(2px);
+    }
+    .sidebar-overlay.open { display: block; }
+    .sidebar { box-shadow: 4px 0 24px rgba(0,0,0,0.5); }
+    .dashboard-grid { grid-template-columns: 1fr; gap: 14px; }
+    .sidebar-nav { max-height: calc(100vh - 180px); }
+    .sidebar-footer { position: sticky; bottom: 0; background: var(--bg2); }
+  }
+
+  @media (max-width: 520px) {
+    .row2 { grid-template-columns: 1fr; gap: 0; }
+  }
+
+  @media (max-width: 600px) {
+    .btn { padding: 10px 14px; font-size: 13px; min-height: 40px; }
+    .btn-sm { padding: 7px 10px; font-size: 12px; min-height: 34px; }
+    .notification-btn { padding: 9px 11px; }
+    #toast { bottom: 16px; right: 12px; left: 12px; max-width: none; text-align: center; font-size: 13px; }
+  }
+
+  @media (max-width: 480px) {
+    .login-box { padding: 32px 20px; margin: 0 12px; }
+    .login-logo h1 { font-size: 17px; }
+    .notification-dropdown { right: -60px; width: 88vw; }
+    .schedule-item { padding: 12px 14px; gap: 10px; }
+    .schedule-dot { width: 36px; height: 36px; font-size: 16px; }
+    .schedule-title { font-size: 13px; }
+    .schedule-date { font-size: 11px; }
+  }
+
+
   </style>
 </head>
 <body>
@@ -520,6 +645,8 @@
      APP SHELL
 ═══════════════════════════════════════════════ -->
 <div id="app">
+  <!-- Sidebar backdrop for mobile -->
+  <div id="sidebar-backdrop" class="sidebar-backdrop" onclick="closeSidebarMobile()"></div>
   <div class="layout">
 
     <!-- SIDEBAR -->
@@ -2052,7 +2179,7 @@
   <div class="modal" style="max-width:640px">
     <div class="modal-header">
       <h3 id="fc-modal-title">ফিচার্ড কোর্স কার্ড</h3>
-      <button class="btn-close" onclick="closeModal('featured-course-modal')">×</button>
+      <button class="btn-close" style="opacity:0.35;cursor:not-allowed" title="বাতিল বাটন ব্যবহার করুন" disabled>×</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="fc-card-index"/>
@@ -2115,7 +2242,7 @@
   <div class="modal">
     <div class="modal-header">
       <h3 id="course-modal-title">নতুন কোর্স</h3>
-      <button class="btn-close" onclick="closeModal('course-modal')">×</button>
+      <button class="btn-close" style="opacity:0.35;cursor:not-allowed" title="বাতিল বাটন ব্যবহার করুন" disabled>×</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="course-id"/>
@@ -2214,7 +2341,7 @@
   <div class="modal">
     <div class="modal-header">
       <h3 id="instructor-modal-title">নতুন ইন্সট্রাক্টর</h3>
-      <button class="btn-close" onclick="closeModal('instructor-modal')">×</button>
+      <button class="btn-close" style="opacity:0.35;cursor:not-allowed" title="বাতিল বাটন ব্যবহার করুন" disabled>×</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="instructor-id"/>
@@ -2280,7 +2407,7 @@
   <div class="modal">
     <div class="modal-header">
       <h3 id="testimonial-modal-title">নতুন রিভিউ</h3>
-      <button class="btn-close" onclick="closeModal('testimonial-modal')">×</button>
+      <button class="btn-close" style="opacity:0.35;cursor:not-allowed" title="বাতিল বাটন ব্যবহার করুন" disabled>×</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="testimonial-id"/>
@@ -2305,7 +2432,7 @@
 <!-- Blog Post Modal -->
 <div class="modal-overlay" id="blog-post-modal">
   <div class="modal" style="max-width:680px">
-    <div class="modal-header"><h3 id="blog-post-modal-title">নতুন ব্লগ পোস্ট</h3><button class="btn-close" onclick="closeModal('blog-post-modal')">×</button></div>
+    <div class="modal-header"><h3 id="blog-post-modal-title">নতুন ব্লগ পোস্ট</h3><button class="btn-close" style="opacity:0.35;cursor:not-allowed" title="বাতিল বাটন ব্যবহার করুন" disabled>×</button></div>
     <div class="modal-body">
       <input type="hidden" id="blog-post-id"/>
       <div class="field"><label>শিরোনাম *</label><input id="bp-title" placeholder="পোস্টের শিরোনাম"/></div>
@@ -2345,7 +2472,7 @@
   <div class="modal">
     <div class="modal-header">
       <h3 id="notice-modal-title">নতুন নোটিশ</h3>
-      <button class="btn-close" onclick="closeModal('notice-modal')">×</button>
+      <button class="btn-close" style="opacity:0.35;cursor:not-allowed" title="বাতিল বাটন ব্যবহার করুন" disabled>×</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="notice-id"/>
@@ -2371,7 +2498,7 @@
   <div class="modal" style="max-width:560px">
     <div class="modal-header">
       <h3 id="category-modal-title">নতুন ক্যাটাগরি</h3>
-      <button class="btn-close" onclick="closeModal('category-modal')">×</button>
+      <button class="btn-close" style="opacity:0.35;cursor:not-allowed" title="বাতিল বাটন ব্যবহার করুন" disabled>×</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="category-id"/>
@@ -2397,7 +2524,7 @@
   <div class="modal" style="max-width:420px">
     <div class="modal-header">
       <h3 id="subcategory-modal-title">নতুন সাব ক্যাটাগরি</h3>
-      <button class="btn-close" onclick="closeModal('subcategory-modal')">×</button>
+      <button class="btn-close" style="opacity:0.35;cursor:not-allowed" title="বাতিল বাটন ব্যবহার করুন" disabled>×</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="subcategory-id"/>
@@ -2423,7 +2550,7 @@
   <div class="modal" style="max-width:420px">
     <div class="modal-header">
       <h3 id="course-tab-modal-title">নতুন কোর্স ট্যাব</h3>
-      <button class="btn-close" onclick="closeModal('course-tab-modal')">×</button>
+      <button class="btn-close" style="opacity:0.35;cursor:not-allowed" title="বাতিল বাটন ব্যবহার করুন" disabled>×</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="course-tab-id"/>
@@ -2453,7 +2580,7 @@
   <div class="modal" style="max-width:500px">
     <div class="modal-header">
       <h3 id="hero-course-modal-title">হিরো কার্ডে কোর্স যোগ করুন</h3>
-      <button class="btn-close" onclick="closeModal('hero-course-modal')">×</button>
+      <button class="btn-close" style="opacity:0.35;cursor:not-allowed" title="বাতিল বাটন ব্যবহার করুন" disabled>×</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="hc-index"/>
@@ -2612,9 +2739,17 @@ function startAdminNotifications() {
   adminNotifyTimer = setInterval(pollAdminNotifications, 30000);
 }
 
-// ── Modal ──
+// ── Modal ── (backdrop click disabled — only Cancel button closes)
 function openModal(id)  { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// Block backdrop clicks on ALL modal overlays so clicking outside does nothing
+document.addEventListener('click', function(e) {
+  if (e.target && e.target.classList.contains('modal-overlay')) {
+    e.stopPropagation();
+    // Do NOT close — user must click Cancel button
+  }
+}, true);
 function escapeAdminHTML(value) {
   return String(value || '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
 }
@@ -2681,7 +2816,15 @@ function doLogout() {
 }
 
 function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
+  const sidebar = document.getElementById('sidebar');
+  const backdrop = document.getElementById('sidebar-backdrop');
+  sidebar.classList.toggle('open');
+  if (backdrop) backdrop.classList.toggle('show', sidebar.classList.contains('open'));
+}
+function closeSidebarMobile() {
+  document.getElementById('sidebar').classList.remove('open');
+  const backdrop = document.getElementById('sidebar-backdrop');
+  if (backdrop) backdrop.classList.remove('show');
 }
 
 // ── On load: check token ──
@@ -2716,6 +2859,8 @@ function navTo(page) {
   if (navEl) navEl.classList.add('active');
   document.getElementById('page-title').textContent = pageTitles[page] || page;
   document.getElementById('sidebar').classList.remove('open');
+  const _bd = document.getElementById('sidebar-backdrop');
+  if (_bd) _bd.classList.remove('show');
 
   const loaders = {
     courses: loadCourses, instructors: loadInstructors,
