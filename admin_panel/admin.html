@@ -37,7 +37,8 @@
       --shadow-card: 0 2px 16px rgba(0,0,0,0.3);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Hind Siliguri', 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    html { overflow-x: hidden; }
+    body { font-family: 'Hind Siliguri', 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; max-width: 100vw; }
     a { text-decoration: none; color: inherit; }
     button { cursor: pointer; font-family: inherit; }
     input, textarea, select { font-family: inherit; }
@@ -93,8 +94,8 @@
     }
 
     /* ── LAYOUT ── */
-    #app { display: none; min-height: 100vh; }
-    .layout { display: flex; min-height: 100vh; }
+    #app { display: none; min-height: 100vh; overflow-x: hidden; }
+    .layout { display: flex; min-height: 100vh; overflow-x: hidden; }
 
     /* ── SIDEBAR ── */
     .sidebar {
@@ -147,12 +148,12 @@
     .btn-logout:hover { border-color: var(--red); color: var(--red); background: var(--red-bg); }
 
     /* ── MAIN ── */
-    .main { margin-left: var(--sidebar); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+    .main { margin-left: var(--sidebar); flex: 1; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; min-width: 0; }
     .topbar {
       background: var(--bg2); border-bottom: 1px solid var(--border);
       padding: 0 28px; height: 62px; display: flex; align-items: center;
       justify-content: space-between; position: sticky; top: 0; z-index: 40;
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px); width: 100%; max-width: 100%; overflow: hidden;
     }
     .topbar-left { display: flex; flex-direction: column; }
     .topbar-greeting { font-size: 18px; font-weight: 700; color: var(--text); }
@@ -182,7 +183,7 @@
     .course-pick-list { max-height: 230px; overflow: auto; border: 1px solid var(--border2); border-radius: var(--radius-sm); background: var(--bg3); padding: 8px; }
     .course-pick-item { display: flex; gap: 8px; align-items: flex-start; padding: 8px; border-bottom: 1px solid var(--border); font-size: 13px; }
     .course-pick-item:last-child { border-bottom: 0; }
-    .content { padding: 26px 28px; flex: 1; }
+    .content { padding: 26px 28px; flex: 1; overflow-x: hidden; }
 
     /* ── PAGE HEADER ── */
     .page-header { margin-bottom: 22px; }
@@ -397,7 +398,7 @@
         transform: translateX(0);
         box-shadow: 8px 0 40px rgba(0,0,0,0.55);
       }
-      .main { margin-left: 0 !important; }
+      .main { margin-left: 0 !important; width: 100% !important; max-width: 100vw !important; overflow-x: hidden !important; }
 
       /* Hamburger দেখাবে topbar-এ */
       .hamburger {
@@ -407,20 +408,25 @@
         background: var(--bg3); border: 1px solid var(--border2);
         border-radius: 10px; color: var(--primary);
         font-size: 18px; cursor: pointer;
+        flex-shrink: 0;
       }
 
       /* Content padding */
-      .content { padding: 14px 12px !important; }
+      .content { padding: 14px 12px !important; overflow-x: hidden; }
 
       /* Topbar */
-      .topbar { padding: 0 14px !important; height: 56px !important; }
+      .topbar { padding: 0 12px !important; height: 56px !important; gap: 8px; }
       .topbar-sub { display: none; }
-      .topbar-greeting { font-size: 16px !important; }
+      .topbar-greeting { font-size: 15px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
       .topbar-uname { display: none !important; }
       .topbar-user {
         padding: 4px !important; border-radius: 50% !important;
         width: 36px; height: 36px; justify-content: center;
+        flex-shrink: 0;
       }
+      /* Website button মোবাইলে লুকাও */
+      .topbar-actions a.btn { display: none !important; }
+      .topbar-actions { gap: 6px !important; flex-shrink: 0; }
 
       /* Stats */
       .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -429,8 +435,8 @@
       .row2 { grid-template-columns: 1fr !important; }
       .dashboard-grid { grid-template-columns: 1fr !important; }
 
-      /* Table scroll */
-      .card-body { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      /* Table scroll — শুধু card-body-র ভেতরে scroll, body-তে না */
+      .card-body { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; }
       table { min-width: 480px; }
       th { padding: 9px 12px; font-size: 10.5px; }
       td { padding: 11px 12px; font-size: 13px; }
@@ -708,7 +714,7 @@
     <div class="main">
       <div class="topbar">
         <div style="display:flex;align-items:center;gap:14px">
-          <button class="hamburger" onclick="toggleSidebar()" style="display:none">☰</button>
+          <button class="hamburger" onclick="toggleSidebar()">☰</button>
           <div class="topbar-left">
             <div class="topbar-greeting" id="page-title">ড্যাশবোর্ড</div>
             <div class="topbar-sub" id="topbar-sub-text">স্বাগতম, আবার দেখা হলো!</div>
