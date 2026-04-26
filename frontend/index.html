@@ -3235,22 +3235,20 @@
   .hero-feature-body{padding:16px 18px 18px}
 }
 
-/* ═══════ CATEGORY FILTER — DROPDOWN SYSTEM (Desktop + Mobile) ═══════ */
+/* ═══════ CATEGORY FILTER — SPLIT-PANEL DROPDOWN SYSTEM ═══════ */
 
-/* ── ড্রপডাউন wrapper ── */
-.cat-dropdown-wrapper {
+/* ── মূল filter row ── */
+.cat-filter-row {
+  margin: 22px 0 6px;
   position: relative;
-  display: inline-block;
-  margin: 24px 0 8px;
-  z-index: 50;
 }
 
-/* ── ড্রপডাউন trigger button ── */
-.cat-dropdown-trigger {
+/* ── Trigger button ── */
+.cat-dd-trigger-btn {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 20px;
+  padding: 11px 18px;
   background: #fff;
   border: 1.5px solid var(--border, #E8DFCC);
   border-radius: 10px;
@@ -3259,199 +3257,290 @@
   font-weight: 600;
   color: var(--text-dark, #1C1612);
   cursor: pointer;
-  min-width: 220px;
+  min-width: 230px;
   justify-content: space-between;
-  box-shadow: 0 2px 8px rgba(28,22,18,0.07);
-  transition: all 0.22s ease;
-  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(28,22,18,0.06);
+  transition: all 0.2s ease;
   user-select: none;
+  position: relative;
+  z-index: 1;
 }
-.cat-dropdown-trigger:hover {
+.cat-dd-trigger-btn:hover {
   border-color: var(--primary, #B8893C);
-  box-shadow: 0 4px 14px rgba(184,137,60,0.14);
+  box-shadow: 0 4px 16px rgba(184,137,60,0.14);
 }
-.cat-dropdown-trigger.open {
+.cat-dd-trigger-btn.is-open {
   border-color: var(--primary, #B8893C);
-  box-shadow: 0 4px 18px rgba(184,137,60,0.18);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: transparent;
+  box-shadow: 0 4px 16px rgba(184,137,60,0.12);
+  background: #fff;
 }
-.cat-dropdown-trigger .cat-dd-icon {
+.cat-dd-trigger-btn .trig-left {
+  display: flex; align-items: center; gap: 9px;
+  overflow: hidden;
+}
+.cat-dd-trigger-btn .trig-icon {
   width: 28px; height: 28px;
-  border-radius: 6px;
+  border-radius: 7px;
   background: var(--primary-soft, #F2E7D0);
   display: flex; align-items: center; justify-content: center;
   font-size: 14px; flex-shrink: 0;
 }
-.cat-dropdown-trigger .cat-dd-label {
-  flex: 1;
-  text-align: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.cat-dd-trigger-btn .trig-label {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.cat-dropdown-trigger .cat-dd-label span.cat-count-badge {
-  display: inline-block;
+.cat-dd-trigger-btn .trig-arrow {
+  flex-shrink: 0; color: var(--text-mid);
+  transition: transform 0.2s ease;
+  display: flex; align-items: center;
+}
+.cat-dd-trigger-btn.is-open .trig-arrow { transform: rotate(180deg); }
+.cat-dd-trigger-btn .trig-badge {
   background: var(--Green, #0F4C3A);
   color: #fff;
   border-radius: 999px;
   font-size: 10px;
   padding: 1px 7px;
-  margin-left: 6px;
   font-weight: 700;
-}
-.cat-dd-arrow {
-  width: 18px; height: 18px;
   flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  transition: transform 0.22s ease;
-  color: var(--text-mid, #5C5248);
-}
-.cat-dropdown-trigger.open .cat-dd-arrow {
-  transform: rotate(180deg);
+  margin-left: 4px;
 }
 
-/* ── ড্রপডাউন মেনু ── */
-.cat-dropdown-menu {
+/* ── Split-panel dropdown ── */
+.cat-split-panel {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% - 1px);
   left: 0;
-  min-width: 260px;
-  max-width: 340px;
+  width: 580px;
+  max-width: calc(100vw - 48px);
   background: #fff;
-  border: 1.5px solid var(--border, #E8DFCC);
-  border-radius: 12px;
-  box-shadow: 0 12px 40px rgba(28,22,18,0.14), 0 4px 12px rgba(28,22,18,0.07);
-  overflow: hidden;
+  border: 1.5px solid var(--primary, #B8893C);
+  border-radius: 0 12px 12px 12px;
+  box-shadow: 0 16px 48px rgba(28,22,18,0.14), 0 4px 16px rgba(28,22,18,0.07);
+  display: flex;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-8px) scale(0.98);
+  transform: translateY(-6px);
   transform-origin: top left;
   transition: all 0.22s cubic-bezier(0.22,0.61,0.36,1);
   z-index: 9999;
+  overflow: hidden;
 }
-.cat-dropdown-menu.open {
+.cat-split-panel.is-open {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0) scale(1);
+  transform: translateY(0);
 }
-.cat-dd-search-wrap {
-  padding: 10px 12px 8px;
+
+/* বাম পাশ: ক্যাটাগরি list */
+.cat-panel-left {
+  width: 220px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border, #E8DFCC);
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-soft, #F4EFE3);
+}
+.cat-panel-left-search {
+  padding: 10px 10px 8px;
   border-bottom: 1px solid var(--border, #E8DFCC);
+  flex-shrink: 0;
 }
-.cat-dd-search {
+.cat-panel-left-search input {
   width: 100%;
-  padding: 8px 12px;
-  border: 1px solid var(--border, #E8DFCC);
+  padding: 7px 10px 7px 30px;
+  border: 1px solid var(--border);
   border-radius: 7px;
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: 12.5px;
   color: var(--text-dark);
-  background: var(--bg, #FBF8F1);
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' fill='%238B8278' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.017-.016zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z'/%3E%3C/svg%3E") no-repeat 9px center;
   outline: none;
-  transition: border-color 0.18s;
+  transition: border-color 0.15s;
 }
-.cat-dd-search:focus { border-color: var(--primary, #B8893C); }
+.cat-panel-left-search input:focus { border-color: var(--primary); }
 
-.cat-dd-list {
-  max-height: 280px;
+.cat-panel-list {
   overflow-y: auto;
-  padding: 6px 0;
+  flex: 1;
+  padding: 4px 0;
+  max-height: 320px;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 }
-.cat-dd-list::-webkit-scrollbar { width: 4px; }
-.cat-dd-list::-webkit-scrollbar-track { background: transparent; }
-.cat-dd-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.cat-panel-list::-webkit-scrollbar { width: 3px; }
+.cat-panel-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-.cat-dd-item {
+.cat-panel-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
+  gap: 8px;
+  padding: 9px 12px;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background 0.12s;
   border-left: 3px solid transparent;
-  font-family: var(--font-body);
-  font-size: 13.5px;
-  font-weight: 500;
-  color: var(--text-dark, #1C1612);
+  position: relative;
 }
-.cat-dd-item:hover {
-  background: var(--bg-soft, #F4EFE3);
+.cat-panel-item:hover {
+  background: rgba(255,255,255,0.7);
   border-left-color: var(--primary, #B8893C);
 }
-.cat-dd-item.active {
-  background: var(--primary-soft, #F2E7D0);
+.cat-panel-item.active {
+  background: #fff;
   border-left-color: var(--primary-dark, #8E6520);
-  color: var(--primary-dark, #8E6520);
-  font-weight: 700;
 }
-.cat-dd-item .cat-dd-item-icon {
-  width: 32px; height: 32px;
-  border-radius: 8px;
-  background: var(--bg-soft, #F4EFE3);
+.cat-panel-item.hovered {
+  background: rgba(255,255,255,0.85);
+  border-left-color: var(--primary, #B8893C);
+}
+.cat-panel-item-icon {
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  background: #fff;
   display: flex; align-items: center; justify-content: center;
-  font-size: 15px; flex-shrink: 0;
+  font-size: 14px; flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(28,22,18,0.08);
 }
-.cat-dd-item.active .cat-dd-item-icon {
-  background: rgba(184,137,60,0.15);
+.cat-panel-item.active .cat-panel-item-icon {
+  background: var(--primary-soft, #F2E7D0);
 }
-.cat-dd-item-name {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.cat-panel-item-name {
+  flex: 1; font-size: 13px; font-weight: 600;
+  color: var(--text-dark);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.cat-dd-item-count {
-  background: rgba(28,22,18,0.09);
-  color: var(--text-mid);
+.cat-panel-item.active .cat-panel-item-name { color: var(--primary-dark); }
+.cat-panel-item-count {
+  font-size: 10.5px; font-weight: 700;
+  color: var(--text-light);
+  background: rgba(28,22,18,0.07);
   border-radius: 999px;
-  font-size: 10.5px;
-  padding: 1px 8px;
-  font-weight: 600;
+  padding: 1px 7px;
   flex-shrink: 0;
 }
-.cat-dd-item.active .cat-dd-item-count {
-  background: rgba(142,101,32,0.15);
+.cat-panel-item.active .cat-panel-item-count {
+  background: rgba(142,101,32,0.12);
   color: var(--primary-dark);
 }
-.cat-dd-empty {
-  padding: 18px 14px;
+.cat-panel-item-arrow {
+  flex-shrink: 0; color: var(--text-light);
+  font-size: 10px;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+.cat-panel-item:hover .cat-panel-item-arrow,
+.cat-panel-item.hovered .cat-panel-item-arrow { opacity: 1; }
+.cat-panel-item.active .cat-panel-item-arrow { opacity: 0; }
+
+/* ডান পাশ: সাব-ক্যাটাগরি panel */
+.cat-panel-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: #fff;
+}
+.cat-panel-right-header {
+  padding: 10px 14px 8px;
+  border-bottom: 1px solid var(--border, #E8DFCC);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cat-panel-right-title {
+  font-family: var(--font-nav);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-mid);
+}
+.cat-panel-right-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
   color: var(--text-light);
   font-size: 13px;
   text-align: center;
+  gap: 10px;
+}
+.cat-panel-right-empty .empty-icon { font-size: 36px; opacity: 0.5; }
+.cat-subcat-list {
+  overflow-y: auto;
+  flex: 1;
+  padding: 8px 10px;
+  max-height: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.cat-subcat-list::-webkit-scrollbar { width: 3px; }
+.cat-subcat-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+.cat-subcat-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all 0.14s;
+  background: var(--bg-soft, #F4EFE3);
+}
+.cat-subcat-item:hover {
+  background: var(--primary-soft, #F2E7D0);
+  border-color: rgba(184,137,60,0.3);
+}
+.cat-subcat-item.active {
+  background: linear-gradient(135deg, #1a3a30, #0f2a22);
+  border-color: #1a3a30;
+}
+.cat-subcat-item-icon {
+  width: 30px; height: 30px;
+  border-radius: 7px;
+  background: rgba(255,255,255,0.7);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+.cat-subcat-item.active .cat-subcat-item-icon { background: rgba(255,255,255,0.15); }
+.cat-subcat-item-name {
+  flex: 1; font-size: 13px; font-weight: 600;
+  color: var(--text-dark);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.cat-subcat-item.active .cat-subcat-item-name { color: #fff; }
+.cat-subcat-item-count {
+  font-size: 11px; font-weight: 700;
+  color: var(--text-mid);
+  background: rgba(28,22,18,0.08);
+  border-radius: 999px;
+  padding: 1px 8px;
+  flex-shrink: 0;
+}
+.cat-subcat-item.active .cat-subcat-item-count {
+  background: rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.9);
 }
 
-/* সাব-ক্যাটাগরি ড্রপডাউন — ডেস্কটপে পাশে */
-.subcat-dropdown-wrapper {
-  position: relative;
-  display: inline-block;
-  margin: 0 0 8px 12px;
-  z-index: 49;
-}
-.subcat-dropdown-wrapper .cat-dropdown-trigger {
-  min-width: 180px;
-  font-size: 13px;
-  padding: 10px 16px;
-}
-.subcat-dropdown-wrapper .cat-dropdown-menu {
-  min-width: 220px;
-}
-
-/* ── Mobile Bottom Sheet ── */
+/* ── Mobile bottom sheet ── */
 .cat-mobile-overlay {
   display: none;
-  position: fixed;
-  inset: 0;
+  position: fixed; inset: 0;
   background: rgba(28,22,18,0.55);
   z-index: 9990;
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
-  animation: catOverlayIn 0.22s ease;
 }
-@keyframes catOverlayIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-.cat-mobile-overlay.open { display: block; }
+.cat-mobile-overlay.is-open { display: block; }
 
 .cat-mobile-sheet {
   position: fixed;
@@ -3459,291 +3548,226 @@
   background: #fff;
   border-radius: 20px 20px 0 0;
   z-index: 9995;
-  max-height: 85vh;
-  display: flex;
-  flex-direction: column;
+  max-height: 88vh;
+  display: flex; flex-direction: column;
   transform: translateY(100%);
   transition: transform 0.3s cubic-bezier(0.22,0.61,0.36,1);
-  box-shadow: 0 -8px 32px rgba(28,22,18,0.14);
+  box-shadow: 0 -8px 32px rgba(28,22,18,0.16);
 }
-.cat-mobile-sheet.open {
-  transform: translateY(0);
-}
+.cat-mobile-sheet.is-open { transform: translateY(0); }
 .cat-sheet-handle {
   width: 40px; height: 4px;
-  background: var(--border, #E8DFCC);
+  background: var(--border);
   border-radius: 4px;
   margin: 10px auto 0;
   flex-shrink: 0;
 }
 .cat-sheet-header {
-  padding: 14px 20px 12px;
-  border-bottom: 1px solid var(--border, #E8DFCC);
+  padding: 12px 18px 10px;
+  border-bottom: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-between;
   flex-shrink: 0;
 }
 .cat-sheet-title {
-  font-family: var(--font-nav);
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--ink);
+  font-family: var(--font-nav); font-size: 15px; font-weight: 700; color: var(--ink);
 }
 .cat-sheet-close {
-  width: 32px; height: 32px;
-  border: none;
-  background: var(--bg-soft);
-  border-radius: 50%;
+  width: 30px; height: 30px; border: none;
+  background: var(--bg-soft); border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  color: var(--text-mid);
-  font-size: 16px;
-  transition: background 0.15s;
+  cursor: pointer; color: var(--text-mid); font-size: 15px;
 }
-.cat-sheet-close:hover { background: var(--border); }
 .cat-sheet-search-wrap {
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--border, #E8DFCC);
-  flex-shrink: 0;
+  padding: 10px 16px 8px; border-bottom: 1px solid var(--border); flex-shrink: 0;
 }
 .cat-sheet-search {
-  width: 100%;
-  padding: 10px 14px 10px 38px;
-  border: 1.5px solid var(--border, #E8DFCC);
-  border-radius: 10px;
-  font-family: var(--font-body);
-  font-size: 14px;
-  color: var(--text-dark);
-  background: var(--bg, #FBF8F1);
-  outline: none;
-  transition: border-color 0.18s;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%238B8278' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: 12px center;
+  width: 100%; padding: 9px 12px 9px 36px;
+  border: 1.5px solid var(--border); border-radius: 9px;
+  font-family: var(--font-body); font-size: 14px; color: var(--text-dark);
+  background: var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' fill='%238B8278' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.017-.016zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z'/%3E%3C/svg%3E") no-repeat 11px center;
+  outline: none; transition: border-color 0.15s;
 }
-.cat-sheet-search:focus { border-color: var(--primary, #B8893C); }
-
+.cat-sheet-search:focus { border-color: var(--primary); }
 .cat-sheet-list {
-  overflow-y: auto;
-  flex: 1;
-  padding: 8px 0 16px;
+  overflow-y: auto; flex: 1; padding: 6px 0 8px;
   -webkit-overflow-scrolling: touch;
 }
 .cat-sheet-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 13px 20px;
-  cursor: pointer;
-  transition: background 0.15s;
-  border-bottom: 1px solid rgba(232,223,204,0.4);
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 18px;
+  cursor: pointer; transition: background 0.12s;
+  border-bottom: 1px solid rgba(232,223,204,0.35);
 }
 .cat-sheet-item:last-child { border-bottom: none; }
-.cat-sheet-item:hover { background: var(--bg-soft, #F4EFE3); }
-.cat-sheet-item.active {
-  background: var(--primary-soft, #F2E7D0);
-}
-.cat-sheet-item .cat-sheet-item-icon {
-  width: 40px; height: 40px;
-  border-radius: 10px;
-  background: var(--bg-soft, #F4EFE3);
-  display: flex; align-items: center; justify-content: center;
+.cat-sheet-item:hover { background: var(--bg-soft); }
+.cat-sheet-item.active { background: var(--primary-soft); }
+.cat-sheet-item-icon {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: var(--bg-soft); display: flex; align-items: center; justify-content: center;
   font-size: 18px; flex-shrink: 0;
 }
-.cat-sheet-item.active .cat-sheet-item-icon {
-  background: rgba(184,137,60,0.18);
-}
+.cat-sheet-item.active .cat-sheet-item-icon { background: rgba(184,137,60,0.18); }
 .cat-sheet-item-info { flex: 1; min-width: 0; }
 .cat-sheet-item-name {
-  font-size: 14.5px;
-  font-weight: 600;
-  color: var(--text-dark);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 14px; font-weight: 600; color: var(--text-dark);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.cat-sheet-item.active .cat-sheet-item-name {
-  color: var(--primary-dark, #8E6520);
-}
-.cat-sheet-item-sub {
-  font-size: 12px;
-  color: var(--text-light);
-  margin-top: 2px;
-}
+.cat-sheet-item.active .cat-sheet-item-name { color: var(--primary-dark); }
+.cat-sheet-item-sub { font-size: 12px; color: var(--text-light); margin-top: 2px; }
 .cat-sheet-item-count {
-  background: rgba(28,22,18,0.09);
-  color: var(--text-mid);
-  border-radius: 999px;
-  font-size: 11px;
-  padding: 2px 9px;
-  font-weight: 600;
-  flex-shrink: 0;
+  background: rgba(28,22,18,0.08); color: var(--text-mid);
+  border-radius: 999px; font-size: 11px; padding: 2px 9px;
+  font-weight: 600; flex-shrink: 0;
 }
 .cat-sheet-item.active .cat-sheet-item-count {
-  background: rgba(142,101,32,0.18);
-  color: var(--primary-dark);
+  background: rgba(142,101,32,0.15); color: var(--primary-dark);
 }
 .cat-sheet-check {
-  width: 20px; height: 20px;
-  border-radius: 50%;
-  border: 2px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.15s;
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid var(--border); display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 11px; transition: all 0.14s;
 }
 .cat-sheet-item.active .cat-sheet-check {
-  background: var(--primary-dark);
-  border-color: var(--primary-dark);
-  color: #fff;
+  background: var(--primary-dark); border-color: var(--primary-dark); color: #fff;
 }
 
-/* সাব-ক্যাটাগরি sheet footer */
-.cat-sheet-subcat-bar {
-  padding: 10px 16px 14px;
-  border-top: 1px solid var(--border);
-  background: var(--bg-soft);
-  flex-shrink: 0;
-  display: none;
+/* সাব-ক্যাটাগরি bottom sheet — দ্বিতীয় sheet */
+.cat-subcat-sheet {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: #fff; border-radius: 20px 20px 0 0;
+  z-index: 9998; max-height: 75vh;
+  display: flex; flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.28s cubic-bezier(0.22,0.61,0.36,1);
+  box-shadow: 0 -8px 32px rgba(28,22,18,0.18);
 }
-.cat-sheet-subcat-bar.visible { display: block; }
-.cat-sheet-subcat-label {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-mid);
-  margin-bottom: 8px;
+.cat-subcat-sheet.is-open { transform: translateY(0); }
+.cat-subcat-sheet-header {
+  padding: 10px 18px 8px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
 }
-.cat-sheet-subcat-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+.cat-subcat-sheet-back {
+  width: 30px; height: 30px; border: none;
+  background: var(--bg-soft); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text-mid); font-size: 14px;
 }
-.cat-sheet-subcat-pill {
-  padding: 6px 14px;
-  border-radius: 999px;
-  background: #fff;
-  border: 1.5px solid var(--border);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-dark);
-  cursor: pointer;
-  transition: all 0.15s;
-  white-space: nowrap;
+.cat-subcat-sheet-title {
+  flex: 1; font-family: var(--font-nav); font-size: 14px; font-weight: 700; color: var(--ink);
 }
-.cat-sheet-subcat-pill:hover { border-color: var(--primary); color: var(--primary-dark); }
-.cat-sheet-subcat-pill.active {
+.cat-subcat-sheet-list {
+  overflow-y: auto; flex: 1; padding: 10px 14px 20px;
+  display: flex; flex-direction: column; gap: 6px;
+  -webkit-overflow-scrolling: touch;
+}
+.cat-subcat-sheet-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 14px; border-radius: 10px;
+  cursor: pointer; border: 1.5px solid var(--border);
+  background: var(--bg-soft); transition: all 0.14s;
+}
+.cat-subcat-sheet-item:hover { border-color: var(--primary); background: var(--primary-soft); }
+.cat-subcat-sheet-item.active {
   background: linear-gradient(135deg, #1a3a30, #0f2a22);
-  color: #fff;
   border-color: #1a3a30;
 }
-
-/* ── Mobile trigger bar ── */
-.cat-mobile-trigger-bar {
-  display: none;
-  align-items: center;
-  gap: 10px;
-  margin: 20px 0 8px;
-  flex-wrap: wrap;
+.cat-subcat-sheet-icon {
+  width: 34px; height: 34px; border-radius: 8px;
+  background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
 }
-.cat-mobile-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 11px 18px;
-  background: #fff;
-  border: 1.5px solid var(--border, #E8DFCC);
-  border-radius: 10px;
-  font-family: var(--font-nav);
-  font-size: 13px;
-  font-weight: 600;
+.cat-subcat-sheet-item.active .cat-subcat-sheet-icon { background: rgba(255,255,255,0.15); }
+.cat-subcat-sheet-name {
+  flex: 1; font-size: 14px; font-weight: 600; color: var(--text-dark);
+}
+.cat-subcat-sheet-item.active .cat-subcat-sheet-name { color: #fff; }
+.cat-subcat-sheet-count {
+  font-size: 11px; font-weight: 700; color: var(--text-mid);
+  background: rgba(28,22,18,0.08); border-radius: 999px; padding: 2px 9px;
+}
+.cat-subcat-sheet-item.active .cat-subcat-sheet-count {
+  background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.9);
+}
+
+/* মোবাইলে trigger button */
+.cat-mob-trigger-btn {
+  display: none;
+  align-items: center; gap: 9px;
+  padding: 11px 16px;
+  background: #fff; border: 1.5px solid var(--border);
+  border-radius: 10px; cursor: pointer;
+  font-family: var(--font-nav); font-size: 13.5px; font-weight: 600;
   color: var(--text-dark);
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(28,22,18,0.07);
+  box-shadow: 0 2px 8px rgba(28,22,18,0.06);
   transition: all 0.2s;
-  flex: 1;
-  min-width: 0;
+  width: 100%;
   justify-content: space-between;
 }
-.cat-mobile-btn .cat-mobile-btn-left {
-  display: flex; align-items: center; gap: 8px;
-  overflow: hidden;
+.cat-mob-trigger-btn .mob-trig-left {
+  display: flex; align-items: center; gap: 8px; overflow: hidden;
 }
-.cat-mobile-btn .cat-mobile-icon {
-  width: 26px; height: 26px;
-  border-radius: 6px;
-  background: var(--primary-soft);
-  display: flex; align-items: center; justify-content: center;
+.cat-mob-trigger-btn .mob-trig-icon {
+  width: 26px; height: 26px; border-radius: 6px;
+  background: var(--primary-soft); display: flex; align-items: center; justify-content: center;
   font-size: 13px; flex-shrink: 0;
 }
-.cat-mobile-btn .cat-mobile-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.cat-mob-trigger-btn .mob-trig-label {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  display: flex; align-items: center; gap: 6px;
 }
-.cat-mobile-btn .cat-mobile-label .cat-count-badge {
-  display: inline-block;
-  background: var(--Green, #0F4C3A);
-  color: #fff;
-  border-radius: 999px;
-  font-size: 10px;
-  padding: 1px 6px;
-  margin-left: 5px;
-  font-weight: 700;
+.cat-mob-trigger-btn .mob-trig-label .mob-badge {
+  background: var(--Green); color: #fff;
+  border-radius: 999px; font-size: 10px; padding: 1px 6px; font-weight: 700;
 }
-.cat-mobile-btn:hover, .cat-mobile-btn.has-selection {
-  border-color: var(--primary);
-  box-shadow: 0 4px 14px rgba(184,137,60,0.14);
-}
+.cat-mob-trigger-btn.has-sel { border-color: var(--primary); }
+.cat-mob-trigger-btn:hover { border-color: var(--primary); box-shadow: 0 4px 14px rgba(184,137,60,0.12); }
 
-/* সাব-ক্যাটাগরি মোবাইল বার */
-.cat-subcat-mobile-bar {
-  display: none;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  gap: 8px;
-  padding: 2px 0 10px;
-  scrollbar-width: none;
+/* মোবাইল সাব-ক্যাট pill bar */
+.cat-mob-subcat-pills {
+  display: none; flex-wrap: nowrap; overflow-x: auto; gap: 7px;
+  padding: 2px 0 8px; scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
-  margin-bottom: 4px;
 }
-.cat-subcat-mobile-bar::-webkit-scrollbar { display: none; }
-.cat-subcat-mobile-bar.visible { display: flex; }
+.cat-mob-subcat-pills::-webkit-scrollbar { display: none; }
+.cat-mob-subcat-pills.visible { display: flex; }
+.cat-mob-pill {
+  flex-shrink: 0; padding: 7px 15px;
+  border-radius: 999px; background: #fff;
+  border: 1.5px solid var(--border);
+  font-size: 12.5px; font-weight: 600; color: var(--text-dark);
+  cursor: pointer; transition: all 0.14s; white-space: nowrap;
+}
+.cat-mob-pill:hover { border-color: var(--primary); color: var(--primary-dark); }
+.cat-mob-pill.active {
+  background: linear-gradient(135deg, #1a3a30, #0f2a22);
+  color: #fff; border-color: #1a3a30;
+}
 
-/* ── রেসপন্সিভ: ডেস্কটপ vs মোবাইল visibility ── */
+/* ── Responsive ── */
 @media (min-width: 641px) {
-  .cat-mobile-trigger-bar { display: none !important; }
-  .cat-mobile-overlay, .cat-mobile-sheet { display: none !important; }
-  .cat-dropdown-wrapper { display: inline-block; }
+  .cat-mob-trigger-btn { display: none !important; }
+  .cat-mobile-overlay, .cat-mobile-sheet, .cat-subcat-sheet { display: none !important; }
+  .cat-mob-subcat-pills { display: none !important; }
+  .cat-dd-trigger-btn { display: inline-flex; }
+  .cat-split-panel { display: flex; }
 }
 @media (max-width: 640px) {
-  .cat-dropdown-wrapper { display: none !important; }
-  .subcat-dropdown-wrapper { display: none !important; }
-  .cat-mobile-trigger-bar { display: flex !important; }
+  .cat-dd-trigger-btn { display: none !important; }
+  .cat-split-panel { display: none !important; }
+  .cat-mob-trigger-btn { display: flex !important; }
   .cat-mobile-overlay { display: none; }
-  .cat-mobile-overlay.open { display: block; }
+  .cat-mobile-overlay.is-open { display: block; }
 }
 
-/* পুরনো tab style — hide করুন (নতুন dropdown দিয়ে রিপ্লেস) */
+/* পুরনো tab style — hide */
 #courses-category-tabs.category-filter-tabs,
-.category-filter-tabs.cat-pills {
-  display: none !important;
-}
-#subcategory-filter-bar {
-  display: none !important;
-}
-
-/* ── ড্রপডাউন row ── */
-.cat-filter-row {
-  display: flex;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 20px 0 4px;
-}
+.category-filter-tabs.cat-pills { display: none !important; }
+#subcategory-filter-bar { display: none !important; }
 
 /* sub-category bar consistent */
 #subcategory-filter-bar .courses-filters{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:8px;padding:10px 0 !important;scrollbar-width:none}
 #subcategory-filter-bar .courses-filters::-webkit-scrollbar{display:none}
+
 
 /* ═══════ INSTRUCTOR-STATS — single line + social squares ═══════ */
 .instructor-stats{flex-wrap:nowrap !important;justify-content:center;gap:8px !important;overflow:hidden}
@@ -4575,73 +4599,83 @@
         <div class="courses-filters" id="subcategory-filters" style="margin-bottom:0"></div>
       </div>
 
-      <!-- ════ নতুন ড্রপডাউন ফিল্টার সিস্টেম ════ -->
+      <!-- ════ ক্যাটাগরি ড্রপডাউন ফিল্টার সিস্টেম ════ -->
       <div class="cat-filter-row" id="cat-filter-row">
 
-        <!-- ── DESKTOP: custom dropdown ── -->
-        <div class="cat-dropdown-wrapper" id="cat-dd-wrapper">
-          <button class="cat-dropdown-trigger" id="cat-dd-trigger" onclick="catDdToggle()" aria-haspopup="listbox" aria-expanded="false">
-            <span class="cat-dd-icon" id="cat-dd-sel-icon">📚</span>
-            <span class="cat-dd-label" id="cat-dd-sel-label">সব কোর্স</span>
-            <span class="cat-dd-arrow">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>
-            </span>
-          </button>
-          <div class="cat-dropdown-menu" id="cat-dd-menu" role="listbox">
-            <div class="cat-dd-search-wrap">
-              <input class="cat-dd-search" id="cat-dd-search" type="text" placeholder="ক্যাটাগরি খুঁজুন..." oninput="catDdSearch(this.value)" autocomplete="off"/>
+        <!-- ── DESKTOP: Split-panel dropdown trigger ── -->
+        <button class="cat-dd-trigger-btn" id="cat-dd-trigger-btn" onclick="catPanelToggle()" aria-haspopup="true" aria-expanded="false">
+          <span class="trig-left">
+            <span class="trig-icon" id="cat-trig-icon">📚</span>
+            <span class="trig-label" id="cat-trig-label">সব ক্যাটাগরি</span>
+          </span>
+          <span class="trig-arrow">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>
+          </span>
+        </button>
+
+        <!-- ── DESKTOP: Split-panel (বামে ক্যাটাগরি, ডানে সাব-ক্যাট) ── -->
+        <div class="cat-split-panel" id="cat-split-panel">
+          <!-- বাম: ক্যাটাগরি list -->
+          <div class="cat-panel-left">
+            <div class="cat-panel-left-search">
+              <input type="text" id="cat-panel-search" placeholder="খুঁজুন..." oninput="catPanelSearch(this.value)" autocomplete="off"/>
             </div>
-            <div class="cat-dd-list" id="cat-dd-list">
+            <div class="cat-panel-list" id="cat-panel-list">
+              <!-- JS দিয়ে লোড হবে -->
+            </div>
+          </div>
+          <!-- ডান: সাব-ক্যাটাগরি panel -->
+          <div class="cat-panel-right" id="cat-panel-right">
+            <div class="cat-panel-right-header" id="cat-panel-right-header">
+              <span class="cat-panel-right-title" id="cat-panel-right-title">সাব-ক্যাটাগরি</span>
+            </div>
+            <div class="cat-panel-right-empty" id="cat-panel-right-empty">
+              <span class="empty-icon">👈</span>
+              <span>বামে একটি ক্যাটাগরির উপর হোভার করুন</span>
+            </div>
+            <div class="cat-subcat-list" id="cat-subcat-list" style="display:none">
               <!-- JS দিয়ে লোড হবে -->
             </div>
           </div>
         </div>
 
-        <!-- সাব-ক্যাটাগরি dropdown (desktop) -->
-        <div class="subcat-dropdown-wrapper" id="subcat-dd-wrapper" style="display:none">
-          <button class="cat-dropdown-trigger" id="subcat-dd-trigger" onclick="subcatDdToggle()" aria-haspopup="listbox" aria-expanded="false">
-            <span class="cat-dd-icon" id="subcat-dd-sel-icon">🔖</span>
-            <span class="cat-dd-label" id="subcat-dd-sel-label">সব</span>
-            <span class="cat-dd-arrow">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>
-            </span>
-          </button>
-          <div class="cat-dropdown-menu" id="subcat-dd-menu" role="listbox">
-            <div class="cat-dd-list" id="subcat-dd-list"></div>
-          </div>
-        </div>
-
-        <!-- ── MOBILE: trigger bar ── -->
-        <div class="cat-mobile-trigger-bar" id="cat-mobile-trigger-bar">
-          <!-- ক্যাটাগরি বাটন -->
-          <button class="cat-mobile-btn" id="cat-mobile-btn" onclick="catSheetOpen()">
-            <span class="cat-mobile-btn-left">
-              <span class="cat-mobile-icon" id="cat-mob-icon">📚</span>
-              <span class="cat-mobile-label" id="cat-mob-label">সব কোর্স</span>
-            </span>
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style="flex-shrink:0;color:#888"><path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>
-          </button>
-        </div>
+        <!-- ── MOBILE: trigger button ── -->
+        <button class="cat-mob-trigger-btn" id="cat-mob-trigger-btn" onclick="catMobSheetOpen()">
+          <span class="mob-trig-left">
+            <span class="mob-trig-icon" id="cat-mob-trig-icon">📚</span>
+            <span class="mob-trig-label" id="cat-mob-trig-label">সব ক্যাটাগরি</span>
+          </span>
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" style="flex-shrink:0;color:#888"><path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>
+        </button>
 
       </div><!-- /cat-filter-row -->
 
-      <!-- সাব-ক্যাটাগরি মোবাইল pill bar -->
-      <div class="cat-subcat-mobile-bar" id="cat-subcat-mobile-bar"></div>
+      <!-- মোবাইল সাব-ক্যাট pills -->
+      <div class="cat-mob-subcat-pills" id="cat-mob-subcat-pills"></div>
 
-      <!-- Mobile Bottom Sheet -->
-      <div class="cat-mobile-overlay" id="cat-mobile-overlay" onclick="catSheetClose()"></div>
+      <!-- Mobile overlay + category sheet -->
+      <div class="cat-mobile-overlay" id="cat-mobile-overlay" onclick="catMobSheetClose()"></div>
       <div class="cat-mobile-sheet" id="cat-mobile-sheet">
         <div class="cat-sheet-handle"></div>
         <div class="cat-sheet-header">
           <span class="cat-sheet-title">ক্যাটাগরি বেছে নিন</span>
-          <button class="cat-sheet-close" onclick="catSheetClose()">✕</button>
+          <button class="cat-sheet-close" onclick="catMobSheetClose()">✕</button>
         </div>
         <div class="cat-sheet-search-wrap">
-          <input class="cat-sheet-search" id="cat-sheet-search" type="text" placeholder="ক্যাটাগরি খুঁজুন..." oninput="catSheetSearch(this.value)" autocomplete="off"/>
+          <input class="cat-sheet-search" id="cat-sheet-search" type="text" placeholder="ক্যাটাগরি খুঁজুন..." oninput="catMobSearch(this.value)" autocomplete="off"/>
         </div>
-        <div class="cat-sheet-list" id="cat-sheet-list">
-          <!-- JS দিয়ে লোড হবে -->
+        <div class="cat-sheet-list" id="cat-sheet-list"></div>
+      </div>
+
+      <!-- Mobile sub-category sheet (ক্যাটাগরি ক্লিক করলে আসবে) -->
+      <div class="cat-subcat-sheet" id="cat-subcat-sheet">
+        <div class="cat-sheet-handle"></div>
+        <div class="cat-subcat-sheet-header">
+          <button class="cat-subcat-sheet-back" onclick="catSubcatSheetBack()">←</button>
+          <span class="cat-subcat-sheet-title" id="cat-subcat-sheet-title">সাব-ক্যাটাগরি</span>
+          <button class="cat-sheet-close" onclick="catMobSheetClose()">✕</button>
         </div>
+        <div class="cat-subcat-sheet-list" id="cat-subcat-sheet-list"></div>
       </div>
 
       <!-- কোর্স গ্রিড ও কাউন্ট -->
@@ -5725,14 +5759,338 @@
     }
 
     // ════════════════════════════════════════════════════
-    // নতুন Dropdown / Bottom-Sheet ক্যাটাগরি ফিল্টার JS
+    // ক্যাটাগরি Split-Panel Dropdown + Mobile Sheet — JS
     // ════════════════════════════════════════════════════
-    var _catDdOpen = false;
-    var _subcatDdOpen = false;
-    var _catSheetOpen = false;
+    var _catPanelOpen   = false;
+    var _hoveredCatSlug = null; // desktop: hover করা ক্যাটাগরি
+    var _mobSheetOpen   = false;
+    var _mobSubSheetOpen = false;
+    var _mobSelectedCatSlug = null;
 
-    // dropdown build (desktop)
+    /* ── buildCatDropdown: API লোডের পরে dropdown data তৈরি ── */
     function buildCatDropdown() {
+      var totalCount = _allCoursesData.length;
+      var allItem = { slug: 'all', name: 'সব কোর্স', icon: '📚', count: totalCount };
+      var catItems = [allItem].concat(_allCategoriesData.map(function(c) {
+        var cnt = _allCoursesData.filter(function(cr) { return courseBelongsToCategory(cr, c.slug || c.name); }).length;
+        return { slug: c.slug || c.name, name: c.name, icon: c.icon || '📖', count: cnt, raw: c };
+      }));
+      window._catItems = catItems;
+
+      renderCatPanelList(catItems, '');
+      renderMobSheet(catItems, '');
+    }
+
+    /* ── Desktop panel list render ── */
+    function renderCatPanelList(items, q) {
+      var list = document.getElementById('cat-panel-list');
+      if (!list) return;
+      var filtered = q ? items.filter(function(it) { return it.name.toLowerCase().indexOf(q.toLowerCase()) !== -1; }) : items;
+      if (!filtered.length) { list.innerHTML = '<div style="padding:16px;color:var(--text-light);font-size:13px;text-align:center">পাওয়া যায়নি</div>'; return; }
+      list.innerHTML = filtered.map(function(it) {
+        var isActive = (_currentCatFilter === it.slug) || (it.slug === 'all' && _currentCatFilter === 'all');
+        var hasSub = it.slug !== 'all' && it.raw && it.raw.subCategories && it.raw.subCategories.filter(function(s){ return s.active !== false; }).length > 0;
+        return '<div class="cat-panel-item' + (isActive ? ' active' : '') + '" '
+          + 'onclick="catPanelSelectCat(\'' + it.slug.replace(/'/g,"\\'") + '\',\'' + it.name.replace(/'/g,"\\'") + '\',\'' + (it.icon||'📖').replace(/'/g,"\\'") + '\')" '
+          + 'onmouseenter="catPanelHover(\'' + it.slug.replace(/'/g,"\\'") + '\',\'' + it.name.replace(/'/g,"\\'") + '\')">'
+          + '<span class="cat-panel-item-icon">' + (it.icon || '📖') + '</span>'
+          + '<span class="cat-panel-item-name">' + it.name + '</span>'
+          + (it.count > 0 ? '<span class="cat-panel-item-count">' + it.count + '</span>' : '')
+          + (hasSub ? '<span class="cat-panel-item-arrow">›</span>' : '')
+          + '</div>';
+      }).join('');
+    }
+
+    /* ── Desktop: ক্যাটাগরিতে hover করলে ডান পাশে সাব-ক্যাট দেখাবে ── */
+    function catPanelHover(slug, name) {
+      _hoveredCatSlug = slug;
+      // হোভার স্টেট
+      document.querySelectorAll('#cat-panel-list .cat-panel-item').forEach(function(el) {
+        el.classList.remove('hovered');
+      });
+      var all = document.querySelectorAll('#cat-panel-list .cat-panel-item');
+      all.forEach(function(el) {
+        if (el.getAttribute('onclick') && el.getAttribute('onclick').indexOf("'" + slug.replace(/'/g,"\\'") + "'") !== -1) {
+          el.classList.add('hovered');
+        }
+      });
+
+      var emptyEl = document.getElementById('cat-panel-right-empty');
+      var listEl  = document.getElementById('cat-subcat-list');
+      var titleEl = document.getElementById('cat-panel-right-title');
+
+      if (slug === 'all') {
+        if (emptyEl) { emptyEl.style.display = 'flex'; emptyEl.innerHTML = '<span class="empty-icon">📚</span><span>"সব কোর্স" ক্লিক করলে সব কোর্স দেখাবে</span>'; }
+        if (listEl)  listEl.style.display = 'none';
+        return;
+      }
+      var catKey = normalizeFilterValue(slug);
+      var found = _allCategoriesData.find(function(c) { return normalizeFilterValue(c.slug) === catKey || normalizeFilterValue(c.name) === catKey; });
+      if (!found) return;
+      var activeSubs = (found.subCategories || []).filter(function(s) { return s.active !== false; });
+      if (!activeSubs.length) {
+        if (emptyEl) { emptyEl.style.display = 'flex'; emptyEl.innerHTML = '<span class="empty-icon">📂</span><span>এই ক্যাটাগরিতে সাব-ক্যাটাগরি নেই<br><small style="color:var(--primary-dark);margin-top:6px;font-weight:600">ক্লিক করলে সব কোর্স দেখাবে</small></span>'; }
+        if (listEl) listEl.style.display = 'none';
+        if (titleEl) titleEl.textContent = name;
+        return;
+      }
+      if (titleEl) titleEl.textContent = name + ' — সাব-ক্যাটাগরি';
+      if (emptyEl) emptyEl.style.display = 'none';
+
+      var allSubCount = _allCoursesData.filter(function(c) { return courseBelongsToCategory(c, slug); }).length;
+      var subItems = [{ slug: 'all', name: 'সব', icon: '🔖', count: allSubCount }]
+        .concat(activeSubs.map(function(s) {
+          var cnt = _allCoursesData.filter(function(c) { return courseBelongsToSubCategory(c, s.slug || s.name); }).length;
+          return { slug: s.slug || s.name, name: s.name, icon: s.icon || '🔖', count: cnt };
+        }));
+
+      if (listEl) {
+        listEl.style.display = 'flex';
+        listEl.innerHTML = subItems.map(function(it) {
+          var isActive = (_currentCatFilter === slug || (_currentCatFilter === 'all' && slug === 'all'))
+            && ((_currentSubCatFilter === it.slug) || (it.slug === 'all' && _currentSubCatFilter === 'all'));
+          return '<div class="cat-subcat-item' + (isActive ? ' active' : '') + '" '
+            + 'onclick="catPanelSelectSubcat(\'' + slug.replace(/'/g,"\\'") + '\',\'' + found.name.replace(/'/g,"\\'") + '\',\'' + (found.icon||'📖').replace(/'/g,"\\'") + '\',\'' + it.slug.replace(/'/g,"\\'") + '\',\'' + it.name.replace(/'/g,"\\'") + '\')">'
+            + '<span class="cat-subcat-item-icon">' + (it.icon || '🔖') + '</span>'
+            + '<span class="cat-subcat-item-name">' + it.name + '</span>'
+            + (it.count > 0 ? '<span class="cat-subcat-item-count">' + it.count + '</span>' : '')
+            + '</div>';
+        }).join('');
+      }
+    }
+
+    /* ── Desktop: ক্যাটাগরি ক্লিক → সব কোর্স দেখাবে, সাব-ক্যাট reset ── */
+    function catPanelSelectCat(slug, name, icon) {
+      _currentCatFilter    = slug;
+      _currentSubCatFilter = 'all';
+      // trigger button label
+      var trigIcon  = document.getElementById('cat-trig-icon');
+      var trigLabel = document.getElementById('cat-trig-label');
+      if (trigIcon)  trigIcon.textContent = icon || '📚';
+      if (trigLabel) trigLabel.textContent = slug === 'all' ? 'সব ক্যাটাগরি' : name;
+      catPanelClose();
+      renderCoursesGrid();
+      // legacy tab sync
+      _syncLegacyTab(slug);
+    }
+
+    /* ── Desktop: সাব-ক্যাট ক্লিক → সাব-ক্যাট ফিল্টার ── */
+    function catPanelSelectSubcat(catSlug, catName, catIcon, subSlug, subName) {
+      _currentCatFilter    = catSlug;
+      _currentSubCatFilter = subSlug;
+      var trigIcon  = document.getElementById('cat-trig-icon');
+      var trigLabel = document.getElementById('cat-trig-label');
+      if (trigIcon)  trigIcon.textContent = catIcon || '📚';
+      if (trigLabel) trigLabel.textContent = subSlug === 'all' ? catName : (catName + ' › ' + subName);
+      catPanelClose();
+      renderCoursesGrid();
+      _syncLegacyTab(catSlug);
+    }
+
+    /* ── Panel open/close ── */
+    function catPanelToggle() {
+      _catPanelOpen ? catPanelClose() : catPanelOpen();
+    }
+    function catPanelOpen() {
+      _catPanelOpen = true;
+      var btn = document.getElementById('cat-dd-trigger-btn');
+      var panel = document.getElementById('cat-split-panel');
+      if (btn)   btn.classList.add('is-open');
+      if (panel) panel.classList.add('is-open');
+      // প্রথমে active ক্যাটাগরি হোভার করি
+      if (_currentCatFilter && _currentCatFilter !== 'all') {
+        var found = (window._catItems || []).find(function(it) { return it.slug === _currentCatFilter; });
+        if (found) catPanelHover(_currentCatFilter, found.name);
+      }
+      setTimeout(function() { var s = document.getElementById('cat-panel-search'); if (s) s.focus(); }, 60);
+    }
+    function catPanelClose() {
+      _catPanelOpen = false;
+      var btn = document.getElementById('cat-dd-trigger-btn');
+      var panel = document.getElementById('cat-split-panel');
+      if (btn)   btn.classList.remove('is-open');
+      if (panel) panel.classList.remove('is-open');
+      // hover state পরিষ্কার
+      document.querySelectorAll('#cat-panel-list .cat-panel-item').forEach(function(el) { el.classList.remove('hovered'); });
+      var srch = document.getElementById('cat-panel-search'); if (srch) srch.value = '';
+      renderCatPanelList(window._catItems || [], '');
+    }
+
+    /* ── Panel search ── */
+    function catPanelSearch(q) { renderCatPanelList(window._catItems || [], q); }
+
+    /* ── বাইরে ক্লিক করলে close ── */
+    document.addEventListener('click', function(e) {
+      if (!_catPanelOpen) return;
+      var row = document.getElementById('cat-filter-row');
+      if (row && !row.contains(e.target)) catPanelClose();
+    });
+
+    /* ── Legacy tab sync ── */
+    function _syncLegacyTab(slug) {
+      var tabs = document.querySelectorAll('#courses-category-tabs .courses-tab');
+      tabs.forEach(function(t) { t.classList.remove('active'); });
+      var target = document.querySelector('#courses-category-tabs .courses-tab[onclick*="\'' + slug + '\'"]');
+      if (target) target.classList.add('active');
+      else if (slug === 'all') { var first = document.querySelector('#courses-category-tabs .courses-tab'); if (first) first.classList.add('active'); }
+    }
+
+    // ── MOBILE SHEET ──
+    function renderMobSheet(items, q) {
+      var list = document.getElementById('cat-sheet-list');
+      if (!list) return;
+      var filtered = q ? items.filter(function(it) { return it.name.toLowerCase().indexOf(q.toLowerCase()) !== -1; }) : items;
+      list.innerHTML = filtered.map(function(it) {
+        var isActive = (_currentCatFilter === it.slug) || (it.slug === 'all' && _currentCatFilter === 'all');
+        var hasSub = it.slug !== 'all' && it.raw && it.raw.subCategories && it.raw.subCategories.filter(function(s){ return s.active !== false; }).length > 0;
+        return '<div class="cat-sheet-item' + (isActive ? ' active' : '') + '" '
+          + 'onclick="catMobSelectCat(\'' + it.slug.replace(/'/g,"\\'") + '\',\'' + it.name.replace(/'/g,"\\'") + '\',\'' + (it.icon||'📖').replace(/'/g,"\\'") + '\',' + hasSub + ')">'
+          + '<span class="cat-sheet-item-icon">' + (it.icon || '📖') + '</span>'
+          + '<div class="cat-sheet-item-info"><div class="cat-sheet-item-name">' + it.name + (hasSub ? ' <span style="color:var(--text-light);font-weight:400;font-size:11px">›</span>' : '') + '</div>'
+          + (it.count > 0 ? '<div class="cat-sheet-item-sub">' + it.count + 'টি কোর্স</div>' : '') + '</div>'
+          + (it.count > 0 ? '<span class="cat-sheet-item-count">' + it.count + '</span>' : '')
+          + '<span class="cat-sheet-check">' + (isActive ? '✓' : '') + '</span>'
+          + '</div>';
+      }).join('');
+    }
+
+    function catMobSheetOpen() {
+      _mobSheetOpen = true;
+      document.getElementById('cat-mobile-overlay').classList.add('is-open');
+      document.getElementById('cat-mobile-sheet').classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+      renderMobSheet(window._catItems || [], '');
+      setTimeout(function() { var s = document.getElementById('cat-sheet-search'); if (s) s.focus(); }, 200);
+    }
+    function catMobSheetClose() {
+      _mobSheetOpen = false;
+      _mobSubSheetOpen = false;
+      document.getElementById('cat-mobile-overlay').classList.remove('is-open');
+      document.getElementById('cat-mobile-sheet').classList.remove('is-open');
+      document.getElementById('cat-subcat-sheet').classList.remove('is-open');
+      document.body.style.overflow = '';
+      var s = document.getElementById('cat-sheet-search'); if (s) s.value = '';
+    }
+    function catMobSearch(q) { renderMobSheet(window._catItems || [], q); }
+
+    /* মোবাইলে ক্যাটাগরি ক্লিক */
+    function catMobSelectCat(slug, name, icon, hasSub) {
+      _mobSelectedCatSlug = slug;
+      if (hasSub && slug !== 'all') {
+        // সাব-ক্যাট sheet খুলুন
+        catMobOpenSubSheet(slug, name, icon);
+      } else {
+        // সরাসরি filter করুন
+        _currentCatFilter    = slug;
+        _currentSubCatFilter = 'all';
+        _updateMobTrigger(icon, slug === 'all' ? 'সব ক্যাটাগরি' : name, slug !== 'all');
+        catMobSheetClose();
+        // mobile subcat pills clear
+        var pills = document.getElementById('cat-mob-subcat-pills');
+        if (pills) { pills.innerHTML = ''; pills.classList.remove('visible'); }
+        renderCoursesGrid();
+        _syncLegacyTab(slug);
+      }
+    }
+
+    /* মোবাইলে সাব-ক্যাট sheet খোলা */
+    function catMobOpenSubSheet(catSlug, catName, catIcon) {
+      var catKey = normalizeFilterValue(catSlug);
+      var found = _allCategoriesData.find(function(c) { return normalizeFilterValue(c.slug) === catKey || normalizeFilterValue(c.name) === catKey; });
+      if (!found) return;
+      var activeSubs = (found.subCategories || []).filter(function(s) { return s.active !== false; });
+      var allSubCount = _allCoursesData.filter(function(c) { return courseBelongsToCategory(c, catSlug); }).length;
+      var subItems = [{ slug: 'all', name: 'সব', icon: '🔖', count: allSubCount }]
+        .concat(activeSubs.map(function(s) {
+          var cnt = _allCoursesData.filter(function(c) { return courseBelongsToSubCategory(c, s.slug || s.name); }).length;
+          return { slug: s.slug || s.name, name: s.name, icon: s.icon || '🔖', count: cnt };
+        }));
+
+      var title = document.getElementById('cat-subcat-sheet-title');
+      if (title) title.textContent = catName;
+
+      var shList = document.getElementById('cat-subcat-sheet-list');
+      if (shList) {
+        shList.innerHTML = subItems.map(function(it) {
+          var isActive = _currentCatFilter === catSlug && (_currentSubCatFilter === it.slug || (it.slug === 'all' && _currentSubCatFilter === 'all'));
+          return '<div class="cat-subcat-sheet-item' + (isActive ? ' active' : '') + '" '
+            + 'onclick="catMobSelectSubcat(\'' + catSlug.replace(/'/g,"\\'") + '\',\'' + catName.replace(/'/g,"\\'") + '\',\'' + (catIcon||'📖').replace(/'/g,"\\'") + '\',\'' + it.slug.replace(/'/g,"\\'") + '\',\'' + it.name.replace(/'/g,"\\'") + '\')">'
+            + '<span class="cat-subcat-sheet-icon">' + (it.icon || '🔖') + '</span>'
+            + '<span class="cat-subcat-sheet-name">' + it.name + '</span>'
+            + (it.count > 0 ? '<span class="cat-subcat-sheet-count">' + it.count + '</span>' : '')
+            + '</div>';
+        }).join('');
+      }
+      _mobSubSheetOpen = true;
+      document.getElementById('cat-subcat-sheet').classList.add('is-open');
+    }
+
+    function catSubcatSheetBack() {
+      _mobSubSheetOpen = false;
+      document.getElementById('cat-subcat-sheet').classList.remove('is-open');
+    }
+
+    function catMobSelectSubcat(catSlug, catName, catIcon, subSlug, subName) {
+      _currentCatFilter    = catSlug;
+      _currentSubCatFilter = subSlug;
+      var labelText = subSlug === 'all' ? catName : (catName + ' › ' + subName);
+      _updateMobTrigger(catIcon, labelText, true);
+      catMobSheetClose();
+      // pill bar update
+      _buildMobSubcatPills(catSlug);
+      renderCoursesGrid();
+      _syncLegacyTab(catSlug);
+    }
+
+    function _updateMobTrigger(icon, label, hasSel) {
+      var ic = document.getElementById('cat-mob-trig-icon');
+      var lb = document.getElementById('cat-mob-trig-label');
+      var btn = document.getElementById('cat-mob-trigger-btn');
+      if (ic) ic.textContent = icon || '📚';
+      if (lb) lb.innerHTML = label;
+      if (btn) btn.classList.toggle('has-sel', !!hasSel);
+    }
+
+    function _buildMobSubcatPills(catSlug) {
+      var pills = document.getElementById('cat-mob-subcat-pills');
+      if (!pills) return;
+      if (!catSlug || catSlug === 'all') { pills.innerHTML = ''; pills.classList.remove('visible'); return; }
+      var catKey = normalizeFilterValue(catSlug);
+      var found = _allCategoriesData.find(function(c) { return normalizeFilterValue(c.slug) === catKey || normalizeFilterValue(c.name) === catKey; });
+      if (!found || !(found.subCategories || []).filter(function(s){ return s.active !== false; }).length) {
+        pills.innerHTML = ''; pills.classList.remove('visible'); return;
+      }
+      var activeSubs = found.subCategories.filter(function(s) { return s.active !== false; });
+      var allSubCount = _allCoursesData.filter(function(c) { return courseBelongsToCategory(c, catSlug); }).length;
+      var subItems = [{ slug: 'all', name: 'সব', icon: '🔖', count: allSubCount }]
+        .concat(activeSubs.map(function(s) {
+          var cnt = _allCoursesData.filter(function(c) { return courseBelongsToSubCategory(c, s.slug || s.name); }).length;
+          return { slug: s.slug || s.name, name: s.name, icon: s.icon || '🔖', count: cnt };
+        }));
+      pills.innerHTML = subItems.map(function(it) {
+        var isActive = _currentSubCatFilter === it.slug || (it.slug === 'all' && _currentSubCatFilter === 'all');
+        return '<button class="cat-mob-pill' + (isActive ? ' active' : '') + '" onclick="catMobPillSelect(this,\'' + catSlug.replace(/'/g,"\\'") + '\',\'' + it.slug.replace(/'/g,"\\'") + '\')">'
+          + (it.icon || '') + ' ' + it.name
+          + (it.count > 0 ? ' <span style="opacity:.65;font-size:10px">(' + it.count + ')</span>' : '')
+          + '</button>';
+      }).join('');
+      pills.classList.add('visible');
+    }
+
+    function catMobPillSelect(el, catSlug, subSlug) {
+      _currentCatFilter    = catSlug;
+      _currentSubCatFilter = subSlug;
+      document.querySelectorAll('#cat-mob-subcat-pills .cat-mob-pill').forEach(function(p) { p.classList.remove('active'); });
+      el.classList.add('active');
+      renderCoursesGrid();
+    }
+
+    function renderCoursesGrid() {
+      var filtered = _allCoursesData.filter(function(c) {
+        var catMatch  = courseBelongsToCategory(c, _currentCatFilter);
+        var subMatch  = courseBelongsToSubCategory(c, _currentSubCatFilter);
+        return catMatch && subMatch;
+      });
       var totalCount = _allCoursesData.length;
       var list = document.getElementById('cat-dd-list');
       var sheetList = document.getElementById('cat-sheet-list');
