@@ -7018,5 +7018,126 @@ document.addEventListener('DOMContentLoaded',function(){
 })();
 </script>
 
+<!-- ═══════════════════════════════════════════════════════════════
+     IKH Admin Patch v5 — "যুক্ত হোন" সেকশনের YouTube ভিডিও ID
+     ═══════════════════════════════════════════════════════════════ -->
+<style id="ikh-admin-v5-style">
+.ikh-v5-card{background:var(--bg2,#fff);border:1px solid var(--border,#e5e7eb);border-radius:10px;padding:16px;margin:14px 0}
+.ikh-v5-card h4{margin:0 0 6px;font-size:14px;font-weight:700;color:var(--text,#111)}
+.ikh-v5-card p{margin:0 0 10px;font-size:12px;color:var(--text2,#666)}
+.ikh-v5-row{display:flex;gap:8px;align-items:center}
+.ikh-v5-row input{flex:1;padding:8px 10px;border:1px solid var(--border,#ddd);border-radius:6px;font-size:13px}
+.ikh-v5-row button{padding:8px 14px;background:var(--primary,#1a3a30);color:#fff;border:0;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer}
+.ikh-v5-row button:hover{opacity:.9}
+.ikh-v5-hint{font-size:11px;color:var(--text2,#888);margin-top:6px}
+.ikh-v5-ok{color:#16a34a;font-size:12px;margin-top:6px}
+.ikh-v5-err{color:#dc2626;font-size:12px;margin-top:6px}
+</style>
+
+<script>
+(function(){
+  function $(s,r){return (r||document).querySelector(s)}
+  function extractYTId(s){
+    s = String(s||'').trim();
+    if (/^[A-Za-z0-9_\-]{11}$/.test(s)) return s;
+    var m = s.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([A-Za-z0-9_\-]{11})/);
+    return m ? m[1] : '';
+  }
+  function buildVideoCard(){
+    var page = $('#page-content-bundle') || $('#page-site-content') || $('[id^="page-content"]') || $('.main-content') || document.body;
+    if (!page || $('#ikh-v5-video-card')) return;
+    var card = document.createElement('div');
+    card.id = 'ikh-v5-video-card';
+    card.className = 'ikh-v5-card';
+    card.innerHTML = ''
+      + '<h4>🎬 হোম পেজ — "আজই যুক্ত হোন" সেকশনের YouTube ভিডিও</h4>'
+      + '<p>YouTube URL বা শুধু ১১ অক্ষরের ভিডিও ID দিন। সেভ করার সাথে সাথে index.html এর "আজই যুক্ত হোন" সেকশনে নতুন ভিডিও দেখাবে।</p>'
+      + '<div class="ikh-v5-row">'
+      + '  <input id="ikh-v5-video-input" placeholder="https://www.youtube.com/watch?v=LXb3EKWsInQ অথবা LXb3EKWsInQ"/>'
+      + '  <button type="button" id="ikh-v5-video-save">💾 সেভ</button>'
+      + '</div>'
+      + '<div id="ikh-v5-video-msg" class="ikh-v5-hint">লোড হচ্ছে...</div>';
+    page.insertBefore(card, page.firstChild ? page.firstChild.nextSibling : null);
+
+    // load current value
+    var apiFn = window.api;
+    if (typeof apiFn !== 'function') {
+      $('#ikh-v5-video-msg').textContent = '⚠ admin api() ফাংশন পাওয়া যায়নি';
+      return;
+    }
+    apiFn('GET','/api/admin/content-bundle').then(function(b){
+      var cur = (b && (b.joinVideoId || b.homeJoinVideoId)) || '';
+      $('#ikh-v5-video-input').value = cur;
+      $('#ikh-v5-video-msg').textContent = cur ? ('বর্তমান ID: '+cur) : 'এখনো কোনো ভিডিও সেট করা নেই (default ভিডিও দেখানো হচ্ছে)';
+    }).catch(function(){
+      $('#ikh-v5-video-msg').textContent = 'লোড হয়নি — সেভ করতে পারবেন';
+    });
+
+    $('#ikh-v5-video-save').addEventListener('click', async function(){
+      var raw = $('#ikh-v5-video-input').value;
+      var id = extractYTId(raw);
+      var msg = $('#ikh-v5-video-msg');
+      if (!id) {
+        msg.className = 'ikh-v5-err';
+        msg.textContent = '❌ সঠিক YouTube URL বা 11-অক্ষরের ID দিন';
+        return;
+      }
+      try {
+        var b = await apiFn('GET','/api/admin/content-bundle').catch(function(){return {}});
+        b = b || {};
+        b.joinVideoId = id;
+        await apiFn('POST','/api/admin/content-bundle', b);
+        msg.className = 'ikh-v5-ok';
+        msg.textContent = '✅ সেভ হয়েছে — ID: '+id;
+        if (typeof toast === 'function') toast('✅ ভিডিও ID সেভ হয়েছে');
+      } catch(e) {
+        msg.className = 'ikh-v5-err';
+        msg.textContent = '❌ সমস্যা: '+(e.message||e);
+      }
+    });
+  }
+
+  // Try to inject when site-content page is opened
+  function tryInject(){
+    var visiblePage = document.querySelector('.page.active') || document.querySelector('.page[style*="block"]');
+    if (visiblePage && /content/i.test(visiblePage.id||'')) buildVideoCard();
+  }
+  // Also expose a manual button always-on inside Site Content section
+  var navObserver = new MutationObserver(tryInject);
+  navObserver.observe(document.body,{subtree:true,attributes:true,attributeFilter:['class','style']});
+  setTimeout(tryInject, 1500);
+
+  // ── Floating fallback button (always available) ──
+  function buildFloatingBtn(){
+    if (document.getElementById('ikh-v5-fab')) return;
+    var btn = document.createElement('button');
+    btn.id = 'ikh-v5-fab';
+    btn.title = 'হোম যুক্ত হোন ভিডিও সেট করুন';
+    btn.innerHTML = '🎬';
+    btn.style.cssText='position:fixed;right:16px;bottom:80px;width:46px;height:46px;border-radius:50%;background:#1a3a30;color:#fff;border:0;font-size:20px;box-shadow:0 6px 20px rgba(0,0,0,.25);cursor:pointer;z-index:9999';
+    btn.addEventListener('click', function(){
+      var raw = prompt('হোম পেজের "আজই যুক্ত হোন" সেকশনে কোন YouTube ভিডিও দেখাতে চান?\nURL বা 11-অক্ষরের ID দিন:');
+      if (raw === null) return;
+      var id = extractYTId(raw);
+      if (!id) { alert('❌ সঠিক YouTube URL/ID দিন'); return; }
+      var apiFn = window.api;
+      if (typeof apiFn !== 'function') { alert('admin api() পাওয়া যায়নি'); return; }
+      apiFn('GET','/api/admin/content-bundle').catch(function(){return {}}).then(function(b){
+        b = b || {}; b.joinVideoId = id;
+        return apiFn('POST','/api/admin/content-bundle', b);
+      }).then(function(){
+        alert('✅ সেভ হয়েছে — ID: '+id);
+        if (typeof toast === 'function') toast('✅ ভিডিও ID সেভ হয়েছে');
+      }).catch(function(e){ alert('❌ সমস্যা: '+(e.message||e)); });
+    });
+    document.body.appendChild(btn);
+  }
+  if (document.body) buildFloatingBtn();
+  else document.addEventListener('DOMContentLoaded', buildFloatingBtn);
+
+  console.log('✅ IKH Admin Patch v5 active: Home video ID manager');
+})();
+</script>
+
 </body>
 </html>

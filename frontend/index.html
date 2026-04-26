@@ -10381,5 +10381,334 @@
 })();
 </script>
 
+<!-- ═══════════════════════════════════════════════════════════════════
+     IKH Patch v5 — Hero stacked cards, FAQ fix, ENG counter,
+     category images, instructor socials, admin video ID
+     ═══════════════════════════════════════════════════════════════════ -->
+<style id="ikh-v5-style">
+/* === 1. HERO — Stacked tilted course cards (desktop + mobile) === */
+.hero .hero-right{position:relative;min-height:480px;perspective:1400px}
+.hero .hero-right .hero-feature-card{position:relative;z-index:3;transform:rotate(-2deg) translateY(0);transition:transform .6s ease;animation:ikhHeroFloat 6s ease-in-out infinite;box-shadow:0 18px 40px -10px rgba(0,0,0,.25)}
+.hero .hero-right::before,
+.hero .hero-right::after{
+  content:"";position:absolute;left:50%;top:6%;width:78%;height:88%;
+  border-radius:18px;background-size:cover;background-position:center;
+  box-shadow:0 12px 30px -12px rgba(0,0,0,.30);
+  z-index:1;pointer-events:none;
+}
+.hero .hero-right::before{
+  transform:translateX(-72%) rotate(-10deg) scale(.78);
+  background-image:url('https://images.unsplash.com/photo-1564769625905-50e93615e769?w=600&q=70');
+  animation:ikhCardSwayL 7s ease-in-out infinite;
+}
+.hero .hero-right::after{
+  transform:translateX(-28%) rotate(8deg) scale(.78);
+  background-image:url('https://images.unsplash.com/photo-1554232456-8727aae0cfa4?w=600&q=70');
+  animation:ikhCardSwayR 7s ease-in-out infinite;
+  z-index:2;
+}
+@keyframes ikhHeroFloat{0%,100%{transform:rotate(-2deg) translateY(0)}50%{transform:rotate(-2deg) translateY(-10px)}}
+@keyframes ikhCardSwayL{0%,100%{transform:translateX(-72%) rotate(-10deg) scale(.78)}50%{transform:translateX(-74%) rotate(-12deg) scale(.78) translateY(-6px)}}
+@keyframes ikhCardSwayR{0%,100%{transform:translateX(-28%) rotate(8deg) scale(.78)}50%{transform:translateX(-26%) rotate(10deg) scale(.78) translateY(-6px)}}
+
+/* === 2. MOBILE HERO — fullscreen, no scroll, 3 stacked mini cards, NO search === */
+@media (max-width: 768px){
+  /* Hide previous v4 mobile hero so v5 can take over cleanly */
+  #ikh-v4-mobile-hero,#mobile-hero-cards,.mobile-hero-search{display:none !important}
+
+  .hero{
+    min-height:100dvh !important;height:100dvh !important;max-height:100dvh !important;
+    overflow:hidden !important;padding:0 !important;
+    display:flex !important;align-items:center !important;justify-content:center !important;
+    background:linear-gradient(160deg,#0c2c24 0%,#1a3a30 55%,#143028 100%) !important;
+  }
+  .hero .hero-inner{
+    display:flex !important;flex-direction:column !important;
+    width:100% !important;height:100% !important;padding:env(safe-area-inset-top,16px) 16px env(safe-area-inset-bottom,16px) !important;
+    gap:14px !important;justify-content:space-between !important;
+  }
+  .hero .hero-left{order:1;text-align:center;color:#fff !important;flex:0 0 auto;padding-top:8px}
+  .hero .hero-left .hero-eyebrow{color:#FFD66B !important;font-size:11px}
+  .hero .hero-left h1{color:#fff !important;font-size:clamp(20px,5.4vw,28px) !important;line-height:1.25 !important;margin:6px 0 6px}
+  .hero .hero-left h1 .accent{color:#FFD66B !important}
+  .hero .hero-left h1 em{color:#FFD66B !important;font-style:normal}
+  .hero .hero-left .hero-sub{color:rgba(255,255,255,.85) !important;font-size:12.5px !important;line-height:1.55 !important;margin:0 auto;max-width:92%}
+  .hero .hero-left .hero-cta-row{justify-content:center;gap:8px;margin-top:10px}
+  .hero .hero-left .hero-cta{padding:9px 16px !important;font-size:12.5px !important}
+  .hero .hero-left .hero-cta-outline{background:rgba(255,255,255,.1) !important;color:#fff !important;border:1px solid rgba(255,255,255,.4) !important}
+  .hero .hero-left .hero-stats-row{justify-content:center;gap:18px;margin-top:10px}
+  .hero .hero-left .hero-stat-num{color:#FFD66B !important;font-size:16px !important}
+  .hero .hero-left .hero-stat-lbl{color:rgba(255,255,255,.75) !important;font-size:10.5px !important}
+
+  /* Mobile triple-card stage */
+  .hero .hero-right{
+    order:2;flex:1 1 auto;min-height:0 !important;width:100%;
+    display:flex;align-items:center;justify-content:center;position:relative;
+    margin:0 !important;padding:0 !important;perspective:1000px;
+  }
+  .hero .hero-right::before,
+  .hero .hero-right::after{display:none !important}
+  .hero .hero-float-chip{display:none !important}
+  .hero .hero-feature-card{
+    position:relative;z-index:3;width:62% !important;max-width:240px;margin:0 auto !important;
+    transform:rotate(0deg) !important;animation:ikhHeroFloatM 5s ease-in-out infinite !important;
+    box-shadow:0 18px 40px -10px rgba(0,0,0,.45) !important;border-radius:14px !important;
+  }
+  .hero .hero-feature-card .hero-feature-thumb img{height:120px !important;object-fit:cover}
+  .hero .hero-feature-card .hero-feature-body{padding:10px 12px !important}
+  .hero .hero-feature-title{font-size:13px !important;line-height:1.35 !important;-webkit-line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+  .hero .hero-feature-meta{font-size:10.5px !important;gap:8px !important}
+  .hero .hero-feature-foot{margin-top:6px !important}
+  .hero .hero-feature-price{font-size:13px !important}
+  .hero .hero-feature-cta{padding:6px 12px !important;font-size:11.5px !important}
+
+  /* Two side mini-cards via JS-injected nodes */
+  .ikh-mhero-side{
+    position:absolute;top:50%;width:42%;max-width:155px;border-radius:12px;overflow:hidden;
+    box-shadow:0 12px 28px -10px rgba(0,0,0,.5);background:#fff;z-index:2;
+  }
+  .ikh-mhero-side img{width:100%;height:90px;object-fit:cover;display:block}
+  .ikh-mhero-side .body{padding:6px 8px}
+  .ikh-mhero-side .ttl{font-size:11px;font-weight:700;color:#1a3a30;line-height:1.3;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .ikh-mhero-side.left{left:-2%;transform:translateY(-50%) rotate(-10deg) scale(.86);animation:ikhSideSwayL 5.5s ease-in-out infinite}
+  .ikh-mhero-side.right{right:-2%;transform:translateY(-50%) rotate(10deg) scale(.86);animation:ikhSideSwayR 5.5s ease-in-out infinite}
+  @keyframes ikhSideSwayL{0%,100%{transform:translateY(-50%) rotate(-10deg) scale(.86)}50%{transform:translateY(-54%) rotate(-12deg) scale(.86)}}
+  @keyframes ikhSideSwayR{0%,100%{transform:translateY(-50%) rotate(10deg) scale(.86)}50%{transform:translateY(-54%) rotate(12deg) scale(.86)}}
+  @keyframes ikhHeroFloatM{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+  /* Hide ALL hero search inputs on mobile (per v5 spec) */
+  .hero .hero-search,.hero #hero-search,.hero input[type="search"],.hero .search-bar,
+  .hero-search-wrap,#hero-search-wrap,.ik-hero-search{display:none !important}
+}
+
+/* === 4. CATEGORY — image icons + FontAwesome arrow === */
+.cats-grid .cat-card .cat-icon{
+  width:54px !important;height:54px !important;border-radius:14px !important;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  background:linear-gradient(135deg,#fef3c7,#fde68a);flex-shrink:0;
+}
+.cats-grid .cat-card .cat-icon img{width:100%;height:100%;object-fit:cover;display:block}
+.cats-grid .cat-card .cat-icon span{font-size:0 !important}
+.cats-grid .cat-card .cat-arrow{font-size:0 !important;color:var(--primary) !important;transition:transform .25s}
+.cats-grid .cat-card .cat-arrow::before{
+  content:"\f078";font-family:"Font Awesome 6 Free","Font Awesome 5 Free",FontAwesome;font-weight:900;font-size:13px;
+}
+.cats-grid .cat-card.open .cat-arrow{transform:rotate(180deg)}
+
+/* === Instructor inline socials (rendered per card) === */
+.instructor-card .ikh-isoc{display:flex;justify-content:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.instructor-card .ikh-isoc a{
+  width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+  background:#f3f4f6;color:#374151;font-size:13px;text-decoration:none;transition:all .2s;border:1px solid #e5e7eb;
+}
+.instructor-card .ikh-isoc a:hover{transform:translateY(-2px)}
+.instructor-card .ikh-isoc a.fb:hover{background:#1877F2;color:#fff;border-color:#1877F2}
+.instructor-card .ikh-isoc a.yt:hover{background:#FF0000;color:#fff;border-color:#FF0000}
+.instructor-card .ikh-isoc a.tw:hover{background:#000;color:#fff;border-color:#000}
+.instructor-card .ikh-isoc a.ig:hover{background:linear-gradient(45deg,#f09433,#dc2743,#bc1888);color:#fff;border-color:#dc2743}
+</style>
+
+<script>
+/* ═══ IKH Patch v5 — Runtime ═══ */
+(function(){
+  var API_FALLBACK = 'https://ibnkhalduninstitute.onrender.com';
+  function api(){
+    try{
+      if (window.API_BASE) return window.API_BASE;
+      if (window.API) return window.API;
+    }catch(e){}
+    return API_FALLBACK;
+  }
+
+  /* ── 1. HERO MOBILE: inject two side mini-cards ── */
+  function injectMobileHeroSides(){
+    if (window.innerWidth > 768) return;
+    var right = document.querySelector('.hero .hero-right');
+    if (!right || right.querySelector('.ikh-mhero-side')) return;
+    var defaults = [
+      {img:'https://images.unsplash.com/photo-1564769625905-50e93615e769?w=400&q=70',title:'সীরাহ ও ইতিহাস'},
+      {img:'https://images.unsplash.com/photo-1554232456-8727aae0cfa4?w=400&q=70', title:'ফিকাহ মাসআলা'}
+    ];
+    ['left','right'].forEach(function(side,i){
+      var d=document.createElement('div');
+      d.className='ikh-mhero-side '+side;
+      d.innerHTML='<img src="'+defaults[i].img+'" alt=""/><div class="body"><div class="ttl">'+defaults[i].title+'</div></div>';
+      right.appendChild(d);
+    });
+  }
+  injectMobileHeroSides();
+  window.addEventListener('resize', injectMobileHeroSides);
+
+  /* ── 2. FAQ — load from /api/admin shape and render ── */
+  function loadHomeFaqs(){
+    var el = document.getElementById('hc-faq-list');
+    if (!el) return;
+    var esc = function(s){return String(s||'').replace(/[<>&"']/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":"&#39;"}[c]})};
+    fetch(api()+'/api/faqs').then(function(r){return r.json()}).then(function(d){
+      var items = [];
+      // New shape: {home:{items:[...]}, about:{items:[...]}}
+      if (d && d.home && Array.isArray(d.home.items)) items = d.home.items;
+      // Legacy array shape
+      else if (Array.isArray(d)) items = d;
+      // Fallback: some endpoints return {items:[...]}
+      else if (d && Array.isArray(d.items)) items = d.items;
+      items = items.filter(function(it){return it && it.question && it.answer});
+      if (!items.length) return; // keep existing fallback content
+      el.innerHTML = items.slice(0,8).map(function(f,i){
+        return '<div class="home-faq-item" data-i="'+i+'">'+
+          '<div class="home-faq-q" onclick="hcToggleFaq('+i+')"><span>'+esc(f.question)+'</span><span class="ic">+</span></div>'+
+          '<div class="home-faq-a"><div class="home-faq-a-inner">'+esc(f.answer)+'</div></div>'+
+        '</div>';
+      }).join('');
+    }).catch(function(){});
+  }
+  // run after a tick so the original loader finishes first; this overrides with admin data
+  setTimeout(loadHomeFaqs, 1200);
+  setTimeout(loadHomeFaqs, 3500);
+
+  /* ── 3. ENGLISH counter + admin-controlled YouTube video ── */
+  function fixCountersToEnglish(){
+    var counters = document.querySelectorAll('.ik-counter-num');
+    if (!counters.length) return;
+    counters.forEach(function(el){
+      el.setAttribute('data-en','1');
+      var t = parseInt(el.getAttribute('data-target'))||0;
+      el.textContent = '0+';
+      var dur=2000, startTime=null;
+      function step(ts){
+        if(!startTime) startTime=ts;
+        var p=Math.min((ts-startTime)/dur,1);
+        var eased=1-Math.pow(1-p,3);
+        el.textContent = Math.floor(eased*t)+'+';
+        if(p<1) requestAnimationFrame(step);
+        else el.textContent = t+'+';
+      }
+      // animate when in view
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if(e.isIntersecting){ requestAnimationFrame(step); io.unobserve(el); }
+        });
+      },{threshold:.25});
+      io.observe(el);
+    });
+  }
+  // Override Bengali animation by re-running with English digits.
+  setTimeout(fixCountersToEnglish, 500);
+
+  function applyJoinSectionVideo(){
+    var sec = document.querySelector('.home-section iframe[src*="youtube.com/embed"]');
+    if (!sec) {
+      // try to find by container
+      var iframes = document.querySelectorAll('iframe[src*="youtube"]');
+      iframes.forEach(function(f){ if(!sec) sec=f; });
+    }
+    if (!sec) return;
+    fetch(api()+'/api/public-content-bundle').then(function(r){return r.json()}).then(function(d){
+      var vid = (d && (d.joinVideoId || d.homeJoinVideoId || (d.home && d.home.joinVideoId))) || '';
+      vid = String(vid||'').trim();
+      // accept full URL too
+      var m = vid.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_\-]{11})/);
+      if (m) vid = m[1];
+      if (vid && /^[A-Za-z0-9_\-]{11}$/.test(vid)) {
+        sec.src = 'https://www.youtube.com/embed/'+vid+'?rel=0&modestbranding=1';
+      }
+    }).catch(function(){});
+  }
+  setTimeout(applyJoinSectionVideo, 800);
+
+  /* ── 4. CATEGORY images — replace emoji with topical photos ── */
+  var CAT_IMG_MAP = {
+    'কুরআন':'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=200&q=70',
+    'quran':'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=200&q=70',
+    'সীরাহ':'https://images.unsplash.com/photo-1564769625905-50e93615e769?w=200&q=70',
+    'ইতিহাস':'https://images.unsplash.com/photo-1564769625905-50e93615e769?w=200&q=70',
+    'seerah':'https://images.unsplash.com/photo-1564769625905-50e93615e769?w=200&q=70',
+    'history':'https://images.unsplash.com/photo-1564769625905-50e93615e769?w=200&q=70',
+    'ফিকাহ':'https://images.unsplash.com/photo-1554232456-8727aae0cfa4?w=200&q=70',
+    'fiqh':'https://images.unsplash.com/photo-1554232456-8727aae0cfa4?w=200&q=70',
+    'হাদীস':'https://images.unsplash.com/photo-1585036156261-1a1c64ed7b27?w=200&q=70',
+    'hadith':'https://images.unsplash.com/photo-1585036156261-1a1c64ed7b27?w=200&q=70',
+    'প্রোডাক্টিভ':'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=200&q=70',
+    'productivity':'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=200&q=70',
+    'লাইফ':'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=200&q=70',
+    'পারিবারিক':'https://images.unsplash.com/photo-1511895426328-dc8714191011?w=200&q=70',
+    'family':'https://images.unsplash.com/photo-1511895426328-dc8714191011?w=200&q=70',
+    'হোমস্কুল':'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=200&q=70',
+    'homeschool':'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=200&q=70',
+    'প্যারেন্টিং':'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=200&q=70',
+    'parenting':'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=200&q=70',
+    'সুন্নাহ':'https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=200&q=70',
+    'sunnah':'https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=200&q=70',
+    'লাইফস্টাইল':'https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=200&q=70',
+    'lifestyle':'https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=200&q=70',
+    'বিশ্বাস':'https://images.unsplash.com/photo-1591456983933-0d1bdf124cdf?w=200&q=70',
+    'মতবাদ':'https://images.unsplash.com/photo-1591456983933-0d1bdf124cdf?w=200&q=70',
+    'belief':'https://images.unsplash.com/photo-1591456983933-0d1bdf124cdf?w=200&q=70',
+    'ideology':'https://images.unsplash.com/photo-1591456983933-0d1bdf124cdf?w=200&q=70'
+  };
+  var DEFAULT_CAT_IMG = 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=200&q=70';
+  function imageForCat(name){
+    var n = String(name||'').toLowerCase();
+    for (var k in CAT_IMG_MAP){ if (n.indexOf(k) !== -1) return CAT_IMG_MAP[k]; }
+    return DEFAULT_CAT_IMG;
+  }
+  function applyCategoryImages(){
+    document.querySelectorAll('#hc-cats-grid .cat-card').forEach(function(card){
+      var iconEl = card.querySelector('.cat-icon');
+      var nameEl = card.querySelector('.cat-name');
+      if (!iconEl || !nameEl || iconEl.querySelector('img')) return;
+      var src = imageForCat(nameEl.textContent);
+      iconEl.innerHTML = '<img src="'+src+'" alt="" loading="lazy" onerror="this.src=\''+DEFAULT_CAT_IMG+'\'"/>';
+    });
+  }
+  // observe for dynamic render
+  var catObs = new MutationObserver(applyCategoryImages);
+  var catGrid = document.getElementById('hc-cats-grid');
+  if (catGrid) catObs.observe(catGrid,{childList:true,subtree:true});
+  setTimeout(applyCategoryImages, 1500);
+  setTimeout(applyCategoryImages, 4000);
+
+  /* ── 5. INSTRUCTOR socials (matched by name, robust) ── */
+  function escAttr(s){return String(s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+  function applyInstructorSocialsV5(){
+    var list = window._apiInstructors || [];
+    if (!list.length) return;
+    var byName = {};
+    list.forEach(function(i){ if(i && i.name) byName[String(i.name).trim().toLowerCase()] = i; });
+    document.querySelectorAll('.instructor-card').forEach(function(card){
+      if (card.querySelector('.ikh-isoc')) return;
+      var nameEl = card.querySelector('.instructor-name');
+      if (!nameEl) return;
+      var key = nameEl.textContent.trim().toLowerCase();
+      var inst = byName[key];
+      if (!inst || !inst.social) return;
+      var soc = inst.social||{};
+      var links = [];
+      if (soc.facebook) links.push(['fb','fab fa-facebook-f', soc.facebook]);
+      if (soc.youtube)  links.push(['yt','fab fa-youtube',    soc.youtube]);
+      if (soc.twitter)  links.push(['tw','fab fa-x-twitter',  soc.twitter]);
+      if (soc.instagram)links.push(['ig','fab fa-instagram',  soc.instagram]);
+      if (!links.length) return;
+      var holder = document.createElement('div');
+      holder.className = 'ikh-isoc';
+      holder.innerHTML = links.map(function(l){
+        return '<a class="'+l[0]+'" target="_blank" rel="noopener" href="'+escAttr(l[2])+'" onclick="event.stopPropagation()"><i class="'+l[1]+'"></i></a>';
+      }).join('');
+      card.appendChild(holder);
+    });
+  }
+  // observe instructor grids
+  ['instructors-grid','page-instructors-grid','featured-instructors-grid'].forEach(function(id){
+    var g = document.getElementById(id);
+    if (g) new MutationObserver(applyInstructorSocialsV5).observe(g,{childList:true,subtree:true});
+  });
+  setTimeout(applyInstructorSocialsV5, 2000);
+  setTimeout(applyInstructorSocialsV5, 5000);
+
+  console.log('✅ IKH Patch v5 active: hero stack, FAQ, EN counter, cat images, instructor socials');
+})();
+</script>
+
 </body>
 </html>
