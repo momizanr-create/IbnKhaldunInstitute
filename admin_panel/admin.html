@@ -629,63 +629,95 @@
         </div>
       </div>
       <nav class="sidebar-nav">
-        <!-- ───── CORE MENU (always visible) ───── -->
+        <!-- ═══════════════════════════════════════════════════
+             RESTRUCTURED v8 — index.html এর প্রতিটি page অনুযায়ী
+             ═══════════════════════════════════════════════════ -->
+
+        <!-- ────── মূল মেনু (নিয়মিত প্রয়োজন) ────── -->
         <div class="nav-section">মূল মেনু</div>
         <div class="nav-item active" onclick="navTo('dashboard')"><span class="icon">📊</span> ড্যাশবোর্ড</div>
-        <div class="nav-item" onclick="navTo('courses')"><span class="icon">📚</span> কোর্স</div>
-        <div class="nav-item" onclick="navTo('categories')"><span class="icon">🏷️</span> ক্যাটাগরি</div>
-        <div class="nav-item" onclick="navTo('instructors')"><span class="icon">👨‍🏫</span> ইন্সট্রাক্টর</div>
+        <div class="nav-item" onclick="navTo('courses')"><span class="icon">📚</span> সকল কোর্স</div>
         <div class="nav-item" onclick="navTo('enrollments')"><span class="icon">📋</span> এনরোলমেন্ট</div>
         <div class="nav-item" onclick="navTo('users')"><span class="icon">👥</span> ব্যবহারকারী</div>
+        <div class="nav-item" onclick="navTo('access-requests')"><span class="icon">🔐</span> অ্যাক্সেস রিকোয়েস্ট</div>
 
-        <!-- ───── GROUPED (collapsible) ───── -->
+        <!-- ────── 🏠 হোম পেজ ────── -->
+        <div class="nav-section">🏠 হোম পেজ</div>
+        <div class="nav-group open" data-group="home-primary">
+          <div class="nav-group-head" onclick="toggleNavGroup(this)">
+            <span class="icon">⭐</span> নিয়মিত আপডেট
+            <span class="caret">▾</span>
+          </div>
+          <div class="nav-group-body">
+            <div class="nav-item" onclick="navTo('hero-section')"><span class="icon">🎯</span> হিরো (টেক্সট)</div>
+            <div class="nav-item" onclick="navTo('hero-courses')"><span class="icon">🖼️</span> হিরো কোর্স কার্ড</div>
+            <div class="nav-item" onclick="navTo('featured-courses-mgr')"><span class="icon">🌟</span> ফিচার্ড কোর্স</div>
+            <div class="nav-item" onclick="navTo('home-join-video')"><span class="icon">🎬</span> "আজই যুক্ত হোন" ভিডিও</div>
+            <div class="nav-item" onclick="navTo('notices')"><span class="icon">📢</span> নোটিশ বার</div>
+          </div>
+        </div>
+        <div class="nav-group" data-group="home-occasional">
+          <div class="nav-group-head" onclick="toggleNavGroup(this)">
+            <span class="icon">📅</span> মাঝে মাঝে আপডেট
+            <span class="caret">▾</span>
+          </div>
+          <div class="nav-group-body">
+            <div class="nav-item" onclick="navTo('testimonials')"><span class="icon">💬</span> ছাত্র রিভিউ</div>
+            <div class="nav-item" onclick="navTo('features')"><span class="icon">⭐</span> বিশেষত্ব</div>
+            <div class="nav-item" onclick="navTo('faqs')"><span class="icon">❓</span> FAQ</div>
+            <div class="nav-item" onclick="navTo('cta-section')"><span class="icon">📣</span> CTA সেকশন</div>
+            <div class="nav-item" onclick="navTo('section-content')"><span class="icon">📋</span> সেকশন টেক্সট</div>
+          </div>
+        </div>
+        <div class="nav-group" data-group="home-rare">
+          <div class="nav-group-head" onclick="toggleNavGroup(this)">
+            <span class="icon">🗓️</span> কদাচিৎ আপডেট
+            <span class="caret">▾</span>
+          </div>
+          <div class="nav-group-body">
+            <div class="nav-item" onclick="navTo('welcome-popup')"><span class="icon">🎉</span> ওয়েলকাম পপআপ</div>
+          </div>
+        </div>
+
+        <!-- ────── 🏷️ ক্যাটাগরি পেজ ────── -->
+        <div class="nav-section">🏷️ ক্যাটাগরি পেজ</div>
+        <div class="nav-item" onclick="navTo('categories')"><span class="icon">🏷️</span> ক্যাটাগরি ম্যানেজার</div>
+
+        <!-- ────── 👨‍🏫 ইন্সট্রাক্টর পেজ ────── -->
+        <div class="nav-section">👨‍🏫 ইন্সট্রাক্টর পেজ</div>
+        <div class="nav-item" onclick="navTo('instructors')"><span class="icon">👨‍🏫</span> ইন্সট্রাক্টর + সোশ্যাল</div>
+
+        <!-- ────── ✍️ ব্লগ পেজ ────── -->
+        <div class="nav-section">✍️ ব্লগ পেজ</div>
+        <div class="nav-item" onclick="navTo('blog-posts')"><span class="icon">✍️</span> ব্লগ পোস্ট</div>
+        <div class="nav-item" onclick="navTo('full-content')"><span class="icon">🧩</span> পূর্ণ কনটেন্ট (পপআপ)</div>
+
+        <!-- ────── ℹ️ আমাদের সম্পর্কে ────── -->
+        <div class="nav-section">ℹ️ আমাদের সম্পর্কে</div>
+        <div class="nav-item" onclick="navTo('about-page')"><span class="icon">ℹ️</span> About পেজ</div>
+
+        <!-- ────── 📞 যোগাযোগ পেজ ────── -->
+        <div class="nav-section">📞 যোগাযোগ পেজ</div>
+        <div class="nav-item" onclick="navTo('contact-content')"><span class="icon">📞</span> Contact পেজ</div>
+
+        <!-- ────── 📚 কোর্স অভ্যন্তরীণ টুলস ────── -->
+        <div class="nav-section">📚 কোর্স টুলস</div>
         <div class="nav-group" data-group="course-tools">
           <div class="nav-group-head" onclick="toggleNavGroup(this)">
-            <span class="icon">📝</span> কোর্স টুলস
+            <span class="icon">📝</span> কোর্স ডিটেইল ও ট্যাব
             <span class="caret">▾</span>
           </div>
           <div class="nav-group-body">
             <div class="nav-item" onclick="navTo('course-detail-mgr')"><span class="icon">📄</span> কোর্স ডিটেইল</div>
             <div class="nav-item" onclick="navTo('course-tabs')"><span class="icon">🧭</span> কোর্স ট্যাব</div>
-            <div class="nav-item" onclick="navTo('featured-courses-mgr')"><span class="icon">⭐</span> ফিচার্ড কোর্স</div>
-            <div class="nav-item" onclick="navTo('access-requests')"><span class="icon">🔐</span> অ্যাক্সেস রিকোয়েস্ট</div>
           </div>
         </div>
 
-        <div class="nav-group" data-group="content">
-          <div class="nav-group-head" onclick="toggleNavGroup(this)">
-            <span class="icon">📰</span> কন্টেন্ট
-            <span class="caret">▾</span>
-          </div>
-          <div class="nav-group-body">
-            <div class="nav-item" onclick="navTo('blog-posts')"><span class="icon">✍️</span> ব্লগ</div>
-            <div class="nav-item" onclick="navTo('testimonials')"><span class="icon">💬</span> রিভিউ</div>
-            <div class="nav-item" onclick="navTo('features')"><span class="icon">⭐</span> বিশেষত্ব</div>
-            <div class="nav-item" onclick="navTo('faqs')"><span class="icon">❓</span> FAQ</div>
-            <div class="nav-item" onclick="navTo('notices')"><span class="icon">📢</span> নোটিশ</div>
-            <div class="nav-item" onclick="navTo('welcome-popup')"><span class="icon">🎉</span> ওয়েলকাম পপআপ</div>
-          </div>
-        </div>
-
-        <div class="nav-group" data-group="pages">
-          <div class="nav-group-head" onclick="toggleNavGroup(this)">
-            <span class="icon">📑</span> পেজ ও সেকশন
-            <span class="caret">▾</span>
-          </div>
-          <div class="nav-group-body">
-            <div class="nav-item" onclick="navTo('hero-section')"><span class="icon">🎯</span> হিরো সেকশন</div>
-            <div class="nav-item" onclick="navTo('hero-courses')"><span class="icon">🖼️</span> হিরো কার্ড</div>
-            <div class="nav-item" onclick="navTo('full-content')"><span class="icon">🧩</span> সম্পূর্ণ কনটেন্ট</div>
-            <div class="nav-item" onclick="navTo('about-page')"><span class="icon">ℹ️</span> আমাদের সম্পর্কে</div>
-            <div class="nav-item" onclick="navTo('contact-content')"><span class="icon">📞</span> কনট্যাক্ট পেজ</div>
-            <div class="nav-item" onclick="navTo('cta-section')"><span class="icon">📣</span> CTA সেকশন</div>
-            <div class="nav-item" onclick="navTo('section-content')"><span class="icon">📋</span> সেকশন কন্টেন্ট</div>
-          </div>
-        </div>
-
+        <!-- ────── ⚙️ সাইট কাস্টমাইজেশন (কদাচিৎ) ────── -->
+        <div class="nav-section">⚙️ সাইট কাস্টমাইজেশন</div>
         <div class="nav-group" data-group="customize">
           <div class="nav-group-head" onclick="toggleNavGroup(this)">
-            <span class="icon">⚙️</span> কাস্টমাইজেশন
+            <span class="icon">🎨</span> সেটিংস ও থিম
             <span class="caret">▾</span>
           </div>
           <div class="nav-group-body">
@@ -7018,124 +7050,110 @@ document.addEventListener('DOMContentLoaded',function(){
 })();
 </script>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     IKH Admin Patch v5 — "যুক্ত হোন" সেকশনের YouTube ভিডিও ID
-     ═══════════════════════════════════════════════════════════════ -->
-<style id="ikh-admin-v5-style">
-.ikh-v5-card{background:var(--bg2,#fff);border:1px solid var(--border,#e5e7eb);border-radius:10px;padding:16px;margin:14px 0}
-.ikh-v5-card h4{margin:0 0 6px;font-size:14px;font-weight:700;color:var(--text,#111)}
-.ikh-v5-card p{margin:0 0 10px;font-size:12px;color:var(--text2,#666)}
-.ikh-v5-row{display:flex;gap:8px;align-items:center}
-.ikh-v5-row input{flex:1;padding:8px 10px;border:1px solid var(--border,#ddd);border-radius:6px;font-size:13px}
-.ikh-v5-row button{padding:8px 14px;background:var(--primary,#1a3a30);color:#fff;border:0;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer}
-.ikh-v5-row button:hover{opacity:.9}
-.ikh-v5-hint{font-size:11px;color:var(--text2,#888);margin-top:6px}
-.ikh-v5-ok{color:#16a34a;font-size:12px;margin-top:6px}
-.ikh-v5-err{color:#dc2626;font-size:12px;margin-top:6px}
-</style>
 
+        <!-- ═══════════════════════════════════════════════════
+             🎬 হোম পেজ — "আজই যুক্ত হোন" ভিডিও ম্যানেজার (v8)
+             ═══════════════════════════════════════════════════ -->
+        <div class="page" id="page-home-join-video">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">🎬 "আজই যুক্ত হোন" সেকশনের YouTube ভিডিও</h1>
+              <p class="page-sub">হোম পেজের "আজই যুক্ত হোন" সেকশনে যে YouTube ভিডিও দেখাবে তা এখান থেকে সেট করুন।</p>
+            </div>
+          </div>
+          <div class="card" style="max-width:720px">
+            <div style="padding:20px">
+              <label style="display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px">
+                YouTube URL অথবা ১১-অক্ষরের ভিডিও ID
+              </label>
+              <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+                <input type="text" id="hjv-input"
+                  placeholder="https://www.youtube.com/watch?v=LXb3EKWsInQ অথবা LXb3EKWsInQ"
+                  style="flex:1;min-width:260px;padding:11px 14px;border:1px solid var(--border2);border-radius:10px;background:var(--bg3);color:var(--text);font-size:14px"/>
+                <button type="button" id="hjv-save"
+                  style="padding:11px 22px;background:var(--primary);color:#0f0f0f;border:0;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer">
+                  💾 সেভ করুন
+                </button>
+              </div>
+              <div id="hjv-msg" style="margin-top:12px;font-size:13px;color:var(--text2)">লোড হচ্ছে...</div>
+              <div style="margin-top:18px;padding:14px;background:var(--bg3);border-radius:10px;border:1px solid var(--border)">
+                <div style="font-size:12px;color:var(--text2);margin-bottom:6px">📺 প্রিভিউ:</div>
+                <div id="hjv-preview" style="aspect-ratio:16/9;background:#000;border-radius:8px;overflow:hidden">
+                  <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#666;font-size:13px">কোনো ভিডিও লোড হয়নি</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- IKH Patch v5 (FAB) removed — replaced by proper page-home-join-video section -->
+
+
+
+<!-- IKH v8 — Home Join Video page logic -->
 <script>
 (function(){
   function $(s,r){return (r||document).querySelector(s)}
   function extractYTId(s){
-    s = String(s||'').trim();
-    if (/^[A-Za-z0-9_\-]{11}$/.test(s)) return s;
-    var m = s.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([A-Za-z0-9_\-]{11})/);
-    return m ? m[1] : '';
+    s=String(s||'').trim();
+    if(/^[A-Za-z0-9_\-]{11}$/.test(s))return s;
+    var m=s.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([A-Za-z0-9_\-]{11})/);
+    return m?m[1]:'';
   }
-  function buildVideoCard(){
-    var page = $('#page-content-bundle') || $('#page-site-content') || $('[id^="page-content"]') || $('.main-content') || document.body;
-    if (!page || $('#ikh-v5-video-card')) return;
-    var card = document.createElement('div');
-    card.id = 'ikh-v5-video-card';
-    card.className = 'ikh-v5-card';
-    card.innerHTML = ''
-      + '<h4>🎬 হোম পেজ — "আজই যুক্ত হোন" সেকশনের YouTube ভিডিও</h4>'
-      + '<p>YouTube URL বা শুধু ১১ অক্ষরের ভিডিও ID দিন। সেভ করার সাথে সাথে index.html এর "আজই যুক্ত হোন" সেকশনে নতুন ভিডিও দেখাবে।</p>'
-      + '<div class="ikh-v5-row">'
-      + '  <input id="ikh-v5-video-input" placeholder="https://www.youtube.com/watch?v=LXb3EKWsInQ অথবা LXb3EKWsInQ"/>'
-      + '  <button type="button" id="ikh-v5-video-save">💾 সেভ</button>'
-      + '</div>'
-      + '<div id="ikh-v5-video-msg" class="ikh-v5-hint">লোড হচ্ছে...</div>';
-    page.insertBefore(card, page.firstChild ? page.firstChild.nextSibling : null);
-
-    // load current value
-    var apiFn = window.api;
-    if (typeof apiFn !== 'function') {
-      $('#ikh-v5-video-msg').textContent = '⚠ admin api() ফাংশন পাওয়া যায়নি';
-      return;
-    }
-    apiFn('GET','/api/admin/content-bundle').then(function(b){
-      var cur = (b && (b.joinVideoId || b.homeJoinVideoId)) || '';
-      $('#ikh-v5-video-input').value = cur;
-      $('#ikh-v5-video-msg').textContent = cur ? ('বর্তমান ID: '+cur) : 'এখনো কোনো ভিডিও সেট করা নেই (default ভিডিও দেখানো হচ্ছে)';
-    }).catch(function(){
-      $('#ikh-v5-video-msg').textContent = 'লোড হয়নি — সেভ করতে পারবেন';
-    });
-
-    $('#ikh-v5-video-save').addEventListener('click', async function(){
-      var raw = $('#ikh-v5-video-input').value;
-      var id = extractYTId(raw);
-      var msg = $('#ikh-v5-video-msg');
-      if (!id) {
-        msg.className = 'ikh-v5-err';
-        msg.textContent = '❌ সঠিক YouTube URL বা 11-অক্ষরের ID দিন';
-        return;
-      }
-      try {
-        var b = await apiFn('GET','/api/admin/content-bundle').catch(function(){return {}});
-        b = b || {};
-        b.joinVideoId = id;
-        await apiFn('POST','/api/admin/content-bundle', b);
-        msg.className = 'ikh-v5-ok';
-        msg.textContent = '✅ সেভ হয়েছে — ID: '+id;
-        if (typeof toast === 'function') toast('✅ ভিডিও ID সেভ হয়েছে');
-      } catch(e) {
-        msg.className = 'ikh-v5-err';
-        msg.textContent = '❌ সমস্যা: '+(e.message||e);
-      }
-    });
+  function setPreview(id){
+    var box=$('#hjv-preview'); if(!box) return;
+    if(!id){ box.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#666;font-size:13px">কোনো ভিডিও লোড হয়নি</div>'; return;}
+    box.innerHTML='<iframe src="https://www.youtube.com/embed/'+id+'" frameborder="0" allowfullscreen style="width:100%;height:100%;border:0"></iframe>';
   }
-
-  // Try to inject when site-content page is opened
-  function tryInject(){
-    var visiblePage = document.querySelector('.page.active') || document.querySelector('.page[style*="block"]');
-    if (visiblePage && /content/i.test(visiblePage.id||'')) buildVideoCard();
+  async function loadHJV(){
+    var msg=$('#hjv-msg'); if(!msg) return;
+    if(typeof window.api!=='function'){ msg.textContent='⚠ admin api() পাওয়া যায়নি'; return; }
+    try{
+      var b=await window.api('GET','/api/admin/content-bundle');
+      var cur=(b&&(b.joinVideoId||b.homeJoinVideoId))||'';
+      $('#hjv-input').value=cur;
+      msg.style.color='var(--text2)';
+      msg.textContent=cur?('✓ বর্তমান ID: '+cur):'এখনো কোনো ভিডিও সেট নেই (ডিফল্ট দেখানো হচ্ছে)';
+      setPreview(cur);
+    }catch(e){ msg.textContent='লোড হয়নি — সেভ করতে পারবেন'; }
   }
-  // Also expose a manual button always-on inside Site Content section
-  var navObserver = new MutationObserver(tryInject);
-  navObserver.observe(document.body,{subtree:true,attributes:true,attributeFilter:['class','style']});
-  setTimeout(tryInject, 1500);
-
-  // ── Floating fallback button (always available) ──
-  function buildFloatingBtn(){
-    if (document.getElementById('ikh-v5-fab')) return;
-    var btn = document.createElement('button');
-    btn.id = 'ikh-v5-fab';
-    btn.title = 'হোম যুক্ত হোন ভিডিও সেট করুন';
-    btn.innerHTML = '🎬';
-    btn.style.cssText='position:fixed;right:16px;bottom:80px;width:46px;height:46px;border-radius:50%;background:#1a3a30;color:#fff;border:0;font-size:20px;box-shadow:0 6px 20px rgba(0,0,0,.25);cursor:pointer;z-index:9999';
-    btn.addEventListener('click', function(){
-      var raw = prompt('হোম পেজের "আজই যুক্ত হোন" সেকশনে কোন YouTube ভিডিও দেখাতে চান?\nURL বা 11-অক্ষরের ID দিন:');
-      if (raw === null) return;
-      var id = extractYTId(raw);
-      if (!id) { alert('❌ সঠিক YouTube URL/ID দিন'); return; }
-      var apiFn = window.api;
-      if (typeof apiFn !== 'function') { alert('admin api() পাওয়া যায়নি'); return; }
-      apiFn('GET','/api/admin/content-bundle').catch(function(){return {}}).then(function(b){
-        b = b || {}; b.joinVideoId = id;
-        return apiFn('POST','/api/admin/content-bundle', b);
-      }).then(function(){
-        alert('✅ সেভ হয়েছে — ID: '+id);
-        if (typeof toast === 'function') toast('✅ ভিডিও ID সেভ হয়েছে');
-      }).catch(function(e){ alert('❌ সমস্যা: '+(e.message||e)); });
-    });
-    document.body.appendChild(btn);
+  async function saveHJV(){
+    var raw=$('#hjv-input').value;
+    var id=extractYTId(raw);
+    var msg=$('#hjv-msg');
+    if(!id){ msg.style.color='#ef4444'; msg.textContent='❌ সঠিক YouTube URL/ID দিন'; return; }
+    try{
+      var b=await window.api('GET','/api/admin/content-bundle').catch(function(){return {}});
+      b=b||{}; b.joinVideoId=id;
+      await window.api('POST','/api/admin/content-bundle',b);
+      msg.style.color='#22c55e';
+      msg.textContent='✅ সেভ হয়েছে — ID: '+id;
+      setPreview(id);
+      if(typeof toast==='function')toast('✅ ভিডিও ID সেভ হয়েছে');
+    }catch(e){ msg.style.color='#ef4444'; msg.textContent='❌ সমস্যা: '+(e.message||e); }
   }
-  if (document.body) buildFloatingBtn();
-  else document.addEventListener('DOMContentLoaded', buildFloatingBtn);
-
-  console.log('✅ IKH Admin Patch v5 active: Home video ID manager');
+  // Wire button when DOM ready
+  document.addEventListener('click',function(ev){
+    if(ev.target&&ev.target.id==='hjv-save'){ saveHJV(); }
+  });
+  // Hook navTo
+  function hookNavTo(){
+    var orig=window.navTo;
+    if(typeof orig!=='function'){ setTimeout(hookNavTo,300); return; }
+    if(orig.__hjvHooked) return;
+    var wrapped=function(p){
+      try{orig(p);}catch(e){}
+      if(p==='home-join-video'){ setTimeout(loadHJV,80); }
+    };
+    wrapped.__hjvHooked=true;
+    window.navTo=wrapped;
+    // Also register page title
+    if(window.pageTitles){ window.pageTitles['home-join-video']='🎬 হোম যুক্ত হোন ভিডিও'; }
+  }
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',hookNavTo);
+  } else { hookNavTo(); }
+  console.log('✅ IKH v8 Home Join Video page ready');
 })();
 </script>
 
