@@ -1090,7 +1090,7 @@
     footer { background: #111; color: #CBD5E1; padding: 0; border-top: 3px solid var(--primary); }
 
     /* Footer Top Bar */
-    .footer-topbar {
+    .footer-topbar { display:none !important; /* removed */
       background: #1a1a1a;
       border-bottom: 1px solid rgba(255,255,255,0.07);
       padding: 18px 0;
@@ -1889,12 +1889,9 @@
     /* Desktop/tablet: hide mobile hero, show original */
     .mobile-hero-section { display: none !important; }
 
-    /* Mobile: hide original hero, show mobile hero fullscreen */
+    /* Mobile: keep new course-style hero visible (no hide) */
     @media (max-width: 768px) {
-      /* মূল হিরো লুকাও */
-      .hero { display: none !important; }
-
-      /* মোবাইল হিরো — ফুল স্ক্রিন */
+      /* unified hero shown on all viewports */
       .mobile-hero-section { display: none !important; }
 
       /* ইমেজ র‍্যাপার — উপরের অর্ধেক */
@@ -2375,7 +2372,7 @@
       .auth-title { font-size: 22px; }
 
       /* ── Footer ── */
-      .footer-topbar { padding: 14px 0; }
+      .footer-topbar { display:none !important; /* removed */ padding: 14px 0; }
       .footer-topbar-inner { flex-direction: column; gap: 12px; align-items: flex-start; }
       .footer-contact-items { gap: 18px; flex-wrap: wrap; }
       .footer-follow { flex-wrap: wrap; }
@@ -3166,6 +3163,99 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <!-- Font Awesome fallback -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.1/css/all.css" crossorigin="anonymous" />
+
+<style id="ikh-update-pack-v3">
+/* ═══════ NAV-ACTIONS ALIGNMENT (mobile: search + hamburger side-by-side) ═══════ */
+.nav-actions{display:flex;align-items:center;gap:10px}
+@media(max-width:768px){
+  .nav-actions{gap:8px}
+  .mobile-search-trigger{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border:1.5px solid rgba(245,197,24,0.28);background:rgba(245,197,24,0.08);border-radius:10px;color:#1a1a1a;cursor:pointer;transition:all .2s}
+  .mobile-search-trigger:active{background:rgba(245,197,24,0.22);transform:scale(.94)}
+  .mobile-search-trigger svg{width:18px;height:18px}
+  .hamburger{position:relative;width:40px;height:40px;display:flex !important;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:rgba(245,197,24,0.08);border:1.5px solid rgba(245,197,24,0.28);border-radius:10px;cursor:pointer;transition:all .25s;margin-left:0 !important}
+  .hamburger span{display:block;width:20px;height:2px;background:#1a1a1a;border-radius:2px;transition:transform .28s ease,opacity .2s ease}
+  .hamburger.is-open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  .hamburger.is-open span:nth-child(2){opacity:0;transform:scaleX(0)}
+  .hamburger.is-open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  .hamburger:active{transform:scale(.94)}
+}
+
+/* ═══════ HERO compact for desktop (no scroll on viewport) ═══════ */
+@media(min-width:981px){
+  .hero-inner{padding:36px 24px 44px;gap:36px}
+  .hero h1{margin-bottom:12px}
+  .hero-sub{margin-bottom:18px}
+  .hero-cta-row{margin-bottom:20px}
+  .hero-stats-row{padding-top:16px}
+  .hero-feature-card{max-width:420px}
+  .hero-feature-body{padding:16px 18px 18px}
+}
+
+/* ═══════ CATEGORY FILTER — pill style, scroll-snap, works desktop & mobile ═══════ */
+#courses-category-tabs.category-filter-tabs,
+.category-filter-tabs.cat-pills{
+  display:flex;flex-wrap:nowrap;overflow-x:auto;gap:10px;
+  border-bottom:none !important;padding:6px 4px 10px;margin:18px 0 0 !important;
+  scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;mask-image:linear-gradient(to right,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);
+}
+#courses-category-tabs.category-filter-tabs::-webkit-scrollbar,
+.category-filter-tabs.cat-pills::-webkit-scrollbar{display:none}
+#courses-category-tabs .courses-tab,
+.category-filter-tabs.cat-pills .courses-tab{
+  flex:0 0 auto;scroll-snap-align:start;
+  padding:9px 18px !important;border-radius:999px !important;
+  background:#f3f1ec !important;border:1.5px solid transparent !important;
+  color:#3a342c !important;font-size:12.5px !important;letter-spacing:.5px !important;
+  text-transform:none !important;font-weight:600 !important;
+  border-bottom:1.5px solid transparent !important;margin-bottom:0 !important;
+  transition:all .2s ease;display:inline-flex;align-items:center;gap:6px;
+}
+#courses-category-tabs .courses-tab:hover,
+.category-filter-tabs.cat-pills .courses-tab:hover{
+  background:#fff !important;border-color:var(--primary,#F5C518) !important;color:#1a1a1a !important;
+}
+#courses-category-tabs .courses-tab.active,
+.category-filter-tabs.cat-pills .courses-tab.active{
+  background:linear-gradient(135deg,#1a3a30,#0f2a22) !important;color:#fff !important;
+  border-color:#1a3a30 !important;box-shadow:0 6px 16px rgba(15,42,34,.22);
+}
+@media(max-width:640px){
+  #courses-category-tabs .courses-tab,.category-filter-tabs.cat-pills .courses-tab{padding:8px 14px !important;font-size:11.5px !important}
+}
+
+/* sub-category bar consistent */
+#subcategory-filter-bar .courses-filters{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:8px;padding:10px 0 !important;scrollbar-width:none}
+#subcategory-filter-bar .courses-filters::-webkit-scrollbar{display:none}
+
+/* ═══════ INSTRUCTOR-STATS — single line + social squares ═══════ */
+.instructor-stats{flex-wrap:nowrap !important;justify-content:center;gap:8px !important;overflow:hidden}
+.instructor-stats span{padding:3px 8px !important;font-size:10.5px !important;border-radius:6px !important;white-space:nowrap}
+.instructor-stats span i{font-size:10px !important}
+.instructor-socials{display:flex;justify-content:center;gap:6px;margin-top:8px}
+.instructor-socials .social-mini{
+  width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;
+  border-radius:6px;background:#f3f1ec;color:#1a3a30;font-size:11px;font-weight:700;
+  border:1px solid #e3ddd2;text-decoration:none;transition:all .18s
+}
+.instructor-socials .social-mini:hover{background:#1a3a30;color:#fff;border-color:#1a3a30;transform:translateY(-2px)}
+.instructor-socials .social-mini.fb:hover{background:#1877F2;border-color:#1877F2}
+.instructor-socials .social-mini.yt:hover{background:#FF0000;border-color:#FF0000}
+.instructor-socials .social-mini.tw:hover,
+.instructor-socials .social-mini.x:hover{background:#000;border-color:#000}
+.instructor-socials .social-mini.ig:hover{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);border-color:#dc2743}
+
+/* ═══════ MOBILE: smoother nav, larger taps ═══════ */
+@media(max-width:768px){
+  .nav-inner{padding:10px 14px !important;min-height:60px}
+  .mobile-nav{padding:12px 14px 18px;border-radius:0 0 14px 14px}
+  .mobile-nav a{padding:14px 16px;font-size:14.5px;border-radius:10px}
+  .mobile-nav a:active{background:rgba(245,197,24,.18)}
+  body{-webkit-tap-highlight-color:transparent}
+  .container{padding-left:14px;padding-right:14px}
+}
+</style>
+
 </head>
 <body>
 
@@ -3200,7 +3290,15 @@
       <div class="nav-actions">
         <button class="btn btn-ghost nav-signin-desktop" id="nav-signin-btn" onclick="navigate('auth')">সাইন ইন</button>
         <button class="btn btn-ghost nav-signin-desktop hidden" id="nav-logout-btn" onclick="navigate('dashboard')" style="border-color:var(--primary);color:var(--primary-dark)"><i class="fas fa-book-open"></i> লার্নিং হাব</button>
-  </div>
+        <button class="mobile-search-trigger" id="mobile-search-trigger" onclick="openMobileSearch()" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </button>
+        <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+  </header>
 
   <!-- Mobile Search Overlay -->
   <div class="mobile-search-overlay" id="mobile-search-overlay" onclick="if(event.target===this)closeMobileSearch()">
@@ -3215,14 +3313,6 @@
       <div class="ms-empty">কোর্সের নাম লিখে খোঁজা শুরু করুন</div>
     </div>
   </div>
-      <button class="mobile-search-trigger" id="mobile-search-trigger" onclick="openMobileSearch()" aria-label="Search">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-      </button>
-      <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Toggle menu">
-        <span></span><span></span><span></span>
-      </button>
-    </nav>
-  </header>
 
   <!-- Mobile Nav -->
   <div class="mobile-nav" id="mobile-nav">
@@ -4580,18 +4670,6 @@
 
   <!-- ===================== GLOBAL FOOTER ===================== -->
   <footer id="global-footer">
-      <!-- Top Contact Bar -->
-      <div class="footer-topbar">
-        <div class="container">
-          <div class="footer-topbar-inner">
-            <div class="footer-contact-items">
-              <div class="footer-contact-item">
-                <div class="footer-contact-icon"><i class="fas fa-phone"></i></div>
-                <div>
-                  <div class="footer-contact-label">কল করুন ২৪/৭</div>
-                  <div class="footer-contact-value">+880 1700-000000</div>
-                </div>
-              </div>
               <div class="footer-contact-item">
                 <div class="footer-contact-icon">✉️</div>
                 <div>
@@ -8793,6 +8871,87 @@
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
     </svg>
   </a>
+
+
+<script id="ikh-update-pack-v3-js">
+/* === Animated hamburger sync === */
+(function(){
+  function applyState(){
+    var ham=document.getElementById('hamburger'); var nav=document.getElementById('mobile-nav');
+    if(!ham||!nav) return;
+    if(nav.classList.contains('open')||nav.classList.contains('show')||nav.style.display==='flex'||nav.style.display==='block'){
+      ham.classList.add('is-open');
+    } else { ham.classList.remove('is-open'); }
+  }
+  document.addEventListener('click', function(e){
+    if(e.target.closest('#hamburger')||e.target.closest('.mobile-nav a')) setTimeout(applyState,30);
+  });
+  // observe class change
+  var nav=document.getElementById('mobile-nav');
+  if(nav && window.MutationObserver){
+    new MutationObserver(applyState).observe(nav,{attributes:true,attributeFilter:['class','style']});
+  }
+})();
+
+/* === Force English digits everywhere on page (Bangla numerals → 0-9) === */
+(function(){
+  var BN_DIGITS={'০':'0','১':'1','২':'2','৩':'3','৪':'4','৫':'5','৬':'6','৭':'7','৮':'8','৯':'9'};
+  function convert(str){return str.replace(/[০-৯]/g,function(c){return BN_DIGITS[c]||c})}
+  var SKIP_TAGS={SCRIPT:1,STYLE:1,NOSCRIPT:1,IFRAME:1,TEXTAREA:1,INPUT:1,SVG:1,CODE:1,PRE:1};
+  function walk(node){
+    if(!node) return;
+    if(node.nodeType===3){
+      if(node.parentNode && SKIP_TAGS[node.parentNode.tagName]) return;
+      var v=node.nodeValue;
+      if(v && /[০-৯]/.test(v)){
+        var nv=convert(v); if(nv!==v) node.nodeValue=nv;
+      }
+      return;
+    }
+    if(node.nodeType===1){
+      if(SKIP_TAGS[node.tagName]) return;
+      for(var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i]);
+    }
+  }
+  function run(){ try{ walk(document.body);}catch(e){} }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',run); else run();
+  // re-run after dynamic renders
+  var t; var mo=new MutationObserver(function(){clearTimeout(t);t=setTimeout(run,180)});
+  document.addEventListener('DOMContentLoaded',function(){
+    if(document.body) mo.observe(document.body,{childList:true,subtree:true,characterData:true});
+  });
+  setTimeout(run,1500); setTimeout(run,3500);
+})();
+
+/* === Add classes to social-mini icons by URL === */
+(function(){
+  function classify(){
+    document.querySelectorAll('.instructor-socials .social-mini').forEach(function(a){
+      var h=(a.getAttribute('href')||'').toLowerCase();
+      if(/facebook\.com|fb\.com/.test(h)) a.classList.add('fb');
+      else if(/youtube\.com|youtu\.be/.test(h)) a.classList.add('yt');
+      else if(/twitter\.com|x\.com/.test(h)) a.classList.add('x');
+      else if(/instagram\.com/.test(h)) a.classList.add('ig');
+      // replace text content with icon
+      var txt=a.textContent.trim().toLowerCase();
+      if(a.classList.contains('fb')) a.innerHTML='<i class="fab fa-facebook-f"></i>';
+      else if(a.classList.contains('yt')) a.innerHTML='<i class="fab fa-youtube"></i>';
+      else if(a.classList.contains('x')) a.innerHTML='<i class="fab fa-twitter"></i>';
+      else if(a.classList.contains('ig')) a.innerHTML='<i class="fab fa-instagram"></i>';
+    });
+  }
+  setInterval(classify,1500);
+})();
+
+/* === Add cat-pills class to category tabs container === */
+(function(){
+  function deco(){
+    var t=document.getElementById('courses-category-tabs');
+    if(t) t.classList.add('cat-pills');
+  }
+  setInterval(deco,1200);
+})();
+</script>
 
 </body>
 </html>

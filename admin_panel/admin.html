@@ -534,50 +534,74 @@
         </div>
       </div>
       <nav class="sidebar-nav">
-        <div class="nav-section">ওভারভিউ</div>
+        <!-- ───── CORE MENU (always visible) ───── -->
+        <div class="nav-section">মূল মেনু</div>
         <div class="nav-item active" onclick="navTo('dashboard')"><span class="icon">📊</span> ড্যাশবোর্ড</div>
-        
-        <div class="nav-section">কোর্স ম্যানেজমেন্ট</div>
-        <div class="nav-item" onclick="navTo('courses')"><span class="icon">📚</span> সকল কোর্স</div>
-        <div class="nav-item" onclick="navTo('course-detail-mgr')"><span class="icon">📝</span> কোর্স ডিটেইল</div>
-        <div class="nav-item" onclick="navTo('course-tabs')"><span class="icon">🧭</span> কোর্স ট্যাব</div>
+        <div class="nav-item" onclick="navTo('courses')"><span class="icon">📚</span> কোর্স</div>
         <div class="nav-item" onclick="navTo('categories')"><span class="icon">🏷️</span> ক্যাটাগরি</div>
-        
-        <div class="nav-section">টিম ও কন্টেন্ট</div>
         <div class="nav-item" onclick="navTo('instructors')"><span class="icon">👨‍🏫</span> ইন্সট্রাক্টর</div>
-        <div class="nav-item" onclick="navTo('testimonials')"><span class="icon">💬</span> রিভিউ</div>
-        <div class="nav-item" onclick="navTo('features')"><span class="icon">⭐</span> বিশেষত্ব</div>
-        <div class="nav-item" onclick="navTo('blog-posts')"><span class="icon">📝</span> ব্লগ</div>
-        
-        <div class="nav-section">হোমপেজ কন্টেন্ট</div>
-        <div class="nav-item" onclick="navTo('hero-section')"><span class="icon">🎯</span> হিরো সেকশন</div>
-        <div class="nav-item" onclick="navTo('hero-courses')"><span class="icon">🖼️</span> হিরো কার্ড</div>
-        <div class="nav-item" onclick="navTo('featured-courses-mgr')"><span class="icon">⭐</span> ফিচার্ড কোর্স</div>
-        <div class="nav-item" onclick="navTo('notices')"><span class="icon">📢</span> নোটিশ</div>
-        <div class="nav-item" onclick="navTo('welcome-popup')"><span class="icon">🎉</span> ওয়েলকাম পপআপ</div>
-        
-        <div class="nav-section">পেজ কন্টেন্ট</div>
-        <div class="nav-item" onclick="navTo('full-content')"><span class="icon">🧩</span> সম্পূর্ণ কনটেন্ট</div>
-        <div class="nav-item" onclick="navTo('about-page')"><span class="icon">ℹ️</span> আমাদের সম্পর্কে</div>
-        <div class="nav-item" onclick="navTo('faqs')"><span class="icon">❓</span> FAQ</div>
-        <div class="nav-item" onclick="navTo('contact-content')"><span class="icon">📞</span> কনট্যাক্ট পেজ</div>
-        
-        <div class="nav-section">সাইট কাস্টমাইজেশন</div>
-        <div class="nav-item" onclick="navTo('site-settings')"><span class="icon">🌐</span> সাইট সেটিংস</div>
-        <div class="nav-item" onclick="navTo('navigation-mgr')"><span class="icon">🔗</span> নেভিগেশন</div>
-        <div class="nav-item" onclick="navTo('footer-mgr')"><span class="icon">🦶</span> ফুটার</div>
-        <div class="nav-item" onclick="navTo('theme-settings')"><span class="icon">🎨</span> থিম / রঙ</div>
-        <div class="nav-item" onclick="navTo('cta-section')"><span class="icon">📣</span> CTA সেকশন</div>
-        <div class="nav-item" onclick="navTo('section-content')"><span class="icon">📋</span> সেকশন কন্টেন্ট</div>
-        
-        <div class="nav-section">ব্যবসা ও ব্যবহারকারী</div>
-        <div class="nav-item" onclick="navTo('access-requests')"><span class="icon">🔐</span> অ্যাক্সেস রিকোয়েস্ট</div>
         <div class="nav-item" onclick="navTo('enrollments')"><span class="icon">📋</span> এনরোলমেন্ট</div>
         <div class="nav-item" onclick="navTo('users')"><span class="icon">👥</span> ব্যবহারকারী</div>
-        
-        <div class="nav-section">সেটিংস</div>
-        <div class="nav-item" onclick="navTo('analytics')"><span class="icon">📊</span> Analytics & Tracking</div>
-        <div class="nav-item" onclick="navTo('settings')"><span class="icon">⚙️</span> সেটিংস</div>
+
+        <!-- ───── GROUPED (collapsible) ───── -->
+        <div class="nav-group" data-group="course-tools">
+          <div class="nav-group-head" onclick="toggleNavGroup(this)">
+            <span class="icon">📝</span> কোর্স টুলস
+            <span class="caret">▾</span>
+          </div>
+          <div class="nav-group-body">
+            <div class="nav-item" onclick="navTo('course-detail-mgr')"><span class="icon">📄</span> কোর্স ডিটেইল</div>
+            <div class="nav-item" onclick="navTo('course-tabs')"><span class="icon">🧭</span> কোর্স ট্যাব</div>
+            <div class="nav-item" onclick="navTo('featured-courses-mgr')"><span class="icon">⭐</span> ফিচার্ড কোর্স</div>
+            <div class="nav-item" onclick="navTo('access-requests')"><span class="icon">🔐</span> অ্যাক্সেস রিকোয়েস্ট</div>
+          </div>
+        </div>
+
+        <div class="nav-group" data-group="content">
+          <div class="nav-group-head" onclick="toggleNavGroup(this)">
+            <span class="icon">📰</span> কন্টেন্ট
+            <span class="caret">▾</span>
+          </div>
+          <div class="nav-group-body">
+            <div class="nav-item" onclick="navTo('blog-posts')"><span class="icon">✍️</span> ব্লগ</div>
+            <div class="nav-item" onclick="navTo('testimonials')"><span class="icon">💬</span> রিভিউ</div>
+            <div class="nav-item" onclick="navTo('features')"><span class="icon">⭐</span> বিশেষত্ব</div>
+            <div class="nav-item" onclick="navTo('faqs')"><span class="icon">❓</span> FAQ</div>
+            <div class="nav-item" onclick="navTo('notices')"><span class="icon">📢</span> নোটিশ</div>
+            <div class="nav-item" onclick="navTo('welcome-popup')"><span class="icon">🎉</span> ওয়েলকাম পপআপ</div>
+          </div>
+        </div>
+
+        <div class="nav-group" data-group="pages">
+          <div class="nav-group-head" onclick="toggleNavGroup(this)">
+            <span class="icon">📑</span> পেজ ও সেকশন
+            <span class="caret">▾</span>
+          </div>
+          <div class="nav-group-body">
+            <div class="nav-item" onclick="navTo('hero-section')"><span class="icon">🎯</span> হিরো সেকশন</div>
+            <div class="nav-item" onclick="navTo('hero-courses')"><span class="icon">🖼️</span> হিরো কার্ড</div>
+            <div class="nav-item" onclick="navTo('full-content')"><span class="icon">🧩</span> সম্পূর্ণ কনটেন্ট</div>
+            <div class="nav-item" onclick="navTo('about-page')"><span class="icon">ℹ️</span> আমাদের সম্পর্কে</div>
+            <div class="nav-item" onclick="navTo('contact-content')"><span class="icon">📞</span> কনট্যাক্ট পেজ</div>
+            <div class="nav-item" onclick="navTo('cta-section')"><span class="icon">📣</span> CTA সেকশন</div>
+            <div class="nav-item" onclick="navTo('section-content')"><span class="icon">📋</span> সেকশন কন্টেন্ট</div>
+          </div>
+        </div>
+
+        <div class="nav-group" data-group="customize">
+          <div class="nav-group-head" onclick="toggleNavGroup(this)">
+            <span class="icon">⚙️</span> কাস্টমাইজেশন
+            <span class="caret">▾</span>
+          </div>
+          <div class="nav-group-body">
+            <div class="nav-item" onclick="navTo('site-settings')"><span class="icon">🌐</span> সাইট সেটিংস</div>
+            <div class="nav-item" onclick="navTo('navigation-mgr')"><span class="icon">🔗</span> নেভিগেশন</div>
+            <div class="nav-item" onclick="navTo('footer-mgr')"><span class="icon">🦶</span> ফুটার</div>
+            <div class="nav-item" onclick="navTo('theme-settings')"><span class="icon">🎨</span> থিম / রঙ</div>
+            <div class="nav-item" onclick="navTo('analytics')"><span class="icon">📊</span> Analytics</div>
+            <div class="nav-item" onclick="navTo('settings')"><span class="icon">🛠️</span> সেটিংস</div>
+          </div>
+        </div>
       </nav>
       <div class="sidebar-footer">
         <div class="admin-badge">
@@ -2232,6 +2256,17 @@
       <div class="field"><label>
         <input type="checkbox" id="i-featured" style="width:auto;margin-right:6px"/>হোমপেজে ফিচার্ড শিক্ষক হিসেবে দেখান
       </label></div>
+
+      <!-- Social Links -->
+      <div class="field" style="border-top:1px solid var(--border);padding-top:14px;margin-top:8px">
+        <label style="font-weight:700;color:var(--text)">🔗 সোশ্যাল মিডিয়া লিংক (ঐচ্ছিক)</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+          <input id="i-soc-fb" placeholder="Facebook URL" type="url"/>
+          <input id="i-soc-yt" placeholder="YouTube URL" type="url"/>
+          <input id="i-soc-tw" placeholder="Twitter / X URL" type="url"/>
+          <input id="i-soc-ig" placeholder="Instagram URL" type="url"/>
+        </div>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn" style="background:var(--bg3);border:1px solid var(--border)" onclick="closeModal('instructor-modal')">বাতিল</button>
@@ -3359,6 +3394,12 @@ function openInstructorModal(inst = null) {
   document.getElementById('i-courses').value      = inst?.courses || '';
   document.getElementById('i-published').checked  = inst?.published !== false;
   document.getElementById('i-featured').checked   = inst?.featured === true || inst?.featured === 'true';
+  // Social links
+  var soc = (inst && inst.social) || {};
+  var sfb=document.getElementById('i-soc-fb'); if(sfb) sfb.value = soc.facebook || '';
+  var syt=document.getElementById('i-soc-yt'); if(syt) syt.value = soc.youtube  || '';
+  var stw=document.getElementById('i-soc-tw'); if(stw) stw.value = soc.twitter  || '';
+  var sig=document.getElementById('i-soc-ig'); if(sig) sig.value = soc.instagram|| '';
   // Show/hide photo preview
   const prevImg = document.getElementById('instructor-photo-preview');
   if (prevImg) {
@@ -3392,6 +3433,12 @@ async function saveInstructor() {
     courses: +document.getElementById('i-courses').value || 0,
     published: document.getElementById('i-published').checked,
     featured: document.getElementById('i-featured').checked,
+    social: {
+      facebook:  (document.getElementById('i-soc-fb')||{}).value || '',
+      youtube:   (document.getElementById('i-soc-yt')||{}).value || '',
+      twitter:   (document.getElementById('i-soc-tw')||{}).value || '',
+      instagram: (document.getElementById('i-soc-ig')||{}).value || ''
+    }
   };
 
   try {
@@ -6350,5 +6397,76 @@ async function saveSectionContent() {
   window.extractYTId = extractYTId;
 })();
 </script>
+
+<style id="admin-polish-v3">
+/* ═══ Sidebar nav-group (collapsible) ═══ */
+.sidebar-nav .nav-section{font-size:10.5px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:1.4px;padding:14px 14px 6px}
+.sidebar-nav .nav-group{margin:6px 0 2px}
+.sidebar-nav .nav-group-head{
+  display:flex;align-items:center;gap:10px;cursor:pointer;
+  padding:9px 12px;border-radius:8px;font-size:12.5px;font-weight:700;color:var(--text);
+  user-select:none;transition:background .18s
+}
+.sidebar-nav .nav-group-head:hover{background:var(--bg3)}
+.sidebar-nav .nav-group-head .icon{font-size:15px;width:22px;text-align:center}
+.sidebar-nav .nav-group-head .caret{margin-left:auto;font-size:11px;color:var(--text2);transition:transform .25s}
+.sidebar-nav .nav-group.open .nav-group-head .caret{transform:rotate(180deg)}
+.sidebar-nav .nav-group-body{
+  max-height:0;overflow:hidden;transition:max-height .28s ease;padding:0 0 0 8px;
+  border-left:2px solid var(--border);margin-left:18px
+}
+.sidebar-nav .nav-group.open .nav-group-body{max-height:600px;padding-top:4px;padding-bottom:4px}
+.sidebar-nav .nav-group-body .nav-item{padding:7px 10px;font-size:12px}
+
+/* ═══ Polished cards / hover lift / cleaner topbar ═══ */
+.card,.stat-card{transition:transform .2s ease,box-shadow .2s ease}
+.card:hover,.stat-card:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.18)}
+.topbar{box-shadow:0 1px 0 var(--border)}
+.btn-primary{background:linear-gradient(135deg,var(--primary,#F5C518),#d8a800);color:#1a1a1a;border:none}
+.btn-primary:hover{filter:brightness(1.08)}
+.nav-item{transition:all .18s}
+.nav-item:hover{transform:translateX(2px)}
+
+/* English-style number look in topbar greeting */
+.topbar-greeting,.topbar-sub,.stat-num,.stat-label{font-variant-numeric:tabular-nums}
+</style>
+
+<script id="admin-polish-v3-js">
+/* === Collapsible groups === */
+function toggleNavGroup(head){
+  var g=head.closest('.nav-group'); if(!g) return;
+  g.classList.toggle('open');
+}
+/* Auto-open the group containing the active item on load */
+document.addEventListener('DOMContentLoaded',function(){
+  var active=document.querySelector('.sidebar-nav .nav-item.active');
+  if(active){ var g=active.closest('.nav-group'); if(g) g.classList.add('open'); }
+});
+
+/* === Force English digits everywhere on admin === */
+(function(){
+  var BN={'০':'0','১':'1','২':'2','৩':'3','৪':'4','৫':'5','৬':'6','৭':'7','৮':'8','৯':'9'};
+  var SKIP={SCRIPT:1,STYLE:1,NOSCRIPT:1,IFRAME:1,TEXTAREA:1,INPUT:1,SVG:1,CODE:1,PRE:1};
+  function conv(s){return s.replace(/[০-৯]/g,function(c){return BN[c]||c})}
+  function walk(n){
+    if(!n) return;
+    if(n.nodeType===3){
+      if(n.parentNode && SKIP[n.parentNode.tagName]) return;
+      var v=n.nodeValue;
+      if(v && /[০-৯]/.test(v)){var nv=conv(v); if(nv!==v) n.nodeValue=nv}
+      return;
+    }
+    if(n.nodeType===1){
+      if(SKIP[n.tagName]) return;
+      for(var i=0;i<n.childNodes.length;i++) walk(n.childNodes[i]);
+    }
+  }
+  function run(){try{walk(document.body)}catch(e){}}
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',run); else run();
+  var t; var mo=new MutationObserver(function(){clearTimeout(t);t=setTimeout(run,200)});
+  document.addEventListener('DOMContentLoaded',function(){if(document.body) mo.observe(document.body,{childList:true,subtree:true,characterData:true})});
+})();
+</script>
+
 </body>
 </html>
