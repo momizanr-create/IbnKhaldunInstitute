@@ -10125,5 +10125,261 @@
 })();
 </script>
 
+
+<!-- ============================================================
+     IKH PATCH v4 — Mobile Hero + Mobile Search + Scroll Fix
+     ============================================================ -->
+<style id="ikh-patch-v4">
+  /* === SCROLL FREEZE FIX ===
+     body.style.overflow='hidden' সমস্যা হয় modal/sidebar বন্ধ হলেও কখনো
+     reset না হলে পুরো site freeze হয়। আমরা একটি safety auto-reset দিচ্ছি
+     যখন কোনো overlay/modal খোলা নেই। */
+  html, body { overscroll-behavior-y: contain; }
+  @media (max-width: 768px) {
+    /* iOS-safe scroll: prevent rubber-band freeze */
+    html { -webkit-overflow-scrolling: touch; }
+    body { -webkit-overflow-scrolling: touch; min-height: 100dvh; }
+  }
+
+  /* === MOBILE HERO RESTORE — show .hero on mobile with course-site feel === */
+  @media (max-width: 768px) {
+    .hero {
+      display: flex !important;
+      flex-direction: column !important;
+      min-height: calc(100dvh - var(--header-h, 64px)) !important;
+      padding: 0 !important;
+      background: linear-gradient(160deg, #0f1e19 0%, #1a3a30 55%, #0f2a22 100%) !important;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 18% 20%, rgba(245,197,24,0.22) 0%, transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(29,184,154,0.18) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .hero-inner {
+      display: flex !important;
+      flex-direction: column !important;
+      grid-template-columns: 1fr !important;
+      gap: 20px !important;
+      padding: 18px 18px 24px !important;
+      width: 100%;
+      flex: 1 1 auto;
+      justify-content: space-between;
+      position: relative; z-index: 2;
+    }
+    .hero-right { order: -1; margin-top: 4px; }
+    .hero-feature-card {
+      max-width: 100% !important;
+      border-radius: 16px !important;
+      box-shadow: 0 18px 44px rgba(0,0,0,0.45), 0 0 0 1px rgba(245,197,24,0.18) !important;
+    }
+    .hero-feature-thumb { aspect-ratio: 16 / 9; }
+    .hero-feature-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .hero-feature-body { padding: 14px 14px 16px !important; }
+    .hero-feature-title { font-size: 15px !important; line-height: 1.4 !important; }
+    .hero-feature-meta { font-size: 11.5px !important; gap: 12px !important; }
+    .hero-feature-foot { padding-top: 10px !important; }
+    .hero-feature-price { font-size: 16px !important; }
+    .hero-feature-cta { padding: 8px 14px !important; font-size: 12px !important; }
+
+    .hero-left { padding: 4px 2px 0 !important; }
+    .hero-eyebrow { font-size: 10px !important; padding: 5px 11px !important; margin-bottom: 10px !important; }
+    .hero h1 {
+      font-size: clamp(22px, 6.8vw, 30px) !important;
+      line-height: 1.2 !important;
+      margin-bottom: 10px !important;
+    }
+    .hero-sub {
+      font-size: 13px !important;
+      line-height: 1.65 !important;
+      margin-bottom: 16px !important;
+    }
+    .hero-cta-row { gap: 8px !important; margin-bottom: 16px !important; }
+    .hero-cta {
+      flex: 1; min-width: 0;
+      padding: 11px 14px !important;
+      font-size: 11.5px !important;
+      letter-spacing: 0.6px !important;
+      justify-content: center;
+    }
+    .hero-stats-row {
+      gap: 10px !important;
+      padding-top: 12px !important;
+      justify-content: space-between;
+    }
+    .hero-stat-item { flex: 1; text-align: center; }
+    .hero-stat-num { font-size: 17px !important; }
+    .hero-stat-lbl { font-size: 10px !important; }
+    .hero-float-chip { display: none !important; }
+
+    /* legacy mobile-hero-section (HTML never existed) — keep hidden */
+    .mobile-hero-section { display: none !important; }
+  }
+
+  /* Very small phones */
+  @media (max-width: 380px) {
+    .hero-cta-row { flex-direction: row !important; }
+    .hero-cta { font-size: 11px !important; padding: 10px 8px !important; }
+    .hero h1 { font-size: 21px !important; }
+  }
+
+  /* === MOBILE SEARCH OVERLAY — make it actually work + style polish === */
+  @media (max-width: 1024px) {
+    .mobile-search-overlay {
+      flex-direction: column;
+    }
+    .mobile-search-overlay.open {
+      display: flex !important;
+    }
+    .mobile-search-panel {
+      flex: 0 0 auto;
+    }
+    .mobile-search-results {
+      flex: 1 1 auto !important;
+      display: block !important;
+      min-height: 200px;
+      background: #fff !important;
+    }
+  }
+</style>
+
+<script id="ikh-patch-v4-js">
+(function(){
+  'use strict';
+
+  // -------- SCROLL FREEZE AUTO-FIX --------
+  // Watchdog: if no overlay/modal/mobile-nav is open but body has overflow:hidden,
+  // restore it. Runs every 800ms.
+  function noOverlayOpen(){
+    var ov = document.getElementById('mobile-search-overlay');
+    if (ov && ov.classList.contains('open')) return false;
+    var mn = document.getElementById('mobile-nav');
+    if (mn && mn.classList.contains('open')) return false;
+    // any visible .modal, .modal-overlay, .popup-overlay
+    var sel = '.modal.show, .modal-overlay.open, .popup-overlay.open, .lightbox.open, .video-modal.open';
+    var anyOpen = document.querySelector(sel);
+    return !anyOpen;
+  }
+  setInterval(function(){
+    try {
+      if (noOverlayOpen() && document.body.style.overflow === 'hidden') {
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+      }
+    } catch(_) {}
+  }, 800);
+
+  // Fallback escape: triple-tap top-right of viewport unfreezes scroll (safety)
+  var tapCount = 0, tapTimer;
+  document.addEventListener('touchend', function(e){
+    var t = e.changedTouches && e.changedTouches[0];
+    if (!t) return;
+    if (t.clientY < 60 && (window.innerWidth - t.clientX) < 60) {
+      tapCount++;
+      clearTimeout(tapTimer);
+      tapTimer = setTimeout(function(){ tapCount = 0; }, 800);
+      if (tapCount >= 3) {
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+        tapCount = 0;
+      }
+    }
+  }, { passive: true });
+
+  // -------- MOBILE SEARCH — ensure courses are loadable & search works --------
+  // The original runMobileSearch reads window._apiCourses / _allCoursesData.
+  // If those arrays aren't populated yet (page hasn't visited courses page),
+  // we proactively fetch from the same backend the site uses.
+
+  function findApiBase(){
+    // Try common globals
+    if (window.API_BASE) return window.API_BASE;
+    if (window.API) return window.API;
+    if (window.BACKEND_URL) return window.BACKEND_URL;
+    // Try to detect from any fetch already done — fallback guess
+    return 'https://ibnkhalduninstitute.onrender.com';
+  }
+
+  var fetchedOnce = false;
+  function ensureCoursesLoaded(cb){
+    var existing = (window._apiCourses && window._apiCourses.length)
+      ? window._apiCourses
+      : (window._allCoursesData && window._allCoursesData.length)
+        ? window._allCoursesData : null;
+    if (existing) { cb(existing); return; }
+    if (fetchedOnce) { cb([]); return; }
+    fetchedOnce = true;
+    var base = findApiBase();
+    fetch(base + '/api/courses')
+      .then(function(r){ return r.ok ? r.json() : []; })
+      .then(function(data){
+        var arr = Array.isArray(data) ? data : (data && data.courses) || [];
+        window._apiCourses = arr;
+        cb(arr);
+      })
+      .catch(function(){ cb([]); });
+  }
+
+  // Wrap the original runMobileSearch with a smarter version.
+  var origRun = window.runMobileSearch;
+  window.runMobileSearch = function(q){
+    var res = document.getElementById('mobile-search-results');
+    if (!res) return;
+    var query = (q || '').trim().toLowerCase();
+    if (!query) {
+      res.innerHTML = '<div class="ms-empty">কোর্সের নাম লিখে খোঁজা শুরু করুন</div>';
+      return;
+    }
+    res.innerHTML = '<div class="ms-empty">খোঁজা হচ্ছে...</div>';
+    ensureCoursesLoaded(function(courses){
+      if (!courses || !courses.length) {
+        res.innerHTML = '<div class="ms-empty">কোর্স লোড করতে সমস্যা হচ্ছে। ইন্টারনেট চেক করুন।</div>';
+        return;
+      }
+      var hits = courses.filter(function(c){
+        var t = (c.title || c.name || '').toLowerCase();
+        var cat = (c.category || c.categoryName || '').toLowerCase();
+        var inst = (c.instructor || c.instructorName || '').toLowerCase();
+        var desc = (c.description || c.shortDescription || '').toLowerCase();
+        return t.indexOf(query) !== -1 || cat.indexOf(query) !== -1
+            || inst.indexOf(query) !== -1 || desc.indexOf(query) !== -1;
+      }).slice(0, 15);
+      if (!hits.length) {
+        res.innerHTML = '<div class="ms-empty">"' + (q||'') + '" — কোনো কোর্স পাওয়া যায়নি</div>';
+        return;
+      }
+      res.innerHTML = hits.map(function(c){
+        var id = c.id || c._id || c.slug || '';
+        var title = c.title || c.name || 'কোর্স';
+        var cat = c.category || c.categoryName || '';
+        var thumb = c.thumbnail || c.image || c.cover || 'https://placehold.co/96x72/eee/999?text=Course';
+        var safeId = String(id).replace(/'/g, "\\'");
+        return '<div class="ms-result-item" onclick="closeMobileSearch();'
+          + (id ? "openCourseDetail('" + safeId + "')" : "navigate('courses')")
+          + '">'
+          + '<img class="ms-result-thumb" src="' + thumb + '" onerror="this.src=\'https://placehold.co/96x72/eee/999?text=Course\'" alt="" />'
+          + '<div class="ms-result-meta">'
+          + '<div class="ms-result-title">' + title + '</div>'
+          + (cat ? '<div class="ms-result-cat">' + cat + '</div>' : '')
+          + '</div></div>';
+      }).join('');
+    });
+  };
+
+  // Pre-warm courses cache on first idle (so first search is instant)
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(function(){ ensureCoursesLoaded(function(){}); });
+  } else {
+    setTimeout(function(){ ensureCoursesLoaded(function(){}); }, 1500);
+  }
+
+  console.log('✅ IKH Patch v4 active: mobile hero, search & scroll-fix');
+})();
+</script>
+
 </body>
 </html>

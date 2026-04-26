@@ -812,8 +812,18 @@
         <div class="page" id="page-courses">
           <div class="card">
             <div class="card-header">
-              <h3>কোর্স সমূহ</h3>
-              <button class="btn btn-primary" onclick="openCourseModal()">+ নতুন কোর্স</button>
+              <div class="card-header-left">
+                <h3>কোর্স সমূহ</h3>
+                <span class="card-subtitle" id="courses-count-sub">সব কোর্স</span>
+              </div>
+              <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+                <div style="position:relative">
+                  <input id="courses-search-input" type="text" placeholder="🔍 কোর্স খুঁজুন (নাম/ক্যাটাগরি)..."
+                    oninput="filterCoursesList(this.value)"
+                    style="padding:9px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none;min-width:260px;font-family:inherit"/>
+                </div>
+                <button class="btn btn-primary" onclick="openCourseModal()">+ নতুন কোর্স</button>
+              </div>
             </div>
             <div class="card-body">
               <table><thead><tr>
@@ -6608,6 +6618,403 @@ document.addEventListener('DOMContentLoaded',function(){
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',run); else run();
   var t; var mo=new MutationObserver(function(){clearTimeout(t);t=setTimeout(run,200)});
   document.addEventListener('DOMContentLoaded',function(){if(document.body) mo.observe(document.body,{childList:true,subtree:true,characterData:true})});
+})();
+</script>
+
+
+<!-- ============================================================
+     IKH ADMIN PATCH v4 — Course Search + Restructure + Detail
+     ============================================================ -->
+<style id="ikh-admin-patch-v4">
+  /* Tier badges in sidebar (priority levels) */
+  .nav-section.tier-1 { color: #22c55e !important; }
+  .nav-section.tier-2 { color: #fb923c !important; }
+  .nav-section.tier-3 { color: #888 !important; }
+  .nav-section .tier-pill {
+    display: inline-block; font-size: 9px; padding: 2px 6px;
+    border-radius: 999px; margin-left: 6px; vertical-align: middle;
+    font-weight: 700; letter-spacing: 0.5px;
+  }
+  .nav-section .tier-pill.t1 { background: rgba(34,197,94,0.15); color: #22c55e; }
+  .nav-section .tier-pill.t2 { background: rgba(251,146,60,0.15); color: #fb923c; }
+  .nav-section .tier-pill.t3 { background: rgba(136,136,136,0.15); color: #aaa; }
+
+  /* Dashboard quick-glance widgets */
+  .dash-quick-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 18px 0 24px;
+  }
+  .dash-quick-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    transition: transform .15s, border-color .15s;
+    cursor: pointer;
+  }
+  .dash-quick-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+  }
+  .dash-quick-label {
+    font-size: 11px; color: var(--text2);
+    text-transform: uppercase; letter-spacing: 1px;
+    font-weight: 700; margin-bottom: 6px;
+  }
+  .dash-quick-value {
+    font-size: 22px; font-weight: 800; color: var(--text);
+    line-height: 1.1;
+  }
+  .dash-quick-delta {
+    font-size: 11px; color: var(--green);
+    margin-top: 4px;
+  }
+  .dash-quick-delta.down { color: var(--red); }
+  .dash-mini-bar {
+    height: 4px; background: var(--bg3); border-radius: 2px;
+    margin-top: 10px; overflow: hidden;
+  }
+  .dash-mini-bar > span {
+    display: block; height: 100%;
+    background: linear-gradient(90deg, var(--primary), #ffd84d);
+    border-radius: 2px;
+  }
+
+  /* Simplified course detail card */
+  .cd-compact {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .cd-yt-helper {
+    background: rgba(245,197,24,0.06);
+    border: 1px dashed rgba(245,197,24,0.4);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: var(--text2);
+    margin-top: 6px;
+  }
+</style>
+
+<script id="ikh-admin-patch-v4-js">
+(function(){
+  'use strict';
+
+  // ════════════════════════════════════════════════
+  // [1] LIVE COURSE SEARCH on Courses page
+  // ════════════════════════════════════════════════
+  let _allLoadedCourses = [];
+
+  // Hook into the existing loadCourses to capture the array
+  if (typeof window.loadCourses === 'function') {
+    const origLoadCourses = window.loadCourses;
+    window.loadCourses = async function(){
+      try {
+        const courses = await window.api('GET', '/api/admin/courses');
+        _allLoadedCourses = Array.isArray(courses) ? courses : [];
+        renderCoursesTable(_allLoadedCourses);
+        updateCoursesCount(_allLoadedCourses.length, _allLoadedCourses.length);
+      } catch(e) {
+        if (typeof toast === 'function') toast('কোর্স লোড হয়নি', 'error');
+      }
+    };
+  }
+
+  function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  function renderCoursesTable(list){
+    const tbody = document.getElementById('courses-tbody');
+    if (!tbody) return;
+    if (!list.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text2);padding:24px">কোনো কোর্স পাওয়া যায়নি</td></tr>';
+      return;
+    }
+    tbody.innerHTML = list.map(c => `<tr>
+      <td><strong>${escapeHtml(c.title)}</strong></td>
+      <td><span class="badge badge-blue">${escapeHtml(c.category || '—')}</span></td>
+      <td>৳${c.price || 0}</td>
+      <td><span class="badge badge-${c.published ? 'green' : 'red'}">${c.published ? 'প্রকাশিত' : 'অপ্রকাশিত'}</span></td>
+      <td style="display:flex;gap:6px">
+        <button class="btn btn-edit btn-sm" onclick="editCourse('${c._id}')">✏️ এডিট</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteCourse('${c._id}')">🗑️</button>
+      </td>
+    </tr>`).join('');
+  }
+
+  function updateCoursesCount(shown, total){
+    const sub = document.getElementById('courses-count-sub');
+    if (!sub) return;
+    sub.textContent = (shown === total)
+      ? `মোট ${total} টি কোর্স`
+      : `${shown} টি দেখানো হচ্ছে (মোট ${total})`;
+  }
+
+  // Live filter — accent-insensitive substring match on title/category/instructor
+  window.filterCoursesList = function(q){
+    const query = (q || '').trim().toLowerCase();
+    if (!_allLoadedCourses.length) return;
+    if (!query) {
+      renderCoursesTable(_allLoadedCourses);
+      updateCoursesCount(_allLoadedCourses.length, _allLoadedCourses.length);
+      return;
+    }
+    const filtered = _allLoadedCourses.filter(c => {
+      const t = (c.title||'').toLowerCase();
+      const cat = (c.category||'').toLowerCase();
+      const inst = (c.instructor||'').toLowerCase();
+      return t.includes(query) || cat.includes(query) || inst.includes(query);
+    });
+    renderCoursesTable(filtered);
+    updateCoursesCount(filtered.length, _allLoadedCourses.length);
+  };
+
+  // ════════════════════════════════════════════════
+  // [2] SIDEBAR RESTRUCTURE — 3 priority tiers
+  //   Tier 1 (সবসময় দরকার): Dashboard, Courses, Enrollments, Notices, Users
+  //   Tier 2 (মাঝে মাঝে): Course Tools, Content, Categories, Instructors
+  //   Tier 3 (কদাচিৎ): Pages, Customization, Settings, Analytics
+  // ════════════════════════════════════════════════
+  function restructureSidebar(){
+    const nav = document.querySelector('.sidebar-nav');
+    if (!nav) return;
+    if (nav.dataset.restructured === '1') return;
+
+    // Annotate existing section headers with priority pills
+    const sections = nav.querySelectorAll('.nav-section');
+    sections.forEach(s => {
+      const txt = s.textContent.trim();
+      if (txt.includes('মূল')) {
+        s.classList.add('tier-1');
+        if (!s.querySelector('.tier-pill')) {
+          s.innerHTML = txt + ' <span class="tier-pill t1">সবসময়</span>';
+        }
+      }
+    });
+
+    // Annotate group heads
+    const groups = nav.querySelectorAll('.nav-group');
+    groups.forEach(g => {
+      const head = g.querySelector('.nav-group-head');
+      if (!head || head.querySelector('.tier-pill')) return;
+      const key = g.getAttribute('data-group') || '';
+      let tier = 't2', label = 'মাঝেমধ্যে';
+      if (key === 'pages' || key === 'customize') { tier = 't3'; label = 'কদাচিৎ'; }
+      if (key === 'course-tools' || key === 'content') { tier = 't2'; label = 'মাঝেমধ্যে'; }
+      const caret = head.querySelector('.caret');
+      const pill = document.createElement('span');
+      pill.className = 'tier-pill ' + tier;
+      pill.textContent = label;
+      pill.style.marginRight = '6px';
+      if (caret) head.insertBefore(pill, caret);
+      else head.appendChild(pill);
+    });
+
+    // Auto-collapse Tier-3 groups (pages, customize) by default for cleaner glance
+    groups.forEach(g => {
+      const key = g.getAttribute('data-group') || '';
+      if (key === 'pages' || key === 'customize') {
+        g.classList.add('collapsed');
+        const body = g.querySelector('.nav-group-body');
+        if (body) body.style.display = 'none';
+      }
+    });
+
+    nav.dataset.restructured = '1';
+  }
+
+  // ════════════════════════════════════════════════
+  // [3] DASHBOARD QUICK-GLANCE WIDGETS
+  // ════════════════════════════════════════════════
+  function injectDashboardWidgets(){
+    const dashPage = document.getElementById('page-dashboard');
+    if (!dashPage) return;
+    if (dashPage.querySelector('.dash-quick-grid')) return;
+
+    const grid = document.createElement('div');
+    grid.className = 'dash-quick-grid';
+    grid.id = 'dash-quick-grid';
+    grid.innerHTML = `
+      <div class="dash-quick-card" onclick="navTo('enrollments')">
+        <div class="dash-quick-label">📋 আজকের এনরোলমেন্ট</div>
+        <div class="dash-quick-value" id="qg-today-enroll">—</div>
+        <div class="dash-quick-delta" id="qg-today-delta">গত ২৪ ঘন্টা</div>
+        <div class="dash-mini-bar"><span id="qg-today-bar" style="width:0%"></span></div>
+      </div>
+      <div class="dash-quick-card" onclick="navTo('access-requests')">
+        <div class="dash-quick-label">🔐 অপেক্ষমান অ্যাক্সেস</div>
+        <div class="dash-quick-value" id="qg-pending-access">—</div>
+        <div class="dash-quick-delta" id="qg-access-note">পর্যালোচনা প্রয়োজন</div>
+      </div>
+      <div class="dash-quick-card" onclick="navTo('courses')">
+        <div class="dash-quick-label">📚 প্রকাশিত কোর্স</div>
+        <div class="dash-quick-value" id="qg-published">—</div>
+        <div class="dash-quick-delta" id="qg-pub-note">— লাইভ</div>
+      </div>
+      <div class="dash-quick-card" onclick="navTo('users')">
+        <div class="dash-quick-label">👥 মোট ব্যবহারকারী</div>
+        <div class="dash-quick-value" id="qg-users">—</div>
+        <div class="dash-quick-delta" id="qg-users-note">এই সপ্তাহে নতুন</div>
+      </div>
+    `;
+
+    // Insert right after stats-grid
+    const statsGrid = document.getElementById('stats-grid');
+    if (statsGrid && statsGrid.parentNode) {
+      statsGrid.parentNode.insertBefore(grid, statsGrid.nextSibling);
+    } else {
+      dashPage.insertBefore(grid, dashPage.firstChild);
+    }
+  }
+
+  async function refreshQuickGlance(){
+    if (typeof window.api !== 'function') return;
+    try {
+      const [enrolls, courses, users, access] = await Promise.all([
+        window.api('GET', '/api/admin/enrollments').catch(()=>[]),
+        window.api('GET', '/api/admin/courses').catch(()=>[]),
+        window.api('GET', '/api/admin/users').catch(()=>[]),
+        window.api('GET', '/api/admin/access-requests').catch(()=>[]),
+      ]);
+      const today = new Date(); today.setHours(0,0,0,0);
+      const todayCount = (enrolls||[]).filter(e => {
+        const d = new Date(e.createdAt || e.date || 0);
+        return d >= today;
+      }).length;
+      const totalEnroll = (enrolls||[]).length || 1;
+      const pubCount = (courses||[]).filter(c => c.published).length;
+      const totalCourses = (courses||[]).length || 1;
+      const pendingAccess = (access||[]).filter(a => (a.status||'').toLowerCase() === 'pending').length;
+      const userCount = (users||[]).length;
+
+      const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+      set('qg-today-enroll', todayCount);
+      set('qg-pending-access', pendingAccess);
+      set('qg-published', pubCount);
+      set('qg-pub-note', `${pubCount} / ${totalCourses} প্রকাশিত`);
+      set('qg-users', userCount);
+
+      const bar = document.getElementById('qg-today-bar');
+      if (bar) {
+        const pct = Math.min(100, Math.round((todayCount / Math.max(1, totalEnroll)) * 100));
+        bar.style.width = pct + '%';
+      }
+    } catch(_) {}
+  }
+
+  // ════════════════════════════════════════════════
+  // [4] COURSE DETAIL — auto YouTube ID extraction (global)
+  //   Any input whose id starts with "cd-youtube-id" or "sc-join-video-id"
+  //   or any input with class "yt-id" — paste a full URL, ID auto-extracted.
+  // ════════════════════════════════════════════════
+  function extractYouTubeId(url){
+    if (!url) return '';
+    url = String(url).trim();
+    // Already an 11-char id?
+    if (/^[A-Za-z0-9_-]{11}$/.test(url)) return url;
+    const patterns = [
+      /(?:youtube\.com\/watch\?[^#]*v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/|youtube\.com\/v\/|youtube\.com\/live\/)([A-Za-z0-9_-]{11})/,
+      /[?&]v=([A-Za-z0-9_-]{11})/,
+    ];
+    for (const re of patterns) {
+      const m = url.match(re);
+      if (m && m[1]) return m[1];
+    }
+    return '';
+  }
+  window.extractYouTubeId = extractYouTubeId;
+
+  function attachYoutubeAutoExtract(){
+    const ytSelectors = [
+      '#cd-youtube-id',
+      '#sc-join-video-id',
+      'input[placeholder*="LXb3EKWsInQ"]',
+      'input[data-yt-id]',
+      'input.yt-id'
+    ];
+    document.querySelectorAll(ytSelectors.join(',')).forEach(inp => {
+      if (inp.dataset.ytAutoBound === '1') return;
+      inp.dataset.ytAutoBound = '1';
+      const handler = function(){
+        const v = inp.value;
+        const id = extractYouTubeId(v);
+        if (id && id !== v) {
+          inp.value = id;
+          inp.dispatchEvent(new Event('change', { bubbles: true }));
+          if (typeof toast === 'function') toast('✅ YouTube ID স্বয়ংক্রিয়ভাবে বের করা হয়েছে', 'success');
+        }
+      };
+      inp.addEventListener('paste', () => setTimeout(handler, 10));
+      inp.addEventListener('blur', handler);
+      inp.addEventListener('input', function(){
+        // If someone is typing a URL, auto-extract once it's complete
+        if (inp.value.length > 15 && /youtu\.?be/.test(inp.value)) {
+          handler();
+        }
+      });
+    });
+
+    // Also handle any future curriculum lesson inputs that get rendered later
+    document.querySelectorAll('input[placeholder*="YouTube Video ID"]').forEach(inp => {
+      if (inp.dataset.ytAutoBound === '1') return;
+      inp.dataset.ytAutoBound = '1';
+      const handler = function(){
+        const id = extractYouTubeId(inp.value);
+        if (id && id !== inp.value) {
+          inp.value = id;
+          inp.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      };
+      inp.addEventListener('paste', () => setTimeout(handler, 10));
+      inp.addEventListener('blur', handler);
+    });
+  }
+
+  // Re-bind auto-extract whenever the course-detail page renders
+  const reBindObserver = new MutationObserver(() => {
+    attachYoutubeAutoExtract();
+  });
+
+  // ════════════════════════════════════════════════
+  // BOOTSTRAP
+  // ════════════════════════════════════════════════
+  function bootPatch(){
+    restructureSidebar();
+    injectDashboardWidgets();
+    refreshQuickGlance();
+    attachYoutubeAutoExtract();
+
+    // Watch course-detail editor for late-rendered inputs
+    const cdEditor = document.getElementById('cd-editor');
+    if (cdEditor) reBindObserver.observe(cdEditor, { childList: true, subtree: true });
+
+    // Hook navTo to refresh dashboard widgets when returning
+    if (typeof window.navTo === 'function' && !window._navToHooked) {
+      const orig = window.navTo;
+      window.navTo = function(p){
+        const r = orig.apply(this, arguments);
+        if (p === 'dashboard') setTimeout(refreshQuickGlance, 300);
+        if (p === 'course-detail-mgr') setTimeout(attachYoutubeAutoExtract, 400);
+        return r;
+      };
+      window._navToHooked = true;
+    }
+  }
+
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setTimeout(bootPatch, 200);
+  } else {
+    document.addEventListener('DOMContentLoaded', () => setTimeout(bootPatch, 200));
+  }
+
+  // Refresh widgets every 60s
+  setInterval(refreshQuickGlance, 60000);
+
+  console.log('✅ IKH Admin Patch v4 active');
 })();
 </script>
 
