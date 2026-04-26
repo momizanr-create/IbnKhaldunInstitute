@@ -11100,5 +11100,238 @@
 })();
 </script>
 
+<!-- ═══════════════════════════════════════════════════════════════════
+     IKH Patch v7 — Mobile hero: cards FIRST then text + carousel fixes
+     ═══════════════════════════════════════════════════════════════════ -->
+<style id="ikh-v7-style">
+@media (max-width: 768px){
+  /* ── Reorder: cards (hero-right) FIRST, text (hero-left) SECOND ── */
+  .hero .hero-inner{
+    display:flex !important;
+    flex-direction:column !important;
+    height:100dvh !important;
+    max-height:100dvh !important;
+    padding:14px 16px 18px !important;
+    gap:10px !important;
+    overflow:hidden !important;
+    justify-content:flex-start !important;
+  }
+  .hero .hero-right{
+    order:1 !important;
+    width:100% !important;
+    flex:0 0 auto !important;
+    margin-top:6px !important;
+    padding:0 !important;
+    min-height:0 !important;
+  }
+  .hero .hero-left{
+    order:2 !important;
+    width:100% !important;
+    flex:1 1 auto !important;
+    text-align:center !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:8px !important;
+    padding:0 4px !important;
+    min-height:0 !important;
+  }
+  .hero .hero-left .hero-eyebrow{font-size:11px !important;margin-bottom:0 !important}
+  .hero .hero-left h1{
+    font-size:clamp(20px, 6vw, 26px) !important;
+    line-height:1.25 !important;
+    margin:2px 0 !important;
+  }
+  .hero .hero-left .hero-sub{
+    font-size:12.5px !important;
+    line-height:1.55 !important;
+    margin:0 !important;
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  .hero .hero-cta-row{
+    flex-direction:row !important;
+    flex-wrap:wrap !important;
+    justify-content:center !important;
+    gap:8px !important;
+    margin-top:4px !important;
+    width:100% !important;
+  }
+  .hero .hero-cta{
+    padding:10px 14px !important;
+    font-size:12.5px !important;
+    flex:1 1 auto;
+    max-width:48% !important;
+  }
+  .hero .hero-stats-row{
+    display:flex !important;
+    justify-content:space-around !important;
+    width:100% !important;
+    gap:6px !important;
+    margin-top:6px !important;
+  }
+  .hero .hero-stat-num{font-size:15px !important}
+  .hero .hero-stat-lbl{font-size:10.5px !important}
+
+  /* ── Carousel sizing fixes ── */
+  .ikh-mhero-carousel{
+    width:78% !important;
+    max-width:280px !important;
+    aspect-ratio:1/1.15 !important;
+    margin:0 auto !important;
+    perspective:1200px !important;
+  }
+  .ikh-mhero-carousel .ikh-cs-card{
+    border-radius:14px !important;
+    box-shadow:0 18px 40px -12px rgba(0,0,0,.55), 0 4px 12px rgba(0,0,0,.25) !important;
+    background:#fff !important;
+  }
+  .ikh-mhero-carousel .ikh-cs-card .img{height:52% !important}
+  .ikh-mhero-carousel .ikh-cs-card .body{padding:9px 11px !important}
+  .ikh-mhero-carousel .ikh-cs-card .ttl{font-size:12.5px !important;-webkit-line-clamp:2 !important}
+  .ikh-mhero-carousel .ikh-cs-card .meta{font-size:10px !important;gap:8px !important;margin-top:5px !important}
+  .ikh-mhero-carousel .ikh-cs-card .price{font-size:12.5px !important;margin-top:5px !important}
+  .ikh-mhero-carousel .ikh-cs-card .cat{font-size:9.5px !important}
+  .ikh-mhero-carousel .ikh-cs-card .badge{font-size:9.5px !important;padding:3px 8px !important}
+
+  /* Tighter side-card transforms so they don't spill outside */
+  .ikh-mhero-carousel .ikh-cs-card[data-pos="prev"]{transform:translateX(-46%) rotate(-10deg) scale(.74) !important;opacity:.6 !important}
+  .ikh-mhero-carousel .ikh-cs-card[data-pos="next"]{transform:translateX(46%) rotate(10deg) scale(.74) !important;opacity:.6 !important}
+  .ikh-mhero-carousel .ikh-cs-card[data-pos="active"]{transform:translateX(0) rotate(0) scale(1) !important;opacity:1 !important}
+
+  .ikh-mhero-dots{margin-top:6px !important}
+  .ikh-mhero-dots span{width:6px;height:6px}
+  .ikh-mhero-dots span.on{width:18px}
+
+  /* Hide chips & search on mobile (they overflow) */
+  .hero .hero-float-chip,
+  .hero .hero-search,
+  .hero-search-wrap{display:none !important}
+}
+
+/* Very small phones */
+@media (max-width: 360px){
+  .ikh-mhero-carousel{width:74% !important;max-width:240px !important}
+  .hero .hero-left h1{font-size:18px !important}
+  .hero .hero-left .hero-sub{font-size:11.5px !important;-webkit-line-clamp:2 !important}
+  .hero .hero-cta{padding:8px 10px !important;font-size:11.5px !important}
+}
+
+/* Short viewports (landscape) */
+@media (max-width: 768px) and (max-height: 620px){
+  .ikh-mhero-carousel{aspect-ratio:1/1 !important;max-width:220px !important;width:60% !important}
+  .hero .hero-left .hero-sub{display:none !important}
+  .hero .hero-stats-row{margin-top:2px !important}
+}
+</style>
+
+<script>
+/* ═══ IKH Patch v7 — Runtime: ensure carousel rebuild & ordering ═══ */
+(function(){
+  function fixHeroOrder(){
+    var inner = document.querySelector('.hero .hero-inner');
+    if (!inner) return;
+    var left = inner.querySelector('.hero-left');
+    var right = inner.querySelector('.hero-right');
+    if (!left || !right) return;
+    if (window.innerWidth <= 768){
+      // Move right BEFORE left in DOM (safer than relying only on flex order for some layouts)
+      if (right.nextElementSibling !== left || right.previousElementSibling){
+        try { inner.insertBefore(right, left); } catch(e){}
+      }
+    } else {
+      // Restore: left BEFORE right
+      if (left.nextElementSibling !== right){
+        try { inner.insertBefore(left, right); } catch(e){}
+      }
+    }
+  }
+
+  function ensureCarousel(){
+    if (window.innerWidth > 768) return;
+    var right = document.querySelector('.hero .hero-right');
+    if (!right) return;
+    var hasCarousel = right.querySelector('.ikh-mhero-carousel');
+    if (hasCarousel) return;
+    // If v6 hasn't built it yet (no courses loaded), inject placeholder cards
+    if (typeof window._ikhBuildPlaceholderHero === 'function') return;
+    window._ikhBuildPlaceholderHero = function(){
+      var existing = right.querySelector('.ikh-mhero-carousel');
+      if (existing) return;
+      var placeholder = [
+        {title:'কুরআন তিলাওয়াত কোর্স', category:'কুরআন', duration:'১২ সপ্তাহ', rating:'৪.৯', image:'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=600&q=80'},
+        {title:'সীরাহ ও ইসলামি ইতিহাস', category:'সীরাহ', duration:'১০ সপ্তাহ', rating:'৪.৮', image:'https://images.unsplash.com/photo-1564769625392-651b2c2b1b9c?w=600&q=80'},
+        {title:'ফিকাহ মূলনীতি', category:'ফিকাহ', duration:'৮ সপ্তাহ', rating:'৪.৯', image:'https://images.unsplash.com/photo-1588621280074-1ba6a4f9f3c1?w=600&q=80'}
+      ];
+      var wrap = document.createElement('div');
+      wrap.className = 'ikh-mhero-carousel';
+      placeholder.forEach(function(c,i){
+        var card = document.createElement('div');
+        card.className = 'ikh-cs-card intro';
+        card.innerHTML =
+          '<span class="badge">'+(i===0?'জনপ্রিয়':(i===1?'নতুন':'বেস্টসেলার'))+'</span>'+
+          '<div class="img" style="background-image:url(\''+c.image+'\')"></div>'+
+          '<div class="body">'+
+            '<div class="cat">'+c.category+'</div>'+
+            '<div class="ttl">'+c.title+'</div>'+
+            '<div class="meta"><span><i class="fas fa-clock"></i> '+c.duration+'</span><span><i class="fas fa-star"></i> '+c.rating+'</span></div>'+
+          '</div>';
+        card.addEventListener('click', function(){ try{ navigate('courses'); }catch(e){} });
+        wrap.appendChild(card);
+      });
+      var dots = document.createElement('div');
+      dots.className = 'ikh-mhero-dots';
+      dots.innerHTML = placeholder.map(function(_,i){return '<span'+(i===0?' class="on"':'')+'></span>'}).join('');
+      right.appendChild(wrap);
+      right.appendChild(dots);
+
+      function setPositions(activeIdx){
+        var nodes = wrap.querySelectorAll('.ikh-cs-card');
+        var n = nodes.length;
+        nodes.forEach(function(el,i){
+          var d = (i - activeIdx + n) % n;
+          var pos = d===0?'active':(d===1?'next':(d===n-1?'prev':'hidden'));
+          el.setAttribute('data-pos', pos);
+        });
+        dots.querySelectorAll('span').forEach(function(s,i){ s.classList.toggle('on', i===activeIdx); });
+      }
+      setPositions(0);
+      setTimeout(function(){ wrap.querySelectorAll('.ikh-cs-card').forEach(function(c){c.classList.remove('intro')}); }, 1500);
+
+      var localIdx = 0;
+      if (window._ikhMHeroTimer) clearInterval(window._ikhMHeroTimer);
+      window._ikhMHeroTimer = setInterval(function(){
+        localIdx = (localIdx + 1) % placeholder.length;
+        setPositions(localIdx);
+      }, 3500);
+    };
+    // Show placeholder immediately so user sees cards before API resolves
+    window._ikhBuildPlaceholderHero();
+  }
+
+  function run(){
+    fixHeroOrder();
+    ensureCarousel();
+  }
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', run);
+  } else {
+    run();
+  }
+  window.addEventListener('resize', function(){
+    clearTimeout(window._ikhV7T);
+    window._ikhV7T = setTimeout(function(){
+      fixHeroOrder();
+      // If real courses already loaded, rebuild via v6
+      var right = document.querySelector('.hero .hero-right');
+      if (right && window.innerWidth <= 768 && !right.querySelector('.ikh-mhero-carousel')){
+        ensureCarousel();
+      }
+    }, 200);
+  });
+  console.log('✅ IKH Patch v7 active: mobile order (cards→text) + carousel fixes');
+})();
+</script>
+
 </body>
 </html>
