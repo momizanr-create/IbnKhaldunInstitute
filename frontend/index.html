@@ -10710,5 +10710,395 @@
 })();
 </script>
 
+<!-- ═══════════════════════════════════════════════════════════════════
+     IKH Patch v6 — Real-API hero courses + mobile carousel + entry
+     animation + Blog "পড়ুন →" full-content popup
+     ═══════════════════════════════════════════════════════════════════ -->
+<style id="ikh-v6-style">
+/* === HERO — beautified card === */
+.hero .hero-feature-card{
+  border-radius:18px !important;overflow:hidden;cursor:pointer;
+  background:#fff;
+  box-shadow:0 22px 50px -12px rgba(15,46,38,.32),0 4px 12px rgba(15,46,38,.08) !important;
+  transition:transform .35s cubic-bezier(.2,.9,.3,1.2),box-shadow .35s;
+}
+.hero .hero-feature-card:hover{transform:translateY(-6px) rotate(-2deg) scale(1.015)}
+.hero .hero-feature-thumb{position:relative;overflow:hidden}
+.hero .hero-feature-thumb img{transition:transform .8s ease}
+.hero .hero-feature-card:hover .hero-feature-thumb img{transform:scale(1.06)}
+.hero .hero-feature-thumb::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.45) 100%);
+  pointer-events:none;
+}
+.hero .hero-feature-badge{
+  background:linear-gradient(135deg,#FFD66B,#F59E0B) !important;color:#1a3a30 !important;
+  font-weight:800 !important;letter-spacing:.3px;box-shadow:0 6px 14px -6px rgba(245,158,11,.7);
+}
+.hero .hero-feature-play{
+  background:rgba(255,255,255,.92) !important;width:56px !important;height:56px !important;
+  border-radius:50% !important;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 20px -6px rgba(0,0,0,.4);
+  animation:ikhPulseBtn 2.4s ease-in-out infinite;
+}
+@keyframes ikhPulseBtn{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.hero .hero-feature-cta{
+  background:linear-gradient(135deg,#0f8a6c,#0c6e57) !important;color:#fff !important;
+  padding:9px 18px !important;border-radius:10px !important;font-weight:700 !important;
+  box-shadow:0 8px 18px -8px rgba(15,138,108,.7);transition:transform .2s;
+}
+.hero .hero-feature-cta:hover{transform:translateY(-2px)}
+
+/* MOBILE — convert stage into carousel (no scroll, full screen) */
+@media (max-width: 768px){
+  /* Strengthen full-screen lock */
+  html,body{overscroll-behavior-y:contain}
+  .hero{height:100dvh !important;min-height:100dvh !important;max-height:100dvh !important}
+
+  /* Hide v5 side cards (we use carousel now) */
+  .ikh-mhero-side{display:none !important}
+
+  .hero .hero-right{
+    width:100% !important;flex:1 1 auto;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:10px;
+  }
+  .ikh-mhero-carousel{
+    position:relative;width:88%;max-width:340px;height:auto;aspect-ratio:1/1.18;
+    perspective:1100px;margin:0 auto;
+  }
+  .ikh-mhero-carousel .ikh-cs-card{
+    position:absolute;inset:0;border-radius:16px;overflow:hidden;background:#fff;
+    box-shadow:0 22px 45px -14px rgba(0,0,0,.55);
+    transition:transform .7s cubic-bezier(.4,.05,.2,1),opacity .55s ease;
+    will-change:transform,opacity;cursor:pointer;
+  }
+  .ikh-mhero-carousel .ikh-cs-card .img{height:54%;background-size:cover;background-position:center;position:relative}
+  .ikh-mhero-carousel .ikh-cs-card .img::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.5))}
+  .ikh-mhero-carousel .ikh-cs-card .badge{
+    position:absolute;top:10px;left:10px;background:linear-gradient(135deg,#FFD66B,#F59E0B);
+    color:#1a3a30;font-size:10.5px;font-weight:800;padding:4px 10px;border-radius:99px;z-index:2;
+  }
+  .ikh-mhero-carousel .ikh-cs-card .body{padding:10px 12px}
+  .ikh-mhero-carousel .ikh-cs-card .cat{font-size:10.5px;color:#0f8a6c;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+  .ikh-mhero-carousel .ikh-cs-card .ttl{font-size:13.5px;font-weight:700;color:#1a3a30;line-height:1.35;margin-top:4px;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .ikh-mhero-carousel .ikh-cs-card .meta{font-size:11px;color:#52706a;margin-top:6px;display:flex;gap:10px}
+  .ikh-mhero-carousel .ikh-cs-card .price{margin-top:8px;font-size:14px;font-weight:800;color:#0c6e57}
+
+  /* Stack positions: prev | active | next */
+  .ikh-mhero-carousel .ikh-cs-card[data-pos="prev"]{transform:translateX(-58%) rotate(-12deg) scale(.78);opacity:.7;z-index:1}
+  .ikh-mhero-carousel .ikh-cs-card[data-pos="active"]{transform:translateX(0) rotate(0) scale(1);opacity:1;z-index:3}
+  .ikh-mhero-carousel .ikh-cs-card[data-pos="next"]{transform:translateX(58%) rotate(12deg) scale(.78);opacity:.7;z-index:2}
+  .ikh-mhero-carousel .ikh-cs-card[data-pos="hidden"]{transform:translateX(0) scale(.6);opacity:0;z-index:0;pointer-events:none}
+
+  /* Entry animation on first paint */
+  .ikh-mhero-carousel .ikh-cs-card.intro{animation:ikhCardIntro .9s cubic-bezier(.2,.9,.3,1.2) both}
+  .ikh-mhero-carousel .ikh-cs-card.intro[data-pos="prev"]{animation-delay:.05s}
+  .ikh-mhero-carousel .ikh-cs-card.intro[data-pos="active"]{animation-delay:.2s}
+  .ikh-mhero-carousel .ikh-cs-card.intro[data-pos="next"]{animation-delay:.35s}
+  @keyframes ikhCardIntro{
+    0%{opacity:0;transform:translateY(80px) scale(.6)}
+    60%{opacity:1}
+    100%{}
+  }
+
+  .ikh-mhero-dots{display:flex;gap:6px;justify-content:center;margin-top:8px}
+  .ikh-mhero-dots span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .25s}
+  .ikh-mhero-dots span.on{background:#FFD66B;width:20px;border-radius:99px}
+
+  /* Hide the original desktop hero-feature-card on mobile (carousel replaces it) */
+  .hero .hero-right > .hero-feature-card{display:none !important}
+  .hero .hero-float-chip{display:none !important}
+}
+
+/* === BLOG POPUP === */
+#ikh-blog-modal{
+  position:fixed;inset:0;background:rgba(10,20,18,.78);backdrop-filter:blur(6px);
+  z-index:99999;display:none;align-items:center;justify-content:center;padding:20px;
+  opacity:0;transition:opacity .25s ease;
+}
+#ikh-blog-modal.show{display:flex;opacity:1}
+#ikh-blog-modal .ikh-bm-card{
+  background:#fff;border-radius:16px;max-width:760px;width:100%;
+  max-height:88vh;overflow:hidden;display:flex;flex-direction:column;
+  box-shadow:0 30px 80px -20px rgba(0,0,0,.6);
+  transform:translateY(20px) scale(.96);transition:transform .35s cubic-bezier(.2,.9,.3,1.2);
+}
+#ikh-blog-modal.show .ikh-bm-card{transform:translateY(0) scale(1)}
+#ikh-blog-modal .ikh-bm-cover{width:100%;height:240px;object-fit:cover;display:block;background:#eee}
+#ikh-blog-modal .ikh-bm-close{
+  position:absolute;top:14px;right:18px;width:38px;height:38px;border-radius:50%;
+  background:rgba(0,0,0,.55);color:#fff;border:none;cursor:pointer;font-size:20px;z-index:5;
+  display:flex;align-items:center;justify-content:center;
+}
+#ikh-blog-modal .ikh-bm-body{padding:24px 28px;overflow-y:auto;flex:1}
+#ikh-blog-modal .ikh-bm-cat{display:inline-block;background:#0f8a6c;color:#fff;font-size:11px;
+  font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:4px 10px;border-radius:99px;margin-bottom:10px}
+#ikh-blog-modal .ikh-bm-title{font-size:22px;font-weight:800;color:#1a3a30;line-height:1.35;margin:0 0 8px}
+#ikh-blog-modal .ikh-bm-meta{font-size:13px;color:#666;margin-bottom:14px;border-bottom:1px solid #eee;padding-bottom:12px}
+#ikh-blog-modal .ikh-bm-content{font-size:15px;line-height:1.85;color:#2a3a36;white-space:pre-wrap}
+#ikh-blog-modal .ikh-bm-content p{margin:0 0 12px}
+#ikh-blog-modal .ikh-bm-content img{max-width:100%;border-radius:8px;margin:10px 0}
+#ikh-blog-modal .ikh-bm-content h2,#ikh-blog-modal .ikh-bm-content h3{margin:18px 0 8px;color:#1a3a30}
+@media (max-width:600px){
+  #ikh-blog-modal .ikh-bm-cover{height:180px}
+  #ikh-blog-modal .ikh-bm-body{padding:18px 20px}
+  #ikh-blog-modal .ikh-bm-title{font-size:18px}
+}
+</style>
+
+<script>
+/* ═══ IKH Patch v6 — Runtime ═══ */
+(function(){
+  var API_FALLBACK = 'https://ibnkhalduninstitute.onrender.com';
+  function api(){
+    try{
+      if (window.API_BASE) return window.API_BASE;
+      if (window.API) return window.API;
+    }catch(e){}
+    return API_FALLBACK;
+  }
+  function esc(s){return String(s==null?'':s).replace(/[<>&"']/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":"&#39;"}[c]})}
+
+  var FALLBACK_THUMB = 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=800&q=80';
+
+  /* ───────── 1. HERO — Real courses from /api/courses ───────── */
+  var heroCourses = [];
+  var heroIdx = 0;
+
+  function pickCourseImg(c){
+    var t = c.thumbnail || c.image || c.cover || '';
+    if (!t) return FALLBACK_THUMB;
+    if (/^https?:\/\//.test(t)) return t;
+    // relative path from server
+    return api().replace(/\/$/,'') + (t.startsWith('/')?t:'/'+t);
+  }
+  function priceFmt(c){
+    if (c.price == null || c.price === '') return '';
+    var p = Number(c.price);
+    if (isNaN(p)) return '৳ ' + c.price;
+    return '৳ ' + p.toLocaleString('en-US');
+  }
+
+  function applyHeroDesktop(c){
+    if (!c) return;
+    var img = document.getElementById('heroFeatureImg');
+    var ttl = document.getElementById('heroFeatureTitle');
+    var cat = document.getElementById('heroFeatureCat');
+    if (img) img.src = pickCourseImg(c);
+    if (ttl) ttl.textContent = c.title || '';
+    if (cat) cat.textContent = c.category || 'কোর্স';
+    var card = document.getElementById('heroFeatureCard');
+    if (card && c.slug){
+      card.onclick = function(){ try{ navigate('course-detail', c.slug); }catch(e){ try{ navigate('courses'); }catch(_){} } };
+    }
+    // price area
+    var priceEl = document.querySelector('.hero-feature-price');
+    if (priceEl){
+      var p = priceFmt(c);
+      if (p) priceEl.innerHTML = p + (c.oldPrice?' <span class="old">৳ '+c.oldPrice+'</span>':'');
+    }
+  }
+
+  function buildMobileCarousel(){
+    if (window.innerWidth > 768) return;
+    var right = document.querySelector('.hero .hero-right');
+    if (!right) return;
+    var existing = right.querySelector('.ikh-mhero-carousel');
+    if (existing) existing.remove();
+    if (!heroCourses.length) return;
+
+    var wrap = document.createElement('div');
+    wrap.className = 'ikh-mhero-carousel';
+    var cards = heroCourses.slice(0,3);
+    while (cards.length < 3) cards.push(cards[0] || {title:'কোর্স', category:'ইসলামিক'});
+
+    cards.forEach(function(c,i){
+      var card = document.createElement('div');
+      card.className = 'ikh-cs-card intro';
+      card.setAttribute('data-i', i);
+      card.innerHTML =
+        '<span class="badge">'+(i===0?'জনপ্রিয়':(i===1?'নতুন':'বেস্টসেলার'))+'</span>'+
+        '<div class="img" style="background-image:url(\''+pickCourseImg(c)+'\')"></div>'+
+        '<div class="body">'+
+          '<div class="cat">'+esc(c.category||'কোর্স')+'</div>'+
+          '<div class="ttl">'+esc(c.title||'')+'</div>'+
+          '<div class="meta"><span><i class="fas fa-clock"></i> '+(c.duration||'১২ সপ্তাহ')+'</span><span><i class="fas fa-star"></i> '+(c.rating||'৪.৯')+'</span></div>'+
+          (priceFmt(c)?'<div class="price">'+priceFmt(c)+'</div>':'')+
+        '</div>';
+      card.addEventListener('click', function(){
+        try{ if (c.slug) navigate('course-detail', c.slug); else navigate('courses'); }catch(e){}
+      });
+      wrap.appendChild(card);
+    });
+
+    var dots = document.createElement('div');
+    dots.className = 'ikh-mhero-dots';
+    dots.innerHTML = cards.map(function(_,i){return '<span'+(i===0?' class="on"':'')+'></span>'}).join('');
+
+    right.appendChild(wrap);
+    right.appendChild(dots);
+
+    function setPositions(activeIdx){
+      var nodes = wrap.querySelectorAll('.ikh-cs-card');
+      var n = nodes.length;
+      nodes.forEach(function(el,i){
+        var d = (i - activeIdx + n) % n;
+        var pos = d===0?'active':(d===1?'next':(d===n-1?'prev':'hidden'));
+        el.setAttribute('data-pos', pos);
+      });
+      dots.querySelectorAll('span').forEach(function(s,i){ s.classList.toggle('on', i===activeIdx); });
+    }
+    setPositions(0);
+
+    // remove intro class after animation completes
+    setTimeout(function(){ wrap.querySelectorAll('.ikh-cs-card').forEach(function(c){c.classList.remove('intro')}); }, 1500);
+
+    // auto-advance
+    var localIdx = 0;
+    if (window._ikhMHeroTimer) clearInterval(window._ikhMHeroTimer);
+    window._ikhMHeroTimer = setInterval(function(){
+      localIdx = (localIdx + 1) % cards.length;
+      setPositions(localIdx);
+    }, 3500);
+  }
+
+  function loadHeroCourses(){
+    fetch(api()+'/api/courses?limit=12').then(function(r){return r.json()}).then(function(list){
+      if (!Array.isArray(list) || !list.length) return;
+      // Prefer featured first, then latest
+      var featured = list.filter(function(c){return c && c.featured});
+      var rest = list.filter(function(c){return c && !c.featured});
+      heroCourses = featured.concat(rest).slice(0,6);
+      // Disable old fallback rotator (set big interval)
+      try { window.clearInterval && (function(){ /* leave the old one running for desktop fallback */ })(); } catch(e){}
+      // Apply first to desktop card
+      applyHeroDesktop(heroCourses[0]);
+      // Build mobile carousel
+      buildMobileCarousel();
+      // Desktop rotation through real courses
+      if (window._ikhHeroDeskTimer) clearInterval(window._ikhHeroDeskTimer);
+      window._ikhHeroDeskTimer = setInterval(function(){
+        if (window.innerWidth <= 768) return;
+        heroIdx = (heroIdx + 1) % heroCourses.length;
+        applyHeroDesktop(heroCourses[heroIdx]);
+      }, 4500);
+    }).catch(function(){});
+  }
+  loadHeroCourses();
+  // Rebuild carousel on resize/orientation change
+  window.addEventListener('resize', function(){
+    clearTimeout(window._ikhHeroResizeT);
+    window._ikhHeroResizeT = setTimeout(buildMobileCarousel, 250);
+  });
+
+  /* ───────── 2. BLOG "পড়ুন →" — full content modal ───────── */
+  // Build modal once
+  if (!document.getElementById('ikh-blog-modal')){
+    var modal = document.createElement('div');
+    modal.id = 'ikh-blog-modal';
+    modal.innerHTML =
+      '<div class="ikh-bm-card" onclick="event.stopPropagation()">'+
+        '<button class="ikh-bm-close" aria-label="বন্ধ করুন">×</button>'+
+        '<img class="ikh-bm-cover" src="" alt=""/>'+
+        '<div class="ikh-bm-body">'+
+          '<span class="ikh-bm-cat"></span>'+
+          '<h2 class="ikh-bm-title"></h2>'+
+          '<div class="ikh-bm-meta"></div>'+
+          '<div class="ikh-bm-content"></div>'+
+        '</div>'+
+      '</div>';
+    document.body.appendChild(modal);
+    function close(){ modal.classList.remove('show'); document.body.style.overflow=''; }
+    modal.addEventListener('click', close);
+    modal.querySelector('.ikh-bm-close').addEventListener('click', function(e){ e.stopPropagation(); close(); });
+    document.addEventListener('keydown', function(e){ if (e.key==='Escape') close(); });
+    window.ikhCloseBlogModal = close;
+  }
+
+  function openBlogModal(post){
+    var modal = document.getElementById('ikh-blog-modal');
+    if (!modal || !post) return;
+    var cover = modal.querySelector('.ikh-bm-cover');
+    cover.src = post.image || FALLBACK_THUMB;
+    cover.alt = post.title || '';
+    modal.querySelector('.ikh-bm-cat').textContent = post.category || 'ব্লগ';
+    modal.querySelector('.ikh-bm-title').textContent = post.title || '';
+    var meta = [];
+    if (post.author) meta.push('<i class="fas fa-user"></i> ' + esc(post.author));
+    if (post.readTime) meta.push('<i class="fas fa-clock"></i> ' + esc(post.readTime));
+    if (post.createdAt){ try{ meta.push('<i class="fas fa-calendar"></i> ' + new Date(post.createdAt).toLocaleDateString('bn-BD')); }catch(e){} }
+    modal.querySelector('.ikh-bm-meta').innerHTML = meta.join(' &nbsp;•&nbsp; ');
+    var content = post.content || post.excerpt || '';
+    // If contains HTML tags, render as HTML, otherwise wrap each \n\n as <p>
+    var contentEl = modal.querySelector('.ikh-bm-content');
+    if (/<[a-z][\s\S]*>/i.test(content)){
+      contentEl.innerHTML = content;
+    } else {
+      contentEl.innerHTML = String(content).split(/\n{2,}/).map(function(p){return '<p>'+esc(p).replace(/\n/g,'<br/>')+'</p>'}).join('');
+    }
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+  window.ikhOpenBlogModal = openBlogModal;
+
+  // Cache API blog posts for lookup by title
+  var blogCache = {};
+  function refreshBlogCache(){
+    fetch(api()+'/api/blog').then(function(r){return r.json()}).then(function(list){
+      if (!Array.isArray(list)) return;
+      list.forEach(function(p){
+        if (p && p.title) blogCache[p.title.trim()] = p;
+        if (p && p.slug) blogCache['__slug:'+p.slug] = p;
+      });
+      wireBlogButtons();
+    }).catch(function(){});
+  }
+
+  function wireBlogButtons(){
+    // Find every "পড়ুন →" button inside #blog-posts-grid (and any blog card)
+    document.querySelectorAll('#blog-posts-grid article, .blog-card, .blog-post-card').forEach(function(card){
+      var btn = card.querySelector('button, a');
+      // grab the actual "পড়ুন" button by text
+      var allBtns = card.querySelectorAll('button,a');
+      var readBtn = null;
+      allBtns.forEach(function(b){
+        var txt = (b.textContent||'').trim();
+        if (/পড়ুন/.test(txt) || /read/i.test(txt)) readBtn = b;
+      });
+      if (!readBtn) return;
+      if (readBtn.dataset.ikhBound) return;
+      readBtn.dataset.ikhBound = '1';
+      // Title from the card
+      var titleEl = card.querySelector('h3,h2,.blog-title');
+      var title = titleEl ? titleEl.textContent.trim() : '';
+      readBtn.onclick = function(e){
+        e.preventDefault(); e.stopPropagation();
+        var post = blogCache[title];
+        if (!post){
+          // fallback: build a minimal post from card
+          post = {
+            title: title,
+            category: (card.querySelector('div[style*="color:var(--primary)"]')||{}).textContent || 'ব্লগ',
+            image: (card.querySelector('img')||{}).src,
+            content: (card.querySelector('p')||{}).textContent || ''
+          };
+        }
+        openBlogModal(post);
+      };
+    });
+  }
+
+  // observe blog grid for re-render
+  var blogGrid = document.getElementById('blog-posts-grid');
+  if (blogGrid) new MutationObserver(function(){ setTimeout(wireBlogButtons, 50); }).observe(blogGrid,{childList:true,subtree:true});
+  setTimeout(refreshBlogCache, 1000);
+  setTimeout(refreshBlogCache, 4500);
+  setTimeout(wireBlogButtons, 2000);
+
+  console.log('✅ IKH Patch v6 active: real hero courses, mobile carousel, blog popup');
+})();
+</script>
+
 </body>
 </html>
