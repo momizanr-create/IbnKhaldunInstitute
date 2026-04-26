@@ -490,177 +490,258 @@
     .fade-in { opacity: 0; transform: translateY(22px); transition: opacity 0.55s ease, transform 0.55s ease; }
     .fade-in.visible { opacity: 1; transform: none; }
 
-    /* ===== HERO — Travel Style ===== */
+    /* ===== HERO — Course Style (10 Minute School inspired, fully responsive) ===== */
     .hero {
       position: relative;
-      min-height: calc(100vh - var(--header-h));
-      max-height: calc(100svh - var(--header-h));
-      display: flex; align-items: stretch;
-      overflow: visible;
+      background: linear-gradient(135deg, #0f1e19 0%, #1a3a30 55%, #0f2a22 100%);
+      overflow: hidden;
+      padding: 0;
     }
-    .hero-bg-img {
-      position: absolute; inset: 0; z-index: 0;
-      background-image: url('/frontend/images/nobobi.png');
-      background-size: cover;
-      background-position: center top;
-      background-repeat: no-repeat;
-    }
-    .hero-bg-img::after {
+    .hero::before {
       content: '';
       position: absolute; inset: 0;
       background:
-        linear-gradient(115deg, rgba(15,30,25,0.78) 0%, rgba(15,30,25,0.45) 55%, rgba(15,30,25,0.25) 100%),
-        linear-gradient(to bottom, rgba(10,18,15,0.30) 0%, rgba(10,18,15,0.55) 100%);
+        radial-gradient(circle at 18% 25%, rgba(245,197,24,0.18) 0%, transparent 45%),
+        radial-gradient(circle at 85% 75%, rgba(29,184,154,0.18) 0%, transparent 45%);
+      pointer-events: none;
     }
-
-    /* ── hero inner layout ── */
     .hero-inner {
       position: relative; z-index: 2;
-      width: 100%; display: flex;
+      max-width: 1240px; margin: 0 auto;
+      padding: 64px 24px 72px;
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      gap: 48px;
       align-items: center;
-      gap: 32px; padding: 56px 0 40px 24px;
-      max-width: 1200px; margin: 0 auto;
     }
-
-    /* ── left text block ── */
-    .hero-left { flex: 0 0 auto; max-width: 380px; }
+    /* ── LEFT: text + CTA + stats ── */
+    .hero-left { color: #fff; }
     .hero-eyebrow {
-      color: rgba(255,255,255,0.72); font-size: 12px;
-      letter-spacing: 2.5px; text-transform: uppercase;
-      margin-bottom: 14px; font-family: var(--font-nav); font-weight: 600;
-      display: flex; align-items: center; gap: 0;
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(245,197,24,0.14);
+      color: var(--primary, #F5C518);
+      padding: 7px 14px; border-radius: 999px;
+      font-family: var(--font-nav); font-size: 12px;
+      font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+      margin-bottom: 18px;
+      border: 1px solid rgba(245,197,24,0.3);
+    }
+    .hero-eyebrow::before {
+      content: '✦'; color: var(--primary, #F5C518); font-size: 13px;
     }
     .hero h1 {
       font-family: var(--font-heading);
-      font-size: clamp(32px, 3.8vw, 56px);
-      font-weight: 900; line-height: 1.06;
-      letter-spacing: -0.5px; text-transform: uppercase;
-      color: #fff; margin-bottom: 18px;
+      font-size: clamp(28px, 4.6vw, 54px);
+      font-weight: 800; line-height: 1.15;
+      letter-spacing: -0.5px; color: #fff;
+      margin-bottom: 18px;
     }
-    .hero h1 em { font-style: normal; color: var(--primary); }
+    .hero h1 em { font-style: normal; color: var(--primary, #F5C518); }
+    .hero h1 .accent {
+      color: var(--primary, #F5C518);
+      background: linear-gradient(120deg, #F5C518 0%, #ffd84d 100%);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
     .hero-sub {
-      font-family: var(--font-body); font-size: 13.5px;
-      color: rgba(255,255,255,0.70);
-      max-width: 300px; margin-bottom: 28px; line-height: 1.75;
+      font-family: var(--font-body);
+      font-size: clamp(14px, 1.4vw, 16.5px);
+      color: rgba(255,255,255,0.78);
+      line-height: 1.85;
+      margin-bottom: 28px;
+      max-width: 560px;
     }
-    .hero-sub strong { color: var(--primary); font-weight: 600; }
+    .hero-sub strong { color: var(--primary, #F5C518); font-weight: 600; }
+    .hero-cta-row {
+      display: flex; flex-wrap: wrap; gap: 12px;
+      margin-bottom: 32px;
+    }
+    .hero-cta {
+      padding: 14px 28px;
+      font-family: var(--font-nav); font-size: 13px;
+      font-weight: 700; letter-spacing: 1.2px;
+      text-transform: uppercase; border-radius: 8px;
+      cursor: pointer; transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+      border: none;
+      display: inline-flex; align-items: center; gap: 10px;
+    }
+    .hero-cta-primary {
+      background: var(--primary, #F5C518);
+      color: #1a1a1a;
+      box-shadow: 0 8px 24px rgba(245,197,24,0.3);
+    }
+    .hero-cta-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(245,197,24,0.45); }
+    .hero-cta-outline {
+      background: transparent; color: #fff;
+      border: 1.5px solid rgba(255,255,255,0.35);
+    }
+    .hero-cta-outline:hover { background: rgba(255,255,255,0.1); border-color: #fff; }
 
-    /* ── Learn More button ── */
-    .hero-learn-btn {
-      background: #1db89a; color: #fff; border: none;
-      padding: 11px 28px; font-family: var(--font-nav);
-      font-size: 11px; font-weight: 700; letter-spacing: 2px;
-      text-transform: uppercase; border-radius: 4px; cursor: pointer;
+    /* ── stats row ── */
+    .hero-stats-row {
+      display: flex; gap: 28px; flex-wrap: wrap;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.12);
+    }
+    .hero-stat-item { display: flex; flex-direction: column; }
+    .hero-stat-num {
+      font-family: var(--font-heading);
+      font-size: clamp(20px, 2.4vw, 28px);
+      font-weight: 800; color: var(--primary, #F5C518);
+      line-height: 1;
+    }
+    .hero-stat-lbl {
+      font-size: 12px; color: rgba(255,255,255,0.65);
+      margin-top: 4px; font-family: var(--font-nav);
+      letter-spacing: 0.5px;
+    }
+
+    /* ── RIGHT: Featured course preview card ── */
+    .hero-right {
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hero-feature-card {
+      width: 100%;
+      max-width: 460px;
+      background: #fff;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.08);
+      transform: rotate(0deg);
+      transition: transform 0.3s ease;
+      position: relative;
+    }
+    .hero-feature-card:hover { transform: translateY(-6px); }
+    .hero-feature-thumb {
+      position: relative; width: 100%;
+      aspect-ratio: 16/9;
+      background: linear-gradient(135deg, #1a3a30, #0f2a22);
+      overflow: hidden;
+    }
+    .hero-feature-thumb img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+    .hero-feature-play {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 64px; height: 64px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #d4a90e; font-size: 22px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .hero-feature-play:hover { transform: translate(-50%, -50%) scale(1.08); background: var(--primary, #F5C518); color: #fff; }
+    .hero-feature-badge {
+      position: absolute; top: 14px; left: 14px;
+      background: var(--primary, #F5C518); color: #1a1a1a;
+      padding: 6px 12px; border-radius: 4px;
+      font-size: 10.5px; font-weight: 800;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      font-family: var(--font-nav);
+    }
+    .hero-feature-body { padding: 20px 22px 22px; }
+    .hero-feature-cat {
+      font-size: 11px; font-weight: 700;
+      color: #d4a90e; letter-spacing: 1.5px;
+      text-transform: uppercase; margin-bottom: 8px;
+      font-family: var(--font-nav);
+    }
+    .hero-feature-title {
+      font-family: var(--font-display);
+      font-size: 18px; font-weight: 700;
+      color: #1a1a1a; line-height: 1.4;
+      margin-bottom: 12px;
+    }
+    .hero-feature-meta {
+      display: flex; gap: 14px; flex-wrap: wrap;
+      font-size: 12px; color: #666;
+      padding-bottom: 14px; border-bottom: 1px dashed #eee;
+      margin-bottom: 14px;
+    }
+    .hero-feature-meta i { color: var(--primary, #F5C518); margin-right: 4px; }
+    .hero-feature-foot {
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .hero-feature-price {
+      font-family: var(--font-heading);
+      font-size: 20px; font-weight: 800; color: #d4a90e;
+    }
+    .hero-feature-price .old { font-size: 13px; color: #999; text-decoration: line-through; margin-left: 6px; font-weight: 500; }
+    .hero-feature-cta {
+      padding: 9px 18px;
+      background: #1a3a30; color: #fff;
+      border: none; border-radius: 6px;
+      font-family: var(--font-nav); font-size: 11.5px;
+      font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; cursor: pointer;
       transition: background 0.2s;
     }
-    .hero-learn-btn:hover { background: #17a085; }
+    .hero-feature-cta:hover { background: #0f2a22; }
 
-    /* ── slide nav ── */
-    .hero-slide-nav {
-      display: flex; align-items: center; gap: 10px; margin-top: 36px;
-    }
-    .hero-nav-btn {
-      width: 36px; height: 36px;
-      border: 1.5px solid rgba(255,255,255,0.6); border-radius: 50%;
-      background: transparent; color: #fff; font-size: 15px;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: background 0.2s;
-    }
-    .hero-nav-btn:hover { background: rgba(255,255,255,0.15); }
-    .hero-slide-line { flex: 1; height: 1px; background: rgba(255,255,255,0.22); margin: 0 4px; }
-    .hero-slide-num { color: #fff; font-size: 18px; font-weight: 700; min-width: 28px; text-align: right; }
-
-    /* ── right cards area — hero এর ডান প্রান্তে absolute ── */
-    .hero-cards-outer {
+    /* ── decorative floating chips around card ── */
+    .hero-float-chip {
       position: absolute;
-      right: 0; top: 0; bottom: 0;
-      display: flex; flex-direction: column;
-      justify-content: center; align-items: flex-end; gap: 12px;
-      overflow: visible;
-      pointer-events: none;
+      background: #fff; color: #1a1a1a;
+      padding: 10px 14px; border-radius: 12px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12.5px; font-weight: 600;
+      font-family: var(--font-body);
       z-index: 3;
     }
-    .hero-dot-grid {
-      display: grid; grid-template-columns: repeat(6, 5px); gap: 5px;
-      align-self: flex-start; padding-left: 0;
-      flex-shrink: 0;
-      pointer-events: auto;
-    }
-    .hero-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.45); }
-
-    /* ── hero-track-wrap: hero ডান প্রান্ত থেকে flush — কোনো ফাঁকা নেই ── */
-    .hero-track-wrap {
-      position: relative;
-      width: 670px;
-      height: 180px;
-      overflow: hidden;
-      border-radius: 10px 0 0 10px;
-      cursor: grab; user-select: none;
-      flex-shrink: 0;
-      pointer-events: auto;
-    }
-    .hero-track-wrap:active { cursor: grabbing; }
-    .hero-track {
-      display: flex; gap: 12px; align-items: flex-start;
-      height: 100%; width: max-content; will-change: transform;
-    }
-    .hero-track.animated {
-      transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+    .hero-float-chip i { color: var(--primary, #F5C518); font-size: 16px; }
+    .hero-float-chip.tl { top: 8%; left: -18px; animation: floaty 4s ease-in-out infinite; }
+    .hero-float-chip.br { bottom: 14%; right: -16px; animation: floaty 4.5s ease-in-out infinite reverse; }
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
 
-    /* ── dest-card: YouTube thumbnail 16:9 → 320×180px ── */
-    .dest-card {
-      width: 320px !important;
-      height: 180px !important;
-      border-radius: 10px; overflow: hidden; position: relative;
-      flex-shrink: 0; pointer-events: auto; cursor: pointer;
-      transition: box-shadow 0.2s ease;
-    }
-    .dest-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.55); }
-    .dest-card::after {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.10) 55%, transparent 100%);
-      border-radius: 18px;
-    }
-    .dest-card-label {
-      position: absolute; bottom: 10px; left: 12px; right: 12px;
-      color: #fff; font-size: 13px; font-weight: 700;
-      letter-spacing: 0.3px; text-shadow: 0 1px 6px rgba(0,0,0,0.85); z-index: 2;
-      font-family: var(--font-nav); line-height: 1.3;
-    }
-    /* Course-related images for hero cards */
-    .dc-1 { background: url('https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=500&q=80') center/cover no-repeat; } /* Quran */
-    .dc-2 { background: url('https://images.unsplash.com/photo-1564769625905-50e93615e769?w=500&q=80') center/cover no-repeat; } /* Seerah/mosque */
-    .dc-3 { background: url('https://images.unsplash.com/photo-1554232456-8727aae0cfa4?w=500&q=80') center/cover no-repeat; } /* Fiqh/study */
-    .dc-4 { background: url('https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=500&q=80') center/cover no-repeat; } /* Productivity/notes */
-    .dc-5 { background: url('https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500&q=80') center/cover no-repeat; } /* Arabic/books */
-    .dc-6 { background: url('https://images.unsplash.com/photo-1511895426328-dc8714191011?w=500&q=80') center/cover no-repeat; } /* Family/Islamic life */
-    .dc-7 { background: url('https://images.unsplash.com/photo-1585036156171-384164a8c675?w=500&q=80') center/cover no-repeat; } /* Hadith/Islamic art */
+    /* hide legacy hero pieces if present */
+    .hero-search, .hero-stats, .hero-stat, .hero-stat-divider,
+    .hero-bg-img, .hero-cards-outer, .hero-track-wrap,
+    .hero-slide-nav, .hero-learn-btn { /* will be unused */ }
 
-    /* keep old hero-search & hero-stats for compatibility but hide in new hero */
-    .hero-search { display: none; }
-    .hero-stats { display: none; }
-    .hero-stat { display: none; }
-    .hero-stat-divider { display: none; }
+    /* ── RESPONSIVE: tablet ── */
+    @media (max-width: 980px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        padding: 48px 20px 56px;
+        text-align: left;
+      }
+      .hero-right { order: -1; }
+      .hero-feature-card { max-width: 420px; margin: 0 auto; }
+      .hero-float-chip.tl { left: 4px; }
+      .hero-float-chip.br { right: 4px; }
+    }
 
-    @media (max-width: 900px) {
-      .hero-cards-outer { display: none; }
-      .hero-inner { justify-content: flex-start; }
-      .hero-left { max-width: 100%; }
-      .hero h1 { font-size: clamp(30px, 6vw, 44px); }
+    /* ── RESPONSIVE: mobile ── */
+    @media (max-width: 640px) {
+      .hero-inner { padding: 36px 16px 44px; gap: 28px; }
+      .hero-eyebrow { font-size: 10.5px; padding: 6px 12px; }
+      .hero h1 { font-size: clamp(24px, 7.5vw, 32px); margin-bottom: 14px; }
+      .hero-sub { font-size: 13.5px; line-height: 1.8; margin-bottom: 22px; }
+      .hero-cta-row { gap: 10px; margin-bottom: 26px; }
+      .hero-cta { padding: 12px 20px; font-size: 11.5px; flex: 1; min-width: 0; justify-content: center; }
+      .hero-stats-row { gap: 18px; padding-top: 18px; }
+      .hero-stat-num { font-size: 20px; }
+      .hero-stat-lbl { font-size: 10.5px; }
+      .hero-feature-body { padding: 16px 16px 18px; }
+      .hero-feature-title { font-size: 15.5px; }
+      .hero-feature-play { width: 54px; height: 54px; font-size: 18px; }
+      .hero-float-chip { font-size: 11px; padding: 8px 11px; }
+      .hero-float-chip.tl { top: -10px; left: 0; }
+      .hero-float-chip.br { bottom: -8px; right: 0; }
     }
-    @media (min-width: 901px) {
-      .hero { height: calc(100svh - var(--header-h)); }
-      .hero-inner { padding-top: 28px; padding-bottom: 28px; padding-right: 0; gap: 24px; }
-      .hero h1 { font-size: clamp(31px, 3.25vw, 48px); margin-bottom: 14px; }
-      .hero-sub { margin-bottom: 20px; line-height: 1.6; }
-      .hero-slide-nav { margin-top: 24px; }
-      .hero-cards-outer { overflow: visible; }
-      .dest-card { max-height: none; width: 320px !important; height: 180px !important; }
-    }
-    @media (max-width: 768px) {
-      .hero-inner { padding: 48px 20px 36px; }
-      .hero-left { max-width: 100%; }
+    @media (max-width: 380px) {
+      .hero-cta-row { flex-direction: column; }
+      .hero-cta { width: 100%; }
     }
 
     /* SECTIONS */
@@ -1806,7 +1887,7 @@
     ══════════════════════════════════════════════ */
 
     /* Desktop/tablet: hide mobile hero, show original */
-    .mobile-hero-section { display: none; }
+    .mobile-hero-section { display: none !important; }
 
     /* Mobile: hide original hero, show mobile hero fullscreen */
     @media (max-width: 768px) {
@@ -1814,14 +1895,7 @@
       .hero { display: none !important; }
 
       /* মোবাইল হিরো — ফুল স্ক্রিন */
-      .mobile-hero-section {
-        display: flex;
-        flex-direction: column;
-        width: 100vw;
-        min-height: calc(100svh - var(--header-h, 70px));
-        background: #fff;
-        overflow: hidden;
-      }
+      .mobile-hero-section { display: none !important; }
 
       /* ইমেজ র‍্যাপার — উপরের অর্ধেক */
       .mobile-hero-img-wrap {
@@ -2734,16 +2808,7 @@
   }
 
   /* Mobile hero container — full screen */
-  .mobile-hero-section {
-    display: flex;
-    flex-direction: column;
-    width: 100vw;
-    height: calc(100svh - var(--header-h, 70px));
-    min-height: calc(100svh - var(--header-h, 70px));
-    background: #fff;
-    overflow: hidden;
-    position: relative;
-  }
+  .mobile-hero-section { display: none !important; }
 
   /* Image wrapper — upper half */
   .mobile-hero-img-wrap {
@@ -3175,44 +3240,72 @@
   <!-- ===================== HOME PAGE ===================== -->
   <div id="page-home" class="page active">
 
-    <!-- Hero — Travel Style -->
+    <!-- Hero — Course Style (Unified, fully responsive) -->
     <section class="hero">
-      <div class="hero-bg-img"></div>
-
       <div class="hero-inner">
 
-        <!-- Left: text + controls -->
+        <!-- LEFT: Headline, sub, CTAs, stats -->
         <div class="hero-left fade-in">
-          <p class="hero-eyebrow">সর্বোত্তম ব্যবসায়িক শিক্ষা</p>
-          <h1>শিখুন কীভাবে<br><em>শুরু করতে, পরিচালনা</em><br>&amp; বিস্তার করতে হয়</h1>
+          <span class="hero-eyebrow">ইবনে খালদুন ইনস্টিটিউট</span>
+          <h1>
+            শিখুন <span class="accent">দক্ষতা</span>,<br>
+            গড়ুন <em>উজ্জ্বল ভবিষ্যৎ</em>
+          </h1>
           <p class="hero-sub">
-            আপনার ব্যবসা — <strong>প্রযুক্তি, ডিজাইন, মার্কেটিং</strong> ও আরও অনেক বিষয়ে বিশেষজ্ঞ-নেতৃত্বাধীন কোর্সে প্রবেশ করুন।
-            বিশ্বব্যাপী ৫০,০০০+ শিক্ষার্থীর সাথে যোগ দিন।
+            <strong>কুরআন, সীরাহ, ফিকাহ</strong> থেকে শুরু করে আধুনিক <strong>প্রোডাক্টিভিটি</strong> ও <strong>হোমস্কুলিং</strong> —
+            বিশেষজ্ঞ শিক্ষকদের নেতৃত্বে ঘরে বসে শিখুন, যেকোনো সময়, যেকোনো ডিভাইস থেকে।
           </p>
-          <button class="hero-learn-btn" onclick="navigate('courses')">আরও জানুন</button>
-
-          <div class="hero-slide-nav">
-            <button class="hero-nav-btn" id="hero-prev">&#8592;</button>
-            <button class="hero-nav-btn" id="hero-next">&#8594;</button>
-            <div class="hero-slide-line"></div>
-            <span class="hero-slide-num" id="hero-slide-num">01</span>
+          <div class="hero-cta-row">
+            <button class="hero-cta hero-cta-primary" onclick="navigate('courses')">
+              <i class="fas fa-graduation-cap"></i> কোর্স দেখুন
+            </button>
+            <button class="hero-cta hero-cta-outline" onclick="navigate('about')">
+              <i class="fas fa-info-circle"></i> আমাদের সম্পর্কে
+            </button>
+          </div>
+          <div class="hero-stats-row">
+            <div class="hero-stat-item">
+              <span class="hero-stat-num">৫০K+</span>
+              <span class="hero-stat-lbl">শিক্ষার্থী</span>
+            </div>
+            <div class="hero-stat-item">
+              <span class="hero-stat-num">১০০+</span>
+              <span class="hero-stat-lbl">কোর্স</span>
+            </div>
+            <div class="hero-stat-item">
+              <span class="hero-stat-num">৪.৯★</span>
+              <span class="hero-stat-lbl">রেটিং</span>
+            </div>
           </div>
         </div>
 
-        <!-- Right: scrolling destination cards -->
-        <div class="hero-cards-outer">
-          <!-- dot grid decoration -->
-          <div class="hero-dot-grid">
-            <div class="hero-dot"></div><div class="hero-dot"></div><div class="hero-dot"></div><div class="hero-dot"></div><div class="hero-dot"></div><div class="hero-dot"></div>
-            <div class="hero-dot"></div><div class="hero-dot"></div><div class="hero-dot"></div><div class="hero-dot"></div><div class="hero-dot"></div><div class="hero-dot"></div>
-            <div class="hero-dot"></div><div class="hero-dot"></div><div class="hero-dot"></div><div class="hero-dot"></div><div class="hero-dot"></div><div class="hero-dot"></div>
-            <div class="hero-dot"></div><div class="hero-dot"></div><div class="hero-dot"></div><div class="hero-dot"></div><div class="hero-dot"></div><div class="hero-dot"></div>
-            <div class="hero-dot"></div><div class="hero-dot"></div><div class="hero-dot"></div><div class="hero-dot"></div><div class="hero-dot"></div><div class="hero-dot"></div>
+        <!-- RIGHT: Featured course card -->
+        <div class="hero-right fade-in">
+          <div class="hero-float-chip tl">
+            <i class="fas fa-certificate"></i> সার্টিফিকেট
+          </div>
+          <div class="hero-float-chip br">
+            <i class="fas fa-users"></i> লাইভ সাপোর্ট
           </div>
 
-          <div class="hero-track-wrap" id="heroTrackWrap">
-            <div class="hero-track animated" id="heroTrack">
-              <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.6);font-size:13px;background:rgba(255,255,255,0.08);border-radius:18px;">কার্ড লোড হচ্ছে...</div>
+          <div class="hero-feature-card" id="heroFeatureCard" onclick="navigate('courses')">
+            <div class="hero-feature-thumb">
+              <span class="hero-feature-badge">জনপ্রিয়</span>
+              <img id="heroFeatureImg" src="https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=800&q=80" alt="Featured course"/>
+              <div class="hero-feature-play"><i class="fas fa-play"></i></div>
+            </div>
+            <div class="hero-feature-body">
+              <div class="hero-feature-cat" id="heroFeatureCat">কুরআন শিক্ষা</div>
+              <h3 class="hero-feature-title" id="heroFeatureTitle">সম্পূর্ণ কুরআন তিলাওয়াত ও তাজবীদ কোর্স</h3>
+              <div class="hero-feature-meta">
+                <span><i class="fas fa-clock"></i> ১২ সপ্তাহ</span>
+                <span><i class="fas fa-video"></i> ৪৮ ভিডিও</span>
+                <span><i class="fas fa-star"></i> ৪.৯</span>
+              </div>
+              <div class="hero-feature-foot">
+                <div class="hero-feature-price">৳ ১,৯৯০ <span class="old">৳ ৩,৫০০</span></div>
+                <button class="hero-feature-cta" onclick="event.stopPropagation(); navigate('courses')">এনরোল</button>
+              </div>
             </div>
           </div>
         </div>
@@ -3220,129 +3313,36 @@
       </div>
     </section>
 
-    <!-- ══════════════════════════════════════════════
-         MOBILE-ONLY HERO — শুধু মোবাইলে দেখায়
-    ══════════════════════════════════════════════ -->
-    <section class="mobile-hero-section">
-      <div class="mobile-hero-img-wrap">
-        <img src="images/hero.png" alt="Ibn Khaldun Institute" class="mobile-hero-banner" onerror="this.src='https://ibnkhalduninstitute.online/images/mobile-hero-banner.png'" />
-      </div>
-      <div class="mobile-hero-content">
-        <span class="mobile-hero-eyebrow">Ibn Khaldun Institute</span>
-        <h1 class="mobile-hero-title">শিখুন <span class="accent">দক্ষতা</span><br>গড়ুন উজ্জ্বল <span class="accent">ভবিষ্যৎ</span></h1>
-        <p class="mobile-hero-desc">
-          বিশেষজ্ঞ শিক্ষকদের নেতৃত্বে ইসলামিক ও আধুনিক জ্ঞানের অনন্য সমন্বয়।
-          ঘরে বসে শিখুন, যেকোনো সময়, যেকোনো ডিভাইস থেকে।
-        </p>
-        <div class="mobile-hero-btns">
-          <button class="mobile-hero-btn mobile-hero-btn-primary" onclick="navigate('courses')">কোর্স দেখুন</button>
-          <button class="mobile-hero-btn mobile-hero-btn-outline" onclick="navigate('about')">আমাদের সম্পর্কে</button>
-        </div>
-      </div>
-    </section>
-
     <script>
-    /* ── Hero Cards Carousel — বড় কার্ড, একটি একটি করে ── */
+    /* ── Hero featured card auto-rotation (uses admin courses if available) ── */
     (function(){
-      var TOTAL    = 7;
-      var INTERVAL = 3200;
-      var TRANS    = 650;
+      var imgEl   = document.getElementById('heroFeatureImg');
+      var titleEl = document.getElementById('heroFeatureTitle');
+      var catEl   = document.getElementById('heroFeatureCat');
+      if (!imgEl || !titleEl || !catEl) return;
 
-      var track   = document.getElementById('heroTrack');
-      var wrap    = document.getElementById('heroTrackWrap');
-      var numEl   = document.getElementById('hero-slide-num');
-      if (!track || !wrap || !numEl) return;
+      var fallback = [
+        { img:'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=800&q=80', cat:'কুরআন শিক্ষা', title:'সম্পূর্ণ কুরআন তিলাওয়াত ও তাজবীদ কোর্স' },
+        { img:'https://images.unsplash.com/photo-1564769625905-50e93615e769?w=800&q=80', cat:'সীরাহ ও ইতিহাস', title:'নবীজির জীবনী — পূর্ণাঙ্গ সীরাহ কোর্স' },
+        { img:'https://images.unsplash.com/photo-1554232456-8727aae0cfa4?w=800&q=80',  cat:'ফিকাহ',         title:'দৈনন্দিন জীবনের ফিকাহ মাসআলা' },
+        { img:'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800&q=80', cat:'প্রোডাক্টিভিটি', title:'মুসলিমের জন্য আধুনিক প্রোডাক্টিভিটি' },
+        { img:'https://images.unsplash.com/photo-1511895426328-dc8714191011?w=800&q=80', cat:'পারিবারিক জীবন', title:'সুখী মুসলিম পরিবার গঠনের কোর্স' }
+      ];
 
-      /* card width = 320px fixed, gap = 12px */
-      function getCardW() { return 320; }
-      function getGap()   { return 12; }
-
-      var pos     = 0;
-      var cardIdx = 0;
-      var paused  = false;
-      var timer   = null;
-
-      function cardStep() { return getCardW() + getGap(); }
-
-      function setPos(x, animate) {
-        if (!animate) {
-          track.classList.remove('animated');
-          track.style.transform = 'translateX('+x+'px)';
-          track.getBoundingClientRect();
-          track.classList.add('animated');
-        } else {
-          track.classList.add('animated');
-          track.style.transform = 'translateX('+x+'px)';
-        }
+      var idx = 0;
+      function applyItem(it){
+        try { imgEl.src = it.img; } catch(e){}
+        titleEl.textContent = it.title || '';
+        catEl.textContent   = it.cat   || '';
       }
-      function updateNum() {
-        numEl.textContent = String((((cardIdx % TOTAL) + TOTAL) % TOTAL) + 1).padStart(2,'0');
+      function tick(){
+        idx = (idx + 1) % fallback.length;
+        applyItem(fallback[idx]);
       }
-      function loopW() { return TOTAL * cardStep(); }
-      function step(dir) {
-        pos   -= dir * cardStep();
-        cardIdx += dir;
-        setPos(pos, true);
-        updateNum();
-        setTimeout(function(){
-          if (pos <= -loopW()) { pos += loopW(); setPos(pos, false); }
-          else if (pos > 0)    { pos -= loopW(); setPos(pos, false); }
-        }, TRANS + 20);
-      }
-      function startAuto() { stopAuto(); timer = setInterval(function(){ if (!paused) step(1); }, INTERVAL); }
-      function stopAuto()  { clearInterval(timer); }
-
-      document.getElementById('hero-next').addEventListener('click', function(){ step(1); });
-      document.getElementById('hero-prev').addEventListener('click', function(){ step(-1); });
-      wrap.addEventListener('mouseenter', function(){ paused = true; });
-      wrap.addEventListener('mouseleave', function(){ paused = false; });
-
-      /* touch */
-      var tx = 0, ty = 0, drag = false, delta = 0;
-      wrap.addEventListener('touchstart', function(e){
-        paused=true; tx=e.touches[0].clientX; ty=e.touches[0].clientY; drag=true; delta=0;
-        track.classList.remove('animated');
-      },{passive:true});
-      wrap.addEventListener('touchmove', function(e){
-        if(!drag) return;
-        delta = e.touches[0].clientX - tx;
-        if(Math.abs(e.touches[0].clientY - ty) > Math.abs(delta)+5) return;
-        track.style.transform = 'translateX('+(pos+delta)+'px)';
-      },{passive:true});
-      wrap.addEventListener('touchend', function(){
-        drag=false; track.classList.add('animated');
-        if(Math.abs(delta)>40){
-          var d=delta<0?1:-1; pos-=d*cardStep(); cardIdx+=d;
-          if(pos<=-loopW()) pos+=loopW(); if(pos>0) pos-=loopW();
-          track.style.transform='translateX('+pos+'px)'; updateNum();
-        } else { track.style.transform='translateX('+pos+'px)'; }
-        setTimeout(function(){paused=false;},300);
-      });
-
-      /* mouse drag */
-      var md=false, ms=0, mdelta=0, wasDrag=false;
-      wrap.addEventListener('mousedown',function(e){md=true;ms=e.clientX;mdelta=0;wasDrag=false;track.classList.remove('animated');});
-      window.addEventListener('mousemove',function(e){if(!md)return;mdelta=e.clientX-ms;if(Math.abs(mdelta)>5)wasDrag=true;track.style.transform='translateX('+(pos+mdelta)+'px)';});
-      window.addEventListener('mouseup',function(){
-        if(!md)return;md=false;track.classList.add('animated');
-        if(Math.abs(mdelta)>40){var d=mdelta<0?1:-1;pos-=d*cardStep();cardIdx+=d;if(pos<=-loopW())pos+=loopW();if(pos>0)pos-=loopW();track.style.transform='translateX('+pos+'px)';updateNum();}
-        else{track.style.transform='translateX('+pos+'px)';}
-      });
-      /* prevent click after drag */
-      wrap.addEventListener('click', function(e){ if(wasDrag){ wasDrag=false; e.stopPropagation(); e.preventDefault(); return; } });
-
-      setPos(0, false);
-      startAuto();
-
-      /* window resize এ card width আপডেট */
-      window.addEventListener('resize', function(){
-        setPos(pos, false);
-      });
-
-      /* applyHeroCards এর জন্য global expose */
-      window._heroCarousel = { cardStep: cardStep };
+      setInterval(tick, 4500);
     })();
     </script>
+
 
     <!-- ═══════════════════════════════════════════════════════════
          <i class="fas fa-home"></i> HOME PAGE — ৭টি নতুন Section (Admin Panel এর সাথে কানেক্টেড)
@@ -7373,46 +7373,44 @@
     // ===========================
     async function loadSiteDataFromAPI() {
       try {
-        // ⚡ SINGLE BUNDLE CALL — সব data এক request এ
-        // Server এ in-memory cache (60s) আছে, তাই দ্রুত response পাবে।
-        // 8 second timeout — Render cold-start এ block করবে না।
-        var ctrl = new AbortController();
-        var to = setTimeout(function(){ ctrl.abort(); }, 8000);
-        var bundle;
-        try {
-          var resp = await fetch(API_BASE + '/api/public/initial-bundle', { signal: ctrl.signal });
-          clearTimeout(to);
-          bundle = await resp.json();
-          // Cache for instant next-load
-          try { localStorage.setItem('_siteDataCache', JSON.stringify({ t: Date.now(), d: bundle })); } catch(e){}
-        } catch(bundleErr) {
-          clearTimeout(to);
-          console.warn('Bundle fetch failed:', bundleErr && bundleErr.message);
-          // fallback: cached data যদি থাকে
-          try {
-            var cached = localStorage.getItem('_siteDataCache');
-            if (cached) bundle = JSON.parse(cached).d;
-          } catch(e){}
-          if (!bundle) throw bundleErr;
-        }
+        // Run all API calls in parallel
+        var results = await Promise.allSettled([
+          fetch(API_BASE + '/api/site-settings').then(r => r.json()),
+          fetch(API_BASE + '/api/theme-settings').then(r => r.json()),
+          fetch(API_BASE + '/api/hero-section').then(r => r.json()),
+          fetch(API_BASE + '/api/navigation').then(r => r.json()),
+          fetch(API_BASE + '/api/footer').then(r => r.json()),
+          fetch(API_BASE + '/api/welcome-popup').then(r => r.json()),
+          fetch(API_BASE + '/api/cta-section').then(r => r.json()),
+          fetch(API_BASE + '/api/featured-courses-config').then(r => r.json()),
+          fetch(API_BASE + '/api/courses').then(r => r.json()),
+          fetch(API_BASE + '/api/testimonials').then(r => r.json()),
+          fetch(API_BASE + '/api/instructors').then(r => r.json()),
+          fetch(API_BASE + '/api/notices').then(r => r.json()),
+          fetch(API_BASE + '/api/blog').then(r => r.json()),
+          fetch(API_BASE + '/api/contact-content').then(r => r.json()),
+          fetch(API_BASE + '/api/course-tabs').then(r => r.json()),
+          fetch(API_BASE + '/api/faqs').then(r => r.json()),
+          fetch(API_BASE + '/api/section-content').then(r => r.json()),
+        ]);
 
-        var siteSettings    = bundle.siteSettings    || null;
-        var themeSettings   = bundle.themeSettings   || null;
-        var heroData        = bundle.heroSection     || null;
-        var navData         = bundle.navigation      || null;
-        var footerData      = bundle.footer          || null;
-        var popupData       = bundle.welcomePopup    || null;
-        var ctaData         = bundle.ctaSection      || null;
-        var fcConfig        = bundle.featuredCoursesConfig || null;
-        var apiCourses      = bundle.courses         || null;
-        var apiTestimonials = bundle.testimonials    || null;
-        var apiInstructors  = bundle.instructors     || null;
-        var apiNotices      = bundle.notices         || null;
-        var apiBlogPosts    = bundle.blog            || null;
-        var contactData     = bundle.contactContent  || null;
-        var apiCourseTabs   = bundle.courseTabs      || null;
-        var faqData         = bundle.faqs            || null;
-        var sectionContent  = bundle.sectionContent  || null;
+        var siteSettings    = results[0].status === 'fulfilled' ? results[0].value : null;
+        var themeSettings   = results[1].status === 'fulfilled' ? results[1].value : null;
+        var heroData        = results[2].status === 'fulfilled' ? results[2].value : null;
+        var navData         = results[3].status === 'fulfilled' ? results[3].value : null;
+        var footerData      = results[4].status === 'fulfilled' ? results[4].value : null;
+        var popupData       = results[5].status === 'fulfilled' ? results[5].value : null;
+        var ctaData         = results[6].status === 'fulfilled' ? results[6].value : null;
+        var fcConfig        = results[7].status === 'fulfilled' ? results[7].value : null;
+        var apiCourses      = results[8].status === 'fulfilled' ? results[8].value : null;
+        var apiTestimonials = results[9].status === 'fulfilled' ? results[9].value : null;
+        var apiInstructors  = results[10].status === 'fulfilled' ? results[10].value : null;
+        var apiNotices      = results[11].status === 'fulfilled' ? results[11].value : null;
+        var apiBlogPosts    = results[12].status === 'fulfilled' ? results[12].value : null;
+        var contactData     = results[13].status === 'fulfilled' ? results[13].value : null;
+        var apiCourseTabs   = results[14].status === 'fulfilled' ? results[14].value : null;
+        var faqData         = results[15].status === 'fulfilled' ? results[15].value : null;
+        var sectionContent  = results[16].status === 'fulfilled' ? results[16].value : null;
 
         // ── THEME / CSS Variables ──
         if (themeSettings && themeSettings.vars) {
@@ -8185,51 +8183,6 @@
     applyFAQContent({});
     renderDefaultHomepageContent();
     renderDefaultInstructors();
-
-    // ⚡ INSTANT RENDER from localStorage cache (০ms)
-    // আগের visit এর data থাকলে সাথে সাথে দেখাবে — কোনো delay নেই।
-    // তারপর background এ fresh data fetch হবে।
-    (function applyCachedBundleInstantly(){
-      try {
-        var raw = localStorage.getItem('_siteDataCache');
-        if (!raw) return;
-        var parsed = JSON.parse(raw);
-        var bundle = parsed && parsed.d;
-        if (!bundle) return;
-        // Theme + site settings — visual stuff
-        if (bundle.themeSettings && bundle.themeSettings.vars) {
-          Object.entries(bundle.themeSettings.vars).forEach(function(kv){
-            document.documentElement.style.setProperty(kv[0], kv[1]);
-          });
-        }
-        var ss = bundle.siteSettings;
-        if (ss) {
-          if (ss.title) document.title = ss.title;
-          if (ss.primaryColor)     document.documentElement.style.setProperty('--primary', ss.primaryColor);
-          if (ss.greenColor)       document.documentElement.style.setProperty('--Green', ss.greenColor);
-          if (ss.primaryDarkColor) document.documentElement.style.setProperty('--primary-dark', ss.primaryDarkColor);
-          if (typeof applyLogo === 'function' && ss.logoHeader) applyLogo(ss.logoHeader);
-          if (typeof applyFooterLogo === 'function' && ss.logoFooter) applyFooterLogo(ss.logoFooter);
-          if (typeof applyTopBanner === 'function') applyTopBanner(ss);
-        }
-        // Courses + instructors — main visible content
-        if (bundle.courses && bundle.courses.length) {
-          window._allCoursesData = bundle.courses;
-          window._apiCourses = bundle.courses;
-          if (typeof renderAPICoursesOnHomepage === 'function') {
-            renderAPICoursesOnHomepage(bundle.courses, bundle.courseTabs);
-          }
-        }
-        if (bundle.instructors && bundle.instructors.length) {
-          window._apiInstructors = bundle.instructors;
-          if (typeof renderAPIInstructors === 'function') renderAPIInstructors(bundle.instructors);
-        }
-        if (bundle.testimonials && bundle.testimonials.length && typeof renderAPITestimonials === 'function') {
-          renderAPITestimonials(bundle.testimonials);
-        }
-        if (bundle.footer && typeof applyFooterData === 'function') applyFooterData(bundle.footer);
-      } catch(e){ /* silent */ }
-    })();
 
     // ── Init: load API data then check popup ──
     loadSiteDataFromAPI().then(function() {

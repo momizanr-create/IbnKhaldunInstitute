@@ -1831,111 +1831,7 @@ const DEFAULT_CONTENT_BUNDLE = {heroSections:{home:{title:'ইবনে খা�
 async function getContentBundle(){const s=await Settings.findOne({key:'contentBundle'});return Object.assign({},DEFAULT_CONTENT_BUNDLE,s&&s.value?s.value:{})}
 app.get('/api/public-content-bundle',async(req,res)=>{try{res.json(await getContentBundle())}catch(e){res.status(500).json({error:e.message})}});
 app.get('/api/admin/content-bundle',authMiddleware,async(req,res)=>{try{res.json(await getContentBundle())}catch(e){res.status(500).json({error:e.message})}});
-app.post('/api/admin/content-bundle',authMiddleware,async(req,res)=>{try{await Settings.findOneAndUpdate({key:'contentBundle'},{key:'contentBundle',value:req.body||{},updatedAt:new Date()},{upsert:true});invalidateBundleCache();res.json({message:'Content bundle saved'})}catch(e){res.status(500).json({error:e.message})}});
-
-// ============================================================
-// SUPER BUNDLE — সব homepage data এক request এ
-// ─────────────────────────────────────────────────────────────
-// এই endpoint টি index.html এর প্রথম লোডে ১৭টি API call এর
-// পরিবর্তে শুধু ১টি call করে। In-memory cache (60s) থাকায়
-// repeat request এ DB hit ছাড়াই instant response দেয়।
-// Admin save এর পর /api/admin/invalidate-bundle call করলে
-// cache reset হয়।
-// ============================================================
-let _bundleCache = null;
-let _bundleCacheAt = 0;
-const BUNDLE_TTL_MS = 60 * 1000; // 60 seconds
-
-function invalidateBundleCache() {
-  _bundleCache = null;
-  _bundleCacheAt = 0;
-}
-
-async function buildInitialBundle() {
-  const safe = (p) => p.then(v => v).catch(() => null);
-
-  const [
-    siteSettings,
-    themeSettings,
-    heroSection,
-    navigation,
-    footer,
-    welcomePopup,
-    ctaSection,
-    featuredCoursesConfig,
-    courses,
-    testimonials,
-    instructors,
-    notices,
-    blog,
-    contactContent,
-    courseTabs,
-    faqs,
-    sectionContent,
-    contentBundle,
-    categories,
-    features,
-  ] = await Promise.all([
-    safe(Settings.findOne({ key: 'siteSettings' }).then(s => s && s.value || null)),
-    safe(Settings.findOne({ key: 'themeSettings' }).then(s => s && s.value || null)),
-    safe(Settings.findOne({ key: 'heroSection' }).then(s => s && s.value || null)),
-    safe(Settings.findOne({ key: 'navigation' }).then(s => s && s.value || null)),
-    safe(Settings.findOne({ key: 'footer' }).then(s => s && s.value || null)),
-    safe(Settings.findOne({ key: 'welcomePopup' }).then(s => s && s.value || null)),
-    safe(Settings.findOne({ key: 'ctaSection' }).then(s => s && s.value || null)),
-    safe(Settings.findOne({ key: 'featuredCoursesConfig' }).then(s => s && s.value || null)),
-    safe(Course.find({}).lean()),
-    safe(Testimonial.find({}).lean()),
-    safe(Instructor.find({}).lean()),
-    safe(Notice.find({}).lean()),
-    safe(BlogPost.find({}).lean()),
-    safe(Settings.findOne({ key: 'contactContent' }).then(s => s && s.value || null)),
-    safe(CourseTab.find({}).lean()),
-    safe(Settings.findOne({ key: 'faqs' }).then(s => s && s.value || null)),
-    safe(Settings.findOne({ key: 'sectionContent' }).then(s => s && s.value || null)),
-    safe(getContentBundle()),
-    safe(Category.find({}).lean()),
-    safe(Feature.find({}).lean()),
-  ]);
-
-  return {
-    siteSettings, themeSettings, heroSection, navigation, footer,
-    welcomePopup, ctaSection, featuredCoursesConfig,
-    courses: courses || [], testimonials: testimonials || [],
-    instructors: instructors || [], notices: notices || [],
-    blog: blog || [], contactContent,
-    courseTabs: courseTabs || [], faqs, sectionContent,
-    contentBundle, categories: categories || [], features: features || [],
-    _generatedAt: Date.now(),
-  };
-}
-
-app.get('/api/public/initial-bundle', async (req, res) => {
-  try {
-    const now = Date.now();
-    if (_bundleCache && (now - _bundleCacheAt) < BUNDLE_TTL_MS) {
-      res.set('X-Bundle-Cache', 'HIT');
-      res.set('Cache-Control', 'public, max-age=30, stale-while-revalidate=60');
-      return res.json(_bundleCache);
-    }
-    const bundle = await buildInitialBundle();
-    _bundleCache = bundle;
-    _bundleCacheAt = now;
-    res.set('X-Bundle-Cache', 'MISS');
-    res.set('Cache-Control', 'public, max-age=30, stale-while-revalidate=60');
-    res.json(bundle);
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-});
-
-// Admin panel থেকে যেকোনো content save এর পর এই endpoint call হবে
-app.post('/api/admin/invalidate-bundle', authMiddleware, (req, res) => {
-  invalidateBundleCache();
-  res.json({ message: 'Bundle cache cleared' });
-});
-
-
+app.post('/api/admin/content-bundle',authMiddleware,async(req,res)=>{try{await Settings.findOneAndUpdate({key:'contentBundle'},{key:'contentBundle',value:req.body||{},updatedAt:new Date()},{upsert:true});res.json({message:'Content bundle saved'})}catch(e){res.status(500).json({error:e.message})}});
 
 // ============================================================
 // ANALYTICS & TRACKING CONFIG
@@ -2767,6 +2663,44 @@ app.delete('/api/admin/features/:id', authMiddleware, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+
+
+// ============================================================
+// 🎬 YouTube URL → Video ID extractor (server-side helper)
+// POST /api/utils/youtube-id  { url: "..." }  →  { id: "...", valid: true|false }
+// ============================================================
+function extractYoutubeId(value) {
+  const text = String(value || '').trim();
+  if (!text) return '';
+  if (/^[a-zA-Z0-9_-]{11}$/.test(text)) return text;
+  try {
+    const url = new URL(text);
+    const host = url.hostname.replace(/^www\./, '');
+    if (host === 'youtu.be') {
+      const p = url.pathname.split('/').filter(Boolean)[0];
+      if (p && /^[a-zA-Z0-9_-]{11}$/.test(p)) return p;
+    }
+    if (host.includes('youtube.com')) {
+      const v = url.searchParams.get('v');
+      if (v && /^[a-zA-Z0-9_-]{11}$/.test(v)) return v;
+      const parts = url.pathname.split('/').filter(Boolean);
+      for (let i = 0; i < parts.length; i++) {
+        if (['embed','shorts','live','v'].includes(parts[i]) && parts[i+1]) {
+          const pid = parts[i+1].split('?')[0].split('&')[0];
+          if (/^[a-zA-Z0-9_-]{11}$/.test(pid)) return pid;
+        }
+      }
+    }
+  } catch(e) {}
+  const m = text.match(/(?:v=|youtu\.be\/|embed\/|shorts\/|live\/|\/v\/)([a-zA-Z0-9_-]{11})/);
+  return m ? m[1] : '';
+}
+
+app.post('/api/utils/youtube-id', (req, res) => {
+  const { url } = req.body || {};
+  const id = extractYoutubeId(url);
+  res.json({ id, valid: !!id });
+});
 
 app.listen(PORT, () => console.log(`🚀 Server: http://localhost:${PORT}`));
   })
