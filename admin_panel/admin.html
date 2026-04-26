@@ -365,56 +365,161 @@
     .spinner { display: inline-block; width: 24px; height: 24px; border: 2px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.7s linear infinite; margin-bottom: 8px; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── MOBILE ── */
-    .hamburger { display: none; background: none; border: none; color: var(--text); font-size: 22px; cursor: pointer; padding: 4px; }
+    /* ══════════════════════════════════════════
+       MOBILE — সম্পূর্ণ মোবাইল ফ্রেন্ডলি সিস্টেম
+       ══════════════════════════════════════════ */
 
-    /* Sidebar overlay backdrop for mobile */
+    .hamburger { display: none; }
+
+    /* ── Sidebar backdrop (mobile overlay) ── */
     #sidebar-backdrop {
-      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55);
-      backdrop-filter: blur(2px); z-index: 49;
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(3px);
+      z-index: 48; transition: opacity 0.3s;
     }
     #sidebar-backdrop.open { display: block; }
 
+    /* ── Bottom Navigation Bar (mobile only) ── */
+    #mobile-bottom-nav {
+      display: none !important;
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: 64px; background: var(--bg2);
+      border-top: 1px solid var(--border);
+      z-index: 60;
+      padding: 0 4px;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+    }
+    #mobile-bottom-nav.visible {
+      display: flex !important;
+    }
+    .bottom-nav-inner {
+      display: flex; align-items: stretch;
+      height: 100%; max-width: 480px; margin: 0 auto;
+    }
+    .bnav-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 3px; cursor: pointer; border-radius: 12px;
+      transition: all 0.18s; padding: 6px 4px;
+      color: var(--text2); position: relative;
+      border: none; background: transparent; font-family: inherit;
+    }
+    .bnav-item:active { transform: scale(0.92); }
+    .bnav-item.active { color: var(--primary); }
+    .bnav-item.active .bnav-icon { background: rgba(245,197,24,0.15); }
+    .bnav-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; transition: background 0.18s;
+    }
+    .bnav-label { font-size: 10px; font-weight: 600; letter-spacing: 0.2px; line-height: 1; }
+    .bnav-badge {
+      position: absolute; top: 4px; right: calc(50% - 24px);
+      min-width: 16px; height: 16px; padding: 0 4px;
+      background: var(--red); color: #fff; border-radius: 999px;
+      font-size: 9px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    /* "আরো" বাটনের active indicator */
+    .bnav-item.menu-open .bnav-icon { background: rgba(245,197,24,0.15); color: var(--primary); }
+
     @media (max-width: 768px) {
-      .sidebar { transform: translateX(-100%); z-index: 50; }
-      .sidebar.open { transform: translateX(0); box-shadow: 4px 0 32px rgba(0,0,0,0.6); }
-      .main { margin-left: 0; }
-      .hamburger { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 10px; background: var(--bg3); border: 1px solid var(--border2) !important; }
+      /* Sidebar এখন left drawer */
+      .sidebar {
+        transform: translateX(-100%);
+        width: 280px !important;
+        z-index: 49;
+        box-shadow: none;
+        transition: transform 0.32s cubic-bezier(0.4,0,0.2,1),
+                    box-shadow 0.32s;
+      }
+      .sidebar.open {
+        transform: translateX(0);
+        box-shadow: 8px 0 40px rgba(0,0,0,0.55);
+      }
+      .main { margin-left: 0 !important; }
+      .hamburger { display: none !important; }
+
+      /* Bottom nav — লগইনের পরে .visible class দিয়ে দেখানো হবে */
+
+      /* Content-এর নিচে bottom nav-এর জায়গা */
+      .content { padding: 14px 12px 80px !important; }
+
+      /* Topbar সরল করা */
+      .topbar {
+        padding: 0 14px !important;
+        height: 56px !important;
+      }
+      .topbar-sub { display: none; }
+      .topbar-greeting { font-size: 16px !important; }
+      .topbar-uname { display: none !important; }
+      .topbar-user {
+        padding: 5px 8px 5px 5px !important;
+        border-radius: 50% !important;
+        width: 36px; height: 36px;
+        justify-content: center;
+      }
+      .topbar-user .topbar-avatar { width: 28px; height: 28px; font-size: 11px; }
+
+      /* Stats grid */
       .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-      .row2 { grid-template-columns: 1fr; }
+
+      /* Form grid */
+      .row2 { grid-template-columns: 1fr !important; }
+      .dashboard-grid { grid-template-columns: 1fr !important; }
+
+      /* Table scroll */
+      .card-body { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      table { min-width: 480px; }
+      th { padding: 9px 12px; font-size: 10.5px; }
+      td { padding: 11px 12px; font-size: 13px; }
+
+      /* Input zoom fix (iOS) */
+      .field input, .field textarea, .field select { font-size: 16px !important; }
+
+      /* Modal — bottom sheet */
+      .modal-overlay {
+        align-items: flex-end !important;
+        padding: 0 !important;
+      }
+      .modal {
+        max-width: 100% !important;
+        border-radius: 20px 20px 0 0 !important;
+        max-height: 88vh !important;
+        animation: sheetUp 0.3s cubic-bezier(0.34,1.1,0.64,1) !important;
+      }
+      @keyframes sheetUp {
+        from { transform: translateY(60px); opacity: 0; }
+        to   { transform: translateY(0);    opacity: 1; }
+      }
+      .modal-header { padding: 14px 18px 12px !important; }
+      .modal-body   { padding: 14px 18px !important; }
+      .modal-footer {
+        padding: 12px 18px 18px !important;
+        flex-direction: column-reverse !important;
+        gap: 8px !important;
+      }
+      .modal-footer .btn { width: 100% !important; justify-content: center; padding: 13px !important; font-size: 14px !important; }
+
+      /* Hide desktop-only elements */
       .hide-mobile { display: none !important; }
-      .topbar-greeting { font-size: 15px; }
-      .topbar { padding: 0 14px 0 60px; }
-      .topbar-uname { display: none; }
-      .content { padding: 14px; }
-      /* Modal mobile */
-      .modal { max-width: 100% !important; margin: 0; border-radius: 18px 18px 0 0; max-height: 92vh; }
-      .modal-overlay { align-items: flex-end; padding: 0; }
-      .modal-header { padding: 16px 18px 14px; }
-      .modal-body { padding: 14px 18px; }
-      .modal-footer { padding: 12px 18px; flex-direction: column-reverse; gap: 8px; }
-      .modal-footer .btn { width: 100%; justify-content: center; padding: 12px; }
-      /* Table mobile scroll */
-      .card-body { overflow-x: auto; }
-      table { min-width: 500px; }
-      th, td { padding: 10px 12px; font-size: 13px; }
-      /* Dashboard grid */
-      .dashboard-grid { grid-template-columns: 1fr; }
+      .notification-dropdown { width: calc(100vw - 24px) !important; right: -60px !important; }
+
       /* Page header */
       .page-header h2 { font-size: 17px; }
-      /* Topbar actions */
-      .notification-dropdown { width: min(340px, 94vw); }
+      .page-header p  { font-size: 12px; }
     }
+
     @media (max-width: 480px) {
-      .stats-grid { grid-template-columns: 1fr; }
-      .content { padding: 10px; }
-      .topbar { height: 54px; }
+      .stats-grid { grid-template-columns: 1fr !important; gap: 8px; }
       .stat-card { padding: 16px 14px; }
-      .stat-info h3 { font-size: 22px; }
+      .stat-info h3 { font-size: 24px; }
+      .content { padding: 10px 10px 80px !important; }
+      .card-header { padding: 14px 14px; }
+      .card-header h3 { font-size: 14px; }
       .btn { padding: 8px 14px; font-size: 12px; }
-      .btn-sm { padding: 5px 8px; font-size: 11px; }
-      .field input, .field textarea, .field select { font-size: 16px; /* prevents iOS zoom */ }
-      .login-box { padding: 32px 22px; margin: 12px; }
+      .btn-sm { padding: 5px 9px; font-size: 11px; }
+      .login-box { padding: 28px 18px; margin: 10px; max-width: calc(100vw - 20px); }
     }
 
   /* ── Thumbnail Drag & Drop ── */
@@ -483,26 +588,16 @@
       100% { background: var(--bg3); }
     }
 
-    /* Mobile responsive sidebar improvements */
-    @media (max-width: 900px) {
-      :root { --sidebar: 220px; }
-      .sidebar { transform: translateX(-100%); transition: transform 0.3s; }
-      .sidebar.open { transform: translateX(0); }
-      .main { margin-left: 0 !important; }
-      .mobile-menu-btn {
-        display: flex !important;
-        position: fixed; top: 14px; left: 14px; z-index: 999;
-        width: 42px; height: 42px;
-        background: var(--bg2); border: 1px solid var(--border2);
-        border-radius: 10px; align-items: center; justify-content: center;
-        color: var(--primary); font-size: 18px;
-      }
-    }
     .mobile-menu-btn { display: none; }
 
     /* Scrollbar polish */
     ::-webkit-scrollbar-thumb { background: var(--primary); opacity: 0.4; border-radius: 6px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--primary-dark); }
+
+    /* Mobile-only sidebar close button */
+    @media (max-width: 768px) {
+      #sidebar-close-btn { display: flex !important; }
+    }
 
     /* Empty state */
     .empty-state {
@@ -554,7 +649,35 @@
 <!-- ═══════════════════════════════════════════════
      APP SHELL
 ═══════════════════════════════════════════════ -->
+<!-- ── Sidebar Backdrop (mobile) ── -->
 <div id="sidebar-backdrop" onclick="closeSidebar()"></div>
+
+<!-- ══ মোবাইল নিচের নেভিগেশন বার ══ -->
+<div id="mobile-bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="bnav-item active" id="bnav-dashboard" onclick="mobileNavTo('dashboard')">
+      <div class="bnav-icon">📊</div>
+      <span class="bnav-label">ড্যাশবোর্ড</span>
+    </button>
+    <button class="bnav-item" id="bnav-courses" onclick="mobileNavTo('courses')">
+      <div class="bnav-icon">📚</div>
+      <span class="bnav-label">কোর্স</span>
+    </button>
+    <button class="bnav-item" id="bnav-enrollments" onclick="mobileNavTo('enrollments')">
+      <div class="bnav-icon">📋</div>
+      <span class="bnav-label">এনরোলমেন্ট</span>
+    </button>
+    <button class="bnav-item" id="bnav-notifications" onclick="toggleNotifications()">
+      <div class="bnav-icon">🔔<span class="bnav-badge" id="bnav-notif-count" style="display:none">0</span></div>
+      <span class="bnav-label">নোটিফিকেশন</span>
+    </button>
+    <button class="bnav-item" id="bnav-menu" onclick="toggleSidebar()">
+      <div class="bnav-icon">☰</div>
+      <span class="bnav-label">আরো</span>
+    </button>
+  </div>
+</div>
+
 <div id="app">
   <div class="layout">
 
@@ -567,6 +690,7 @@
             <div class="sidebar-brand">ইবনে খালদুন</div>
             <div class="sidebar-sub">Admin Dashboard</div>
           </div>
+          <button onclick="closeSidebar()" id="sidebar-close-btn" style="display:none;margin-left:auto;background:var(--bg3);border:1px solid var(--border);color:var(--text2);border-radius:8px;width:30px;height:30px;align-items:center;justify-content:center;font-size:16px;cursor:pointer;flex-shrink:0">✕</button>
         </div>
       </div>
       <nav class="sidebar-nav">
@@ -655,7 +779,7 @@
     <div class="main">
       <div class="topbar">
         <div style="display:flex;align-items:center;gap:14px">
-          <button class="hamburger" onclick="toggleSidebar()">☰</button>
+          <button class="hamburger" onclick="toggleSidebar()" style="display:none">☰</button>
           <div class="topbar-left">
             <div class="topbar-greeting" id="page-title">ড্যাশবোর্ড</div>
             <div class="topbar-sub" id="topbar-sub-text">স্বাগতম, আবার দেখা হলো!</div>
@@ -2611,6 +2735,12 @@ function renderAdminNotifications(data) {
     count.textContent = unread > 99 ? '99+' : unread;
     count.style.display = unread ? 'flex' : 'none';
   }
+  // Bottom nav badge sync
+  var bnavBadge = document.getElementById('bnav-notif-count');
+  if (bnavBadge) {
+    bnavBadge.textContent = unread > 99 ? '99+' : unread;
+    bnavBadge.style.display = unread ? 'flex' : 'none';
+  }
   if (!list) return;
   const items = data?.notifications || [];
   list.innerHTML = items.length ? items.map(n => `
@@ -2702,6 +2832,9 @@ document.getElementById('login-username').addEventListener('keydown', e => {
 function showApp(username) {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
+  // মোবাইলে bottom nav দেখাও (লগইনের পরে)
+  var bn = document.getElementById('mobile-bottom-nav');
+  if (bn) bn.classList.add('visible');
   document.getElementById('admin-name-display').textContent = username || 'Admin';
   document.getElementById('admin-avatar-letter').textContent = (username || 'A')[0].toUpperCase();
   document.getElementById('topbar-uname-display').textContent = username || 'Admin';
@@ -2719,16 +2852,36 @@ function doLogout() {
 function toggleSidebar() {
   var sb = document.getElementById('sidebar');
   var bd = document.getElementById('sidebar-backdrop');
-  sb.classList.toggle('open');
-  if (sb.classList.contains('open')) {
-    bd.classList.add('open');
-  } else {
+  var menuBtn = document.getElementById('bnav-menu');
+  var isOpen = sb.classList.contains('open');
+  if (isOpen) {
+    sb.classList.remove('open');
     bd.classList.remove('open');
+    if (menuBtn) menuBtn.classList.remove('menu-open');
+  } else {
+    sb.classList.add('open');
+    bd.classList.add('open');
+    if (menuBtn) menuBtn.classList.add('menu-open');
   }
 }
+
 function closeSidebar() {
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('sidebar-backdrop').classList.remove('open');
+  var menuBtn = document.getElementById('bnav-menu');
+  if (menuBtn) menuBtn.classList.remove('menu-open');
+}
+
+/* মোবাইল bottom nav থেকে navigate করার ফাংশন */
+function mobileNavTo(page) {
+  // bottom nav active state আপডেট
+  document.querySelectorAll('.bnav-item').forEach(b => b.classList.remove('active'));
+  var activeBtn = document.getElementById('bnav-' + page);
+  if (activeBtn) activeBtn.classList.add('active');
+  // sidebar বন্ধ করো
+  closeSidebar();
+  // page navigate
+  navTo(page);
 }
 
 // ── On load: check token ──
@@ -2762,9 +2915,18 @@ function navTo(page) {
   const navEl = document.querySelector(`.nav-item[onclick="navTo('${page}')"]`);
   if (navEl) navEl.classList.add('active');
   document.getElementById('page-title').textContent = pageTitles[page] || page;
-  document.getElementById('sidebar').classList.remove('open');
-  var bd = document.getElementById('sidebar-backdrop');
-  if (bd) bd.classList.remove('open');
+  // Sidebar ও backdrop বন্ধ করো
+  closeSidebar();
+  // Bottom nav sync — শুধু known bottom nav items-এর জন্য
+  var bnavMap = ['dashboard','courses','enrollments'];
+  if (bnavMap.includes(page)) {
+    document.querySelectorAll('.bnav-item').forEach(b => b.classList.remove('active'));
+    var ab = document.getElementById('bnav-' + page);
+    if (ab) ab.classList.add('active');
+  } else {
+    // অন্য page-এ গেলে bottom nav থেকে active সরাও
+    document.querySelectorAll('.bnav-item[id^="bnav-"]:not(#bnav-menu):not(#bnav-notifications)').forEach(b => b.classList.remove('active'));
+  }
 
   const loaders = {
     courses: loadCourses, instructors: loadInstructors,
@@ -6098,8 +6260,8 @@ async function loadUsers() {
   } catch(e) { toast('লোড হয়নি', 'error'); }
 }
 
-// Modal overlay background click করলে বন্ধ হবে না — শুধু বাতিল বাটনে বন্ধ হবে
-// (Intentionally disabled outside-click-to-close)
+// Modal overlay বাইরে ক্লিক করলে বন্ধ হবে না — শুধু বাতিল বাটনে বন্ধ হবে
+// document.querySelectorAll('.modal-overlay') — intentionally disabled
 
 
 // ══ SECTION CONTENT FUNCTIONS ══
