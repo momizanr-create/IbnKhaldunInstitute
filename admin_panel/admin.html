@@ -2882,6 +2882,7 @@ const pageTitles = {
   users: 'ব্যবহারকারী',
   'blog-posts': 'ব্লগ', 'contact-content': 'কনট্যাক্ট', 'about-page': 'আমাদের সম্পর্কে',
   faqs: 'FAQ', analytics: 'Analytics & Tracking',
+  'home-join-video': '🎬 "আজই যুক্ত হোন" ভিডিও',
 };
 
 function navTo(page) {
@@ -7052,108 +7053,427 @@ document.addEventListener('DOMContentLoaded',function(){
 
 
         <!-- ═══════════════════════════════════════════════════
-             🎬 হোম পেজ — "আজই যুক্ত হোন" ভিডিও ম্যানেজার (v8)
+             🎬 হোম পেজ — "আজই যুক্ত হোন" ভিডিও ম্যানেজার (v9)
              ═══════════════════════════════════════════════════ -->
         <div class="page" id="page-home-join-video">
+
+          <!-- Page Header -->
           <div class="page-header">
             <div>
-              <h1 class="page-title">🎬 "আজই যুক্ত হোন" সেকশনের YouTube ভিডিও</h1>
-              <p class="page-sub">হোম পেজের "আজই যুক্ত হোন" সেকশনে যে YouTube ভিডিও দেখাবে তা এখান থেকে সেট করুন।</p>
+              <h2>🎬 "আজই যুক্ত হোন" ভিডিও</h2>
+              <p>হোম পেজের "আজই যুক্ত হোন" সেকশনে যে YouTube ভিডিও দেখাবে তা এখান থেকে সেট করুন।</p>
             </div>
           </div>
-          <div class="card" style="max-width:720px">
-            <div style="padding:20px">
-              <label style="display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px">
-                YouTube URL অথবা ১১-অক্ষরের ভিডিও ID
-              </label>
-              <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-                <input type="text" id="hjv-input"
-                  placeholder="https://www.youtube.com/watch?v=LXb3EKWsInQ অথবা LXb3EKWsInQ"
-                  style="flex:1;min-width:260px;padding:11px 14px;border:1px solid var(--border2);border-radius:10px;background:var(--bg3);color:var(--text);font-size:14px"/>
-                <button type="button" id="hjv-save"
-                  style="padding:11px 22px;background:var(--primary);color:#0f0f0f;border:0;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer">
-                  💾 সেভ করুন
-                </button>
+
+          <!-- Main Card -->
+          <div class="card hjv-card">
+
+            <!-- Card Header -->
+            <div class="card-header">
+              <div class="card-header-left">
+                <h3>📹 YouTube ভিডিও সেটিং</h3>
+                <span class="card-subtitle">URL অথবা ভিডিও ID দিন এবং সেভ করুন</span>
               </div>
-              <div id="hjv-msg" style="margin-top:12px;font-size:13px;color:var(--text2)">লোড হচ্ছে...</div>
-              <div style="margin-top:18px;padding:14px;background:var(--bg3);border-radius:10px;border:1px solid var(--border)">
-                <div style="font-size:12px;color:var(--text2);margin-bottom:6px">📺 প্রিভিউ:</div>
-                <div id="hjv-preview" style="aspect-ratio:16/9;background:#000;border-radius:8px;overflow:hidden">
-                  <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#666;font-size:13px">কোনো ভিডিও লোড হয়নি</div>
+              <!-- Status badge — JS দিয়ে আপডেট হবে -->
+              <span id="hjv-status-badge" class="badge badge-yellow" style="display:none">লোড হচ্ছে…</span>
+            </div>
+
+            <div class="hjv-body">
+
+              <!-- ── Input Row ── -->
+              <div class="hjv-input-group">
+                <label class="hjv-label" for="hjv-input">
+                  YouTube URL অথবা ১১-অক্ষরের ভিডিও ID
+                </label>
+                <div class="hjv-row">
+                  <input
+                    type="text"
+                    id="hjv-input"
+                    class="hjv-input"
+                    placeholder="https://youtu.be/LXb3EKWsInQ  অথবা  LXb3EKWsInQ"
+                    autocomplete="off"
+                    spellcheck="false"
+                  />
+                  <button type="button" id="hjv-save" class="hjv-save-btn">
+                    💾 সেভ করুন
+                  </button>
+                </div>
+                <!-- Status / feedback message -->
+                <div id="hjv-msg" class="hjv-msg">⏳ লোড হচ্ছে…</div>
+              </div>
+
+              <!-- ── Divider ── -->
+              <div class="hjv-divider"></div>
+
+              <!-- ── Preview ── -->
+              <div class="hjv-preview-section">
+                <div class="hjv-preview-label">📺 লাইভ প্রিভিউ</div>
+                <div class="hjv-preview-wrap">
+                  <div id="hjv-preview" class="hjv-preview-box">
+                    <div class="hjv-preview-empty">
+                      <span style="font-size:32px">🎬</span>
+                      <span>কোনো ভিডিও সেট করা নেই</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- IKH Patch v5 (FAB) removed — replaced by proper page-home-join-video section -->
+              <!-- ── Help Tips ── -->
+              <div class="hjv-tips">
+                <div class="hjv-tip-title">📌 সাপোর্টেড ফরম্যাট:</div>
+                <div class="hjv-tip-grid">
+                  <div class="hjv-tip-item"><span class="hjv-tip-dot"></span>https://www.youtube.com/watch?v=XXXXXXXXXXX</div>
+                  <div class="hjv-tip-item"><span class="hjv-tip-dot"></span>https://youtu.be/XXXXXXXXXXX</div>
+                  <div class="hjv-tip-item"><span class="hjv-tip-dot"></span>https://youtube.com/shorts/XXXXXXXXXXX</div>
+                  <div class="hjv-tip-item"><span class="hjv-tip-dot"></span>শুধু ১১ অক্ষরের ID: XXXXXXXXXXX</div>
+                </div>
+              </div>
 
+            </div><!-- /.hjv-body -->
+          </div><!-- /.card -->
+        </div><!-- /#page-home-join-video -->
 
+<!-- ═══════════════════════════════════════════════════
+     🎬 HJV v9 — CSS + Logic
+     ═══════════════════════════════════════════════════ -->
+<style>
+/* ── Card width ── */
+.hjv-card { max-width: 760px; }
 
-<!-- IKH v8 — Home Join Video page logic -->
+/* ── Body padding ── */
+.hjv-body { padding: 22px 22px 26px; }
+@media (max-width: 480px) { .hjv-body { padding: 14px 14px 20px; } }
+
+/* ── Label ── */
+.hjv-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text3);
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+/* ── Input group ── */
+.hjv-input-group { margin-bottom: 0; }
+
+/* ── Input + button row ── */
+.hjv-row {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+@media (max-width: 560px) {
+  .hjv-row { flex-direction: column; }
+}
+
+/* ── Text input ── */
+.hjv-input {
+  flex: 1;
+  padding: 11px 14px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  min-width: 0;          /* flex shrink fix */
+}
+.hjv-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+@media (max-width: 560px) {
+  .hjv-input { font-size: 16px; } /* iOS zoom fix */
+}
+
+/* ── Save button ── */
+.hjv-save-btn {
+  padding: 11px 22px;
+  background: linear-gradient(135deg, var(--primary), #e6b800);
+  color: #0f0f0f;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: transform .15s, box-shadow .15s;
+  box-shadow: 0 4px 14px rgba(245,197,24,.3);
+}
+.hjv-save-btn:hover  { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(245,197,24,.4); }
+.hjv-save-btn:active { transform: translateY(0); }
+.hjv-save-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+@media (max-width: 560px) {
+  .hjv-save-btn { padding: 13px; width: 100%; justify-content: center; }
+}
+
+/* ── Feedback message ── */
+.hjv-msg {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--text2);
+  min-height: 20px;
+  line-height: 1.5;
+  transition: color .2s;
+}
+
+/* ── Divider ── */
+.hjv-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 20px 0;
+}
+
+/* ── Preview section ── */
+.hjv-preview-section { margin-bottom: 20px; }
+
+.hjv-preview-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text2);
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.hjv-preview-wrap {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid var(--border2);
+  /* 16:9 responsive using padding-top trick — works on all browsers */
+  position: relative;
+  padding-top: 56.25%;
+}
+
+.hjv-preview-box {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hjv-preview-box iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+.hjv-preview-empty {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #555;
+  font-size: 13px;
+}
+
+/* ── Help tips ── */
+.hjv-tips {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.hjv-tip-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text3);
+  margin-bottom: 10px;
+}
+.hjv-tip-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 16px;
+}
+@media (max-width: 560px) {
+  .hjv-tip-grid { grid-template-columns: 1fr; }
+}
+.hjv-tip-item {
+  font-size: 12px;
+  color: var(--text2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  word-break: break-all;
+}
+.hjv-tip-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+  flex-shrink: 0;
+}
+</style>
+
 <script>
+/* ═══════════════════════════════════════════════
+   🎬 IKH v9 — Home Join Video Manager
+   ═══════════════════════════════════════════════ */
 (function(){
-  function $(s,r){return (r||document).querySelector(s)}
+  'use strict';
+
+  function qs(sel){ return document.querySelector(sel); }
+
+  /* ── YouTube ID extractor ── */
   function extractYTId(s){
-    s=String(s||'').trim();
-    if(/^[A-Za-z0-9_\-]{11}$/.test(s))return s;
-    var m=s.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([A-Za-z0-9_\-]{11})/);
-    return m?m[1]:'';
+    s = String(s || '').trim();
+    if (/^[A-Za-z0-9_\-]{11}$/.test(s)) return s;
+    var m = s.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([A-Za-z0-9_\-]{11})/);
+    return m ? m[1] : '';
   }
+
+  /* ── Update status badge ── */
+  function setBadge(text, type){
+    var b = qs('#hjv-status-badge');
+    if (!b) return;
+    b.style.display = '';
+    b.className = 'badge badge-' + (type || 'yellow');
+    b.textContent = text;
+  }
+
+  /* ── Update feedback message ── */
+  function setMsg(text, color){
+    var m = qs('#hjv-msg');
+    if (!m) return;
+    m.style.color = color || 'var(--text2)';
+    m.textContent = text;
+  }
+
+  /* ── Render preview iframe ── */
   function setPreview(id){
-    var box=$('#hjv-preview'); if(!box) return;
-    if(!id){ box.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#666;font-size:13px">কোনো ভিডিও লোড হয়নি</div>'; return;}
-    box.innerHTML='<iframe src="https://www.youtube.com/embed/'+id+'" frameborder="0" allowfullscreen style="width:100%;height:100%;border:0"></iframe>';
+    var box = qs('#hjv-preview');
+    if (!box) return;
+    if (!id){
+      box.innerHTML = '<div class="hjv-preview-empty"><span style="font-size:32px">🎬</span><span>কোনো ভিডিও সেট করা নেই</span></div>';
+      return;
+    }
+    box.innerHTML = '<iframe src="https://www.youtube.com/embed/' + id +
+      '?rel=0&modestbranding=1" frameborder="0" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>';
   }
+
+  /* ── Load current video from API ── */
   async function loadHJV(){
-    var msg=$('#hjv-msg'); if(!msg) return;
-    if(typeof window.api!=='function'){ msg.textContent='⚠ admin api() পাওয়া যায়নি'; return; }
-    try{
-      var b=await window.api('GET','/api/admin/content-bundle');
-      var cur=(b&&(b.joinVideoId||b.homeJoinVideoId))||'';
-      $('#hjv-input').value=cur;
-      msg.style.color='var(--text2)';
-      msg.textContent=cur?('✓ বর্তমান ID: '+cur):'এখনো কোনো ভিডিও সেট নেই (ডিফল্ট দেখানো হচ্ছে)';
+    if (typeof window.api !== 'function'){
+      setMsg('⚠ admin api() পাওয়া যায়নি', '#ef4444');
+      setBadge('এরর', 'red');
+      return;
+    }
+    setMsg('⏳ লোড হচ্ছে…', 'var(--text2)');
+    setBadge('লোড হচ্ছে…', 'yellow');
+    try {
+      var b   = await window.api('GET', '/api/admin/content-bundle');
+      var cur = (b && (b.joinVideoId || b.homeJoinVideoId)) || '';
+      var inp = qs('#hjv-input');
+      if (inp) inp.value = cur;
+      if (cur){
+        setMsg('✓ বর্তমান ভিডিও ID: ' + cur, 'var(--text2)');
+        setBadge('সেট আছে ✓', 'green');
+      } else {
+        setMsg('এখনো কোনো ভিডিও সেট করা নেই।', 'var(--text2)');
+        setBadge('সেট নেই', 'yellow');
+      }
       setPreview(cur);
-    }catch(e){ msg.textContent='লোড হয়নি — সেভ করতে পারবেন'; }
+    } catch(e){
+      setMsg('লোড হয়নি — তবে নতুন ID সেভ করতে পারবেন।', 'var(--text2)');
+      setBadge('লোড এরর', 'red');
+    }
   }
+
+  /* ── Save video ID ── */
   async function saveHJV(){
-    var raw=$('#hjv-input').value;
-    var id=extractYTId(raw);
-    var msg=$('#hjv-msg');
-    if(!id){ msg.style.color='#ef4444'; msg.textContent='❌ সঠিক YouTube URL/ID দিন'; return; }
-    try{
-      var b=await window.api('GET','/api/admin/content-bundle').catch(function(){return {}});
-      b=b||{}; b.joinVideoId=id;
-      await window.api('POST','/api/admin/content-bundle',b);
-      msg.style.color='#22c55e';
-      msg.textContent='✅ সেভ হয়েছে — ID: '+id;
+    var inp = qs('#hjv-input');
+    if (!inp) return;
+    var id  = extractYTId(inp.value);
+    if (!id){
+      setMsg('❌ সঠিক YouTube URL বা ১১-অক্ষরের ID দিন।', '#ef4444');
+      setBadge('ভুল ID', 'red');
+      inp.focus();
+      return;
+    }
+    var btn = qs('#hjv-save');
+    if (btn){ btn.disabled = true; btn.textContent = '⏳ সেভ হচ্ছে…'; }
+    try {
+      var b = await window.api('GET', '/api/admin/content-bundle').catch(function(){ return {}; });
+      b = b || {};
+      b.joinVideoId = id;
+      await window.api('POST', '/api/admin/content-bundle', b);
+      setMsg('✅ সফলভাবে সেভ হয়েছে — ID: ' + id, '#22c55e');
+      setBadge('সেভ হয়েছে ✓', 'green');
       setPreview(id);
-      if(typeof toast==='function')toast('✅ ভিডিও ID সেভ হয়েছে');
-    }catch(e){ msg.style.color='#ef4444'; msg.textContent='❌ সমস্যা: '+(e.message||e); }
+      if (typeof toast === 'function') toast('✅ ভিডিও ID সেভ হয়েছে');
+    } catch(e){
+      setMsg('❌ সমস্যা হয়েছে: ' + (e.message || e), '#ef4444');
+      setBadge('সেভ এরর', 'red');
+    } finally {
+      if (btn){ btn.disabled = false; btn.textContent = '💾 সেভ করুন'; }
+    }
   }
-  // Wire button when DOM ready
-  document.addEventListener('click',function(ev){
-    if(ev.target&&ev.target.id==='hjv-save'){ saveHJV(); }
+
+  /* ── Button click listener ── */
+  document.addEventListener('click', function(ev){
+    if (ev.target && ev.target.id === 'hjv-save'){ saveHJV(); }
   });
-  // Hook navTo
-  function hookNavTo(){
-    var orig=window.navTo;
-    if(typeof orig!=='function'){ setTimeout(hookNavTo,300); return; }
-    if(orig.__hjvHooked) return;
-    var wrapped=function(p){
-      try{orig(p);}catch(e){}
-      if(p==='home-join-video'){ setTimeout(loadHJV,80); }
-    };
-    wrapped.__hjvHooked=true;
-    window.navTo=wrapped;
-    // Also register page title
-    if(window.pageTitles){ window.pageTitles['home-join-video']='🎬 হোম যুক্ত হোন ভিডিও'; }
+
+  /* ── Enter key on input ── */
+  document.addEventListener('keydown', function(ev){
+    if (ev.key === 'Enter' && ev.target && ev.target.id === 'hjv-input'){ saveHJV(); }
+  });
+
+  /* ── Auto-detect paste → extract ID immediately ── */
+  document.addEventListener('paste', function(ev){
+    if (!ev.target || ev.target.id !== 'hjv-input') return;
+    setTimeout(function(){
+      var id = extractYTId(ev.target.value);
+      if (id && id !== ev.target.value){ ev.target.value = id; }
+    }, 20);
+  });
+
+  /* ── Register page title ── */
+  function registerTitle(){
+    if (window.pageTitles) window.pageTitles['home-join-video'] = '🎬 "আজই যুক্ত হোন" ভিডিও';
   }
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',hookNavTo);
-  } else { hookNavTo(); }
-  console.log('✅ IKH v8 Home Join Video page ready');
+
+  /* ── Watch page activation via MutationObserver (chain-safe) ── */
+  function watchPage(){
+    registerTitle();
+    var pg = document.getElementById('page-home-join-video');
+    if (!pg) return;
+    var obs = new MutationObserver(function(muts){
+      muts.forEach(function(m){
+        if (m.attributeName === 'class' && pg.classList.contains('active')){
+          loadHJV();
+        }
+      });
+    });
+    obs.observe(pg, { attributes: true });
+    /* If already active on load */
+    if (pg.classList.contains('active')) loadHJV();
+  }
+
+  /* ── Also catch nav-item clicks (belt-and-suspenders) ── */
+  document.addEventListener('click', function(ev){
+    var ni = ev.target.closest && ev.target.closest('.nav-item[onclick]');
+    if (!ni) return;
+    var oc = ni.getAttribute('onclick') || '';
+    if (oc.indexOf('home-join-video') !== -1){ setTimeout(loadHJV, 120); }
+  });
+
+  /* ── Boot ── */
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', watchPage);
+  } else {
+    watchPage();
+  }
+
+  console.log('✅ IKH v9 Home Join Video Manager ready');
 })();
 </script>
 

@@ -497,6 +497,7 @@
     @media (max-width: 768px) {
       .nav-signin-desktop { display: none !important; }
     }
+    .eyebrow-br { display: none; }
     .fade-in { opacity: 0; transform: translateY(22px); transition: opacity 0.55s ease, transform 0.55s ease; }
     .fade-in.visible { opacity: 1; transform: none; }
 
@@ -3877,14 +3878,13 @@
 
         <!-- LEFT: Headline, sub, CTAs, stats -->
         <div class="hero-left fade-in">
-          <span class="hero-eyebrow">ইবনে খালদুন ইনস্টিটিউট</span>
+          <span class="hero-eyebrow">আসসালাম</span>
           <h1>
-            শিখুন <span class="accent">দক্ষতা</span>,<br>
-            গড়ুন <em>উজ্জ্বল ভবিষ্যৎ</em>
+            ইসলামী জ্ঞান অনলাইনে শিখুন<br>
+            <em>যেকোনো জায়গা থেকে</em>
           </h1>
           <p class="hero-sub">
-            <strong>কুরআন, সীরাহ, ফিকাহ</strong> থেকে শুরু করে আধুনিক <strong>প্রোডাক্টিভিটি</strong> ও <strong>হোমস্কুলিং</strong> —
-            বিশেষজ্ঞ শিক্ষকদের নেতৃত্বে ঘরে বসে শিখুন, যেকোনো সময়, যেকোনো ডিভাইস থেকে।
+            বিশেষজ্ঞ ইন্সট্রাক্টরদের কাছ থেকে <strong>কুরআন, আরবি</strong> ও <strong>ইসলামী বিষয়ে</strong> জ্ঞান অর্জন করুন।
           </p>
           <div class="hero-cta-row">
             <button class="hero-cta hero-cta-primary" onclick="navigate('courses')">
@@ -11104,232 +11104,414 @@
      IKH Patch v7 — Mobile hero: cards FIRST then text + carousel fixes
      ═══════════════════════════════════════════════════════════════════ -->
 <style id="ikh-v7-style">
+/* ═══════════════════════════════════════════════════════════
+   IKH Mobile Hero Fix — v8 (সম্পূর্ণ নতুন, stable)
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Desktop featured card: hide on mobile, show carousel instead ── */
 @media (max-width: 768px){
-  /* ── Reorder: cards (hero-right) FIRST, text (hero-left) SECOND ── */
+  /* Hero wrapper: scroll করতে পারবে, কোনো height lock নেই */
+  .hero{
+    min-height:auto !important;
+    height:auto !important;
+    padding-top:0 !important;
+    padding-bottom:0 !important;
+  }
   .hero .hero-inner{
     display:flex !important;
     flex-direction:column !important;
-    height:100dvh !important;
-    max-height:100dvh !important;
-    padding:14px 16px 18px !important;
-    gap:10px !important;
-    overflow:hidden !important;
+    height:auto !important;
+    max-height:none !important;
+    padding:16px 16px 18px !important;
+    gap:12px !important;
+    overflow:visible !important;
     justify-content:flex-start !important;
   }
+
+  /* Cards আগে, text পরে */
   .hero .hero-right{
     order:1 !important;
     width:100% !important;
-    flex:0 0 auto !important;
-    margin-top:6px !important;
+    flex:none !important;
+    margin:0 !important;
     padding:0 !important;
-    min-height:0 !important;
-  }
-  .hero .hero-left{
-    order:2 !important;
-    width:100% !important;
-    flex:1 1 auto !important;
-    text-align:center !important;
     display:flex !important;
     flex-direction:column !important;
     align-items:center !important;
-    justify-content:center !important;
-    gap:8px !important;
-    padding:0 4px !important;
-    min-height:0 !important;
   }
-  .hero .hero-left .hero-eyebrow{font-size:11px !important;margin-bottom:0 !important}
+
+  /* Desktop feature card — মোবাইলে লুকিয়ে ফেলো */
+  .hero .hero-feature-card{
+    display:none !important;
+  }
+
+  /* Floating chips — লুকাও */
+  .hero .hero-float-chip,
+  .hero .hero-search,
+  .hero-search-wrap{
+    display:none !important;
+  }
+
+  /* Hero left — text section */
+  .hero .hero-left{
+    order:2 !important;
+    width:100% !important;
+    flex:none !important;
+    text-align:left !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:flex-start !important;
+    gap:0 !important;
+    padding:0 !important;
+  }
+
+  .hero .hero-left .hero-eyebrow{
+    font-size:11px !important;
+    margin-bottom:10px !important;
+    text-align:left !important;
+    white-space:nowrap !important;
+    max-width:none !important;
+  }
   .hero .hero-left h1{
-    font-size:clamp(20px, 6vw, 26px) !important;
+    font-size:clamp(22px, 6.5vw, 30px) !important;
     line-height:1.25 !important;
-    margin:2px 0 !important;
+    margin-bottom:12px !important;
+    text-align:left !important;
   }
   .hero .hero-left .hero-sub{
-    font-size:12.5px !important;
-    line-height:1.55 !important;
-    margin:0 !important;
-    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+    font-size:13px !important;
+    line-height:1.65 !important;
+    margin-bottom:10px !important;
+    max-width:100% !important;
+    text-align:left !important;
   }
   .hero .hero-cta-row{
     flex-direction:row !important;
     flex-wrap:wrap !important;
-    justify-content:center !important;
+    justify-content:flex-start !important;
     gap:8px !important;
-    margin-top:4px !important;
+    margin-bottom:10px !important;
     width:100% !important;
   }
   .hero .hero-cta{
-    padding:10px 14px !important;
+    padding:11px 18px !important;
     font-size:12.5px !important;
-    flex:1 1 auto;
+    flex:1 1 auto !important;
     max-width:48% !important;
+    justify-content:center !important;
   }
   .hero .hero-stats-row{
     display:flex !important;
-    justify-content:space-around !important;
+    justify-content:flex-start !important;
     width:100% !important;
-    gap:6px !important;
-    margin-top:6px !important;
+    gap:20px !important;
+    padding-top:14px !important;
+    margin-top:0 !important;
+    flex-wrap:nowrap !important;
   }
-  .hero .hero-stat-num{font-size:15px !important}
+  .hero .hero-stat-num{font-size:16px !important}
   .hero .hero-stat-lbl{font-size:10.5px !important}
+}
 
-  /* ── Carousel sizing fixes ── */
+/* ── Carousel — সঠিক সাইজিং ── */
+@media (max-width: 768px){
+  /* Carousel container */
   .ikh-mhero-carousel{
-    width:78% !important;
-    max-width:280px !important;
-    aspect-ratio:1/1.15 !important;
+    position:relative !important;
+    width:88% !important;
+    max-width:320px !important;
+    height:220px !important;
     margin:0 auto !important;
-    perspective:1200px !important;
+    perspective:1000px !important;
+    overflow:visible !important;
   }
+
+  /* প্রতিটি card — absolute positioned inside carousel */
   .ikh-mhero-carousel .ikh-cs-card{
+    position:absolute !important;
+    width:100% !important;
+    height:100% !important;
     border-radius:14px !important;
-    box-shadow:0 18px 40px -12px rgba(0,0,0,.55), 0 4px 12px rgba(0,0,0,.25) !important;
+    box-shadow:0 12px 32px rgba(0,0,0,.45) !important;
     background:#fff !important;
+    overflow:hidden !important;
+    transition:transform 0.45s cubic-bezier(0.22,0.61,0.36,1), opacity 0.45s !important;
+    cursor:pointer !important;
+    will-change:transform, opacity !important;
   }
-  .ikh-mhero-carousel .ikh-cs-card .img{height:52% !important}
-  .ikh-mhero-carousel .ikh-cs-card .body{padding:9px 11px !important}
-  .ikh-mhero-carousel .ikh-cs-card .ttl{font-size:12.5px !important;-webkit-line-clamp:2 !important}
-  .ikh-mhero-carousel .ikh-cs-card .meta{font-size:10px !important;gap:8px !important;margin-top:5px !important}
-  .ikh-mhero-carousel .ikh-cs-card .price{font-size:12.5px !important;margin-top:5px !important}
+  .ikh-mhero-carousel .ikh-cs-card .img{
+    height:50% !important;
+    width:100% !important;
+    background-size:cover !important;
+    background-position:center !important;
+    position:relative !important;
+  }
+  .ikh-mhero-carousel .ikh-cs-card .body{
+    padding:9px 12px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    height:50% !important;
+    box-sizing:border-box !important;
+  }
+  .ikh-mhero-carousel .ikh-cs-card .ttl{
+    font-size:12px !important;
+    -webkit-line-clamp:2 !important;
+    line-height:1.35 !important;
+    margin-bottom:4px !important;
+  }
+  .ikh-mhero-carousel .ikh-cs-card .meta{
+    font-size:10px !important;
+    gap:8px !important;
+    margin-top:4px !important;
+  }
+  .ikh-mhero-carousel .ikh-cs-card .price{
+    font-size:12px !important;
+    margin-top:4px !important;
+  }
   .ikh-mhero-carousel .ikh-cs-card .cat{font-size:9.5px !important}
-  .ikh-mhero-carousel .ikh-cs-card .badge{font-size:9.5px !important;padding:3px 8px !important}
+  .ikh-mhero-carousel .ikh-cs-card .badge{
+    font-size:9px !important;
+    padding:3px 8px !important;
+  }
 
-  /* Tighter side-card transforms so they don't spill outside */
-  .ikh-mhero-carousel .ikh-cs-card[data-pos="prev"]{transform:translateX(-46%) rotate(-10deg) scale(.74) !important;opacity:.6 !important}
-  .ikh-mhero-carousel .ikh-cs-card[data-pos="next"]{transform:translateX(46%) rotate(10deg) scale(.74) !important;opacity:.6 !important}
-  .ikh-mhero-carousel .ikh-cs-card[data-pos="active"]{transform:translateX(0) rotate(0) scale(1) !important;opacity:1 !important}
+  /* Card positions */
+  .ikh-mhero-carousel .ikh-cs-card[data-pos="prev"]{
+    transform:translateX(-52%) rotate(-8deg) scale(0.76) !important;
+    opacity:0.55 !important;
+    z-index:1 !important;
+  }
+  .ikh-mhero-carousel .ikh-cs-card[data-pos="next"]{
+    transform:translateX(52%) rotate(8deg) scale(0.76) !important;
+    opacity:0.55 !important;
+    z-index:1 !important;
+  }
+  .ikh-mhero-carousel .ikh-cs-card[data-pos="active"]{
+    transform:translateX(0) rotate(0) scale(1) !important;
+    opacity:1 !important;
+    z-index:2 !important;
+  }
+  .ikh-mhero-carousel .ikh-cs-card[data-pos="hidden"]{
+    transform:translateX(0) scale(0.7) !important;
+    opacity:0 !important;
+    z-index:0 !important;
+    pointer-events:none !important;
+  }
 
-  .ikh-mhero-dots{margin-top:6px !important}
-  .ikh-mhero-dots span{width:6px;height:6px}
-  .ikh-mhero-dots span.on{width:18px}
+  /* Dots — লুকানো */
+  .ikh-mhero-dots{
+    display:none !important;
+  }
 
-  /* Hide chips & search on mobile (they overflow) */
-  .hero .hero-float-chip,
-  .hero .hero-search,
-  .hero-search-wrap{display:none !important}
+  /* Eyebrow — দুই লাইনে */
+  .hero .hero-eyebrow{
+    text-align:center !important;
+    white-space:normal !important;
+    line-height:1.5 !important;
+    max-width:260px !important;
+  }
+  .eyebrow-br{ display:inline !important; }
 }
 
-/* Very small phones */
+/* ── Very small phones (≤360px) ── */
 @media (max-width: 360px){
-  .ikh-mhero-carousel{width:74% !important;max-width:240px !important}
-  .hero .hero-left h1{font-size:18px !important}
-  .hero .hero-left .hero-sub{font-size:11.5px !important;-webkit-line-clamp:2 !important}
-  .hero .hero-cta{padding:8px 10px !important;font-size:11.5px !important}
+  .ikh-mhero-carousel{
+    width:86% !important;
+    max-width:280px !important;
+    height:200px !important;
+  }
+  .hero .hero-left h1{font-size:20px !important}
+  .hero .hero-left .hero-sub{font-size:12px !important}
+  .hero .hero-cta{padding:9px 12px !important;font-size:11.5px !important}
 }
 
-/* Short viewports (landscape) */
-@media (max-width: 768px) and (max-height: 620px){
-  .ikh-mhero-carousel{aspect-ratio:1/1 !important;max-width:220px !important;width:60% !important}
+/* ── Landscape short viewport ── */
+@media (max-width: 768px) and (max-height: 560px){
+  .ikh-mhero-carousel{height:170px !important;max-width:240px !important}
   .hero .hero-left .hero-sub{display:none !important}
-  .hero .hero-stats-row{margin-top:2px !important}
+  .hero .hero-left h1{font-size:18px !important}
+}
+
+/* ── Course cards মোবাইলে সঠিকভাবে দেখানো ── */
+@media (max-width: 640px){
+  /* courses-grid-2: 2 column কিন্তু proper height */
+  .courses-grid-2{
+    grid-template-columns:repeat(2,1fr) !important;
+    gap:10px !important;
+  }
+  .ccard{
+    display:flex !important;
+    flex-direction:column !important;
+    min-height:0 !important;
+  }
+  .ccard-img{
+    aspect-ratio:16/10 !important;
+    height:auto !important;
+  }
+  .ccard-body{
+    padding:9px 10px 12px !important;
+    flex:1 !important;
+  }
+  .ccard-cat{font-size:9.5px !important;margin-bottom:4px !important}
+  .ccard-title{
+    font-size:12.5px !important;
+    -webkit-line-clamp:2 !important;
+    min-height:auto !important;
+    margin-bottom:6px !important;
+    line-height:1.3 !important;
+  }
+  .ccard-meta{
+    font-size:10px !important;
+    gap:3px !important;
+    margin-bottom:6px !important;
+    flex-wrap:wrap !important;
+  }
+  .ccard-foot{
+    padding-top:7px !important;
+    gap:4px !important;
+    flex-wrap:wrap !important;
+    align-items:center !important;
+  }
+  .ccard-price{font-size:13px !important}
+  .ccard-price .old{font-size:10px !important}
+  .ccard-btn{
+    padding:5px 8px !important;
+    font-size:9.5px !important;
+    letter-spacing:0.05em !important;
+    white-space:nowrap !important;
+  }
+}
+
+/* ── Very small: 1 column ── */
+@media (max-width: 360px){
+  .courses-grid-2{grid-template-columns:1fr !important}
 }
 </style>
 
 <script>
-/* ═══ IKH Patch v7 — Runtime: ensure carousel rebuild & ordering ═══ */
+/* ═══ IKH Patch v8 — Stable mobile hero + carousel (replaces v7) ═══ */
 (function(){
-  function fixHeroOrder(){
-    var inner = document.querySelector('.hero .hero-inner');
-    if (!inner) return;
-    var left = inner.querySelector('.hero-left');
-    var right = inner.querySelector('.hero-right');
-    if (!left || !right) return;
-    if (window.innerWidth <= 768){
-      // Move right BEFORE left in DOM (safer than relying only on flex order for some layouts)
-      if (right.nextElementSibling !== left || right.previousElementSibling){
-        try { inner.insertBefore(right, left); } catch(e){}
-      }
-    } else {
-      // Restore: left BEFORE right
-      if (left.nextElementSibling !== right){
-        try { inner.insertBefore(left, right); } catch(e){}
-      }
+  'use strict';
+
+  function buildPlaceholderCarousel(right){
+    if (right.querySelector('.ikh-mhero-carousel')) return;
+    var placeholder = [
+      {title:'কুরআন তিলাওয়াত ও তাজবীদ কোর্স', category:'কুরআন', duration:'১২ সপ্তাহ', rating:'৪.৯', image:'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=600&q=80'},
+      {title:'সীরাহ ও ইসলামি ইতিহাস', category:'সীরাহ', duration:'১০ সপ্তাহ', rating:'৪.৮', image:'https://images.unsplash.com/photo-1564769625905-50e93615e769?w=600&q=80'},
+      {title:'ফিকাহ মূলনীতি কোর্স', category:'ফিকাহ', duration:'৮ সপ্তাহ', rating:'৪.৯', image:'https://images.unsplash.com/photo-1554232456-8727aae0cfa4?w=600&q=80'}
+    ];
+    var labels = ['জনপ্রিয়','নতুন','বেস্টসেলার'];
+
+    var wrap = document.createElement('div');
+    wrap.className = 'ikh-mhero-carousel';
+    wrap.style.cssText = 'position:relative;width:88%;max-width:320px;height:220px;margin:0 auto;perspective:1000px;overflow:visible';
+
+    placeholder.forEach(function(c, i){
+      var card = document.createElement('div');
+      card.className = 'ikh-cs-card';
+      card.style.cssText = 'position:absolute;width:100%;height:100%;background:#fff;border-radius:14px;overflow:hidden;cursor:pointer;box-shadow:0 12px 32px rgba(0,0,0,.4);transition:transform .45s cubic-bezier(.22,.61,.36,1),opacity .45s';
+      card.innerHTML =
+        '<div class="img" style="background-image:url(\''+c.image+'\');background-size:cover;background-position:center;width:100%;height:50%">'+
+          '<span class="badge" style="position:absolute;top:8px;left:8px;background:#0F4C3A;color:#fff;font-size:9px;font-weight:700;padding:3px 9px;border-radius:3px;letter-spacing:.1em;text-transform:uppercase">'+labels[i]+'</span>'+
+        '</div>'+
+        '<div class="body" style="padding:10px 12px;display:flex;flex-direction:column;gap:4px;height:50%;box-sizing:border-box;overflow:hidden">'+
+          '<div class="cat" style="font-size:9px;font-weight:700;text-transform:uppercase;color:#B8893C;letter-spacing:.08em">'+c.category+'</div>'+
+          '<div class="ttl" style="font-size:12px;font-weight:700;color:#1C1612;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">'+c.title+'</div>'+
+          '<div class="meta" style="display:flex;gap:10px;font-size:10px;color:#5C5248;margin-top:2px">'+
+            '<span>⏱ '+c.duration+'</span><span>★ '+c.rating+'</span>'+
+          '</div>'+
+        '</div>';
+      card.addEventListener('click', function(){ try{ navigate('courses'); }catch(e){} });
+      wrap.appendChild(card);
+    });
+
+    var dots = document.createElement('div');
+    dots.className = 'ikh-mhero-dots';
+    dots.style.cssText = 'display:flex;justify-content:center;gap:6px;margin-top:12px';
+    placeholder.forEach(function(_, i){
+      var s = document.createElement('span');
+      s.style.cssText = 'display:inline-block;height:6px;border-radius:999px;background:rgba(255,255,255,.35);transition:width .3s,background .3s';
+      if (i === 0){ s.className = 'on'; s.style.width = '20px'; s.style.background = '#F5C518'; }
+      else { s.style.width = '6px'; }
+      dots.appendChild(s);
+    });
+
+    right.appendChild(wrap);
+    right.appendChild(dots);
+
+    function setPos(activeIdx){
+      var nodes = wrap.querySelectorAll('.ikh-cs-card');
+      var n = nodes.length;
+      nodes.forEach(function(el, i){
+        var d = (i - activeIdx + n) % n;
+        if (d === 0){
+          el.style.transform = 'translateX(0) rotate(0) scale(1)';
+          el.style.opacity = '1';
+          el.style.zIndex = '2';
+        } else if (d === 1){
+          el.style.transform = 'translateX(52%) rotate(8deg) scale(0.76)';
+          el.style.opacity = '0.55';
+          el.style.zIndex = '1';
+        } else if (d === n - 1){
+          el.style.transform = 'translateX(-52%) rotate(-8deg) scale(0.76)';
+          el.style.opacity = '0.55';
+          el.style.zIndex = '1';
+        } else {
+          el.style.transform = 'scale(0.7)';
+          el.style.opacity = '0';
+          el.style.zIndex = '0';
+          el.style.pointerEvents = 'none';
+        }
+      });
+      dots.querySelectorAll('span').forEach(function(s, i){
+        if (i === activeIdx){
+          s.className = 'on';
+          s.style.width = '20px';
+          s.style.background = '#F5C518';
+        } else {
+          s.className = '';
+          s.style.width = '6px';
+          s.style.background = 'rgba(255,255,255,.35)';
+        }
+      });
     }
+
+    setPos(0);
+    var localIdx = 0;
+    if (window._ikhMHeroTimer) clearInterval(window._ikhMHeroTimer);
+    window._ikhMHeroTimer = setInterval(function(){
+      localIdx = (localIdx + 1) % placeholder.length;
+      setPos(localIdx);
+    }, 3500);
   }
 
-  function ensureCarousel(){
+  window._ikhBuildPlaceholderHero = function(){
+    var right = document.querySelector('.hero .hero-right');
+    if (right) buildPlaceholderCarousel(right);
+  };
+
+  function init(){
     if (window.innerWidth > 768) return;
     var right = document.querySelector('.hero .hero-right');
     if (!right) return;
-    var hasCarousel = right.querySelector('.ikh-mhero-carousel');
-    if (hasCarousel) return;
-    // If v6 hasn't built it yet (no courses loaded), inject placeholder cards
-    if (typeof window._ikhBuildPlaceholderHero === 'function') return;
-    window._ikhBuildPlaceholderHero = function(){
-      var existing = right.querySelector('.ikh-mhero-carousel');
-      if (existing) return;
-      var placeholder = [
-        {title:'কুরআন তিলাওয়াত কোর্স', category:'কুরআন', duration:'১২ সপ্তাহ', rating:'৪.৯', image:'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=600&q=80'},
-        {title:'সীরাহ ও ইসলামি ইতিহাস', category:'সীরাহ', duration:'১০ সপ্তাহ', rating:'৪.৮', image:'https://images.unsplash.com/photo-1564769625392-651b2c2b1b9c?w=600&q=80'},
-        {title:'ফিকাহ মূলনীতি', category:'ফিকাহ', duration:'৮ সপ্তাহ', rating:'৪.৯', image:'https://images.unsplash.com/photo-1588621280074-1ba6a4f9f3c1?w=600&q=80'}
-      ];
-      var wrap = document.createElement('div');
-      wrap.className = 'ikh-mhero-carousel';
-      placeholder.forEach(function(c,i){
-        var card = document.createElement('div');
-        card.className = 'ikh-cs-card intro';
-        card.innerHTML =
-          '<span class="badge">'+(i===0?'জনপ্রিয়':(i===1?'নতুন':'বেস্টসেলার'))+'</span>'+
-          '<div class="img" style="background-image:url(\''+c.image+'\')"></div>'+
-          '<div class="body">'+
-            '<div class="cat">'+c.category+'</div>'+
-            '<div class="ttl">'+c.title+'</div>'+
-            '<div class="meta"><span><i class="fas fa-clock"></i> '+c.duration+'</span><span><i class="fas fa-star"></i> '+c.rating+'</span></div>'+
-          '</div>';
-        card.addEventListener('click', function(){ try{ navigate('courses'); }catch(e){} });
-        wrap.appendChild(card);
-      });
-      var dots = document.createElement('div');
-      dots.className = 'ikh-mhero-dots';
-      dots.innerHTML = placeholder.map(function(_,i){return '<span'+(i===0?' class="on"':'')+'></span>'}).join('');
-      right.appendChild(wrap);
-      right.appendChild(dots);
-
-      function setPositions(activeIdx){
-        var nodes = wrap.querySelectorAll('.ikh-cs-card');
-        var n = nodes.length;
-        nodes.forEach(function(el,i){
-          var d = (i - activeIdx + n) % n;
-          var pos = d===0?'active':(d===1?'next':(d===n-1?'prev':'hidden'));
-          el.setAttribute('data-pos', pos);
-        });
-        dots.querySelectorAll('span').forEach(function(s,i){ s.classList.toggle('on', i===activeIdx); });
-      }
-      setPositions(0);
-      setTimeout(function(){ wrap.querySelectorAll('.ikh-cs-card').forEach(function(c){c.classList.remove('intro')}); }, 1500);
-
-      var localIdx = 0;
-      if (window._ikhMHeroTimer) clearInterval(window._ikhMHeroTimer);
-      window._ikhMHeroTimer = setInterval(function(){
-        localIdx = (localIdx + 1) % placeholder.length;
-        setPositions(localIdx);
-      }, 3500);
-    };
-    // Show placeholder immediately so user sees cards before API resolves
-    window._ikhBuildPlaceholderHero();
+    if (right.querySelector('.ikh-mhero-carousel')) return; // v6 already built
+    buildPlaceholderCarousel(right);
   }
 
-  function run(){
-    fixHeroOrder();
-    ensureCarousel();
-  }
   if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', run);
+    document.addEventListener('DOMContentLoaded', function(){ setTimeout(init, 100); });
   } else {
-    run();
+    setTimeout(init, 100);
   }
   window.addEventListener('resize', function(){
-    clearTimeout(window._ikhV7T);
-    window._ikhV7T = setTimeout(function(){
-      fixHeroOrder();
-      // If real courses already loaded, rebuild via v6
-      var right = document.querySelector('.hero .hero-right');
-      if (right && window.innerWidth <= 768 && !right.querySelector('.ikh-mhero-carousel')){
-        ensureCarousel();
+    clearTimeout(window._ikhV8T);
+    window._ikhV8T = setTimeout(function(){
+      if (window.innerWidth <= 768){
+        var right = document.querySelector('.hero .hero-right');
+        if (right && !right.querySelector('.ikh-mhero-carousel')) buildPlaceholderCarousel(right);
       }
-    }, 200);
+    }, 250);
   });
-  console.log('✅ IKH Patch v7 active: mobile order (cards→text) + carousel fixes');
+  console.log('✅ IKH Patch v8: stable mobile hero + carousel');
 })();
 </script>
 
