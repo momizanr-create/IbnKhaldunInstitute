@@ -15,7 +15,7 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const jwt        = require('jsonwebtoken');
 const bcrypt     = require('bcryptjs');
 const path       = require('path');
-const nodemailer = require('nodemailer');
+// ✅ nodemailer / Gmail App Password সম্পূর্ণ বাদ — Google Apps Script দিয়ে email পাঠানো হচ্ছে
 
 // ── In-memory OTP store (email → { otp, expiresAt }) ──
 const otpStore = new Map();
@@ -31,14 +31,48 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// ── Gmail Nodemailer Transporter ──
-const mailTransporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.GMAIL_USER || 'momizanr@gmail.com',
-    pass: process.env.GMAIL_APP_PASS || 'gjgd clsc hurw hbyo',
-  },
-});
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 📧 Google Apps Script — Email Service
+// Gmail App Password / nodemailer সম্পূর্ণ বাদ ✅
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Render Dashboard → Environment Variables-এ সেট করুন:
+//   GOOGLE_SCRIPT_URL    = https://script.google.com/macros/s/XXXX/exec
+//   GOOGLE_SCRIPT_SECRET = ibnkhaldun_gas_secret_2024
+const GOOGLE_SCRIPT_URL    = process.env.GOOGLE_SCRIPT_URL || '';
+const GOOGLE_SCRIPT_SECRET = process.env.GOOGLE_SCRIPT_SECRET || 'ibnkhaldun_gas_secret_2024';
+
+if (GOOGLE_SCRIPT_URL) {
+  console.log('✅ Google Apps Script Email Service চালু');
+} else {
+  console.warn('⚠️  GOOGLE_SCRIPT_URL সেট নেই — OTP মেইল পাঠানো হবে না');
+  console.warn('    Render Dashboard → Environment Variables-এ GOOGLE_SCRIPT_URL যোগ করুন');
+}
+
+// ── Google Apps Script দিয়ে email পাঠানোর helper ──
+async function sendViaGAS(to, subject, html, type = 'general') {
+  if (!GOOGLE_SCRIPT_URL) {
+    console.warn('⚠️  GOOGLE_SCRIPT_URL নেই — email skip করা হলো');
+    return false;
+  }
+  try {
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ secret: GOOGLE_SCRIPT_SECRET, to, subject, html, type }),
+      signal:  AbortSignal.timeout(20000),
+    });
+    const data = await res.json();
+    if (data.ok) {
+      console.log(`📧 Email sent via GAS | type:${type} | to:${to}`);
+      return true;
+    }
+    console.error(`❌ GAS email error: ${data.error}`);
+    return false;
+  } catch (err) {
+    console.error('❌ GAS fetch error:', err.message);
+    return false;
+  }
+}
 
 // ============================================================
 // CORS — সব Vercel URL + localhost allow
@@ -1211,11 +1245,10 @@ app.post('/api/user/send-otp', async (req, res) => {
 
     const otp = await saveOtp(email, 'register');
 
-    await mailTransporter.sendMail({
-      from: `"ইবনে খালদুন ইনস্টিটিউট" <momizanr@gmail.com>`,
-      to: email,
-      subject: 'আপনার OTP কোড — ইবনে খালদুন ইনস্টিটিউট',
-      html: `
+    await sendViaGAS(
+      email,
+      'আপনার OTP কোড — ইবনে খালদুন ইনস্টিটিউট',
+      `
         <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:480px;margin:0 auto;background:#fff;border:1px solid #e8e8e8;border-radius:10px;overflow:hidden">
           <div style="background:#066144;padding:24px 30px">
             <h2 style="color:#F5C518;margin:0;font-size:20px">ইবনে খালদুন ইনস্টিটিউট</h2>
@@ -1233,7 +1266,8 @@ app.post('/api/user/send-otp', async (req, res) => {
           </div>
         </div>
       `,
-    });
+      'otp-register'
+    );
 
     res.json({ message: 'OTP পাঠানো হয়েছে' });
   } catch (e) {
@@ -1292,11 +1326,10 @@ app.post('/api/user/send-reset-otp', async (req, res) => {
 
     const otp = await saveOtp(email, 'reset');
 
-    await mailTransporter.sendMail({
-      from: `"ইবনে খালদুন ইনস্টিটিউট" <momizanr@gmail.com>`,
-      to: email,
-      subject: 'পাসওয়ার্ড রিসেট OTP — ইবনে খালদুন ইনস্টিটিউট',
-      html: `
+    await sendViaGAS(
+      email,
+      'পাসওয়ার্ড রিসেট OTP — ইবনে খালদুন ইনস্টিটিউট',
+      `
         <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:480px;margin:0 auto;background:#fff;border:1px solid #e8e8e8;border-radius:10px;overflow:hidden">
           <div style="background:#066144;padding:24px 30px">
             <h2 style="color:#F5C518;margin:0;font-size:20px">ইবনে খালদুন ইনস্টিটিউট</h2>
@@ -1316,7 +1349,8 @@ app.post('/api/user/send-reset-otp', async (req, res) => {
           </div>
         </div>
       `,
-    });
+      'otp-reset'
+    );
 
     res.json({ message: 'OTP পাঠানো হয়েছে' });
   } catch (e) {
@@ -1357,11 +1391,10 @@ app.post('/api/user/reset-password-otp', async (req, res) => {
     );
 
     // Success notification email (background)
-    mailTransporter.sendMail({
-      from: '"ইবনে খালদুন ইনস্টিটিউট" <momizanr@gmail.com>',
-      to: email,
-      subject: '✅ পাসওয়ার্ড পরিবর্তন সফল — ইবনে খালদুন ইনস্টিটিউট',
-      html: `
+    sendViaGAS(
+      email,
+      '✅ পাসওয়ার্ড পরিবর্তন সফল — ইবনে খালদুন ইনস্টিটিউট',
+      `
         <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:480px;margin:0 auto;background:#fff;border:1px solid #e8e8e8;border-radius:10px;overflow:hidden">
           <div style="background:#066144;padding:20px 28px">
             <h2 style="color:#F5C518;margin:0;font-size:18px">ইবনে খালদুন ইনস্টিটিউট</h2>
@@ -1378,7 +1411,8 @@ app.post('/api/user/reset-password-otp', async (req, res) => {
           </div>
         </div>
       `,
-    }).catch(err => console.error('[reset-password-otp] email notify error:', err.message));
+      'password-changed'
+    ).catch(err => console.error('[reset-password-otp] email notify error:', err.message));
 
     res.json({
       message: 'পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে',
@@ -1679,11 +1713,10 @@ app.put('/api/admin/access-requests/:id', authMiddleware, async (req, res) => {
         : '';
 
       try {
-        await mailTransporter.sendMail({
-          from: '"ইবনে খালদুন ইনস্টিটিউট" <momizanr@gmail.com>',
-          to: request.userEmail,
-          subject: `✅ কোর্স অ্যাক্সেস অনুমোদিত — ${request.courseTitle}`,
-          html: `
+        await sendViaGAS(
+          request.userEmail,
+          `✅ কোর্স অ্যাক্সেস অনুমোদিত — ${request.courseTitle}`,
+          `
             <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:560px;margin:0 auto;background:#fff;border:1px solid #e8e8e8;border-radius:10px;overflow:hidden">
               <div style="background:#066144;padding:24px 30px">
                 <h2 style="color:#F5C518;margin:0;font-size:20px">ইবনে খালদুন ইনস্টিটিউট</h2>
@@ -1716,7 +1749,8 @@ app.put('/api/admin/access-requests/:id', authMiddleware, async (req, res) => {
               </div>
             </div>
           `,
-        });
+          'course-approved'
+        );
         console.log(`✅ Approval email sent to ${request.userEmail}`);
       } catch (mailErr) {
         console.error('❌ Approval email error:', mailErr.message);
@@ -1724,14 +1758,12 @@ app.put('/api/admin/access-requests/:id', authMiddleware, async (req, res) => {
       }
     }
 
-    // ❌ প্রত্যাখ্যান ইমেইল
     if (status === 'rejected') {
       try {
-        await mailTransporter.sendMail({
-          from: '"ইবনে খালদুন ইনস্টিটিউট" <momizanr@gmail.com>',
-          to: request.userEmail,
-          subject: `কোর্স অ্যাক্সেস সম্পর্কে আপডেট — ${request.courseTitle}`,
-          html: `
+        await sendViaGAS(
+          request.userEmail,
+          `কোর্স অ্যাক্সেস সম্পর্কে আপডেট — ${request.courseTitle}`,
+          `
             <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:560px;margin:0 auto;background:#fff;border:1px solid #e8e8e8;border-radius:10px;overflow:hidden">
               <div style="background:#066144;padding:24px 30px">
                 <h2 style="color:#F5C518;margin:0;font-size:20px">ইবনে খালদুন ইনস্টিটিউট</h2>
@@ -1746,7 +1778,8 @@ app.put('/api/admin/access-requests/:id', authMiddleware, async (req, res) => {
               </div>
             </div>
           `,
-        });
+          'course-rejected'
+        );
       } catch (mailErr) {
         console.error('❌ Rejection email error:', mailErr.message);
       }
