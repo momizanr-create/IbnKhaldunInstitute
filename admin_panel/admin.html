@@ -318,32 +318,15 @@
       <div class="nav-item" data-page="users" onclick="navTo('users')"><span class="icon">👥</span> ব্যবহারকারী</div>
       <div class="nav-item" data-page="notices" onclick="navTo('notices')"><span class="icon">📢</span> নোটিশ</div>
 
-      <!-- ── ৩. হোম পেজ ── -->
-      <div class="nav-section"><span class="dot"></span> 🏠 হোম পেজ</div>
-      <div class="nav-item" data-page="hero-section" onclick="navTo('hero-section')"><span class="icon">🎯</span> হিরো সেকশন</div>
-      <div class="nav-item" data-page="hero-courses" onclick="navTo('hero-courses')"><span class="icon">🖼️</span> হিরো কোর্স কার্ড</div>
-      <div class="nav-item" data-page="featured-mgr" onclick="navTo('featured-mgr')"><span class="icon">🌟</span> ফিচার্ড কোর্স</div>
-      <div class="nav-item" data-page="course-tabs" onclick="navTo('course-tabs')"><span class="icon">🧭</span> কোর্স ট্যাব</div>
-      <div class="nav-item" data-page="join-video" onclick="navTo('join-video')"><span class="icon">🎬</span> "যুক্ত হোন" ভিডিও</div>
-      <div class="nav-item" data-page="features" onclick="navTo('features')"><span class="icon">⭐</span> বিশেষত্ব</div>
-      <div class="nav-item" data-page="testimonials" onclick="navTo('testimonials')"><span class="icon">💬</span> ছাত্র রিভিউ</div>
-      <div class="nav-item" data-page="cta-section" onclick="navTo('cta-section')"><span class="icon">📣</span> CTA সেকশন</div>
-      <div class="nav-item" data-page="welcome-popup" onclick="navTo('welcome-popup')"><span class="icon">🎉</span> ওয়েলকাম পপআপ</div>
-
-      <!-- ── ৪. অন্যান্য পেজ ── -->
-      <div class="nav-section"><span class="dot"></span> অন্যান্য পেজ</div>
-      <div class="nav-item" data-page="about-page" onclick="navTo('about-page')"><span class="icon">ℹ️</span> About পেজ</div>
-      <div class="nav-item" data-page="contact-content" onclick="navTo('contact-content')"><span class="icon">📞</span> Contact পেজ</div>
-      <div class="nav-item" data-page="blog-posts" onclick="navTo('blog-posts')"><span class="icon">✍️</span> ব্লগ পোস্ট</div>
+      <!-- ── ৩. কনটেন্ট ম্যানেজমেন্ট ── -->
+      <div class="nav-section"><span class="dot"></span> কনটেন্ট</div>
       <div class="nav-item" data-page="categories" onclick="navTo('categories')"><span class="icon">🏷️</span> ক্যাটাগরি</div>
       <div class="nav-item" data-page="instructors" onclick="navTo('instructors')"><span class="icon">👨‍🏫</span> ইন্সট্রাক্টর</div>
-      <div class="nav-item" data-page="faqs" onclick="navTo('faqs')"><span class="icon">❓</span> FAQ</div>
+      <div class="nav-item" data-page="blog-posts" onclick="navTo('blog-posts')"><span class="icon">✍️</span> ব্লগ পোস্ট</div>
 
-      <!-- ── ৫. সাইট ── -->
-      <div class="nav-section"><span class="dot"></span> সাইট সেটিংস</div>
-      <div class="nav-item" data-page="site-settings" onclick="navTo('site-settings')"><span class="icon">🌐</span> সাইট সেটিংস</div>
-      <div class="nav-item" data-page="navigation-mgr" onclick="navTo('navigation-mgr')"><span class="icon">🔗</span> নেভিগেশন</div>
-      <div class="nav-item" data-page="footer-mgr" onclick="navTo('footer-mgr')"><span class="icon">📄</span> ফুটার</div>
+      <!-- ── ৪. সাইট কাস্টমাইজেশন ── -->
+      <div class="nav-section"><span class="dot"></span> কাস্টমাইজেশন</div>
+      <div class="nav-item" data-page="customize" onclick="navTo('customize')"><span class="icon">🎨</span> সাইট সেটিংস</div>
       <div class="nav-item" data-page="analytics" onclick="navTo('analytics')"><span class="icon">📈</span> Analytics</div>
 
       <!-- ── ৬. সিস্টেম ── -->
@@ -435,6 +418,12 @@
           </table>
         </div>
       </div>
+    </div>
+
+    <!-- ═══ CUSTOMIZE HUB (markazuddirasah-style settings center) ═══ -->
+    <div class="page" id="page-customize">
+      <div class="page-head"><h1>🎨 সাইট সেটিংস ও কাস্টমাইজেশন</h1><p>হোম পেজ, ফুটার, নেভিগেশন ও অন্যান্য পেজের সব কন্টেন্ট এক জায়গায়</p></div>
+      <div class="card-b" id="customize-hub" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;padding:0"></div>
     </div>
 
     <!-- ═══ ENROLLMENTS ═══ -->
@@ -1046,8 +1035,34 @@
       </div>
       <div class="field"><label>সংক্ষিপ্ত বিবরণ</label><textarea id="c-shortDesc"></textarea></div>
       <div class="field"><label>বিস্তারিত বিবরণ</label><textarea id="c-description" style="min-height:110px"></textarea></div>
-      <div class="field"><label>থাম্বনেইল URL</label><input id="c-thumbnail"/></div>
+
+      <!-- ── থাম্বনেইল (Drag & Drop + URL) ── -->
+      <div class="field">
+        <label>থাম্বনেইল ছবি</label>
+        <div id="c-thumb-drop" style="border:2px dashed var(--border2);border-radius:10px;padding:14px;text-align:center;background:var(--bg3);cursor:pointer;transition:.2s">
+          <img id="c-thumb-preview" src="" alt="" style="display:none;max-width:100%;max-height:160px;border-radius:8px;margin-bottom:8px"/>
+          <div id="c-thumb-text" style="color:var(--text2);font-size:13px">📁 ছবি এখানে টেনে আনুন <strong>অথবা</strong> ক্লিক করে সিলেক্ট করুন</div>
+          <input type="file" id="c-thumb-file" accept="image/*" style="display:none"/>
+        </div>
+        <input id="c-thumbnail" placeholder="অথবা ছবির URL লিখুন (https://...)" style="margin-top:6px" oninput="thumbPreview(this.value)"/>
+        <button type="button" class="btn btn-secondary btn-sm" style="margin-top:6px" onclick="document.getElementById('c-thumbnail').value='';thumbPreview('')">🗑️ ছবি মুছুন</button>
+      </div>
+
       <div class="field"><label>ট্যাগ (কমা দিয়ে আলাদা)</label><input id="c-tags" placeholder="যেমন: কুরআন, তাজবীদ"/></div>
+
+      <!-- ── SEO সেকশন (Auto-fill সুবিধা সহ) ── -->
+      <div class="field" style="margin-top:8px;border:1px solid var(--border2);border-radius:10px;padding:12px;background:var(--bg3)">
+        <label style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px">
+          <span>🔍 SEO অপটিমাইজেশন</span>
+          <button type="button" class="btn btn-success btn-sm" onclick="autoSEO()" title="title, description, tags থেকে সব SEO ফিল্ড অটো পূরণ করুন">🪄 অটো SEO পূরণ</button>
+        </label>
+        <div class="field"><label style="font-size:12px">SEO Title (60 অক্ষর)</label><input id="c-seoTitle" maxlength="70"/></div>
+        <div class="field"><label style="font-size:12px">Meta Description (160 অক্ষর)</label><textarea id="c-seoDesc" maxlength="180" style="min-height:60px"></textarea></div>
+        <div class="row2">
+          <div class="field"><label style="font-size:12px">Slug (URL)</label><input id="c-slug" placeholder="quran-tajweed-course"/></div>
+          <div class="field"><label style="font-size:12px">SEO Keywords</label><input id="c-seoKeywords" placeholder="কমা দিয়ে আলাদা"/></div>
+        </div>
+      </div>
       <div class="row2">
         <div class="field"><label><input type="checkbox" id="c-featured" style="width:auto;margin-right:6px"/> ফিচার্ড</label></div>
         <div class="field"><label><input type="checkbox" id="c-published" checked style="width:auto;margin-right:6px"/> প্রকাশিত</label></div>
@@ -1370,6 +1385,7 @@ const PAGE_TITLES = {
   'blog-posts':'ব্লগ পোস্ট', categories:'ক্যাটাগরি', instructors:'ইন্সট্রাক্টর', faqs:'FAQ',
   'site-settings':'সাইট সেটিংস', 'navigation-mgr':'নেভিগেশন', 'footer-mgr':'ফুটার',
   analytics:'Analytics', snapshot:'Snapshot ও Download', settings:'পাসওয়ার্ড',
+  customize:'সাইট সেটিংস ও কাস্টমাইজেশন',
 };
 
 function navTo(page){
@@ -1396,8 +1412,54 @@ function navTo(page){
     'blog-posts': loadBlog, categories: loadCategories, instructors: loadInstructors, faqs: loadFaqs,
     'site-settings': loadSiteSettings, 'navigation-mgr': loadNavigation, 'footer-mgr': loadFooter,
     analytics: loadAnalytics, snapshot: loadSnapshotInfo,
+    customize: loadCustomizeHub,
   };
   if(L[page]) L[page]();
+}
+
+// ════════════════════════════════════════════════
+// CUSTOMIZE HUB — markazuddirasah-style settings cards
+// ════════════════════════════════════════════════
+const CUSTOMIZE_SECTIONS = [
+  {group:'🏠 হোম পেজ', items:[
+    {page:'hero-section',  icon:'🎯', title:'হিরো সেকশন',     desc:'হোম পেজের প্রধান ব্যানার ও টেক্সট'},
+    {page:'hero-courses',  icon:'🖼️', title:'হিরো কোর্স কার্ড', desc:'স্ক্রলিং কোর্স কার্ড সমূহ'},
+    {page:'featured-mgr',  icon:'🌟', title:'ফিচার্ড কোর্স',    desc:'হোমে দেখানো ফিচার্ড কোর্স'},
+    {page:'course-tabs',   icon:'🧭', title:'কোর্স ট্যাব',      desc:'হোম পেজের ট্যাব বার'},
+    {page:'join-video',    icon:'🎬', title:'যুক্ত হোন ভিডিও',  desc:'প্রমোশনাল ভিডিও'},
+    {page:'features',      icon:'⭐', title:'বিশেষত্ব',          desc:'কেন আমরা — ফিচার লিস্ট'},
+    {page:'testimonials',  icon:'💬', title:'ছাত্র রিভিউ',      desc:'টেস্টিমোনিয়াল ম্যানেজ'},
+    {page:'cta-section',   icon:'📣', title:'CTA সেকশন',        desc:'কল-টু-অ্যাকশন ব্লক'},
+    {page:'welcome-popup', icon:'🎉', title:'ওয়েলকাম পপআপ',    desc:'প্রথম ভিজিটে পপআপ'},
+  ]},
+  {group:'📄 অন্যান্য পেজ', items:[
+    {page:'about-page',       icon:'ℹ️', title:'About পেজ',    desc:'আমাদের সম্পর্কে কন্টেন্ট'},
+    {page:'contact-content',  icon:'📞', title:'Contact পেজ',  desc:'যোগাযোগ পেজের কন্টেন্ট'},
+    {page:'faqs',             icon:'❓', title:'FAQ',          desc:'প্রায়শই জিজ্ঞাসিত প্রশ্ন'},
+  ]},
+  {group:'🌐 সাইট ও সিস্টেম', items:[
+    {page:'site-settings',   icon:'⚙️', title:'সাইট সেটিংস',    desc:'নাম, লোগো, কালার, কন্টাক্ট'},
+    {page:'navigation-mgr',  icon:'🔗', title:'নেভিগেশন মেনু',  desc:'হেডার মেনু আইটেম'},
+    {page:'footer-mgr',      icon:'📄', title:'ফুটার',          desc:'ফুটার লিঙ্ক ও কপিরাইট'},
+    {page:'snapshot',        icon:'📦', title:'Snapshot',       desc:'সাইট snapshot ও ডাউনলোড'},
+    {page:'settings',        icon:'🔐', title:'পাসওয়ার্ড',     desc:'এডমিন পাসওয়ার্ড পরিবর্তন'},
+  ]},
+];
+function loadCustomizeHub(){
+  const box = document.getElementById('customize-hub');
+  if (!box) return;
+  box.innerHTML = CUSTOMIZE_SECTIONS.map(g => `
+    <div style="grid-column:1/-1;margin:8px 0 -4px;font-size:13px;font-weight:700;color:var(--text2);letter-spacing:.3px">${g.group}</div>
+    ${g.items.map(it => `
+      <div onclick="navTo('${it.page}')" style="cursor:pointer;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:16px;transition:.2s;display:flex;flex-direction:column;gap:6px"
+           onmouseover="this.style.borderColor='var(--primary)';this.style.transform='translateY(-2px)'"
+           onmouseout="this.style.borderColor='var(--border2)';this.style.transform=''">
+        <div style="font-size:28px">${it.icon}</div>
+        <div style="font-weight:700;color:var(--text);font-size:14px">${it.title}</div>
+        <div style="color:var(--text2);font-size:12px;line-height:1.45">${it.desc}</div>
+      </div>
+    `).join('')}
+  `).join('');
 }
 
 // ════════════════════════════════════════════════
@@ -1609,6 +1671,91 @@ function curriculumDeleteLesson(si,li){ __curriculum[si].lessons.splice(li,1); c
 function curriculumSetLesson(si,li,key,val){ __curriculum[si].lessons[li][key]=val; }
 
 // ════════════════════════════════════════════════
+// THUMBNAIL: Drag & Drop + URL Preview + Base64 upload
+// ════════════════════════════════════════════════
+function thumbPreview(url){
+  const img = document.getElementById('c-thumb-preview');
+  const txt = document.getElementById('c-thumb-text');
+  if (!img) return;
+  if (url){
+    img.src = url; img.style.display='block';
+    if (txt) txt.style.display='none';
+  } else {
+    img.src=''; img.style.display='none';
+    if (txt) txt.style.display='block';
+  }
+}
+function _readImgFile(file){
+  if (!file || !file.type.startsWith('image/')) { toast('শুধু ছবি ফাইল দিন','error'); return; }
+  if (file.size > 3*1024*1024){ toast('সর্বোচ্চ 3MB সাইজের ছবি দিন','error'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('c-thumbnail').value = e.target.result;
+    thumbPreview(e.target.result);
+    toast('✅ ছবি যোগ হয়েছে');
+  };
+  reader.readAsDataURL(file);
+}
+function _bindThumbDrop(){
+  const drop = document.getElementById('c-thumb-drop');
+  const file = document.getElementById('c-thumb-file');
+  if (!drop || drop._bound) return;
+  drop._bound = true;
+  drop.addEventListener('click', ()=> file.click());
+  file.addEventListener('change', e => _readImgFile(e.target.files[0]));
+  ['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.style.borderColor='var(--primary)'; drop.style.background='var(--primary-soft)'; }));
+  ['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.style.borderColor='var(--border2)'; drop.style.background='var(--bg3)'; }));
+  drop.addEventListener('drop', e => { if(e.dataTransfer.files && e.dataTransfer.files[0]) _readImgFile(e.dataTransfer.files[0]); });
+  // Paste image directly
+  drop.addEventListener('paste', e => {
+    const items = e.clipboardData?.items || [];
+    for (const it of items){ if (it.type.startsWith('image/')){ _readImgFile(it.getAsFile()); e.preventDefault(); return; } }
+  });
+}
+
+// ════════════════════════════════════════════════
+// AUTO SEO — এক ক্লিকে title/desc/slug/keywords পূরণ
+// ════════════════════════════════════════════════
+function _slugify(s){
+  return (s||'').toString().trim().toLowerCase()
+    .replace(/[\u0980-\u09FF]+/g, m => m) // keep Bangla
+    .replace(/[^\w\u0980-\u09FF\s-]/g,'')
+    .replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+}
+function autoSEO(){
+  const title = document.getElementById('c-title').value.trim();
+  const sdesc = document.getElementById('c-shortDesc').value.trim();
+  const desc  = document.getElementById('c-description').value.trim();
+  const cat   = document.getElementById('c-category').value || '';
+  const inst  = document.getElementById('c-instructor').value || '';
+  const tags  = document.getElementById('c-tags').value || '';
+  if (!title){ toast('আগে শিরোনাম লিখুন','error'); return; }
+
+  // SEO Title — title + category (max 60)
+  const seoTitle = (cat ? `${title} | ${cat}` : title).slice(0,60);
+
+  // Meta description — short desc, fall back to clipped description (max 160)
+  let metaSrc = sdesc || desc.replace(/\s+/g,' ').trim();
+  if (!metaSrc) metaSrc = `${title} — ${cat||'কোর্স'}${inst?', ইন্সট্রাক্টর: '+inst:''}`;
+  const seoDesc = metaSrc.slice(0,160);
+
+  // Slug
+  const slug = _slugify(title);
+
+  // Keywords — tags + category + instructor
+  const kws = [...new Set([
+    ...tags.split(',').map(t=>t.trim()).filter(Boolean),
+    cat, inst, 'ইসলামিক কোর্স', 'অনলাইন কোর্স'
+  ].filter(Boolean))].slice(0,10).join(', ');
+
+  document.getElementById('c-seoTitle').value = seoTitle;
+  document.getElementById('c-seoDesc').value  = seoDesc;
+  document.getElementById('c-slug').value     = slug;
+  document.getElementById('c-seoKeywords').value = kws;
+  toast('🪄 SEO অটো পূরণ হয়েছে');
+}
+
+// ════════════════════════════════════════════════
 // COURSES
 // ════════════════════════════════════════════════
 let _allCourses = [];
@@ -1652,6 +1799,16 @@ async function openCourseModal(c=null){
   document.getElementById('c-published').checked = c?.published !== false;
   curriculumInit(c?.curriculum || []);
 
+  // SEO fields
+  document.getElementById('c-seoTitle').value = c?.seoTitle || '';
+  document.getElementById('c-seoDesc').value = c?.seoDesc || c?.metaDescription || '';
+  document.getElementById('c-slug').value = c?.slug || '';
+  document.getElementById('c-seoKeywords').value = (c?.seoKeywords || []).join ? (c.seoKeywords||[]).join(', ') : (c?.seoKeywords || '');
+
+  // Thumb preview + bind drop zone
+  thumbPreview(c?.thumbnail || '');
+  setTimeout(_bindThumbDrop, 30);
+
   // Load instructors
   try {
     const insts = await api('GET','/api/admin/instructors');
@@ -1686,6 +1843,10 @@ async function saveCourse(){
     description: document.getElementById('c-description').value,
     thumbnail: document.getElementById('c-thumbnail').value,
     tags: tagsRaw.split(',').map(t=>t.trim()).filter(Boolean),
+    seoTitle: document.getElementById('c-seoTitle').value,
+    seoDesc: document.getElementById('c-seoDesc').value,
+    slug: document.getElementById('c-slug').value,
+    seoKeywords: (document.getElementById('c-seoKeywords').value||'').split(',').map(t=>t.trim()).filter(Boolean),
     curriculum: __curriculum.map(sec => ({
       sectionTitle: sec.sectionTitle || '',
       lessons: (sec.lessons||[]).map(l => ({
