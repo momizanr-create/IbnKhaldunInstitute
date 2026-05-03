@@ -11515,5 +11515,104 @@
 })();
 </script>
 
+
+<!-- ============================================================
+     IKH UNIFIED PROFESSIONAL THEME OVERLAY (v-final)
+     Loaded last — refines existing styles without breaking layout
+============================================================ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style id="ikh-pro-overlay-final">
+  :root{
+    --pro-primary:#B8893C;         /* antique gold */
+    --pro-primary-dark:#8E6520;
+    --pro-emerald:#0F4C3A;         /* deep emerald */
+    --pro-emerald-dark:#0A3528;
+    --pro-cream:#FBF8F1;
+    --pro-parchment:#F4EFE3;
+    --pro-ink:#1C1612;
+    --pro-mid:#5C5248;
+    --pro-rule:#E8DFCC;
+    --pro-shadow-soft:0 4px 18px rgba(28,22,18,.08), 0 1px 3px rgba(28,22,18,.04);
+    --pro-shadow-elev:0 22px 60px rgba(28,22,18,.14), 0 8px 20px rgba(28,22,18,.06);
+    --pro-shadow-gold:0 10px 30px rgba(184,137,60,.22);
+    --pro-grad-gold:linear-gradient(135deg,#D4A85A 0%,#B8893C 50%,#8E6520 100%);
+    --pro-grad-emerald:linear-gradient(135deg,#176B53 0%,#0F4C3A 60%,#0A3528 100%);
+    --pro-radius:10px;
+  }
+  html{scroll-behavior:smooth}
+  body{font-family:'Hind Siliguri','Inter',system-ui,sans-serif !important;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  h1,h2,h3,.section-title,.hero-title,.page-title{font-family:'Playfair Display','Hind Siliguri',Georgia,serif !important;letter-spacing:-.01em}
+  ::selection{background:var(--pro-primary);color:#fff}
+
+  /* Refined primary buttons */
+  .btn-primary,.cta-btn,.hero-cta,button.primary,.button-primary{
+    background:var(--pro-grad-gold) !important;color:#fff !important;border:none !important;
+    box-shadow:var(--pro-shadow-gold) !important;transition:transform .25s cubic-bezier(.22,.61,.36,1), box-shadow .25s !important;
+    letter-spacing:.01em;font-weight:600;
+  }
+  .btn-primary:hover,.cta-btn:hover,.hero-cta:hover,button.primary:hover,.button-primary:hover{
+    transform:translateY(-2px);box-shadow:0 14px 36px rgba(184,137,60,.32) !important;
+  }
+
+  /* Cards refinement */
+  .course-card,.testimonial-card,.instructor-card,.feature-card,.faq-card,.stat-card,.card{
+    border-radius:var(--pro-radius) !important;
+    transition:transform .35s cubic-bezier(.22,.61,.36,1), box-shadow .35s !important;
+  }
+  .course-card:hover,.instructor-card:hover,.feature-card:hover,.testimonial-card:hover{
+    transform:translateY(-4px);
+    box-shadow:var(--pro-shadow-elev) !important;
+  }
+
+  /* Header glass polish */
+  header,.site-header,.main-header,#header{
+    backdrop-filter:saturate(140%) blur(14px);-webkit-backdrop-filter:saturate(140%) blur(14px);
+  }
+
+  /* Section spacing rhythm */
+  section{scroll-margin-top:90px}
+
+  /* Premium link underline */
+  a.pro-link,.footer a{transition:color .2s}
+  .footer a:hover{color:var(--pro-primary) !important}
+
+  /* Focus ring (a11y) */
+  :focus-visible{outline:2px solid var(--pro-primary);outline-offset:3px;border-radius:6px}
+
+  /* Print + reduced motion */
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important;animation:none !important}
+  }
+
+  /* Subtle decorative top accent on hero */
+  .hero,.hero-section{position:relative}
+  .hero::before,.hero-section::before{
+    content:"";position:absolute;inset:0 0 auto 0;height:3px;
+    background:var(--pro-grad-gold);opacity:.85;pointer-events:none;
+  }
+
+  /* Toast polish */
+  .toast,.notification{border-radius:10px !important;box-shadow:var(--pro-shadow-elev) !important}
+
+  /* Loader spinner accent */
+  .loader,.spinner{border-top-color:var(--pro-primary) !important}
+</style>
+
+<!-- Unified API base (allows ?api=... override or localhost dev) -->
+<script>
+(function(){
+  try{
+    var qs = new URLSearchParams(location.search);
+    var override = qs.get('api') || localStorage.getItem('IKH_API_BASE');
+    var isLocal = location.hostname==='localhost'||location.hostname==='127.0.0.1';
+    var base = override || (isLocal ? 'http://localhost:5000' : 'https://ibnkhalduninstitute.onrender.com');
+    window.IKH_API_BASE = base;
+    if(qs.get('api')) localStorage.setItem('IKH_API_BASE', base);
+  }catch(e){}
+})();
+</script>
+
 </body>
 </html>

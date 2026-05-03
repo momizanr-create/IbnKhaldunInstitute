@@ -2608,5 +2608,78 @@ async function changePassword(){
 window.api = api; window.toast = toast;
 </script>
 
+
+<!-- ============================================================
+     IKH ADMIN PROFESSIONAL THEME OVERLAY (v-final)
+     Refines existing dark admin look — calmer, more pro
+============================================================ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Hind+Siliguri:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style id="ikh-admin-pro-overlay">
+  :root{
+    --pro-gold:#D4A85A;
+    --pro-gold-2:#B8893C;
+    --pro-emerald:#0F4C3A;
+    --pro-bg:#0b0d11;
+    --pro-bg2:#12161d;
+    --pro-bg3:#1a1f28;
+    --pro-border:#262c36;
+    --pro-text:#f3f4f6;
+    --pro-text2:#a8aeb8;
+    --pro-grad-gold:linear-gradient(135deg,#E8C277 0%,#D4A85A 50%,#B8893C 100%);
+  }
+  body{font-family:'Hind Siliguri','Inter',system-ui,sans-serif !important;background:var(--pro-bg) !important;color:var(--pro-text)}
+  h1,h2,h3,.page-title,.section-title{font-family:'Playfair Display','Hind Siliguri',serif !important;letter-spacing:-.01em}
+
+  /* Sidebar polish */
+  .sidebar,#sidebar,aside{background:linear-gradient(180deg,#0d1015 0%,#0a0c10 100%) !important;border-right:1px solid var(--pro-border) !important}
+  .sidebar a,.sidebar .nav-item,#sidebar a{transition:background .2s,color .2s,padding .2s}
+  .sidebar a:hover,.sidebar .nav-item:hover{background:rgba(212,168,90,.08) !important;color:var(--pro-gold) !important;padding-left:18px}
+  .sidebar .active,.sidebar a.active,.nav-item.active{background:linear-gradient(90deg,rgba(212,168,90,.18),transparent) !important;color:var(--pro-gold) !important;border-left:3px solid var(--pro-gold) !important}
+
+  /* Login screen */
+  #login-screen{background:radial-gradient(ellipse at 50% 25%,rgba(212,168,90,.12),transparent 55%),var(--pro-bg) !important}
+  .login-box{background:var(--pro-bg2) !important;border:1px solid var(--pro-border) !important;box-shadow:0 30px 70px rgba(0,0,0,.6) !important;border-radius:16px !important}
+  .login-box button[type=submit],.login-btn{background:var(--pro-grad-gold) !important;color:#1a1410 !important;font-weight:700 !important;letter-spacing:.02em}
+
+  /* Buttons */
+  .btn-primary,.primary-btn,button.primary{background:var(--pro-grad-gold) !important;color:#1a1410 !important;border:none !important;font-weight:600 !important;border-radius:8px !important;transition:transform .2s,box-shadow .2s !important}
+  .btn-primary:hover,.primary-btn:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(212,168,90,.28) !important}
+
+  /* Cards & panels */
+  .card,.panel,.box,.stat-card,.section-card{background:var(--pro-bg2) !important;border:1px solid var(--pro-border) !important;border-radius:12px !important;transition:border-color .25s,transform .25s}
+  .card:hover,.panel:hover,.stat-card:hover{border-color:rgba(212,168,90,.45) !important}
+
+  /* Tables */
+  table{border-collapse:separate;border-spacing:0}
+  table th{background:var(--pro-bg3) !important;color:var(--pro-text2) !important;font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-size:11px}
+  table tr:hover td{background:rgba(212,168,90,.05) !important}
+
+  /* Inputs */
+  input,select,textarea{background:var(--pro-bg) !important;border:1px solid var(--pro-border) !important;color:var(--pro-text) !important;border-radius:8px !important;transition:border-color .2s,box-shadow .2s}
+  input:focus,select:focus,textarea:focus{border-color:var(--pro-gold) !important;box-shadow:0 0 0 3px rgba(212,168,90,.18) !important;outline:none}
+
+  /* Scrollbar */
+  ::-webkit-scrollbar-thumb{background:var(--pro-border)}
+  ::-webkit-scrollbar-thumb:hover{background:var(--pro-gold)}
+
+  /* Focus ring */
+  :focus-visible{outline:2px solid var(--pro-gold);outline-offset:2px}
+
+  @media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important}}
+</style>
+
+<!-- Unified API base override capability -->
+<script>
+(function(){
+  try{
+    var qs = new URLSearchParams(location.search);
+    var override = qs.get('api') || localStorage.getItem('IKH_API_BASE');
+    if(override){ window.IKH_API_BASE = override; if(qs.get('api')) localStorage.setItem('IKH_API_BASE', override); }
+  }catch(e){}
+})();
+</script>
+
 </body>
 </html>
