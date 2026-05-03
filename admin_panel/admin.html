@@ -1023,7 +1023,7 @@
 
 <!-- Course Modal -->
 <div class="modal-bg" id="m-course">
-  <div class="modal">
+  <div class="modal" style="max-width:760px">
     <div class="modal-h"><h3 id="m-course-title">নতুন কোর্স</h3><button class="x-btn" onclick="closeModal('m-course')">×</button></div>
     <div class="modal-b">
       <input type="hidden" id="c-id"/>
@@ -1037,14 +1037,30 @@
         <div class="field"><label>আসল মূল্য (৳)</label><input type="number" id="c-originalPrice"/></div>
       </div>
       <div class="row2">
-        <div class="field"><label>সময়কাল</label><input id="c-duration"/></div>
+        <div class="field"><label>সময়কাল</label><input id="c-duration" placeholder="যেমন: ৪ মাস"/></div>
         <div class="field"><label>লেভেল</label><select id="c-level"><option>সকলের জন্য</option><option>শুরু</option><option>মধ্যবর্তী</option><option>উন্নত</option></select></div>
       </div>
+      <div class="row2">
+        <div class="field"><label>মোট লেসন সংখ্যা</label><input type="number" id="c-lessons" placeholder="0"/></div>
+        <div class="field"><label>প্রিভিউ ভিডিও (YouTube ID/URL)</label><input id="c-previewVideo" placeholder="LXb3EKWsInQ অথবা পুরো URL" onblur="this.value=ytId(this.value)"/></div>
+      </div>
       <div class="field"><label>সংক্ষিপ্ত বিবরণ</label><textarea id="c-shortDesc"></textarea></div>
+      <div class="field"><label>বিস্তারিত বিবরণ</label><textarea id="c-description" style="min-height:110px"></textarea></div>
       <div class="field"><label>থাম্বনেইল URL</label><input id="c-thumbnail"/></div>
+      <div class="field"><label>ট্যাগ (কমা দিয়ে আলাদা)</label><input id="c-tags" placeholder="যেমন: কুরআন, তাজবীদ"/></div>
       <div class="row2">
         <div class="field"><label><input type="checkbox" id="c-featured" style="width:auto;margin-right:6px"/> ফিচার্ড</label></div>
         <div class="field"><label><input type="checkbox" id="c-published" checked style="width:auto;margin-right:6px"/> প্রকাশিত</label></div>
+      </div>
+
+      <!-- ── CURRICULUM BUILDER (Sections + Video Lessons) ── -->
+      <div class="field" style="margin-top:8px">
+        <label style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+          <span>🎬 কোর্স কারিকুলাম (সেকশন + ভিডিও লেসন)</span>
+          <button type="button" class="btn btn-primary btn-sm" onclick="curriculumAddSection()">+ নতুন সেকশন</button>
+        </label>
+        <div id="curriculumBuilder" style="border:1px dashed var(--border2);border-radius:10px;padding:10px;background:var(--bg3);min-height:70px"></div>
+        <small style="color:var(--text2);font-size:11px;display:block;margin-top:6px">প্রতিটি সেকশনের ভিতরে ভিডিও লেসন যোগ করুন। ভিডিও ID = YouTube URL এর শেষ অংশ (যেমন: <code>LXb3EKWsInQ</code>)। "ফ্রি" চেক করলে লেসনটি ছাত্ররা কেনার আগেই দেখতে পাবে।</small>
       </div>
     </div>
     <div class="modal-f"><button class="btn btn-secondary" onclick="closeModal('m-course')">বাতিল</button><button class="btn btn-primary" onclick="saveCourse()">সংরক্ষণ</button></div>
@@ -1512,6 +1528,87 @@ async function loadDashboard(){
 }
 
 // ════════════════════════════════════════════════
+// CURRICULUM BUILDER (Sections + Video Lessons)
+// ════════════════════════════════════════════════
+let __curriculum = [];
+function ytId(input){
+  const s = (input||'').trim();
+  if (/^[a-zA-Z0-9_-]{11}$/.test(s)) return s;
+  try {
+    const url = new URL(s);
+    if (url.hostname === 'youtu.be') return url.pathname.slice(1).split('?')[0].split('&')[0];
+    if (url.hostname.includes('youtube.com')){
+      if (url.searchParams.get('v')) return url.searchParams.get('v');
+      const m = url.pathname.match(/\/(embed|v|shorts)\/([a-zA-Z0-9_-]{11})/);
+      if (m) return m[2];
+    }
+  } catch(e){}
+  const m = s.match(/(?:v=|\/embed\/|\/v\/|\/shorts\/|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  return m ? m[1] : s;
+}
+function curriculumInit(data){
+  __curriculum = (Array.isArray(data) ? JSON.parse(JSON.stringify(data)) : []).map(sec => ({
+    sectionTitle: sec.sectionTitle || sec.title || '',
+    lessons: Array.isArray(sec.lessons) ? sec.lessons.map(l => ({
+      title: l.title||'', duration: l.duration||'',
+      videoId: l.videoId || l.video || '', isFree: !!l.isFree
+    })) : []
+  }));
+  curriculumRender();
+}
+function curriculumRender(){
+  const box = document.getElementById('curriculumBuilder');
+  if (!box) return;
+  if (!__curriculum.length){
+    box.innerHTML = '<div style="text-align:center;padding:18px;color:var(--text2);font-size:13px">এখনো কোনো সেকশন যোগ করা হয়নি — উপরের "+ নতুন সেকশন" বাটনে ক্লিক করুন।</div>';
+    return;
+  }
+  box.innerHTML = __curriculum.map((s,si) => `
+    <div style="border:1px solid var(--border2);border-radius:10px;margin-bottom:10px;background:var(--bg2)">
+      <div style="display:flex;gap:8px;align-items:center;padding:10px;background:var(--primary-soft);border-radius:10px 10px 0 0">
+        <span style="font-weight:700;color:var(--primary);min-width:22px">${si+1}.</span>
+        <input type="text" value="${esc(s.sectionTitle)}" placeholder="সেকশনের নাম (যেমন: সেকশন ১ — পরিচিতি)"
+          oninput="curriculumSetSectionTitle(${si}, this.value)"
+          style="flex:1;padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:13px;font-weight:600"/>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="curriculumMoveSection(${si},-1)" title="উপরে">↑</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="curriculumMoveSection(${si},1)" title="নিচে">↓</button>
+        <button type="button" class="btn btn-danger btn-sm" onclick="curriculumDeleteSection(${si})" title="সেকশন মুছুন">🗑️</button>
+      </div>
+      <div style="padding:10px">
+        ${s.lessons.length ? s.lessons.map((l,li) => `
+          <div style="display:grid;grid-template-columns:24px 2fr 1fr 1.4fr auto auto;gap:6px;align-items:center;padding:7px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;margin-bottom:6px">
+            <span style="color:var(--text2);font-size:12px;text-align:center">${li+1}</span>
+            <input type="text" value="${esc(l.title)}" placeholder="ভিডিওর শিরোনাম"
+              oninput="curriculumSetLesson(${si},${li},'title',this.value)"
+              style="padding:6px 8px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px"/>
+            <input type="text" value="${esc(l.duration)}" placeholder="সময় (12:30)"
+              oninput="curriculumSetLesson(${si},${li},'duration',this.value)"
+              style="padding:6px 8px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px"/>
+            <input type="text" value="${esc(l.videoId)}" placeholder="YouTube URL/ID"
+              oninput="curriculumSetLesson(${si},${li},'videoId',this.value)"
+              onblur="this.value=ytId(this.value);curriculumSetLesson(${si},${li},'videoId',this.value)"
+              style="padding:6px 8px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;font-family:monospace"/>
+            <label style="display:flex;gap:4px;align-items:center;font-size:11px;cursor:pointer;color:var(--text3)" title="ফ্রি প্রিভিউ">
+              <input type="checkbox" ${l.isFree?'checked':''} onchange="curriculumSetLesson(${si},${li},'isFree',this.checked)" style="width:auto;margin:0"/>
+              <span>ফ্রি</span>
+            </label>
+            <button type="button" class="btn btn-danger btn-sm" onclick="curriculumDeleteLesson(${si},${li})" title="মুছুন">✕</button>
+          </div>
+        `).join('') : '<div style="color:var(--text2);font-size:12px;text-align:center;padding:8px">এই সেকশনে কোনো ভিডিও নেই</div>'}
+        <button type="button" class="btn btn-success btn-sm" onclick="curriculumAddLesson(${si})" style="margin-top:4px">🎬 ভিডিও লেসন যোগ করুন</button>
+      </div>
+    </div>
+  `).join('');
+}
+function curriculumAddSection(){ __curriculum.push({sectionTitle:'সেকশন '+(__curriculum.length+1), lessons:[]}); curriculumRender(); }
+function curriculumDeleteSection(si){ if(!confirm('এই সেকশন এবং এর সব ভিডিও মুছে ফেলবেন?')) return; __curriculum.splice(si,1); curriculumRender(); }
+function curriculumMoveSection(si,dir){ const ni=si+dir; if(ni<0||ni>=__curriculum.length) return; const t=__curriculum[si]; __curriculum[si]=__curriculum[ni]; __curriculum[ni]=t; curriculumRender(); }
+function curriculumSetSectionTitle(si,v){ __curriculum[si].sectionTitle=v; }
+function curriculumAddLesson(si){ __curriculum[si].lessons.push({title:'',duration:'',videoId:'',isFree:false}); curriculumRender(); }
+function curriculumDeleteLesson(si,li){ __curriculum[si].lessons.splice(li,1); curriculumRender(); }
+function curriculumSetLesson(si,li,key,val){ __curriculum[si].lessons[li][key]=val; }
+
+// ════════════════════════════════════════════════
 // COURSES
 // ════════════════════════════════════════════════
 let _allCourses = [];
@@ -1545,10 +1642,15 @@ async function openCourseModal(c=null){
   document.getElementById('c-originalPrice').value = c?.originalPrice || '';
   document.getElementById('c-duration').value = c?.duration || '';
   document.getElementById('c-level').value = c?.level || 'সকলের জন্য';
+  document.getElementById('c-lessons').value = c?.lessons || 0;
+  document.getElementById('c-previewVideo').value = c?.previewVideo || '';
   document.getElementById('c-shortDesc').value = c?.shortDesc || '';
+  document.getElementById('c-description').value = c?.description || '';
   document.getElementById('c-thumbnail').value = c?.thumbnail || '';
+  document.getElementById('c-tags').value = (c?.tags||[]).join(', ');
   document.getElementById('c-featured').checked = !!c?.featured;
   document.getElementById('c-published').checked = c?.published !== false;
+  curriculumInit(c?.curriculum || []);
 
   // Load instructors
   try {
@@ -1569,6 +1671,7 @@ async function openCourseModal(c=null){
 async function editCourse(id){ const c = _allCourses.find(x => x._id===id); if(c) openCourseModal(c); }
 async function saveCourse(){
   const id = document.getElementById('c-id').value;
+  const tagsRaw = document.getElementById('c-tags').value || '';
   const body = {
     title: document.getElementById('c-title').value.trim(),
     category: document.getElementById('c-category').value,
@@ -1577,8 +1680,19 @@ async function saveCourse(){
     originalPrice: +document.getElementById('c-originalPrice').value || 0,
     duration: document.getElementById('c-duration').value,
     level: document.getElementById('c-level').value,
+    lessons: +document.getElementById('c-lessons').value || 0,
+    previewVideo: ytId(document.getElementById('c-previewVideo').value),
     shortDesc: document.getElementById('c-shortDesc').value,
+    description: document.getElementById('c-description').value,
     thumbnail: document.getElementById('c-thumbnail').value,
+    tags: tagsRaw.split(',').map(t=>t.trim()).filter(Boolean),
+    curriculum: __curriculum.map(sec => ({
+      sectionTitle: sec.sectionTitle || '',
+      lessons: (sec.lessons||[]).map(l => ({
+        title: l.title||'', duration: l.duration||'',
+        videoId: ytId(l.videoId||''), isFree: !!l.isFree
+      }))
+    })),
     featured: document.getElementById('c-featured').checked,
     published: document.getElementById('c-published').checked,
   };
