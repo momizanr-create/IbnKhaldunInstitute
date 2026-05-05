@@ -136,7 +136,7 @@ const courseSchema = new mongoose.Schema({
   tags: [String],
   curriculum: [{
     sectionTitle: String,
-    lessons: [{ title: String, duration: String, videoId: String, isFree: Boolean }],
+    lessons: [{ title: String, duration: String, videoId: String, isFree: Boolean, pdfUrl: String }],
   }],
   featured:  { type: Boolean, default: false },
   published: { type: Boolean, default: true },
@@ -186,6 +186,27 @@ const featureSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 const Feature = mongoose.model('Feature', featureSchema);
+
+// ── Comment Schema (only enrolled users can comment) ──
+const commentSchema = new mongoose.Schema({
+  courseId:   { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },
+  userId:    { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  userName:  String,
+  text:      { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+});
+const Comment = mongoose.model('Comment', commentSchema);
+
+// ── Course Q&A Schema (admin-managed) ──
+const courseQASchema = new mongoose.Schema({
+  courseId:   { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },
+  question:  { type: String, required: true },
+  answer:    { type: String, required: true },
+  order:     { type: Number, default: 0 },
+  active:    { type: Boolean, default: true },
+  createdAt: { type: Date, default: Date.now },
+});
+const CourseQA = mongoose.model('CourseQA', courseQASchema);
 
 
 const blogPostSchema = new mongoose.Schema({
@@ -863,6 +884,7 @@ app.post('/api/admin/course-detail/:id', authMiddleware, async (req, res) => {
           duration: ls.duration,
           videoId: ls.youtubeId,
           isFree: ls.free || false,
+          pdfUrl: ls.pdfUrl || '',
         })),
       })),
       updatedAt: new Date(),

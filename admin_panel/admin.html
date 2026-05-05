@@ -323,6 +323,8 @@
       <div class="nav-item" data-page="categories" onclick="navTo('categories')"><span class="icon">🏷️</span> ক্যাটাগরি</div>
       <div class="nav-item" data-page="instructors" onclick="navTo('instructors')"><span class="icon">👨‍🏫</span> ইন্সট্রাক্টর</div>
       <div class="nav-item" data-page="blog-posts" onclick="navTo('blog-posts')"><span class="icon">✍️</span> ব্লগ পোস্ট</div>
+      <div class="nav-item" data-page="course-qa" onclick="navTo('course-qa')"><span class="icon">❓</span> কোর্স প্রশ্নোত্তর</div>
+      <div class="nav-item" data-page="course-comments" onclick="navTo('course-comments')"><span class="icon">💬</span> মন্তব্য</div>
 
       <!-- ── ৪. সাইট কাস্টমাইজেশন ── -->
       <div class="nav-section"><span class="dot"></span> কাস্টমাইজেশন</div>
@@ -1028,7 +1030,44 @@
       </div>
     </div>
 
-    <!-- ═══ SETTINGS (PASSWORD) ═══ -->
+    <!-- ═══ COURSE Q&A ═══ -->
+    <div class="page" id="page-course-qa">
+      <div class="page-head"><h1>❓ কোর্স প্রশ্নোত্তর</h1><p>কোর্স সম্পর্কিত প্রশ্ন ও উত্তর — এডমিন থেকে যোগ করুন</p></div>
+      <div class="card">
+        <div class="card-h">
+          <select id="qa-course-select" onchange="loadCourseQA(this.value)" style="padding:9px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);min-width:240px">
+            <option value="">কোর্স নির্বাচন করুন...</option>
+          </select>
+          <button class="btn btn-primary" onclick="openQAModal()">+ নতুন প্রশ্নোত্তর</button>
+        </div>
+        <div class="card-b" style="padding:0">
+          <table>
+            <thead><tr><th>প্রশ্ন</th><th>উত্তর</th><th>ক্রম</th><th>অ্যাকশন</th></tr></thead>
+            <tbody id="qa-tbody"><tr><td colspan="4" class="empty"><span class="ic">❓</span>উপরে কোর্স নির্বাচন করুন</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ COURSE COMMENTS ═══ -->
+    <div class="page" id="page-course-comments">
+      <div class="page-head"><h1>💬 মন্তব্য</h1><p>শিক্ষার্থীদের মন্তব্য দেখুন ও পরিচালনা করুন</p></div>
+      <div class="card">
+        <div class="card-h">
+          <select id="cm-course-select" onchange="loadCourseComments(this.value)" style="padding:9px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);min-width:240px">
+            <option value="">কোর্স নির্বাচন করুন...</option>
+          </select>
+        </div>
+        <div class="card-b" style="padding:0">
+          <table>
+            <thead><tr><th>নাম</th><th>মন্তব্য</th><th>তারিখ</th><th>অ্যাকশন</th></tr></thead>
+            <tbody id="cm-tbody"><tr><td colspan="4" class="empty"><span class="ic">💬</span>উপরে কোর্স নির্বাচন করুন</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+        <!-- ═══ SETTINGS (PASSWORD) ═══ -->
     <div class="page" id="page-settings">
       <div class="page-head"><h1>⚙️ পাসওয়ার্ড পরিবর্তন</h1></div>
       <div class="card" style="max-width:520px">
@@ -1296,6 +1335,20 @@
   </div>
 </div>
 
+<!-- Q&A Modal -->
+<div class="modal-bg" id="m-qa">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-h"><h3 id="m-qa-title">নতুন প্রশ্নোত্তর</h3><button class="x-btn" onclick="closeModal('m-qa')">×</button></div>
+    <div class="modal-b">
+      <input type="hidden" id="qa-id"/>
+      <div class="field"><label>প্রশ্ন *</label><textarea id="qa-question" style="min-height:70px"></textarea></div>
+      <div class="field"><label>উত্তর *</label><textarea id="qa-answer" style="min-height:100px"></textarea></div>
+      <div class="field"><label>ক্রম</label><input type="number" id="qa-order" value="0"/></div>
+    </div>
+    <div class="modal-f"><button class="btn btn-secondary" onclick="closeModal('m-qa')">বাতিল</button><button class="btn btn-primary" onclick="saveQA()">সংরক্ষণ</button></div>
+  </div>
+</div>
+
 <!-- Toast -->
 <div id="toast"></div>
 
@@ -1427,6 +1480,8 @@ const PAGE_TITLES = {
   analytics:'Analytics', snapshot:'Snapshot ও Download', settings:'পাসওয়ার্ড',
   customize:'সাইট সেটিংস ও কাস্টমাইজেশন',
   'ai-builder':'🤖 AI সেকশন বিল্ডার',
+  'course-qa':'কোর্স প্রশ্নোত্তর',
+  'course-comments':'মন্তব্য',
 };
 
 function navTo(page){
@@ -1455,6 +1510,8 @@ function navTo(page){
     analytics: loadAnalytics, snapshot: loadSnapshotInfo,
     customize: loadCustomizeHub,
     'ai-builder': loadAiBuilder,
+    'course-qa': loadCourseQAPage,
+    'course-comments': loadCourseCommentsPage,
   };
   if(L[page]) L[page]();
 }
@@ -1893,7 +1950,7 @@ async function saveCourse(){
       sectionTitle: sec.sectionTitle || '',
       lessons: (sec.lessons||[]).map(l => ({
         title: l.title||'', duration: l.duration||'',
-        videoId: ytId(l.videoId||''), isFree: !!l.isFree
+        videoId: ytId(l.videoId||''), isFree: !!l.isFree, pdfUrl: l.pdfUrl||''
       }))
     })),
     featured: document.getElementById('c-featured').checked,
