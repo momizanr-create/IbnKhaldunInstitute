@@ -15,6 +15,7 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const jwt        = require('jsonwebtoken');
 const bcrypt     = require('bcryptjs');
 const path       = require('path');
+const fs         = require('fs');
 // ✅ nodemailer / Gmail App Password সম্পূর্ণ বাদ — Google Apps Script দিয়ে email পাঠানো হচ্ছে
 
 // ── In-memory OTP store (email → { otp, expiresAt }) ──
@@ -395,38 +396,96 @@ function authMiddleware(req, res, next) {
 }
 
 // ============================================================
-// STATIC FILES — index.html ও admin.html serve করার জন্য
+// STATIC FILES — screenshot অনুযায়ী folder structure support
+// Project:
+//   admin_panel/admin.html
+//   backend/server.js
+//   frontend/index.html + frontend/images/*
 // ============================================================
-app.use(express.static(path.join(__dirname, 'public')));
+const PROJECT_ROOT = path.resolve(__dirname, '..');
+
+const FRONTEND_DIRS = [
+  path.join(__dirname, 'public'),
+  path.join(__dirname, 'frontend'),
+  path.join(PROJECT_ROOT, 'frontend'),
+  path.join(process.cwd(), 'frontend'),
+  path.join(process.cwd(), 'public'),
+];
+
+const ADMIN_DIRS = [
+  path.join(__dirname, 'public'),
+  path.join(__dirname, 'admin_panel'),
+  path.join(PROJECT_ROOT, 'admin_panel'),
+  path.join(process.cwd(), 'admin_panel'),
+  path.join(process.cwd(), 'public'),
+];
+
+const STATIC_DIRS = [
+  ...FRONTEND_DIRS,
+  ...ADMIN_DIRS,
+  path.join(__dirname, 'images'),
+  path.join(PROJECT_ROOT, 'frontend', 'images'),
+  path.join(process.cwd(), 'frontend', 'images'),
+];
+
+function uniqueExistingDirs(dirs) {
+  return [...new Set(dirs.map(dir => path.resolve(dir)))].filter(dir => fs.existsSync(dir));
+}
+
+function firstExistingFile(paths) {
+  return paths.find(filePath => fs.existsSync(filePath));
+}
+
+function htmlCandidates(fileName, dirs) {
+  return dirs.map(dir => path.join(dir, fileName));
+}
+
+function sendHtmlFile(res, fileName, dirs, fallbackJson) {
+  const checkedPaths = htmlCandidates(fileName, dirs);
+  const htmlFile = firstExistingFile(checkedPaths);
+  if (htmlFile) return res.sendFile(htmlFile);
+  if (fallbackJson) return res.json(fallbackJson);
+  return res.status(404).json({
+    error: `${fileName} ফাইল পাওয়া যায়নি`,
+    checkedPaths,
+  });
+}
+
+uniqueExistingDirs(STATIC_DIRS).forEach(dir => app.use(express.static(dir)));
 
 // ============================================================
 // HEALTH
 // ============================================================
 app.get('/api/health', (req, res) =>
-  res.json({ status: 'ok', time: new Date().toISOString() })
+  res.json({
+    status: 'ok',
+    time: new Date().toISOString(),
+    structure: {
+      root: PROJECT_ROOT,
+      staticDirs: uniqueExistingDirs(STATIC_DIRS),
+    },
+  })
 );
 
 // ── HTML Routes ──
 app.get('/', (req, res) => {
-  const htmlFile = path.join(__dirname, 'public', 'index.html');
-  const fs = require('fs');
-  if (fs.existsSync(htmlFile)) {
-    res.sendFile(htmlFile);
-  } else {
-    res.json({ status: 'ok', message: 'Ibn Khaldun Institute API ✅', time: new Date().toISOString() });
-  }
+  sendHtmlFile(res, 'index.html', FRONTEND_DIRS, {
+    status: 'ok',
+    message: 'Ibn Khaldun Institute API ✅',
+    time: new Date().toISOString(),
+  });
 });
+
+app.get('/index.html', (req, res) => {
+  sendHtmlFile(res, 'index.html', FRONTEND_DIRS);
+});
+
 app.get('/admin', (req, res) => {
-  const htmlFile = path.join(__dirname, 'public', 'admin.html');
-  const fs = require('fs');
-  if (fs.existsSync(htmlFile)) {
-    res.sendFile(htmlFile);
-  } else {
-    res.status(404).json({ error: 'admin.html not found in public/' });
-  }
+  sendHtmlFile(res, 'admin.html', ADMIN_DIRS);
 });
+
 app.get('/admin.html', (req, res) => {
-  res.redirect('/admin');
+  sendHtmlFile(res, 'admin.html', ADMIN_DIRS);
 });
 
 // ── /reset-password route সরানো হয়েছে — এখন OTP-based system ব্যবহৃত হচ্ছে ──
@@ -2825,30 +2884,67 @@ app.post('/api/admin/build-snapshot', authMiddleware, async (req, res) => {
 });
 
 // ── Admin: পূর্ণ index.html (snapshot embed করে) ডাউনলোড ──
-const fs = require('fs');
 app.get('/api/admin/download-index', authMiddleware, async (req, res) => {
   try {
-    let html = '';
-    const indexPath = path.join(__dirname, 'public', 'index.html');
-    const altPath = path.join(__dirname, 'index.html');
-    if (fs.existsSync(indexPath)) html = fs.readFileSync(indexPath, 'utf8');
-    else if (fs.existsSync(altPath)) html = fs.readFileSync(altPath, 'utf8');
-    else return res.status(404).json({ error: 'index.html ফাইল server-এ পাওয়া যায়নি' });
+    const checkedPaths = htmlCandidates('index.html', FRONTEND_DIRS);
+    const indexPath = firstExistingFile(checkedPaths);
+    if (!indexPath) {
+      return res.status(404).json({ error: 'index.html ফাইল পাওয়া যায়নি', checkedPaths });
+    }
+
+    let html = fs.readFileSync(indexPath, 'utf8');
 
     // snapshot embed
     const s = await Settings.findOne({ key: 'dataSnapshot' });
-    const snapshot = (s && s.value) ? s.value : await buildDataSnapshot().then(() => Settings.findOne({ key: 'dataSnapshot' })).then(x => x.value);
+    const snapshot = (s && s.value)
+      ? s.value
+      : await buildDataSnapshot()
+          .then(() => Settings.findOne({ key: 'dataSnapshot' }))
+          .then(x => x.value);
 
     const embed = `<script id="__SNAPSHOT__" type="application/json">${JSON.stringify(snapshot).replace(/</g, '\\u003c')}</script>`;
     if (html.includes('id="__SNAPSHOT__"')) {
       html = html.replace(/<script id="__SNAPSHOT__"[\s\S]*?<\/script>/, embed);
-    } else {
+    } else if (html.includes('</head>')) {
       html = html.replace('</head>', embed + '\n</head>');
+    } else {
+      html = embed + '\n' + html;
     }
 
     res.set('Content-Type', 'text/html; charset=utf-8');
     res.set('Content-Disposition', 'attachment; filename="index.html"');
     res.send(html);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Admin: admin.html ডাউনলোড ──
+app.get('/api/admin/download-admin', authMiddleware, async (req, res) => {
+  try {
+    const checkedPaths = htmlCandidates('admin.html', ADMIN_DIRS);
+    const adminPath = firstExistingFile(checkedPaths);
+    if (!adminPath) {
+      return res.status(404).json({ error: 'admin.html ফাইল পাওয়া যায়নি', checkedPaths });
+    }
+
+    res.set('Content-Type', 'text/html; charset=utf-8');
+    res.set('Content-Disposition', 'attachment; filename="admin.html"');
+    res.send(fs.readFileSync(adminPath, 'utf8'));
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Admin: JSON snapshot ডাউনলোড ──
+app.get('/api/admin/download-snapshot', authMiddleware, async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'dataSnapshot' });
+    const snapshot = (s && s.value)
+      ? s.value
+      : await buildDataSnapshot()
+          .then(() => Settings.findOne({ key: 'dataSnapshot' }))
+          .then(x => x.value);
+
+    res.set('Content-Type', 'application/json; charset=utf-8');
+    res.set('Content-Disposition', 'attachment; filename="data-snapshot.json"');
+    res.send(JSON.stringify(snapshot, null, 2));
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
