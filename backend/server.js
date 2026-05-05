@@ -75,45 +75,28 @@ async function sendViaGAS(to, subject, html, type = 'general') {
 }
 
 // ============================================================
-// CORS — সব Vercel URL + localhost allow
+// CORS — সব origin allow (open API; admin auth JWT দিয়ে protected)
 // ============================================================
-app.use(cors({
-  origin: (origin, callback) => {
-    // Origin না থাকলে allow (Postman / server-to-server)
-    // "null" string origin — file://, redirect, বা sandboxed iframe থেকে আসে
-    if (!origin || origin === 'null') return callback(null, true);
-
-    // যেকোনো vercel.app বা onrender.com subdomain allow
-    if (origin.endsWith('.vercel.app')) return callback(null, true);
-    if (origin.endsWith('.onrender.com')) return callback(null, true);
-
-    // localhost / 127.0.0.1 যেকোনো port allow
-    if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
-      return callback(null, true);
-    }
-
-    // নির্দিষ্ট allowed origins
-    const allowed = [
-      'https://ibnkhalduninstitute.online',
-      'https://admin.ibnkhalduninstitute.online',
-      'https://ibnkhalduninstitute.onrender.com',
-      process.env.FRONTEND_URL,
-      process.env.ADMIN_URL,
-      process.env.RENDER_URL,
-    ].filter(Boolean);
-
-    if (allowed.includes(origin)) return callback(null, true);
-
-    console.warn('⚠️ CORS blocked:', origin);
-    callback(new Error('CORS: not allowed — ' + origin));
-  },
+const corsOptions = {
+  origin: true,                 // request origin reflect — সব allow
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  exposedHeaders: ['Content-Disposition'],
+  maxAge: 86400,
+};
+app.use(cors(corsOptions));
+// Preflight সব route এ handle
+app.options('*', cors(corsOptions));
 
-// Preflight OPTIONS সব route এ handle
-app.options('*', cors());
+// Safety net: যদি কোথাও error হয়, response-এ CORS headers থাকবে
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin) res.header('Access-Control-Allow-Origin', origin);
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Vary', 'Origin');
+  next();
+});
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
