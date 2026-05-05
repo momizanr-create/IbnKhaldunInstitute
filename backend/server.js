@@ -80,7 +80,8 @@ async function sendViaGAS(to, subject, html, type = 'general') {
 app.use(cors({
   origin: (origin, callback) => {
     // Origin না থাকলে allow (Postman / server-to-server)
-    if (!origin) return callback(null, true);
+    // "null" string origin — file://, redirect, বা sandboxed iframe থেকে আসে
+    if (!origin || origin === 'null') return callback(null, true);
 
     // যেকোনো vercel.app বা onrender.com subdomain allow
     if (origin.endsWith('.vercel.app')) return callback(null, true);
