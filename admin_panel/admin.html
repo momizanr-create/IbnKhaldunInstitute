@@ -327,6 +327,7 @@
       <!-- ── ৪. সাইট কাস্টমাইজেশন ── -->
       <div class="nav-section"><span class="dot"></span> কাস্টমাইজেশন</div>
       <div class="nav-item" data-page="customize" onclick="navTo('customize')"><span class="icon">🎨</span> সাইট সেটিংস</div>
+      <div class="nav-item" data-page="ai-builder" onclick="navTo('ai-builder')"><span class="icon">🤖</span> AI সেকশন বিল্ডার</div>
       <div class="nav-item" data-page="analytics" onclick="navTo('analytics')"><span class="icon">📈</span> Analytics</div>
 
       <!-- ── ৬. সিস্টেম ── -->
@@ -927,6 +928,45 @@
       </div>
     </div>
 
+    <!-- ═══ AI SECTION BUILDER ═══ -->
+    <div class="page" id="page-ai-builder">
+      <div class="page-head">
+        <h1>🤖 AI সেকশন বিল্ডার</h1>
+        <p>AI কে বলুন কেমন কোর্স-সম্পর্কিত সেকশন চান — সে ৩টি ডিজাইন রেকমেন্ড করবে, পছন্দেরটি save করলেই index.html-এ দেখাবে।</p>
+      </div>
+
+      <div class="card" style="margin-bottom:18px">
+        <div class="card-h"><div class="card-h-l"><h3>📝 নতুন সেকশন তৈরি করুন</h3></div></div>
+        <div class="card-b">
+          <label style="font-size:13px;font-weight:600;color:var(--text3);margin-bottom:6px;display:block">সেকশন টাইপ</label>
+          <select id="ai-kind" style="width:100%;max-width:360px;padding:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);margin-bottom:14px">
+            <option value="course-grid">📚 কোর্স গ্রিড / শোকেস</option>
+            <option value="hero">🎯 হিরো / ব্যানার</option>
+            <option value="stats">📊 পরিসংখ্যান / কাউন্টার</option>
+            <option value="testimonial">💬 ছাত্র রিভিউ</option>
+            <option value="faq">❓ FAQ</option>
+            <option value="custom">✨ কাস্টম (আপনার বর্ণনা অনুযায়ী)</option>
+          </select>
+          <label style="font-size:13px;font-weight:600;color:var(--text3);margin-bottom:6px;display:block">AI কে বলুন কী চান (Bengali/English উভয়ই চলবে)</label>
+          <textarea id="ai-prompt" rows="4" placeholder="যেমন: জনপ্রিয় ৬টি কোর্সের একটি card grid চাই — সবুজ accent border সহ, প্রতিটি card-এ thumbnail, title, instructor name আর enroll button থাকবে..."
+            style="width:100%;padding:12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:inherit;line-height:1.6;resize:vertical"></textarea>
+          <button class="tb-btn tb-btn-primary" style="margin-top:14px" onclick="aiGenerate()">
+            <span class="ic">✨</span><span>৩টি ডিজাইন রেকমেন্ড করুন</span>
+          </button>
+          <div id="ai-status" style="margin-top:10px;font-size:13px;color:var(--text3)"></div>
+        </div>
+      </div>
+
+      <div id="ai-variants" style="display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))"></div>
+
+      <div class="card" style="margin-top:24px">
+        <div class="card-h"><div class="card-h-l"><h3>📋 বর্তমান হোম পেজের সেকশনসমূহ</h3></div>
+          <button class="tb-btn" onclick="loadHomeSections()">🔄 রিফ্রেশ</button>
+        </div>
+        <div class="card-b" id="home-sections-list">লোড হচ্ছে...</div>
+      </div>
+    </div>
+
     <!-- ═══ SNAPSHOT ═══ -->
     <div class="page" id="page-snapshot">
       <div class="page-head"><h1>📦 Snapshot ও Download</h1><p>Static snapshot তৈরি করুন — index.html-এর জন্য</p></div>
@@ -1386,6 +1426,7 @@ const PAGE_TITLES = {
   'site-settings':'সাইট সেটিংস', 'navigation-mgr':'নেভিগেশন', 'footer-mgr':'ফুটার',
   analytics:'Analytics', snapshot:'Snapshot ও Download', settings:'পাসওয়ার্ড',
   customize:'সাইট সেটিংস ও কাস্টমাইজেশন',
+  'ai-builder':'🤖 AI সেকশন বিল্ডার',
 };
 
 function navTo(page){
@@ -1413,6 +1454,7 @@ function navTo(page){
     'site-settings': loadSiteSettings, 'navigation-mgr': loadNavigation, 'footer-mgr': loadFooter,
     analytics: loadAnalytics, snapshot: loadSnapshotInfo,
     customize: loadCustomizeHub,
+    'ai-builder': loadAiBuilder,
   };
   if(L[page]) L[page]();
 }
@@ -2879,8 +2921,118 @@ async function changePassword(){
   } catch(e){ toast(e.message,'error'); }
 }
 
+// ════════════════════════════════════════════════
+// 🤖 AI SECTION BUILDER
+// ════════════════════════════════════════════════
+let _aiVariants = [];
+
+async function loadAiBuilder(){
+  document.getElementById('ai-status').textContent = '';
+  document.getElementById('ai-variants').innerHTML = '';
+  loadHomeSections();
+}
+
+async function aiGenerate(){
+  const prompt = document.getElementById('ai-prompt').value.trim();
+  const kind   = document.getElementById('ai-kind').value;
+  if(!prompt){ toast('আগে বলুন কী চান','error'); return; }
+  const status = document.getElementById('ai-status');
+  const box    = document.getElementById('ai-variants');
+  status.innerHTML = '<span class="spinner" style="display:inline-block;width:14px;height:14px;border:2px solid var(--primary);border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle"></span> AI ডিজাইন তৈরি করছে... ১০–২০ সেকেন্ড লাগতে পারে';
+  box.innerHTML = '';
+  try{
+    const r = await api('POST', '/api/admin/ai-section-generate', { prompt, kind });
+    _aiVariants = r.variants || [];
+    status.textContent = '✅ ' + _aiVariants.length + 'টি ডিজাইন তৈরি হয়েছে — পছন্দেরটি save করুন';
+    box.innerHTML = _aiVariants.map((v, i) => `
+      <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:14px;overflow:hidden;display:flex;flex-direction:column">
+        <div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px">
+          <div>
+            <div style="font-weight:700;font-size:14px">${esc(v.name || ('Variant '+(i+1)))}</div>
+            <div style="font-size:11.5px;color:var(--text3);margin-top:2px">${esc(v.preview || '')}</div>
+          </div>
+          <button class="tb-btn tb-btn-primary" onclick="aiSaveVariant(${i})">💾 Save & Add</button>
+        </div>
+        <div style="background:#fff;color:#111;max-height:340px;overflow:auto">
+          <iframe srcdoc="${esc(v.html||'')}" style="width:100%;height:340px;border:0;display:block"></iframe>
+        </div>
+      </div>
+    `).join('');
+  }catch(e){
+    status.innerHTML = '<span style="color:var(--red)">❌ '+esc(e.message)+'</span>';
+  }
+}
+
+async function aiSaveVariant(idx){
+  const v = _aiVariants[idx];
+  if(!v) return;
+  const kind = document.getElementById('ai-kind').value;
+  const title = prompt('সেকশনের নাম দিন (admin reference)', v.name || 'AI Section');
+  if(!title) return;
+  try{
+    await api('POST', '/api/admin/home-sections', {
+      type: kind, title, subtitle: v.preview || '',
+      variant: v.id || ('v'+idx),
+      html: v.html, data: v.data || {},
+      enabled: true, order: Date.now(),
+    });
+    toast('✅ সেকশন যোগ হয়েছে — index.html এ এখন দেখাবে');
+    loadHomeSections();
+  }catch(e){ toast(e.message,'error'); }
+}
+
+async function loadHomeSections(){
+  const box = document.getElementById('home-sections-list');
+  if(!box) return;
+  box.innerHTML = 'লোড হচ্ছে...';
+  try{
+    const list = await api('GET', '/api/admin/home-sections');
+    if(!list.length){ box.innerHTML = '<p style="color:var(--text3);font-size:13.5px">এখনো কোনো AI সেকশন যোগ করা হয়নি।</p>'; return; }
+    box.innerHTML = list.map(s => `
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;background:var(--bg3)">
+        <div style="min-width:0;flex:1">
+          <div style="font-weight:700;font-size:14px">${esc(s.title||'(নামহীন)')}
+            <span style="font-size:11px;color:var(--text3);font-weight:500;margin-left:6px">${esc(s.type)} • ${esc(s.variant||'')}</span>
+          </div>
+          <div style="font-size:12px;color:var(--text3);margin-top:3px">${esc(s.subtitle||'')}</div>
+        </div>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3)">
+          <input type="checkbox" ${s.enabled?'checked':''} onchange="toggleHomeSection('${s._id}', this.checked)"> চালু
+        </label>
+        <button class="tb-btn" onclick="previewHomeSection('${s._id}')">👁 প্রিভিউ</button>
+        <button class="tb-btn" style="color:var(--red)" onclick="deleteHomeSection('${s._id}')">🗑</button>
+      </div>
+    `).join('');
+  }catch(e){ box.innerHTML = '<span style="color:var(--red)">'+esc(e.message)+'</span>'; }
+}
+
+async function toggleHomeSection(id, enabled){
+  try{ await api('PUT', '/api/admin/home-sections/'+id, { enabled }); toast('আপডেট হয়েছে'); }
+  catch(e){ toast(e.message,'error'); }
+}
+async function deleteHomeSection(id){
+  if(!confirm('সত্যিই ডিলিট করবেন?')) return;
+  try{ await api('DELETE', '/api/admin/home-sections/'+id); toast('ডিলিট হয়েছে'); loadHomeSections(); }
+  catch(e){ toast(e.message,'error'); }
+}
+async function previewHomeSection(id){
+  try{
+    const list = await api('GET', '/api/admin/home-sections');
+    const s = list.find(x => x._id === id);
+    if(!s) return;
+    const w = window.open('', '_blank');
+    w.document.write('<!doctype html><meta charset="utf-8"><title>Preview</title><body style="margin:0;font-family:sans-serif">'+s.html+'</body>');
+    w.document.close();
+  }catch(e){ toast(e.message,'error'); }
+}
+
 // expose globals
 window.api = api; window.toast = toast;
+window.aiGenerate = aiGenerate; window.aiSaveVariant = aiSaveVariant;
+window.loadHomeSections = loadHomeSections;
+window.toggleHomeSection = toggleHomeSection;
+window.deleteHomeSection = deleteHomeSection;
+window.previewHomeSection = previewHomeSection;
 </script>
 
 

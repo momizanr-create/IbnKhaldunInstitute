@@ -346,6 +346,21 @@ const accessRequestSchema = new mongoose.Schema({
 });
 const AccessRequest = mongoose.model('AccessRequest', accessRequestSchema);
 
+// ── HOME SECTION (AI-generated dynamic blocks) ──
+const homeSectionSchema = new mongoose.Schema({
+  type:        { type: String, default: 'custom' },   // hero | course-grid | stats | testimonial | faq | custom
+  title:       String,
+  subtitle:    String,
+  variant:     { type: String, default: 'default' },  // chosen design template id
+  data:        { type: mongoose.Schema.Types.Mixed, default: {} }, // free-form payload
+  html:        String,           // rendered HTML (server-side cached)
+  order:       { type: Number, default: 0 },
+  enabled:     { type: Boolean, default: true },
+  createdAt:   { type: Date, default: Date.now },
+  updatedAt:   { type: Date, default: Date.now },
+});
+const HomeSection = mongoose.model('HomeSection', homeSectionSchema);
+
 
 // ============================================================
 // REALTIME VISITOR TRACKING (In-Memory — GA-independent)
@@ -2971,6 +2986,146 @@ app.get('/api/admin/notifications', authMiddleware, async (req, res) => {
       notifications,
     });
   } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ============================================================
+// HOME SECTIONS — CRUD (admin) + public read
+// ============================================================
+app.get('/api/home-sections', async (req, res) => {
+  try {
+    const list = await HomeSection.find({ enabled: true }).sort({ order: 1, createdAt: 1 });
+    res.json(list);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.get('/api/admin/home-sections', authMiddleware, async (req, res) => {
+  try {
+    const list = await HomeSection.find().sort({ order: 1, createdAt: 1 });
+    res.json(list);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/admin/home-sections', authMiddleware, async (req, res) => {
+  try {
+    const body = req.body || {};
+    body.updatedAt = new Date();
+    const sec = await HomeSection.create(body);
+    res.json(sec);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.put('/api/admin/home-sections/:id', authMiddleware, async (req, res) => {
+  try {
+    const body = req.body || {};
+    body.updatedAt = new Date();
+    const sec = await HomeSection.findByIdAndUpdate(req.params.id, body, { new: true });
+    res.json(sec);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.delete('/api/admin/home-sections/:id', authMiddleware, async (req, res) => {
+  try {
+    await HomeSection.findByIdAndDelete(req.params.id);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/admin/home-sections/reorder', authMiddleware, async (req, res) => {
+  try {
+    const { items = [] } = req.body || {};
+    await Promise.all(items.map((it, i) =>
+      HomeSection.findByIdAndUpdate(it.id, { order: it.order ?? i })
+    ));
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ============================================================
+// AI Section Generator — Lovable AI Gateway
+// Body: { prompt: string, kind?: 'course-grid'|'hero'|'stats'|'testimonial'|'faq'|'custom' }
+// Returns: { variants: [ { id, name, html, data } ] }  (3 design recommendations)
+// ============================================================
+app.post('/api/admin/ai-section-generate', authMiddleware, async (req, res) => {
+  try {
+    const { prompt = '', kind = 'custom' } = req.body || {};
+    if (!prompt.trim()) return res.status(400).json({ error: 'prompt required' });
+
+    const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
+    if (!LOVABLE_API_KEY) {
+      return res.status(500).json({ error: 'LOVABLE_API_KEY not configured on server. Add it to environment variables.' });
+    }
+
+    const sys = `তুমি একজন expert web designer। ইবনে খালদুন ইনস্টিটিউট-এর হোম পেজের জন্য একটি কোর্স-সম্পর্কিত section design করবে। 
+Brand colors: primary #066144 (deep green), accent #F5C518 (gold), white background, rounded cards, soft shadows, Hind Siliguri font.
+তুমি ৩টি ভিন্ন design variant (desktop + mobile responsive) generate করবে — প্রতিটি একটি self-contained HTML block যেটি index.html-এ সরাসরি বসানো যাবে।
+Section type: ${kind}. সব styles inline বা <style scoped> এর মধ্যে রাখবে যাতে existing CSS-এর সাথে conflict না হয়। সব class names "ihs-" prefix দিয়ে শুরু করবে।
+প্রতিটি variant অবশ্যই mobile-first responsive হবে এবং একটি সুন্দর Bengali label থাকবে।`;
+
+    const tool = {
+      type: 'function',
+      function: {
+        name: 'design_variants',
+        description: 'Return 3 design variants for the section',
+        parameters: {
+          type: 'object',
+          properties: {
+            variants: {
+              type: 'array',
+              minItems: 3, maxItems: 3,
+              items: {
+                type: 'object',
+                properties: {
+                  id:       { type: 'string', description: 'short slug e.g. v1-card-grid' },
+                  name:     { type: 'string', description: 'Bengali friendly name' },
+                  preview:  { type: 'string', description: 'short Bengali description of the design' },
+                  html:     { type: 'string', description: 'self-contained HTML+CSS block, no <html>/<body>' },
+                  data:     { type: 'object', description: 'editable text fields used in the html', additionalProperties: true },
+                },
+                required: ['id','name','html'],
+              }
+            }
+          },
+          required: ['variants'],
+        }
+      }
+    };
+
+    const r = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + LOVABLE_API_KEY,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'google/gemini-2.5-flash',
+        messages: [
+          { role: 'system', content: sys },
+          { role: 'user',   content: prompt },
+        ],
+        tools: [tool],
+        tool_choice: { type: 'function', function: { name: 'design_variants' } },
+      }),
+    });
+
+    if (!r.ok) {
+      const txt = await r.text();
+      if (r.status === 429) return res.status(429).json({ error: 'AI rate limit, একটু পরে চেষ্টা করুন।' });
+      if (r.status === 402) return res.status(402).json({ error: 'AI credits শেষ — Lovable workspace-এ credit যোগ করুন।' });
+      return res.status(500).json({ error: 'AI gateway error: ' + txt.slice(0, 300) });
+    }
+    const j = await r.json();
+    const call = j.choices?.[0]?.message?.tool_calls?.[0];
+    let variants = [];
+    if (call?.function?.arguments) {
+      try { variants = JSON.parse(call.function.arguments).variants || []; } catch(_) {}
+    }
+    if (!variants.length) {
+      return res.status(500).json({ error: 'AI কোনো valid design ফেরত দেয়নি, আবার চেষ্টা করুন।' });
+    }
+    res.json({ variants });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 
