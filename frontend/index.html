@@ -883,15 +883,90 @@ const qsa = sel => document.querySelectorAll(sel);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+/* ========== SNAPSHOT (offline / static deploy data) ==========
+ * server থেকে download করা index.html-এ <script id="__SNAPSHOT__"> থাকে।
+ * না থাকলে runtime-এ /api/public/data-snapshot থেকে load করা হয়।
+ * GET request snapshot থেকে answer হয় — server-call শুধু writes/auth-এর জন্য।
+ */
+let _SNAPSHOT = null;
+let _snapshotReady = (async () => {
+  try {
+    const tag = document.getElementById('__SNAPSHOT__');
+    if (tag && tag.textContent.trim()) {
+      _SNAPSHOT = JSON.parse(tag.textContent);
+      return _SNAPSHOT;
+    }
+  } catch(e){}
+  try {
+    const r = await fetch(API_BASE + '/api/public/data-snapshot', { cache: 'no-cache' });
+    if (r.ok) { _SNAPSHOT = await r.json(); return _SNAPSHOT; }
+  } catch(e){}
+  return null;
+})();
+
+function _fromSnapshot(url) {
+  if (!_SNAPSHOT || !_SNAPSHOT.data) return undefined;
+  const d = _SNAPSHOT.data;
+  const map = {
+    '/api/courses':                d.courses,
+    '/api/instructors':            d.instructors,
+    '/api/testimonials':           d.testimonials,
+    '/api/notices':                d.notices,
+    '/api/blog':                   d.blog,
+    '/api/categories':             d.categories,
+    '/api/features':               d.features,
+    '/api/site-settings':          d.siteSettings,
+    '/api/hero-section':           d.heroSection,
+    '/api/navigation':             d.navigation,
+    '/api/footer':                 d.footer,
+    '/api/theme-settings':         d.themeSettings,
+    '/api/welcome-popup':          d.welcomePopup,
+    '/api/cta-section':            d.ctaSection,
+    '/api/featured-courses-config':d.featuredConfig,
+    '/api/contact-content':        d.contactContent,
+    '/api/public-content-bundle':  d.contentBundle,
+    '/api/public/about-page':      d.aboutPage,
+    '/api/course-tabs':            d.courseTabs,
+  };
+  if (map[url] !== undefined) return map[url];
+  if (url === '/api/faqs/home' || url === '/api/faqs') return (d.faqs && d.faqs.home && d.faqs.home.items) || [];
+  if (url.startsWith('/api/courses/')) {
+    const slug = url.replace('/api/courses/', '');
+    return (d.courses || []).find(c => c.slug === slug || String(c._id) === slug);
+  }
+  if (url.startsWith('/api/course-detail/')) {
+    const id = url.replace('/api/course-detail/', '');
+    return (d.courseDetails || {})[id];
+  }
+  return undefined;
+}
+
 async function api(url, opts = {}) {
+  const method = (opts.method || 'GET').toUpperCase();
+  // GET requests → try snapshot first (offline / static deploy)
+  if (method === 'GET' && !opts.headers?.Authorization && !_token) {
+    await _snapshotReady;
+    const cached = _fromSnapshot(url);
+    if (cached !== undefined) return cached;
+  }
   opts.headers = opts.headers || {};
   if (opts.body && !opts.headers['Content-Type']) opts.headers['Content-Type'] = 'application/json';
   if (_token) opts.headers['Authorization'] = 'Bearer ' + _token;
-  const r = await fetch(API_BASE + url, opts);
-  const ct = r.headers.get('content-type') || '';
-  const data = ct.includes('json') ? await r.json().catch(()=>({})) : await r.text();
-  if (!r.ok) throw new Error((data && data.error) || (data && data.message) || ('HTTP ' + r.status));
-  return data;
+  try {
+    const r = await fetch(API_BASE + url, opts);
+    const ct = r.headers.get('content-type') || '';
+    const data = ct.includes('json') ? await r.json().catch(()=>({})) : await r.text();
+    if (!r.ok) throw new Error((data && data.error) || (data && data.message) || ('HTTP ' + r.status));
+    return data;
+  } catch (err) {
+    // network failed → snapshot fallback
+    if (method === 'GET') {
+      await _snapshotReady;
+      const cached = _fromSnapshot(url);
+      if (cached !== undefined) return cached;
+    }
+    throw err;
+  }
 }
 
 function toast(msg, type = '') {

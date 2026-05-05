@@ -2735,6 +2735,165 @@ app.post('/api/utils/youtube-id', (req, res) => {
   res.json({ id, valid: !!id });
 });
 
+
+// ============================================================
+// 📦 SNAPSHOT SYSTEM — admin panel থেকে static data build
+// ─────────────────────────────────────────────────────────────
+// সব public data এক JSON-এ একত্রিত করে রাখা হয় Settings('dataSnapshot')-এ।
+// index.html এই snapshot থেকে দ্রুত data পড়তে পারে (offline / static deploy)।
+// admin save করলে auto-rebuild হয়।
+// ============================================================
+async function buildDataSnapshot() {
+  const safe = async (fn, fallback) => { try { return await fn(); } catch(e) { return fallback; } };
+
+  const [
+    courses, instructors, testimonials, notices, blog, categories,
+    features, faqs, courseTabs, contactContent, siteSettings,
+    heroSection, navigation, footer, themeSettings, welcomePopup,
+    ctaSection, featuredConfig, contentBundle, aboutPage,
+  ] = await Promise.all([
+    safe(() => Course.find({ active: { $ne: false } }).sort({ createdAt: -1 }).lean(), []),
+    safe(() => Instructor.find({ active: { $ne: false } }).sort({ order: 1 }).lean(), []),
+    safe(() => Testimonial.find({ active: { $ne: false } }).sort({ order: 1 }).lean(), []),
+    safe(() => Notice.find({ active: { $ne: false } }).sort({ createdAt: -1 }).lean(), []),
+    safe(() => BlogPost.find({ published: { $ne: false } }).sort({ createdAt: -1 }).lean(), []),
+    safe(() => Category.find({ active: { $ne: false } }).sort({ order: 1 }).lean(), []),
+    safe(() => Feature.find({ active: { $ne: false } }).sort({ order: 1 }).lean(), []),
+    safe(async () => { const s = await Settings.findOne({ key: 'faqs' }); return (s && s.value) ? s.value : DEFAULT_FAQS; }, DEFAULT_FAQS),
+    safe(() => CourseTab.find({ active: { $ne: false } }).sort({ order: 1 }).lean(), []),
+    safe(async () => { const s = await Settings.findOne({ key: 'contactContent' }); return s ? s.value : {}; }, {}),
+    safe(async () => { const s = await Settings.findOne({ key: 'siteSettings' }); return s ? s.value : {}; }, {}),
+    safe(async () => { const s = await Settings.findOne({ key: 'heroSection' }); return s ? s.value : {}; }, {}),
+    safe(async () => { const s = await Settings.findOne({ key: 'navigation' }); return s ? s.value : {}; }, {}),
+    safe(async () => { const s = await Settings.findOne({ key: 'footer' }); return s ? s.value : {}; }, {}),
+    safe(async () => { const s = await Settings.findOne({ key: 'themeSettings' }); return s ? s.value : {}; }, {}),
+    safe(async () => { const s = await Settings.findOne({ key: 'welcomePopup' }); return s ? s.value : {}; }, {}),
+    safe(async () => { const s = await Settings.findOne({ key: 'ctaSection' }); return s ? s.value : {}; }, {}),
+    safe(async () => { const s = await Settings.findOne({ key: 'featuredCoursesConfig' }); return s ? s.value : {}; }, {}),
+    safe(() => getContentBundle(), {}),
+    safe(async () => { const s = await Settings.findOne({ key: 'aboutPage' }); return s ? s.value : {}; }, {}),
+  ]);
+
+  // course-detail bundle (shallow, for offline detail-page browsing)
+  const courseDetails = {};
+  for (const c of courses) {
+    const id = String(c._id);
+    const det = await safe(async () => { const s = await Settings.findOne({ key: 'courseDetail_' + id }); return s ? s.value : null; }, null);
+    if (det) courseDetails[id] = det;
+  }
+
+  const snapshot = {
+    builtAt: new Date().toISOString(),
+    version: 1,
+    data: {
+      courses, instructors, testimonials, notices, blog, categories,
+      features, faqs, courseTabs, contactContent, siteSettings,
+      heroSection, navigation, footer, themeSettings, welcomePopup,
+      ctaSection, featuredConfig, contentBundle, aboutPage, courseDetails,
+    },
+  };
+
+  await Settings.findOneAndUpdate(
+    { key: 'dataSnapshot' },
+    { key: 'dataSnapshot', value: snapshot, updatedAt: new Date() },
+    { upsert: true }
+  );
+
+  const itemCount =
+    courses.length + instructors.length + testimonials.length +
+    notices.length + blog.length + categories.length + features.length;
+  const size = Buffer.byteLength(JSON.stringify(snapshot), 'utf8');
+  return { builtAt: snapshot.builtAt, size, itemCount };
+}
+
+// ── Public: snapshot serve (index.html এই endpoint থেকে data পড়ে) ──
+app.get('/api/public/data-snapshot', async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'dataSnapshot' });
+    if (!s || !s.value) return res.status(404).json({ error: 'Snapshot এখনো তৈরি হয়নি' });
+    res.set('Cache-Control', 'public, max-age=60');
+    res.json(s.value);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Admin: snapshot তথ্য ──
+app.get('/api/admin/snapshot-info', authMiddleware, async (req, res) => {
+  try {
+    const s = await Settings.findOne({ key: 'dataSnapshot' });
+    if (!s || !s.value) return res.json({ builtAt: null, size: 0, itemCount: 0 });
+    const value = s.value;
+    const size = Buffer.byteLength(JSON.stringify(value), 'utf8');
+    const d = value.data || {};
+    const itemCount =
+      (d.courses?.length || 0) + (d.instructors?.length || 0) +
+      (d.testimonials?.length || 0) + (d.notices?.length || 0) +
+      (d.blog?.length || 0) + (d.categories?.length || 0) + (d.features?.length || 0);
+    res.json({ builtAt: value.builtAt, size, itemCount });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Admin: snapshot build trigger ──
+app.post('/api/admin/build-snapshot', authMiddleware, async (req, res) => {
+  try {
+    const info = await buildDataSnapshot();
+    res.json({ message: '✅ Snapshot তৈরি হয়েছে', ...info });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Admin: পূর্ণ index.html (snapshot embed করে) ডাউনলোড ──
+const fs = require('fs');
+app.get('/api/admin/download-index', authMiddleware, async (req, res) => {
+  try {
+    let html = '';
+    const indexPath = path.join(__dirname, 'public', 'index.html');
+    const altPath = path.join(__dirname, 'index.html');
+    if (fs.existsSync(indexPath)) html = fs.readFileSync(indexPath, 'utf8');
+    else if (fs.existsSync(altPath)) html = fs.readFileSync(altPath, 'utf8');
+    else return res.status(404).json({ error: 'index.html ফাইল server-এ পাওয়া যায়নি' });
+
+    // snapshot embed
+    const s = await Settings.findOne({ key: 'dataSnapshot' });
+    const snapshot = (s && s.value) ? s.value : await buildDataSnapshot().then(() => Settings.findOne({ key: 'dataSnapshot' })).then(x => x.value);
+
+    const embed = `<script id="__SNAPSHOT__" type="application/json">${JSON.stringify(snapshot).replace(/</g, '\\u003c')}</script>`;
+    if (html.includes('id="__SNAPSHOT__"')) {
+      html = html.replace(/<script id="__SNAPSHOT__"[\s\S]*?<\/script>/, embed);
+    } else {
+      html = html.replace('</head>', embed + '\n</head>');
+    }
+
+    res.set('Content-Type', 'text/html; charset=utf-8');
+    res.set('Content-Disposition', 'attachment; filename="index.html"');
+    res.send(html);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ============================================================
+// 🔔 NOTIFICATIONS — sidebar badges
+// নতুন enrollment / access-request / contact-message — সব এক জায়গায়
+// ============================================================
+app.get('/api/admin/notifications', authMiddleware, async (req, res) => {
+  try {
+    const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000); // last 7 days
+    const [enrolls, accessReqs, msgs] = await Promise.all([
+      Enrollment.find({ status: 'pending' }).sort({ createdAt: -1 }).limit(20).lean().catch(() => []),
+      AccessRequest.find({ status: 'pending' }).sort({ createdAt: -1 }).limit(20).lean().catch(() => []),
+      ContactMessage.find({ status: { $ne: 'read' }, createdAt: { $gte: since } }).sort({ createdAt: -1 }).limit(20).lean().catch(() => []),
+    ]);
+    const notifications = [
+      ...enrolls.map(e => ({ type: 'enrollment', read: false, title: e.studentName || 'নতুন এনরোলমেন্ট', desc: e.courseTitle || '', at: e.createdAt, id: String(e._id) })),
+      ...accessReqs.map(a => ({ type: 'access_request', read: false, title: a.userName || 'অ্যাক্সেস রিকোয়েস্ট', desc: a.courseTitle || '', at: a.createdAt, id: String(a._id) })),
+      ...msgs.map(m => ({ type: 'contact', read: false, title: m.name || 'নতুন মেসেজ', desc: m.subject || '', at: m.createdAt, id: String(m._id) })),
+    ].sort((a, b) => new Date(b.at) - new Date(a.at));
+
+    res.json({
+      unread: notifications.filter(n => !n.read).length,
+      notifications,
+    });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+
 app.listen(PORT, () => console.log(`🚀 Server: http://localhost:${PORT}`));
   })
   .catch(err => console.error('❌ MongoDB error:', err));
