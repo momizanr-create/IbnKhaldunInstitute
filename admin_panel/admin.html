@@ -68,9 +68,9 @@ textarea{resize:vertical;min-height:80px}
 .badge-info{background:#dbeafe;color:#1e40af}
 
 /* LOGIN */
-#loginPage{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1e1b4b 0%,#4c1d95 50%,#1e1b4b 100%);padding:16px;position:relative;overflow:hidden}
-#loginPage::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(163,230,53,.15),transparent 70%);top:-150px;right:-100px}
-#loginPage::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.3),transparent 70%);bottom:-150px;left:-80px}
+#login-page{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1e1b4b 0%,#4c1d95 50%,#1e1b4b 100%);padding:16px;position:relative;overflow:hidden}
+#login-page::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(163,230,53,.15),transparent 70%);top:-150px;right:-100px}
+#login-page::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.3),transparent 70%);bottom:-150px;left:-80px}
 .login-card{background:rgba(255,255,255,.97);border-radius:20px;padding:36px 30px;width:100%;max-width:420px;box-shadow:0 25px 80px rgba(0,0,0,.35);position:relative;z-index:1;border:1px solid rgba(255,255,255,.3)}
 .login-card h1{text-align:center;color:var(--primary);margin-bottom:18px;font-size:clamp(18px,5vw,22px);font-weight:800}
 
@@ -279,7 +279,7 @@ tr:hover td{background:#faf8ff}
 <body>
 
 <!-- LOGIN -->
-<div id="loginPage">
+<div id="login-page">
   <div class="login-card">
     <h1><i class="fas fa-mosque"></i> অ্যাডমিন প্যানেল</h1>
     <p style="text-align:center;color:var(--text-soft);font-size:13px;margin-bottom:18px">ইবনে খালদুন ইনস্টিটিউট</p>
@@ -288,7 +288,7 @@ tr:hover td{background:#faf8ff}
       <div class="form-group"><label class="label">পাসওয়ার্ড</label><input type="password" id="password" autocomplete="current-password" required /></div>
       <button class="btn btn-primary btn-block" style="padding:11px">লগইন</button>
       <p style="text-align:center;margin-top:12px;font-size:12px;color:var(--text-soft)">ইউজারনেম ও পাসওয়ার্ড সার্ভারের <code>.env</code> ফাইলে সেট করা।</p>
-      <p style="text-align:center;margin-top:6px;font-size:11px;color:#94a3b8">🔗 Server: <code style="font-size:10px" id="serverHostTag">ibnkhalduninstitute.onrender.com</code></p>
+      <p style="text-align:center;margin-top:6px;font-size:11px;color:#94a3b8">🔗 Server: <code style="font-size:10px" id="server-host-tag">ibnkhalduninstitute.onrender.com</code></p>
     </form>
   </div>
 </div>
@@ -296,7 +296,7 @@ tr:hover td{background:#faf8ff}
 <!-- APP -->
 <div id="app">
 <div class="layout">
-  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar(false)"></div>
+  <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar(false)"></div>
   <aside class="sidebar" id="sidebar">
     <h2><i class="fas fa-graduation-cap"></i> ইবনে খালদুন</h2>
     <div class="sidebar-section-label">মূল মেনু</div>
@@ -322,10 +322,10 @@ tr:hover td{background:#faf8ff}
     <div class="topbar">
       <div style="display:flex;align-items:center;gap:8px;min-width:0">
         <button class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
-        <h1 id="pageTitle">ড্যাশবোর্ড</h1>
+        <h1 id="page-title">ড্যাশবোর্ড</h1>
       </div>
       <div class="topbar-right">
-        <span class="email-text" id="adminEmail"></span>
+        <span class="email-text" id="admin-email"></span>
       </div>
     </div>
 
@@ -339,34 +339,34 @@ tr:hover td{background:#faf8ff}
           </div>
           <div>
             <div style="font-size:13px;opacity:.8">এই মুহূর্তে ওয়েবসাইটে</div>
-            <div style="font-size:28px;font-weight:800;line-height:1.1"><span id="liveVisitorCount">—</span> জন</div>
+            <div style="font-size:28px;font-weight:800;line-height:1.1"><span id="live-visitor-count">—</span> জন</div>
           </div>
         </div>
         <div style="display:flex;gap:18px;flex-wrap:wrap">
-          <div style="text-align:center"><div style="font-size:22px;font-weight:800" id="todayViewsCount">—</div><div style="font-size:12px;opacity:.8">আজকের ভিউ</div></div>
-          <div style="text-align:center"><div style="font-size:22px;font-weight:800" id="uniqueTodayCount">—</div><div style="font-size:12px;opacity:.8">আজকের ইউনিক ভিজিটর</div></div>
-          <div style="text-align:center"><div style="font-size:22px;font-weight:800" id="todayCourseViewsCount">—</div><div style="font-size:12px;opacity:.8">আজকের কোর্স ভিউ</div></div>
+          <div style="text-align:center"><div style="font-size:22px;font-weight:800" id="today-views-count">—</div><div style="font-size:12px;opacity:.8">আজকের ভিউ</div></div>
+          <div style="text-align:center"><div style="font-size:22px;font-weight:800" id="unique-today-count">—</div><div style="font-size:12px;opacity:.8">আজকের ইউনিক ভিজিটর</div></div>
+          <div style="text-align:center"><div style="font-size:22px;font-weight:800" id="today-course-views-count">—</div><div style="font-size:12px;opacity:.8">আজকের কোর্স ভিউ</div></div>
         </div>
       </div>
       <style>@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.4)}}</style>
 
-      <div class="stat-grid" id="statGrid"><div class="loader"></div></div>
+      <div class="stat-grid" id="stat-grid"><div class="loader"></div></div>
 
       <!-- Data Visualization: charts -->
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px">
         <div class="card">
           <h3 style="margin-bottom:8px;font-size:15px"><i class="fas fa-chart-line" style="color:var(--primary)"></i> গত ৭ দিনের ভিজিটর ট্রেন্ড</h3>
-          <div id="chartTrend" style="min-height:240px"></div>
+          <div id="chart-trend" style="min-height:240px"></div>
         </div>
         <div class="card">
           <h3 style="margin-bottom:8px;font-size:15px"><i class="fas fa-chart-pie" style="color:var(--primary)"></i> অনুরোধ স্ট্যাটাস</h3>
-          <div id="chartStatus" style="min-height:240px"></div>
+          <div id="chart-status" style="min-height:240px"></div>
         </div>
       </div>
 
       <div class="card" style="margin-top:14px">
         <h3 style="margin-bottom:10px;font-size:16px"><i class="fas fa-fire" style="color:#ef4444"></i> আজকের জনপ্রিয় কোর্স</h3>
-        <div class="table-wrap" id="topCoursesTable"></div>
+        <div class="table-wrap" id="top-courses-table"></div>
       </div>
     </div>
 
@@ -376,37 +376,37 @@ tr:hover td{background:#faf8ff}
       <div style="margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
         <div style="flex:1;min-width:240px;position:relative">
           <i class="fas fa-search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7c3aed"></i>
-          <input type="text" id="courseAdminSearch" placeholder="কোর্স খুঁজুন... (নাম, ক্যাটাগরি, প্রকার)" oninput="filterAdminCourses(this.value)" style="width:100%;padding:11px 14px 11px 42px;border-radius:10px;border:1.5px solid #e5e7eb;font-family:inherit;font-size:14px;background:#fff" />
+          <input type="text" id="course-admin-search" placeholder="কোর্স খুঁজুন... (নাম, ক্যাটাগরি, প্রকার)" oninput="filterAdminCourses(this.value)" style="width:100%;padding:11px 14px 11px 42px;border-radius:10px;border:1.5px solid #e5e7eb;font-family:inherit;font-size:14px;background:#fff" />
         </div>
-        <button class="btn btn-outline btn-sm" onclick="document.getElementById('courseAdminSearch').value='';filterAdminCourses('')"><i class="fas fa-times"></i> ক্লিয়ার</button>
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('course-admin-search').value='';filterAdminCourses('')"><i class="fas fa-times"></i> ক্লিয়ার</button>
       </div>
-      <div class="table-wrap"><table id="coursesTable"></table></div>
+      <div class="table-wrap"><table id="courses-table"></table></div>
     </div>
 
     <!-- ACCESS REQUESTS -->
-    <div class="section" id="sec-accessRequests">
+    <div class="section" id="sec-access-requests">
       <div class="card">
         <h3 style="font-size:16px"><i class="fas fa-key"></i> কোর্সসমূহ অ্যাক্সেস অনুরোধ</h3>
         <p class="text-soft">Approve করলে ছাত্র ইমেইলে কনফার্মেশন পাবে।</p>
       </div>
-      <div class="table-wrap"><table id="accessTable"></table></div>
+      <div class="table-wrap"><table id="access-table"></table></div>
     </div>
 
     <!-- USERS -->
-    <div class="section" id="sec-users"><div class="table-wrap"><table id="usersTable"></table></div></div>
+    <div class="section" id="sec-users"><div class="table-wrap"><table id="users-table"></table></div></div>
 
     <!-- INSTRUCTORS -->
     <div class="section" id="sec-instructors">
       <button class="btn btn-primary" onclick="openCrudModal('instructors')" style="margin-bottom:14px"><i class="fas fa-plus"></i> নতুন শিক্ষক</button>
-      <div class="table-wrap"><table id="instructorsTable"></table></div>
+      <div class="table-wrap"><table id="instructors-table"></table></div>
     </div>
     <div class="section" id="sec-testimonials">
       <button class="btn btn-primary" onclick="openCrudModal('testimonials')" style="margin-bottom:14px"><i class="fas fa-plus"></i> নতুন অভিমত</button>
-      <div class="table-wrap"><table id="testimonialsTable"></table></div>
+      <div class="table-wrap"><table id="testimonials-table"></table></div>
     </div>
     <div class="section" id="sec-notices">
       <button class="btn btn-primary" onclick="openCrudModal('notices')" style="margin-bottom:14px"><i class="fas fa-plus"></i> নতুন নোটিশ</button>
-      <div class="table-wrap"><table id="noticesTable"></table></div>
+      <div class="table-wrap"><table id="notices-table"></table></div>
     </div>
     <div class="section" id="sec-categories">
       <div class="card" style="margin-bottom:14px">
@@ -414,15 +414,15 @@ tr:hover td{background:#faf8ff}
         <p class="text-soft">একটি ক্যাটাগরির অধীনে একাধিক সাব-ক্যাটাগরি যোগ করতে পারবেন। কোর্স তৈরির সময় এগুলো ড্রপডাউনে আসবে।</p>
       </div>
       <button class="btn btn-primary" onclick="openCategoryModal()" style="margin-bottom:14px"><i class="fas fa-plus"></i> নতুন ক্যাটাগরি</button>
-      <div class="table-wrap"><table id="categoriesTable"></table></div>
+      <div class="table-wrap"><table id="categories-table"></table></div>
     </div>
     <div class="section" id="sec-faqs">
       <button class="btn btn-primary" onclick="openCrudModal('faqs')" style="margin-bottom:14px"><i class="fas fa-plus"></i> নতুন FAQ</button>
-      <div class="table-wrap"><table id="faqsTable"></table></div>
+      <div class="table-wrap"><table id="faqs-table"></table></div>
     </div>
     <div class="section" id="sec-blog">
       <button class="btn btn-primary" onclick="openBlogModal()" style="margin-bottom:14px"><i class="fas fa-plus"></i> নতুন পোস্ট</button>
-      <div class="table-wrap"><table id="blogTable"></table></div>
+      <div class="table-wrap"><table id="blog-table"></table></div>
     </div>
     
     <!-- TOPICS SECTION -->
@@ -434,24 +434,15 @@ tr:hover td{background:#faf8ff}
         </div>
         <button class="btn btn-primary" onclick="openTopicModal()"><i class="fas fa-plus"></i> নতুন বিষয়</button>
       </div>
-      <div class="table-wrap"><table id="topicsTable"></table></div>
+      <div class="table-wrap"><table id="topics-table"></table></div>
     </div>
 
-    <div class="section" id="sec-messages"><div class="table-wrap"><table id="messagesTable"></table></div></div>
+    <div class="section" id="sec-messages"><div class="table-wrap"><table id="messages-table"></table></div></div>
 
     <!-- SETTINGS -->
     <div class="section" id="sec-settings">
-      <div class="card" style="background:linear-gradient(135deg,#1e1b4b,#5b21b6);color:#fff;margin-bottom:14px;padding:16px">
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
-          <div>
-            <h3 style="color:#fff;font-size:16px;margin-bottom:4px"><i class="fas fa-link"></i> সেটিংস → index.html সংযোগ</h3>
-            <p style="font-size:12px;opacity:.8">এখান থেকে পরিবর্তন করলে index.html-এ স্বয়ংক্রিয়ভাবে আপডেট হবে।</p>
-          </div>
-          <button class="btn" style="background:#a3e635;color:#1e1b4b;font-weight:700" onclick="showSettingsGuide()"><i class="fas fa-map"></i> আইডি ম্যাপিং দেখুন</button>
-        </div>
-      </div>
       <div class="card">
-        <div class="tab-row" id="settingsTabs">
+        <div class="tab-row" id="settings-tabs">
           <button class="active" data-set="contact">যোগাযোগ</button>
           <button data-set="payment">পেমেন্ট</button>
           <button data-set="social">সোশ্যাল</button>
@@ -476,9 +467,8 @@ tr:hover td{background:#faf8ff}
           <button data-set="contactHeader">যোগাযোগ হেডার</button>
           <button data-set="faqHeader">FAQ হেডার</button>
           <button data-set="aboutPage">পরিচিতি পেজ (বিস্তারিত)</button>
-          <button data-set="downloadFiles" style="background:#a3e635;color:#1e1b4b;font-weight:700;border-radius:8px;border:none">⬇ ফাইল ডাউনলোড</button>
         </div>
-        <div id="setPane"></div>
+        <div id="set-pane"></div>
       </div>
     </div>
   </div>
@@ -489,7 +479,7 @@ tr:hover td{background:#faf8ff}
 <div class="modal-bg" id="modal">
   <div class="modal">
     <button class="modal-close" onclick="closeModal()">×</button>
-    <div id="modalBody"></div>
+    <div id="modal-body"></div>
   </div>
 </div>
 
@@ -528,7 +518,7 @@ let ENV_CONFIG = {};
       if (cfg.apiBase && !localStorage.getItem('adminApiUrl')) API = cfg.apiBase;
       // Reflect in UI
       try{
-        const tag = document.querySelector('#serverHostTag');
+        const tag = document.querySelector('#server-host-tag');
         if (tag) tag.textContent = (API||'').replace(/^https?:\/\//,'');
         if (cfg.siteName){
           document.title = `অ্যাডমিন প্যানেল — ${cfg.siteName}`;
@@ -555,11 +545,11 @@ let TOKEN = localStorage.getItem('adminToken') || '';
 let ALL_COURSES_ADMIN = [];
 
 function toast(m,t=''){const el=$('#toast');el.textContent=m;el.className='toast show '+t;setTimeout(()=>el.className='toast',3000)}
-function openModal(html){$('#modalBody').innerHTML=html;$('#modal').classList.add('open');document.body.style.overflow='hidden'}
+function openModal(html){$('#modal-body').innerHTML=html;$('#modal').classList.add('open');document.body.style.overflow='hidden'}
 function closeModal(){$('#modal').classList.remove('open');document.body.style.overflow=''}
 
 function toggleSidebar(force){
-  const sb = $('#sidebar'), bd = $('#sidebarBackdrop');
+  const sb = $('#sidebar'), bd = $('#sidebar-backdrop');
   const open = force===undefined ? !sb.classList.contains('open') : force;
   sb.classList.toggle('open', open);
   bd.classList.toggle('show', open);
@@ -702,10 +692,10 @@ async function login(e){
 function logout(){TOKEN='';localStorage.removeItem('adminToken');location.reload()}
 
 function bootApp(){
-  $('#loginPage').style.display='none';
+  $('#login-page').style.display='none';
   $('#app').style.display='block';
   const u = JSON.parse(localStorage.getItem('adminUser')||'{}');
-  $('#adminEmail').textContent = u.username || u.email || '';
+  $('#admin-email').textContent = u.username || u.email || '';
   loadDashboard();
 }
 
@@ -718,15 +708,15 @@ $$('.sidebar-link[data-section]').forEach(el=>el.addEventListener('click',()=>{
   const s = el.dataset.section;
   $$('.section').forEach(x=>x.classList.remove('active'));
   $('#sec-'+s).classList.add('active');
-  $('#pageTitle').textContent = el.textContent.trim();
+  $('#page-title').textContent = el.textContent.trim();
   toggleSidebar(false);
   loadSection(s);
 }));
 
 // settings tabs delegated
-$('#settingsTabs').addEventListener('click', e=>{
+$('#settings-tabs').addEventListener('click', e=>{
   const b = e.target.closest('button[data-set]'); if (!b) return;
-  $$('#settingsTabs button').forEach(x=>x.classList.remove('active'));
+  $$('#settings-tabs button').forEach(x=>x.classList.remove('active'));
   b.classList.add('active');
   switchSetTab(b.dataset.set);
 });
@@ -745,7 +735,7 @@ function loadSection(s){
     faqs: ()=>loadCrud('faqs'),
     blog: loadBlog,
     messages: loadMessages,
-    settings: ()=>{ $$('#settingsTabs button').forEach((x,i)=>x.classList.toggle('active',i===0)); switchSetTab('contact'); },
+    settings: ()=>{ $$('#settings-tabs button').forEach((x,i)=>x.classList.toggle('active',i===0)); switchSetTab('contact'); },
   })[s]?.();
 }
 
@@ -755,7 +745,7 @@ function loadSection(s){
 async function loadDashboard(){
   try{
     const s = await api('/api/admin/stats');
-    $('#statGrid').innerHTML = [
+    $('#stat-grid').innerHTML = [
       ['কোর্স',s.totalCourses,'fa-book'],
       ['ছাত্র',s.totalUsers,'fa-users'],
       ['কোর্স অ্যাক্সেস অনুরোধ',s.totalAccessRequests,'fa-key'],
@@ -764,7 +754,7 @@ async function loadDashboard(){
       ['বার্তা',s.totalMessages||0,'fa-envelope'],
     ].map(([l,n,ic])=>`<div class="stat"><div class="stat-icon"><i class="${ic.startsWith('fab')?ic:'fas '+ic}"></i></div><div style="min-width:0"><div class="stat-num">${fmt(n)}</div><div class="stat-label">${l}</div></div></div>`).join('');
     loadAnalyticsWidgets([]);
-  }catch(e){ $('#statGrid').innerHTML=`<div class="empty">${escapeHtml(e.message)}</div>` }
+  }catch(e){ $('#stat-grid').innerHTML=`<div class="empty">${escapeHtml(e.message)}</div>` }
 }
 
 // ============================================================
@@ -779,10 +769,10 @@ async function loadAnalyticsWidgets(liveList){
     try {
       const a = await api('/api/admin/analytics/summary');
       const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = fmt(v||0); };
-      set('liveVisitorCount', a.live);
-      set('todayViewsCount', a.todayViews);
-      set('uniqueTodayCount', a.uniqueToday);
-      set('todayCourseViewsCount', a.todayCourseViews);
+      set('live-visitor-count', a.live);
+      set('today-views-count', a.todayViews);
+      set('unique-today-count', a.uniqueToday);
+      set('today-course-views-count', a.todayCourseViews);
     } catch(e){}
   };
   refresh();
@@ -798,7 +788,7 @@ async function loadAnalyticsWidgets(liveList){
     const views = trend.map(t => t.views);
     const unique = trend.map(t => t.unique);
     if (window.ApexCharts){
-      const el = document.getElementById('chartTrend'); if (el){
+      const el = document.getElementById('chart-trend'); if (el){
         if (__chartTrend) __chartTrend.destroy();
         __chartTrend = new ApexCharts(el, {
           chart:{type:'area',height:240,toolbar:{show:false},fontFamily:'Hind Siliguri,sans-serif'},
@@ -822,7 +812,7 @@ async function loadAnalyticsWidgets(liveList){
     const counts = { approved:0, pending:0, rejected:0 };
     live.forEach(p => { if (counts[p.status] !== undefined) counts[p.status]++; });
     if (window.ApexCharts){
-      const el = document.getElementById('chartStatus'); if (el){
+      const el = document.getElementById('chart-status'); if (el){
         if (__chartStatus) __chartStatus.destroy();
         __chartStatus = new ApexCharts(el, {
           chart:{type:'donut',height:240,fontFamily:'Hind Siliguri,sans-serif'},
@@ -840,7 +830,7 @@ async function loadAnalyticsWidgets(liveList){
   // Top courses today
   try {
     const top = await api('/api/admin/analytics/top-courses?limit=10');
-    const t = document.getElementById('topCoursesTable');
+    const t = document.getElementById('top-courses-table');
     if (t){
       t.innerHTML = top.length ? `<table>
         <tr><th>#</th><th>থাম্বনেইল</th><th>কোর্স</th><th>আজকের ভিউ</th><th>মোট ভিউ</th></tr>
@@ -867,7 +857,7 @@ async function loadCourses(){
   try{
     const list = await api('/api/admin/courses');
     ALL_COURSES_ADMIN = list;
-    $('#coursesTable').innerHTML = `<tr><th>থাম্বনেইল</th><th>শিরোনাম</th><th>ক্যাটাগরি</th><th>মূল্য</th><th>সক্রিয়</th><th>অ্যাকশন</th></tr>
+    $('#courses-table').innerHTML = `<tr><th>থাম্বনেইল</th><th>শিরোনাম</th><th>ক্যাটাগরি</th><th>মূল্য</th><th>সক্রিয়</th><th>অ্যাকশন</th></tr>
       ${list.map(c=>`<tr>
         <td><img src="${c.thumbnail||'https://via.placeholder.com/60'}" class="thumb"/></td>
         <td><strong>${escapeHtml(c.title)}</strong><br/><small style="color:var(--text-soft)">${escapeHtml(c.slug||'')}</small></td>
@@ -897,7 +887,7 @@ function openCourseModal(c={}){
         <div class="form-group"><label class="label">ধরন</label><input type="hidden" name="type" value="recorded" /><input value="কোর্সসমূহ" disabled /></div>
         <div class="form-group">
           <label class="label">ক্যাটাগরি</label>
-          <select name="category" id="courseCategorySel" onchange="onCourseCategoryChange(this.value)">
+          <select name="category" id="course-category-sel" onchange="onCourseCategoryChange(this.value)">
             <option value="">— নির্বাচন করুন —</option>
           </select>
         </div>
@@ -905,7 +895,7 @@ function openCourseModal(c={}){
       <div class="row">
         <div class="form-group">
           <label class="label">সাব-ক্যাটাগরি</label>
-          <select name="subCategory" id="courseSubCategorySel">
+          <select name="subCategory" id="course-sub-category-sel">
             <option value="">— নির্বাচন করুন —</option>
           </select>
         </div>
@@ -919,10 +909,10 @@ function openCourseModal(c={}){
       </div>
       <div class="row">
         <div class="form-group"><label class="label">শিক্ষক</label>
-            <select name="instructorId" id="courseInstructorSel">
+            <select name="instructorId" id="course-instructor-sel">
               <option value="">— শিক্ষক নির্বাচন করুন —</option>
             </select>
-            <input type="hidden" name="instructor" id="courseInstructorName" value="${escapeHtml(c.instructor||'')}" />
+            <input type="hidden" name="instructor" id="course-instructor-name" value="${escapeHtml(c.instructor||'')}" />
           </div>
         <div class="form-group"><label class="label">সময়কাল</label><input name="duration" value="${escapeHtml(c.duration||'')}" /></div>
       </div>
@@ -939,7 +929,7 @@ function openCourseModal(c={}){
       </div>
 
       <!-- ── Recorded course rich detail (no certificate) ── -->
-      <div id="recordedFields" style="display:block;border:2px solid #d1fae5;border-radius:10px;padding:14px;margin:12px 0;background:#ecfdf5">
+      <div id="recorded-fields" style="display:block;border:2px solid #d1fae5;border-radius:10px;padding:14px;margin:12px 0;background:#ecfdf5">
         <h4 style="color:var(--primary);margin-bottom:10px"><i class="fas fa-play-circle"></i> কোর্স বিস্তারিত পেজের তথ্য</h4>
         <div class="row">
           <div class="form-group"><label class="label">প্রিভিউ ভিডিও (YouTube ID)</label><input name="previewVideoId" value="${escapeHtml(c.previewVideoId||'')}" placeholder="YouTube URL বা ID (যেমন: LXb3EKWsInQ)" onblur="const _v=extractYouTubeId(this.value);if(_v!==this.value)this.value=_v;" onpaste="setTimeout(()=>{const _v=extractYouTubeId(this.value);if(_v!==this.value)this.value=_v;},0)" /></div>
@@ -959,8 +949,8 @@ function openCourseModal(c={}){
             <span><i class="fas fa-list-ul"></i> কোর্স কারিকুলাম (সেকশন + ভিডিও লেসন)</span>
             <button type="button" class="btn btn-primary btn-sm" onclick="curriculumAddSection()"><i class="fas fa-plus"></i> নতুন সেকশন</button>
           </label>
-          <div id="curriculumBuilder" style="border:1px dashed #cbd5e1;border-radius:8px;padding:10px;background:#fff;min-height:60px"></div>
-          <input type="hidden" name="curriculum" id="curriculumHidden" />
+          <div id="curriculum-builder" style="border:1px dashed #cbd5e1;border-radius:8px;padding:10px;background:#fff;min-height:60px"></div>
+          <input type="hidden" name="curriculum" id="curriculum-hidden" />
           <small style="color:var(--text-soft);font-size:11px">প্রতিটি সেকশনের ভিতরে ভিডিও লেসন যোগ করুন। ভিডিও ID = YouTube URL এর শেষ অংশ (যেমন: <code>LXb3EKWsInQ</code>)। "ফ্রি" চেক করলে লেসনটি ছাত্ররা কেনার আগেই দেখতে পাবে।</small>
         </div>
       </div>
@@ -983,8 +973,8 @@ function openCourseModal(c={}){
           <span><i class="fas fa-question-circle"></i> কোর্স সম্পর্কিত প্রশ্নোত্তর (Q&A)</span>
           <button type="button" class="btn btn-primary btn-sm" onclick="qnaAdd()"><i class="fas fa-plus"></i> নতুন প্রশ্ন</button>
         </h4>
-        <div id="qnaList" style="display:flex;flex-direction:column;gap:8px"></div>
-        <input type="hidden" name="qna" id="qnaHidden" />
+        <div id="qna-list" style="display:flex;flex-direction:column;gap:8px"></div>
+        <input type="hidden" name="qna" id="qna-hidden" />
         <small class="text-soft" style="font-size:11px">কোর্স বিস্তারিত পেজে এই প্রশ্নোত্তরসমূহ "প্রশ্নোত্তর" ট্যাবে দেখানো হবে।</small>
       </div>
 
@@ -997,12 +987,12 @@ function openCourseModal(c={}){
           <button type="button" class="btn btn-primary btn-sm" onclick="autoFillSeo(this.form)"><i class="fas fa-magic"></i> অটো এসিও</button>
         </div>
         <div class="form-group"><label class="label">SEO শিরোনাম <small class="text-soft">(৫০-৬০ অক্ষর সর্বোত্তম)</small></label>
-          <input name="seoTitle" id="seoTitleInput" maxlength="70" value="${escapeHtml(c.seoTitle||'')}" oninput="updateSeoPreview()" />
-          <small class="text-soft" id="seoTitleLen">0 অক্ষর</small>
+          <input name="seoTitle" id="seo-title-input" maxlength="70" value="${escapeHtml(c.seoTitle||'')}" oninput="updateSeoPreview()" />
+          <small class="text-soft" id="seo-title-len">0 অক্ষর</small>
         </div>
         <div class="form-group"><label class="label">SEO বিবরণ <small class="text-soft">(১৫০-১৬০ অক্ষর সর্বোত্তম)</small></label>
-          <textarea name="seoDescription" id="seoDescInput" rows="2" maxlength="180" oninput="updateSeoPreview()">${escapeHtml(c.seoDescription||'')}</textarea>
-          <small class="text-soft" id="seoDescLen">0 অক্ষর</small>
+          <textarea name="seoDescription" id="seo-desc-input" rows="2" maxlength="180" oninput="updateSeoPreview()">${escapeHtml(c.seoDescription||'')}</textarea>
+          <small class="text-soft" id="seo-desc-len">0 অক্ষর</small>
         </div>
         <div class="form-group"><label class="label">কীওয়ার্ডস <small class="text-soft">(কমা দিয়ে আলাদা)</small></label>
           <input name="seoKeywords" value="${escapeHtml(c.seoKeywords||'')}" placeholder="কুরআন কোর্স, ইসলামী শিক্ষা, অনলাইন ক্লাস" />
@@ -1015,16 +1005,16 @@ function openCourseModal(c={}){
         <div style="margin-top:12px">
           <label class="label" style="margin-bottom:6px"><i class="fab fa-google"></i> Google সার্চ রেজাল্টে যেমন দেখাবে:</label>
           <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:12px;font-family:Arial,sans-serif">
-            <div id="seoPreviewUrl" style="color:#202124;font-size:12px">https://yoursite.com › course › ...</div>
-            <div id="seoPreviewTitle" style="color:#1a0dab;font-size:18px;margin:4px 0;cursor:pointer">কোর্সের শিরোনাম</div>
-            <div id="seoPreviewDesc" style="color:#4d5156;font-size:13px;line-height:1.4">কোর্সের বিবরণ এখানে দেখাবে...</div>
+            <div id="seo-preview-url" style="color:#202124;font-size:12px">https://yoursite.com › course › ...</div>
+            <div id="seo-preview-title" style="color:#1a0dab;font-size:18px;margin:4px 0;cursor:pointer">কোর্সের শিরোনাম</div>
+            <div id="seo-preview-desc" style="color:#4d5156;font-size:13px;line-height:1.4">কোর্সের বিবরণ এখানে দেখাবে...</div>
           </div>
 
           <label class="label" style="margin:10px 0 6px"><i class="fab fa-microsoft"></i> Bing সার্চ রেজাল্টে যেমন দেখাবে:</label>
           <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:12px;font-family:'Segoe UI',sans-serif">
-            <div id="seoPreviewBingTitle" style="color:#0066cc;font-size:18px;font-weight:500;cursor:pointer">কোর্সের শিরোনাম</div>
-            <div id="seoPreviewBingUrl" style="color:#006621;font-size:13px;margin:2px 0">yoursite.com</div>
-            <div id="seoPreviewBingDesc" style="color:#444;font-size:13px;line-height:1.4">কোর্সের বিবরণ এখানে দেখাবে...</div>
+            <div id="seo-preview-bing-title" style="color:#0066cc;font-size:18px;font-weight:500;cursor:pointer">কোর্সের শিরোনাম</div>
+            <div id="seo-preview-bing-url" style="color:#006621;font-size:13px;margin:2px 0">yoursite.com</div>
+            <div id="seo-preview-bing-desc" style="color:#444;font-size:13px;line-height:1.4">কোর্সের বিবরণ এখানে দেখাবে...</div>
           </div>
         </div>
       </div>
@@ -1036,7 +1026,7 @@ function openCourseModal(c={}){
       <button type="submit" class="btn btn-primary btn-block" style="margin-top:12px;padding:11px"><i class="fas fa-save"></i> সংরক্ষণ</button>
     </form>
   `);
-  bindDropzones($('#modalBody'));
+  bindDropzones($('#modal-body'));
   populateCourseCategoryDropdowns(c.category||'', c.subCategory||'');
   populateCourseInstructorDropdown(c.instructorId||'', c.instructor||'');
   curriculumInit(c.curriculum||[]);
@@ -1052,7 +1042,7 @@ function autoFillSeo(form){
   const title = (fd.get('title')||'').toString().trim();
   const cat   = (fd.get('category')||'').toString().trim();
   const sub   = (fd.get('subCategory')||'').toString().trim();
-  const instr = (form.querySelector('#courseInstructorSel')?.selectedOptions[0]?.text || fd.get('instructor') || '').toString().trim();
+  const instr = (form.querySelector('#course-instructor-sel')?.selectedOptions[0]?.text || fd.get('instructor') || '').toString().trim();
   const type  = fd.get('type')==='live' ? 'লাইভ' : 'প্রিমিয়াম';
   const shortDesc = (fd.get('shortDescription')||'').toString().trim();
   const desc  = (fd.get('description')||'').toString().trim();
@@ -1092,19 +1082,19 @@ function autoFillSeo(form){
 }
 
 function updateSeoPreview(){
-  const t = document.getElementById('seoTitleInput')?.value || '';
-  const d = document.getElementById('seoDescInput')?.value || '';
-  const tl = document.getElementById('seoTitleLen'); if (tl){
+  const t = document.getElementById('seo-title-input')?.value || '';
+  const d = document.getElementById('seo-desc-input')?.value || '';
+  const tl = document.getElementById('seo-title-len'); if (tl){
     tl.textContent = t.length + ' অক্ষর';
     tl.style.color = (t.length>=50 && t.length<=65) ? '#16a34a' : (t.length>65 ? '#ef4444' : '#6b7280');
   }
-  const dl = document.getElementById('seoDescLen'); if (dl){
+  const dl = document.getElementById('seo-desc-len'); if (dl){
     dl.textContent = d.length + ' অক্ষর';
     dl.style.color = (d.length>=120 && d.length<=160) ? '#16a34a' : (d.length>160 ? '#ef4444' : '#6b7280');
   }
   const setT = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v || el.textContent; };
-  if (t) { setT('seoPreviewTitle', t); setT('seoPreviewBingTitle', t); }
-  if (d) { setT('seoPreviewDesc', d); setT('seoPreviewBingDesc', d); }
+  if (t) { setT('seo-preview-title', t); setT('seo-preview-bing-title', t); }
+  if (d) { setT('seo-preview-desc', d); setT('seo-preview-bing-desc', d); }
 }
 
 // ============================================================
@@ -1123,11 +1113,11 @@ function curriculumInit(data){
   curriculumRender();
 }
 function curriculumSync(){
-  const el = document.getElementById('curriculumHidden');
+  const el = document.getElementById('curriculum-hidden');
   if (el) el.value = JSON.stringify(__curriculum);
 }
 function curriculumRender(){
-  const box = document.getElementById('curriculumBuilder');
+  const box = document.getElementById('curriculum-builder');
   if (!box) return;
   curriculumSync();
   if (!__curriculum.length){
@@ -1252,7 +1242,7 @@ async function saveCourse(e, id){
 async function loadAccessRequests(){
   try{
     const list = await api('/api/admin/access-requests');
-    $('#accessTable').innerHTML = `<tr>
+    $('#access-table').innerHTML = `<tr>
       <th>ছাত্র</th><th>কোর্স</th><th>পেমেন্ট</th><th>স্ক্রিনশট</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th>
     </tr>${list.map(p=>`<tr>
       <td><strong>${escapeHtml(p.userName||'')}</strong><br/><small style="color:var(--text-soft)">${escapeHtml(p.userEmail||'')}</small></td>
@@ -1287,7 +1277,7 @@ async function rejectAccess(id){
 async function loadUsers(){
   try{
     const list = await api('/api/admin/users');
-    $('#usersTable').innerHTML = `<tr><th>নাম</th><th>ইমেইল</th><th>ফোন</th><th>WhatsApp</th><th>কোর্স</th><th>যোগদান</th></tr>
+    $('#users-table').innerHTML = `<tr><th>নাম</th><th>ইমেইল</th><th>ফোন</th><th>WhatsApp</th><th>কোর্স</th><th>যোগদান</th></tr>
       ${list.map(u=>`<tr>
         <td><strong>${escapeHtml(u.name||'')}</strong></td>
         <td>${escapeHtml(u.email||'')}</td>
@@ -1352,7 +1342,7 @@ function openCrudModal(name, item={}){
       ${fieldsHtml}${fileHtml}
       <button type="submit" class="btn btn-primary btn-block" style="padding:11px"><i class="fas fa-save"></i> সংরক্ষণ</button>
     </form>`);
-  bindDropzones($('#modalBody'));
+  bindDropzones($('#modal-body'));
 }
 
 async function saveCrud(e, name, id){
@@ -1382,7 +1372,7 @@ async function delItem(name, id, cb){
 async function loadBlog(){
   try{
     const list = await api('/api/admin/blog');
-    $('#blogTable').innerHTML = `<tr><th>ছবি</th><th>শিরোনাম</th><th>লেখক</th><th>প্রকাশিত</th><th>অ্যাকশন</th></tr>
+    $('#blog-table').innerHTML = `<tr><th>ছবি</th><th>শিরোনাম</th><th>লেখক</th><th>প্রকাশিত</th><th>অ্যাকশন</th></tr>
       ${list.map(b=>`<tr>
         <td>${b.image?`<img src="${b.image}" class="thumb"/>`:'—'}</td>
         <td><strong>${escapeHtml(b.title||'')}</strong><br/><small>${escapeHtml(b.slug||'')}</small></td>
@@ -1410,7 +1400,7 @@ function openBlogModal(b={}){
       <label style="display:flex;gap:8px;font-size:14px"><input type="checkbox" name="isPublished" value="true" ${b.isPublished!==false?'checked':''} style="width:auto"/> প্রকাশিত</label>
       <button type="submit" class="btn btn-primary btn-block" style="margin-top:12px;padding:11px"><i class="fas fa-save"></i> সংরক্ষণ</button>
     </form>`);
-  bindDropzones($('#modalBody'));
+  bindDropzones($('#modal-body'));
 }
 
 async function saveBlog(e, id){
@@ -1434,7 +1424,7 @@ async function saveBlog(e, id){
 async function loadMessages(){
   try{
     const list = await api('/api/admin/contact-messages');
-    $('#messagesTable').innerHTML = `<tr><th>নাম</th><th>ইমেইল</th><th>বিষয়</th><th>বার্তা</th><th>তারিখ</th><th>অ্যাকশন</th></tr>
+    $('#messages-table').innerHTML = `<tr><th>নাম</th><th>ইমেইল</th><th>বিষয়</th><th>বার্তা</th><th>তারিখ</th><th>অ্যাকশন</th></tr>
       ${list.map(m=>`<tr>
         <td><strong>${escapeHtml(m.name||'')}</strong></td>
         <td>${escapeHtml(m.email||'')}<br/><small>${escapeHtml(m.phone||'')}</small></td>
@@ -1562,7 +1552,7 @@ const SETTINGS_FIELDS = {
       ['tagline','ট্যাগলাইন','text'],
       ['logo','লোগো ছবি (আপলোড)','image'],
       ['favicon','ফ্যাভিকন (আপলোড)','image'],
-      ['footerAbout','ফুটার পরিচিতি','textarea'],
+      ['footer-about','ফুটার পরিচিতি','textarea'],
       ['copyright','কপিরাইট টেক্সট ({year} = বর্তমান বছর)','text'],
     ]
   },
@@ -1633,7 +1623,7 @@ const SETTINGS_FIELDS = {
     title:'SEO ও মেটা ট্যাগ',
     desc:'index.html-এর <title>, description, og:image ইত্যাদি।',
     fields:[
-      ['pageTitle','Page Title','text','ইবনে খালদুন ইনস্টিটিউট – অনলাইনে নতুন দক্ষতা অর্জন করুন'],
+      ['page-title','Page Title','text','ইবনে খালদুন ইনস্টিটিউট – অনলাইনে নতুন দক্ষতা অর্জন করুন'],
       ['metaDescription','Meta Description','textarea','ইবনে খালদুন ইনস্টিটিউট - বাংলাদেশের শীর্ষস্থানীয় অনলাইন শিক্ষা প্ল্যাটফর্ম।'],
       ['metaKeywords','Meta Keywords','text','ইবনে খালদুন, Ibn Khaldun Institute, অনলাইন কোর্স, ইসলামিক কোর্স'],
       ['ogTitle','Open Graph Title','text','ইবনে খালদুন ইনস্টিটিউট'],
@@ -1670,7 +1660,7 @@ const SETTINGS_FIELDS = {
     title:'ব্লগ সেকশন হেডার', desc:'',
     fields:[
       ['title','হোম পেজ ব্লগ শিরোনাম','text','সাম্প্রতিক ব্লগ থেকে পড়ুন'],
-      ['pageTitle','ব্লগ পেজ শিরোনাম','text','আমাদের ব্লগ'],
+      ['page-title','ব্লগ পেজ শিরোনাম','text','আমাদের ব্লগ'],
       ['subtitle','উপ-শিরোনাম','textarea',''],
     ]
   },
@@ -1710,14 +1700,13 @@ const SETTINGS_FIELDS = {
 };
 
 async function switchSetTab(key){
-  if (key === 'downloadFiles') return renderDownloadFilesTab();
   if (key === 'whyJoin') return renderWhyJoinTab();
   const cfg = SETTINGS_FIELDS[key];
-  if (!cfg){ $('#setPane').innerHTML=''; return; }
-  $('#setPane').innerHTML = `<div class="empty"><div class="loader"></div></div>`;
+  if (!cfg){ $('#set-pane').innerHTML=''; return; }
+  $('#set-pane').innerHTML = `<div class="empty"><div class="loader"></div></div>`;
   let val = {};
   try{ val = (await api('/api/admin/settings/'+key)) || {}; }catch{}
-  $('#setPane').innerHTML = `
+  $('#set-pane').innerHTML = `
     <div class="settings-section">
       <h4>${cfg.title}</h4>
       <p class="text-soft" style="margin-bottom:14px">${cfg.desc}</p>
@@ -1754,7 +1743,7 @@ async function switchSetTab(key){
         <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> সংরক্ষণ</button>
       </form>
     </div>`;
-  bindDropzones($('#setPane'));
+  bindDropzones($('#set-pane'));
 }
 
 // ── Image-type setting field: upload to /api/admin/upload, store URL in hidden input ──
@@ -1799,7 +1788,7 @@ function settingImageClear(fieldKey){
 
 // ── "কেন যুক্ত হবেন" ডাইনামিক আইটেম এডিটর ──
 async function renderWhyJoinTab(){
-  $('#setPane').innerHTML = `<div class="empty"><div class="loader"></div></div>`;
+  $('#set-pane').innerHTML = `<div class="empty"><div class="loader"></div></div>`;
   let val = {};
   try{ val = (await api('/api/admin/settings/whyJoin')) || {}; }catch{}
   let items = val.items;
@@ -1819,7 +1808,7 @@ async function renderWhyJoinTab(){
 }
 function drawWhyJoinUI(){
   const w = window.__wj;
-  $('#setPane').innerHTML = `
+  $('#set-pane').innerHTML = `
     <div class="settings-section">
       <h4>"কেন যুক্ত হবেন?" সেকশন</h4>
       <p class="text-soft" style="margin-bottom:14px">হোম পেজের ফিচার কার্ডগুলো এখান থেকে পরিবর্তন করুন।</p>
@@ -1827,7 +1816,7 @@ function drawWhyJoinUI(){
         <div class="form-group"><label class="label">সেকশন শিরোনাম</label><input name="title" value="${escapeHtml(w.title)}" placeholder="কেন ইবনে খালদুন ইনস্টিটিউটতে যুক্ত হবেন?"/></div>
         <div class="form-group"><label class="label">উপ-শিরোনাম</label><input name="subtitle" value="${escapeHtml(w.subtitle)}"/></div>
         <h4 style="margin-top:18px">কার্ডসমূহ</h4>
-        <div id="wjItems">
+        <div id="wj-items">
           ${w.items.map((it,i)=>`
             <div class="card" style="padding:12px;margin-bottom:10px;background:#f8fafc">
               <div class="row" style="align-items:flex-start">
@@ -1897,11 +1886,11 @@ async function openCourseComments(courseId, courseTitle){
   openModal(`
     <h2><i class="fas fa-comments"></i> মন্তব্য মডারেশন</h2>
     <p class="text-soft" style="margin-bottom:14px">${escapeHtml(courseTitle||'')}</p>
-    <div id="courseCommentsList"><div class="loader"></div></div>
+    <div id="course-comments-list"><div class="loader"></div></div>
   `);
   try{
     const list = await api('/api/courses/'+courseId+'/comments');
-    const box = document.getElementById('courseCommentsList');
+    const box = document.getElementById('course-comments-list');
     if (!Array.isArray(list) || !list.length){
       box.innerHTML = '<div class="empty">এই কোর্সে কোনো মন্তব্য নেই</div>';
       return;
@@ -1920,7 +1909,7 @@ async function openCourseComments(courseId, courseTitle){
         </div>
       </div>`).join('');
   }catch(e){
-    document.getElementById('courseCommentsList').innerHTML = `<div class="empty" style="color:var(--danger)">${escapeHtml(e.message)}</div>`;
+    document.getElementById('course-comments-list').innerHTML = `<div class="empty" style="color:var(--danger)">${escapeHtml(e.message)}</div>`;
   }
 }
 async function deleteCourseComment(commentId, courseId, courseTitle){
@@ -1940,7 +1929,7 @@ async function loadCategories(){
   try{
     const list = await api('/api/admin/categories');
     ALL_CATEGORIES = list || [];
-    $('#categoriesTable').innerHTML = `<tr>
+    $('#categories-table').innerHTML = `<tr>
         <th>নাম</th><th>Slug</th><th>প্রযোজ্য</th><th>সাব-ক্যাটাগরি</th><th>ক্রম</th><th>অ্যাকশন</th>
       </tr>` + (ALL_CATEGORIES.map(cat => {
         const subs = (cat.subCategories||[]);
@@ -1991,11 +1980,11 @@ function openCategoryModal(cat={}){
       <h4 style="font-size:14px;color:var(--primary);margin:14px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border)">
         <i class="fas fa-list"></i> সাব-ক্যাটাগরিসমূহ
       </h4>
-      <div id="subCatList"></div>
+      <div id="sub-cat-list"></div>
 
       <div class="row" style="align-items:flex-end">
         <div class="form-group"><label class="label">নতুন সাব-ক্যাটাগরি নাম</label>
-          <input id="newSubName" placeholder="যেমন: তাজবীদ" />
+          <input id="new-sub-name" placeholder="যেমন: তাজবীদ" />
         </div>
         <div class="form-group">
           <button type="button" class="btn btn-outline btn-block" onclick="addSubCategory()"><i class="fas fa-plus"></i> যোগ করুন</button>
@@ -2006,7 +1995,7 @@ function openCategoryModal(cat={}){
     </form>
   `);
   drawSubCategoryList();
-  bindDropzones($('#modalBody'));
+  bindDropzones($('#modal-body'));
 }
 
 function drawSubCategoryList(){
@@ -2020,7 +2009,7 @@ function drawSubCategoryList(){
           <button type="button" class="btn btn-danger btn-sm" onclick="window.__catSubs.splice(${i},1);drawSubCategoryList()"><i class="fas fa-trash"></i></button>
         </div>`).join('')
     : '<p class="text-soft" style="font-size:13px;padding:8px 0">কোনো সাব-ক্যাটাগরি যোগ করা হয়নি।</p>';
-  $('#subCatList').innerHTML = html;
+  $('#sub-cat-list').innerHTML = html;
 }
 
 function slugifyClient(s){
@@ -2030,7 +2019,7 @@ function slugifyClient(s){
 }
 
 function addSubCategory(){
-  const inp = $('#newSubName');
+  const inp = $('#new-sub-name');
   const name = (inp.value||'').trim();
   if (!name) { toast('সাব-ক্যাটাগরির নাম দিন','error'); return; }
   window.__catSubs.push({ name, slug: slugifyClient(name) });
@@ -2061,7 +2050,7 @@ async function saveCategory(e, id){
 
 // ── Course form: load categories into <select>, and subcategories on change
 async function populateCourseCategoryDropdowns(selectedCat='', selectedSub=''){
-  const catSel = $('#courseCategorySel');
+  const catSel = $('#course-category-sel');
   if (!catSel) return;
   try{
     if (!ALL_CATEGORIES.length){
@@ -2075,7 +2064,7 @@ async function populateCourseCategoryDropdowns(selectedCat='', selectedSub=''){
 }
 
 function onCourseCategoryChange(catName, selectedSub=''){
-  const subSel = $('#courseSubCategorySel');
+  const subSel = $('#course-sub-category-sel');
   if (!subSel) return;
   const cat = ALL_CATEGORIES.find(c => c.name === catName);
   const subs = cat?.subCategories || [];
@@ -2118,7 +2107,7 @@ async function loadTopics(){
   try{
     const list = await api('/api/admin/topics');
     ALL_TOPICS_ADMIN = list || [];
-    const tbl = $('#topicsTable');
+    const tbl = $('#topics-table');
     tbl.innerHTML = `<tr><th>ছবি</th><th>নাম</th><th>Slug</th><th>কোর্স</th><th>ক্রম</th><th>অ্যাকশন</th></tr>` +
       (ALL_TOPICS_ADMIN.length ? ALL_TOPICS_ADMIN.map(t => {
         const courseNames = (t.courseIds||[]).length ? `<small class="text-soft">${(t.courseIds||[]).length}টি কোর্স</small>` : '<span class="text-soft">—</span>';
@@ -2155,7 +2144,7 @@ function openTopicModal(t={}){
       </div>
       <div class="form-group">
         <label class="label"><i class="fas fa-book"></i> কোর্সসমূহ নির্বাচন করুন</label>
-        <div id="topicCoursePicker" style="max-height:250px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;padding:10px;background:#f8fafc">
+        <div id="topic-course-picker" style="max-height:250px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;padding:10px;background:#f8fafc">
           <div class="loading-state"><div class="loader"></div></div>
         </div>
         <small class="text-soft" style="font-size:11px">এই বিষয়ের অধীনে যে কোর্সগুলো দেখানো হবে সেগুলো সিলেক্ট করুন।</small>
@@ -2163,12 +2152,12 @@ function openTopicModal(t={}){
       <button type="submit" class="btn btn-primary btn-block" style="margin-top:14px;padding:11px"><i class="fas fa-save"></i> সংরক্ষণ</button>
     </form>
   `);
-  bindDropzones($('#modalBody'));
+  bindDropzones($('#modal-body'));
   loadTopicCoursePicker(selectedIds);
 }
 
 async function loadTopicCoursePicker(selectedIds=[]){
-  const picker = $('#topicCoursePicker');
+  const picker = $('#topic-course-picker');
   if (!picker) return;
   try{
     let courses = [];
@@ -2213,8 +2202,8 @@ async function saveTopic(e, id){
 let ALL_INSTRUCTORS_ADMIN = [];
 
 async function populateCourseInstructorDropdown(selectedId='', selectedName=''){
-  const sel = $('#courseInstructorSel');
-  const nameInp = $('#courseInstructorName');
+  const sel = $('#course-instructor-sel');
+  const nameInp = $('#course-instructor-name');
   if (!sel) return;
   try{
     if (!ALL_INSTRUCTORS_ADMIN.length) ALL_INSTRUCTORS_ADMIN = await api('/api/admin/instructors');
@@ -2240,7 +2229,7 @@ async function populateCourseInstructorDropdown(selectedId='', selectedName=''){
 window.__ALL_ADMIN_COURSES = window.__ALL_ADMIN_COURSES || [];
 window.filterAdminCourses = function(q){
   q = (q||'').trim().toLowerCase();
-  const tbl = document.getElementById('coursesTable');
+  const tbl = document.getElementById('courses-table');
   if (!tbl) return;
   const rows = tbl.querySelectorAll('tbody tr, tr');
   let firstHeader = true;
@@ -2278,7 +2267,7 @@ window.filterAdminCourses = function(q){
 // ====== COURSE Q&A EDITOR ======
 let __qna = [];
 function qnaSync(){
-  const el = document.getElementById('qnaList');
+  const el = document.getElementById('qna-list');
   if (!el) return;
   el.innerHTML = __qna.map((q,i)=>`
     <div style="border:1px solid var(--border);border-radius:8px;padding:10px;background:#fff">
@@ -2290,198 +2279,13 @@ function qnaSync(){
       <input placeholder="প্রশ্ন লিখুন" value="${escapeHtml(q.question||'')}" oninput="__qna[${i}].question=this.value" style="margin-bottom:6px"/>
       <textarea rows="2" placeholder="উত্তর লিখুন" oninput="__qna[${i}].answer=this.value">${escapeHtml(q.answer||'')}</textarea>
     </div>`).join('') || '<p class="text-soft" style="font-size:12px">কোনো প্রশ্নোত্তর যোগ করা হয়নি।</p>';
-  const hid = document.getElementById('qnaHidden');
+  const hid = document.getElementById('qna-hidden');
   if (hid) hid.value = JSON.stringify(__qna);
 }
 function qnaAdd(){ __qna.push({question:'',answer:''}); qnaSync(); }
 function qnaRemove(i){ __qna.splice(i,1); qnaSync(); }
 function qnaInit(arr){ __qna = Array.isArray(arr) ? JSON.parse(JSON.stringify(arr)) : []; qnaSync(); }
 window.qnaAdd=qnaAdd; window.qnaRemove=qnaRemove;
-
-
-// ============================================================
-// SETTINGS GUIDE — Shows which index.html elements each setting controls
-// ============================================================
-
-// ============================================================
-// DOWNLOAD FILES TAB
-// ============================================================
-function renderDownloadFilesTab(){
-  const pane = document.getElementById('setPane');
-  if (!pane) return;
-  pane.innerHTML = `
-    <div class="settings-section">
-      <h4 style="color:var(--primary)"><i class="fas fa-download"></i> ফাইল ডাউনলোড</h4>
-      <p class="text-soft" style="margin-bottom:20px">বর্তমান কনফিগারেশন অনুযায়ী আপডেটেড ফাইলগুলো ডাউনলোড করুন।</p>
-      
-      <div style="display:grid;gap:14px">
-        <div class="card" style="background:#f0fdf4;border:1.5px solid #86efac">
-          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-            <div style="flex:1">
-              <h4 style="color:#166534;margin-bottom:4px"><i class="fas fa-home"></i> index.html</h4>
-              <p style="font-size:13px;color:#4b7c5a">সাইটের মূল ফ্রন্টএন্ড ফাইল। সমস্ত নতুন IDs (ikx_ prefix) সহ আপডেটেড।</p>
-              <div style="margin-top:8px;font-size:12px;color:#6b7280">
-                <i class="fas fa-info-circle"></i> সমস্ত settings API থেকে লোড হয় — এই ফাইল deploy করলেই হবে।
-              </div>
-            </div>
-            <button class="btn btn-success" onclick="downloadIndexHtml()" style="flex-shrink:0">
-              <i class="fas fa-download"></i> index.html ডাউনলোড
-            </button>
-          </div>
-        </div>
-        
-        <div class="card" style="background:#f5f3ff;border:1.5px solid #c4b5fd">
-          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-            <div style="flex:1">
-              <h4 style="color:#5b21b6;margin-bottom:4px"><i class="fas fa-tools"></i> admin.html</h4>
-              <p style="font-size:13px;color:#7c3aed">এই অ্যাডমিন প্যানেল ফাইল। সমস্ত সেটিংস, আইডি ম্যাপিং গাইড সহ।</p>
-            </div>
-            <button class="btn btn-primary" onclick="downloadAdminHtml()" style="flex-shrink:0">
-              <i class="fas fa-download"></i> admin.html ডাউনলোড
-            </button>
-          </div>
-        </div>
-
-        <div class="card" style="background:#fff7ed;border:1.5px solid #fed7aa">
-          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-            <div style="flex:1">
-              <h4 style="color:#c2410c;margin-bottom:4px"><i class="fas fa-box"></i> উভয় ফাইল একসাথে</h4>
-              <p style="font-size:13px;color:#9a3412">index.html ও admin.html — দুটোই একসাথে ডাউনলোড করুন।</p>
-            </div>
-            <button class="btn btn-warn" onclick="downloadBothFiles()" style="flex-shrink:0">
-              <i class="fas fa-file-archive"></i> উভয় ডাউনলোড
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:18px;background:#f8fafc">
-        <h4 style="font-size:14px;color:var(--primary);margin-bottom:10px"><i class="fas fa-list-ol"></i> ডিপ্লয় করার ধাপসমূহ</h4>
-        <ol style="padding-left:18px;font-size:13px;line-height:2;color:var(--text)">
-          <li>উপরের বাটন থেকে <strong>index.html</strong> ও <strong>admin.html</strong> ডাউনলোড করুন</li>
-          <li>পুরনো ফাইলগুলো আপনার হোস্টিং সার্ভারে রিপ্লেস করুন</li>
-          <li>server.js ও .env ফাইল আগের মতোই থাকবে — পরিবর্তন নেই</li>
-          <li>সাইট রিফ্রেশ করুন — সব পরিবর্তন কার্যকর হবে</li>
-        </ol>
-      </div>
-    </div>
-  `;
-}
-
-// ── Download current index.html content from server or use cached ──
-async function downloadIndexHtml(){
-  try{
-    // Fetch the current index from same origin or API's frontend URL
-    let htmlContent = null;
-    
-    // Try fetching from same origin
-    try {
-      const r = await fetch(location.origin + '/index.html', {cache:'no-cache'});
-      if (r.ok) htmlContent = await r.text();
-    } catch(e){}
-    
-    if (!htmlContent){
-      toast('index.html সার্ভার থেকে লোড করা যায়নি। সরাসরি সার্ভার ফাইল থেকে ডাউনলোড করুন।', 'error');
-      return;
-    }
-    
-    const blob = new Blob([htmlContent], {type:'text/html;charset=utf-8'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'index.html';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(a.href);
-    toast('index.html ডাউনলোড শুরু হয়েছে', 'success');
-  }catch(e){ toast(e.message,'error'); }
-}
-
-async function downloadAdminHtml(){
-  try{
-    let htmlContent = null;
-    try {
-      const r = await fetch(location.origin + '/admin.html', {cache:'no-cache'});
-      if (r.ok) htmlContent = await r.text();
-    } catch(e){}
-    
-    if (!htmlContent){
-      // Try fetching admin page itself
-      htmlContent = document.documentElement.outerHTML;
-    }
-    
-    const blob = new Blob([htmlContent], {type:'text/html;charset=utf-8'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'admin.html';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(a.href);
-    toast('admin.html ডাউনলোড শুরু হয়েছে', 'success');
-  }catch(e){ toast(e.message,'error'); }
-}
-
-async function downloadBothFiles(){
-  await downloadIndexHtml();
-  await new Promise(r=>setTimeout(r,500));
-  await downloadAdminHtml();
-}
-
-function showSettingsGuide(){
-  openModal(`
-    <h2><i class="fas fa-map"></i> Settings → index.html সংযোগ মানচিত্র</h2>
-    <div style="font-size:13px;line-height:2">
-      <table style="width:100%;border-collapse:collapse;min-width:300px">
-        <tr style="background:var(--primary);color:#fff"><th style="padding:8px 12px;text-align:left">সেটিংস ট্যাব → ফিল্ড</th><th style="padding:8px 12px;text-align:left">index.html এলিমেন্ট ID</th></tr>
-        <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>হিরো সেকশন</b></td><td></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">pill</td><td><code>#ikx_hero_pill_text</code></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">title + highlight</td><td><code>#ikx_hero_title_h</code></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">subtitle</td><td><code>#ikx_hero_subtitle</code></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">primaryButtonText</td><td><code>#ikx_hero_btn_primary_txt</code></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">secondaryButtonText</td><td><code>#ikx_hero_btn_secondary_txt</code></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">stat1Num / stat1Lbl</td><td><code>#ikx_hero_stat1_num / #ikx_hero_stat1_lbl</code></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">stat2Num / stat2Lbl</td><td><code>#ikx_hero_stat2_num / #ikx_hero_stat2_lbl</code></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">stat3Num / stat3Lbl</td><td><code>#ikx_hero_stat3_num / #ikx_hero_stat3_lbl</code></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">stat4Num / stat4Lbl</td><td><code>#ikx_hero_stat4_num / #ikx_hero_stat4_lbl</code></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">card1Title / card1Desc</td><td><code>#ikx_hero_card1_title / #ikx_hero_card1_desc</code></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">card2Title / card2Desc</td><td><code>#ikx_hero_card2_title / #ikx_hero_card2_desc</code></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">card3Title / card3Desc</td><td><code>#ikx_hero_card3_title / #ikx_hero_card3_desc</code></td></tr>
-        <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>টপ নোটিশ</b></td><td></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">notice.text</td><td><code>#ikx_notice_bar</code></td></tr>
-        <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>সাইট তথ্য</b></td><td></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">siteName</td><td><code>#ikx_logo_name, #ikx_footer_site_name, &lt;title&gt;</code></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">logo</td><td><code>#ikx_logo_img</code></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">favicon</td><td><code>#ikx_favicon (link rel)</code></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">footerAbout</td><td><code>#ikx_footer_about</code></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">copyright</td><td><code>#ikx_footer_copyright</code></td></tr>
-        <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>যোগাযোগ তথ্য</b></td><td></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">email</td><td><code>#ikx_footer_email, যোগাযোগ পেজ</code></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">phone</td><td><code>#ikx_footer_phone, যোগাযোগ পেজ</code></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">address</td><td><code>#ikx_footer_address, যোগাযোগ পেজ</code></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">mapUrl</td><td><code>#ikx_contact_map_iframe</code></td></tr>
-        <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>সোশ্যাল মিডিয়া</b></td><td></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">social.facebook/youtube/etc</td><td><code>#ikx_footer_social (আইকন)</code></td></tr>
-        <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>WhatsApp উইজেট</b></td><td></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">enabled + number</td><td><code>#ikx_wa_float (ফ্লোটিং বাটন)</code></td></tr>
-        <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>পরিচিতি পেজ</b></td><td></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">title, tagline</td><td><code>#ikx_about_title, #ikx_about_tagline</code></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">stat1-4 Num/Lbl</td><td><code>#ikx_about_stat1-4_num/lbl</code></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">paragraphs + mission</td><td><code>#ikx_about_content</code></td></tr>
-        <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>FAQ ছবি</b></td><td></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">faqSection.image</td><td><code>#ikx_faq_image_wrap</code></td></tr>
-        <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>কেন যুক্ত হবেন</b></td><td></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">title, subtitle, items</td><td><code>#ikx_why_join_title, #ikx_why_join_subtitle, #ikx_why_join_grid</code></td></tr>
-        <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>নেভিগেশন</b></td><td></td></tr>
-        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">homeLabel, coursesLabel, etc</td><td><code>#ikx_nav_links a[data-nav] টেক্সট</code></td></tr>
-        <tr><td style="padding:8px;"><b>ক্যাটাগরি ও কোর্স</b></td><td></td></tr>
-        <tr><td style="padding:6px 8px;">category filter dropdown</td><td><code>#ikx_category_filter, #ikx_sub_category_filter</code></td></tr>
-        <tr><td style="padding:6px 8px;">all courses grid</td><td><code>#ikx_all_courses, #ikx_recorded_courses</code></td></tr>
-      </table>
-    </div>
-    <div style="margin-top:14px;text-align:right"><button class="btn btn-outline" onclick="closeModal()">বন্ধ করুন</button></div>
-  `);
-}
 
 </script>
 </body>
