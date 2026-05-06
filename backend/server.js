@@ -1042,6 +1042,111 @@ app.get('/api/admin/users', authMiddleware, async (_, res) => {
   res.json(await User.find().select('-password').sort({ createdAt: -1 }));
 });
 
+// Delete a user (admin)
+app.delete('/api/admin/users/:id', authMiddleware, async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// Alias used by frontend (index.html) — same as /api/user/me
+app.get('/api/me', userAuthMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id)
+      .select('-password')
+      .populate('enrolledCourses.courseId');
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json(user);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ============================================================
+// ADMIN CONFIG — single endpoint to read/write all site settings
+// (admin.html uses PUT /api/admin/config with a body whose keys are
+//  setting keys: siteSettings, hero, payment, contact, social, about,
+//  notice, whatsapp, faqSection, faqImage, etc.)
+// ============================================================
+app.get('/api/admin/config', authMiddleware, async (_, res) => {
+  try {
+    const all = await Settings.find();
+    const out = {};
+    all.forEach(s => { out[s.key] = s.value; });
+    res.json(out);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.put('/api/admin/config', authMiddleware, async (req, res) => {
+  try {
+    const body = req.body || {};
+    const ops = [];
+    for (const key of Object.keys(body)) {
+      if (key === '_id' || key === 'env' || key === 'siteName') continue;
+      ops.push(
+        Settings.findOneAndUpdate(
+          { key },
+          { key, value: body[key], updatedAt: new Date() },
+          { upsert: true, new: true }
+        )
+      );
+    }
+    await Promise.all(ops);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ============================================================
+// ENROLLMENTS — admin: list/grant/revoke course access
+// ============================================================
+app.get('/api/admin/enrollments', authMiddleware, async (_, res) => {
+  try {
+    const users = await User.find()
+      .select('name email phone enrolledCourses')
+      .populate('enrolledCourses.courseId', 'title slug')
+      .lean();
+    const list = [];
+    users.forEach(u => {
+      (u.enrolledCourses || []).forEach(ec => {
+        if (!ec.courseId) return;
+        list.push({
+          _id: String(u._id) + '_' + String(ec.courseId._id || ec.courseId),
+          userId: u._id,
+          userName: u.name,
+          userEmail: u.email,
+          userPhone: u.phone,
+          courseId: ec.courseId._id || ec.courseId,
+          courseTitle: ec.courseId.title,
+          courseSlug: ec.courseId.slug,
+          enrolledAt: ec.enrolledAt,
+        });
+      });
+    });
+    res.json(list);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/admin/grant-access', authMiddleware, async (req, res) => {
+  try {
+    const { userId, courseId } = req.body || {};
+    if (!userId || !courseId) return res.status(400).json({ error: 'userId এবং courseId লাগবে' });
+    await User.findByIdAndUpdate(userId, {
+      $addToSet: { enrolledCourses: { courseId, enrolledAt: new Date() } }
+    });
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/admin/revoke-access', authMiddleware, async (req, res) => {
+  try {
+    const { userId, courseId } = req.body || {};
+    if (!userId || !courseId) return res.status(400).json({ error: 'userId এবং courseId লাগবে' });
+    await User.findByIdAndUpdate(userId, {
+      $pull: { enrolledCourses: { courseId } }
+    });
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 // ============================================================
 // STATS
 // ============================================================
