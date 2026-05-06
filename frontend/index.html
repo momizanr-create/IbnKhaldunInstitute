@@ -128,17 +128,20 @@ header{
 /* Right side actions */
 .nav-actions{display:flex;gap:10px;align-items:center;flex-shrink:0}
 .btn-nav-login{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
   background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.55);
   border-radius:8px;padding:9px 22px;font-weight:600;font-size:14px;
   cursor:pointer;font-family:inherit;transition:all .18s;white-space:nowrap;
 }
 .btn-nav-login:hover{background:rgba(255,255,255,.12);border-color:#fff}
 .btn-nav-dash{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
   background:var(--primary);color:#fff;border:none;
   border-radius:8px;padding:9px 20px;font-weight:600;font-size:14px;
   cursor:pointer;font-family:inherit;transition:all .18s;white-space:nowrap;
 }
 .btn-nav-dash:hover{background:var(--primary-dark)}
+.btn-nav-login i,.btn-nav-dash i{margin:0!important;font-size:14px}
 
 /* Hamburger */
 .menu-btn{
@@ -1219,7 +1222,9 @@ th{background:#f1f5f9;font-weight:600}
 
 /* ====== IBN KHALDUN — REDESIGNED HERO ====== */
 body{font-family:'Hind Siliguri','Inter',sans-serif}
-.ibk-hero{position:relative;background:var(--gradient-hero);color:#fff;padding:90px 0 110px;overflow:hidden;border-radius:0 0 38px 38px}
+.ibk-hero{position:relative;background:var(--gradient-hero);color:#fff;overflow:hidden;border-radius:0 0 38px 38px;
+  min-height:calc(100vh - 80px);min-height:calc(100svh - 80px);
+  display:flex;align-items:center;padding:40px 0}
 .ibk-hero::before{content:"";position:absolute;inset:0;background:
   radial-gradient(circle at 15% 20%,rgba(245,197,24,.18),transparent 45%),
   radial-gradient(circle at 88% 80%,rgba(15,157,88,.30),transparent 50%),
@@ -1229,21 +1234,21 @@ body{font-family:'Hind Siliguri','Inter',sans-serif}
   linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),
   linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
   background-size:42px 42px;mask-image:radial-gradient(ellipse at center,#000 30%,transparent 75%);pointer-events:none}
-.ibk-hero .container{position:relative;z-index:2;display:grid;grid-template-columns:1.05fr .95fr;gap:50px;align-items:center}
+.ibk-hero .container{position:relative;z-index:2;display:grid;grid-template-columns:1.05fr .95fr;gap:50px;align-items:center;width:100%}
 .ibk-hero .pill{display:inline-flex;align-items:center;gap:8px;background:rgba(245,197,24,.18);color:#FCE490;border:1px solid rgba(245,197,24,.35);padding:7px 16px;border-radius:999px;font-size:13px;font-weight:600;margin-bottom:18px}
-.ibk-hero h1{font-size:clamp(34px,5vw,58px);line-height:1.1;font-weight:800;letter-spacing:-.02em;margin-bottom:18px}
+.ibk-hero h1{font-size:clamp(30px,4.5vw,52px);line-height:1.1;font-weight:800;letter-spacing:-.02em;margin-bottom:16px}
 .ibk-hero h1 .gold{background:var(--gradient-gold);-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block}
-.ibk-hero p.lead{font-size:17px;line-height:1.7;color:rgba(255,255,255,.85);margin-bottom:28px;max-width:560px}
-.ibk-cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:34px}
+.ibk-hero p.lead{font-size:clamp(14px,1.6vw,17px);line-height:1.7;color:rgba(255,255,255,.85);margin-bottom:24px;max-width:560px}
+.ibk-cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:28px}
 .ibk-btn-gold{background:var(--gradient-gold);color:#022b1d;padding:14px 28px;border-radius:14px;font-weight:700;border:none;cursor:pointer;font-size:15px;display:inline-flex;align-items:center;gap:10px;box-shadow:0 10px 24px rgba(245,197,24,.35);transition:.25s;font-family:inherit}
 .ibk-btn-gold:hover{transform:translateY(-3px);box-shadow:0 16px 32px rgba(245,197,24,.45)}
 .ibk-btn-ghost{background:rgba(255,255,255,.08);color:#fff;border:1.5px solid rgba(255,255,255,.25);padding:13px 26px;border-radius:14px;font-weight:600;cursor:pointer;font-size:15px;display:inline-flex;align-items:center;gap:10px;backdrop-filter:blur(8px);transition:.25s;font-family:inherit}
 .ibk-btn-ghost:hover{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.5)}
-.ibk-stats{display:flex;gap:28px;flex-wrap:wrap;padding-top:18px;border-top:1px solid rgba(255,255,255,.12)}
+.ibk-stats{display:flex;gap:24px;flex-wrap:wrap;padding-top:16px;border-top:1px solid rgba(255,255,255,.12)}
 .ibk-stats .it{display:flex;flex-direction:column}
-.ibk-stats .n{font-size:26px;font-weight:800;color:#F5C518;line-height:1}
+.ibk-stats .n{font-size:24px;font-weight:800;color:#F5C518;line-height:1}
 .ibk-stats .l{font-size:12.5px;color:rgba(255,255,255,.7);margin-top:4px}
-.ibk-hero-visual{position:relative;height:480px}
+.ibk-hero-visual{position:relative;height:clamp(300px,42vh,460px)}
 .ibk-card-stack{position:absolute;inset:0}
 .ibk-card-glass{position:absolute;background:rgba(255,255,255,.10);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.18);border-radius:22px;padding:18px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
 .ibk-card-1{top:0;right:30px;width:280px;animation:ibkFloat 7s ease-in-out infinite}
@@ -1253,13 +1258,20 @@ body{font-family:'Hind Siliguri','Inter',sans-serif}
 .ibk-card-glass .ic{width:48px;height:48px;border-radius:12px;background:var(--gradient-gold);color:#022b1d;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:12px}
 .ibk-card-glass h4{color:#fff;font-size:15px;margin-bottom:4px;font-weight:700}
 .ibk-card-glass p{color:rgba(255,255,255,.7);font-size:12.5px;line-height:1.5}
-.ibk-arabic{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:200px;font-family:'Noto Naskh Arabic',serif;color:rgba(245,197,24,.10);font-weight:700;pointer-events:none;line-height:1;user-select:none}
+.ibk-arabic{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:clamp(120px,18vw,200px);font-family:'Noto Naskh Arabic',serif;color:rgba(245,197,24,.10);font-weight:700;pointer-events:none;line-height:1;user-select:none}
 @media(max-width:880px){
-  .ibk-hero{padding:60px 0 80px}
-  .ibk-hero .container{grid-template-columns:1fr;gap:40px}
-  .ibk-hero-visual{height:340px}
-  .ibk-card-1{width:230px}.ibk-card-2{width:200px}.ibk-card-3{width:160px}
-  .ibk-arabic{font-size:140px}
+  .ibk-hero{min-height:calc(100vh - 70px);min-height:calc(100svh - 70px);padding:24px 0;border-radius:0 0 28px 28px}
+  .ibk-hero .container{grid-template-columns:1fr;gap:24px}
+  .ibk-hero-visual{height:clamp(220px,32vh,300px)}
+  .ibk-card-1{width:210px;right:10px}.ibk-card-2{width:180px;bottom:10px}.ibk-card-3{width:150px;right:0;top:90px}
+  .ibk-stats{gap:16px}.ibk-stats .n{font-size:20px}
+  .ibk-cta-row{margin-bottom:18px}
+}
+@media(max-height:700px) and (min-width:881px){
+  .ibk-hero h1{font-size:clamp(26px,3.6vw,40px);margin-bottom:10px}
+  .ibk-hero p.lead{font-size:14px;margin-bottom:14px}
+  .ibk-cta-row{margin-bottom:14px}
+  .ibk-stats{padding-top:10px}
 }
 /* Header rebrand */
 header .logo span#logoLine1,header .logo span#logoLine2,header .logo #logoDivider{font-family:'Inter',sans-serif !important;font-weight:800;letter-spacing:.02em}
@@ -1331,18 +1343,18 @@ header .logo span#logoLine1,header .logo span#logoLine2,header .logo #logoDivide
   <section class="ibk-hero">
     <div class="container">
       <div>
-        <span class="pill"><i class="fas fa-star"></i> বাংলাদেশের নির্ভরযোগ্য ইসলামিক একাডেমি</span>
-        <h1>অনলাইনে নতুন <span class="gold">দক্ষতা অর্জন</span> করুন</h1>
+        <span class="pill" id="heroPill"><i class="fas fa-star"></i> <span id="heroPillText">বাংলাদেশের নির্ভরযোগ্য ইসলামিক একাডেমি</span></span>
+        <h1 id="heroTitleH"><span id="heroTitlePre">অনলাইনে নতুন </span><span class="gold" id="heroTitleGold">দক্ষতা অর্জন</span><span id="heroTitlePost"> করুন</span></h1>
         <p class="lead" id="heroSubtitle">কুরআন, সীরাহ, ফিকাহ, হাদীস ও আরবি ভাষা — অভিজ্ঞ আলেমদের তত্ত্বাবধানে ঘরে বসেই দীন শিক্ষার আধুনিক প্ল্যাটফর্ম।</p>
         <div class="ibk-cta-row">
-          <button class="ibk-btn-gold" onclick="navigate('courses')"><i class="fas fa-book-open"></i> সব কোর্স দেখুন</button>
-          <button class="ibk-btn-ghost" onclick="navigate('about')"><i class="fas fa-info-circle"></i> আমাদের সম্পর্কে</button>
+          <button class="ibk-btn-gold" id="heroBtnPrimary" onclick="navigate('courses')"><i class="fas fa-book-open"></i> <span id="heroBtnPrimaryTxt">সব কোর্স দেখুন</span></button>
+          <button class="ibk-btn-ghost" id="heroBtnSecondary" onclick="navigate('about')"><i class="fas fa-info-circle"></i> <span id="heroBtnSecondaryTxt">আমাদের সম্পর্কে</span></button>
         </div>
-        <div class="ibk-stats">
-          <div class="it"><div class="n">১২,০০০+</div><div class="l">শিক্ষার্থী</div></div>
-          <div class="it"><div class="n">৬০+</div><div class="l">কোর্স</div></div>
-          <div class="it"><div class="n">২৫+</div><div class="l">শিক্ষক</div></div>
-          <div class="it"><div class="n">৪.৯★</div><div class="l">রেটিং</div></div>
+        <div class="ibk-stats" id="heroStats">
+          <div class="it"><div class="n" id="heroStat1Num">১২,০০০+</div><div class="l" id="heroStat1Lbl">শিক্ষার্থী</div></div>
+          <div class="it"><div class="n" id="heroStat2Num">৬০+</div><div class="l" id="heroStat2Lbl">কোর্স</div></div>
+          <div class="it"><div class="n" id="heroStat3Num">২৫+</div><div class="l" id="heroStat3Lbl">শিক্ষক</div></div>
+          <div class="it"><div class="n" id="heroStat4Num">৪.৯★</div><div class="l" id="heroStat4Lbl">রেটিং</div></div>
         </div>
       </div>
       <div class="ibk-hero-visual" aria-hidden="true">
@@ -1350,18 +1362,18 @@ header .logo span#logoLine1,header .logo span#logoLine2,header .logo #logoDivide
         <div class="ibk-card-stack">
           <div class="ibk-card-glass ibk-card-1">
             <div class="ic"><i class="fas fa-quran"></i></div>
-            <h4>অথেনটিক কোর্স</h4>
-            <p>কুরআন ও সহীহ হাদিসভিত্তিক যাচাইকৃত পাঠ্যক্রম।</p>
+            <h4 id="heroCard1Title">অথেনটিক কোর্স</h4>
+            <p id="heroCard1Desc">কুরআন ও সহীহ হাদিসভিত্তিক যাচাইকৃত পাঠ্যক্রম।</p>
           </div>
           <div class="ibk-card-glass ibk-card-2">
             <div class="ic"><i class="fas fa-chalkboard-teacher"></i></div>
-            <h4>অভিজ্ঞ আলেম</h4>
-            <p>দেশ-বিদেশের প্রসিদ্ধ আলেমদের তত্ত্বাবধানে।</p>
+            <h4 id="heroCard2Title">অভিজ্ঞ আলেম</h4>
+            <p id="heroCard2Desc">দেশ-বিদেশের প্রসিদ্ধ আলেমদের তত্ত্বাবধানে।</p>
           </div>
           <div class="ibk-card-glass ibk-card-3">
             <div class="ic"><i class="fas fa-certificate"></i></div>
-            <h4>সার্টিফিকেট</h4>
-            <p>প্রতিষ্ঠান-স্বীকৃত ডিজিটাল সনদ।</p>
+            <h4 id="heroCard3Title">সার্টিফিকেট</h4>
+            <p id="heroCard3Desc">প্রতিষ্ঠান-স্বীকৃত ডিজিটাল সনদ।</p>
           </div>
         </div>
       </div>
@@ -1393,14 +1405,14 @@ header .logo span#logoLine1,header .logo span#logoLine2,header .logo #logoDivide
   <section class="block">
     <div class="container">
       <div class="section-head">
-        <h2><i class="fas fa-play-circle" style="color:var(--primary)"></i> রেকর্ডেড কোর্স</h2>
+        <h2><i class="fas fa-play-circle" style="color:var(--primary)"></i> কোর্সসমূহ</h2>
         <p>যেকোনো সময়, যেকোনো জায়গা থেকে নিজের গতিতে শিখুন</p>
       </div>
       <div id="recordedCourses" class="grid grid-3"><div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line short"></div><div class="skel-line tiny"></div></div></div><div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line short"></div><div class="skel-line tiny"></div></div></div><div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line short"></div><div class="skel-line tiny"></div></div></div>
         <div class="loading-state"><div class="loader"></div></div>
       </div>
       <div style="text-align:center;margin-top:24px">
-        <button class="btn btn-outline" onclick="navigate('courses');setTimeout(()=>filterCourses('recorded',document.querySelector('[data-filter=recorded]')),100)">সব রেকর্ডেড কোর্স <i class="fas fa-arrow-left"></i></button>
+        <button class="btn btn-outline" onclick="navigate('courses');setTimeout(()=>filterCourses('recorded',document.querySelector('[data-filter=recorded]')),100)">সব কোর্সসমূহ <i class="fas fa-arrow-left"></i></button>
       </div>
     </div>
   </section>
@@ -1486,17 +1498,14 @@ header .logo span#logoLine1,header .logo span#logoLine2,header .logo #logoDivide
     <div class="container">
       <div class="section-head">
         <h2>সকল কোর্স</h2>
-        <p>অভিজ্ঞ আলেমদের তত্ত্বাবধানে রেকর্ডেড কোর্সসমূহ</p>
+        <p>অভিজ্ঞ আলেমদের তত্ত্বাবধানে কোর্সসমূহসমূহ</p>
       </div>
       <div class="course-search">
         <input type="text" id="courseSearchInput" placeholder="কোর্স খুঁজুন... (যেমন: তাজবীদ, হাদিস, ফিকহ)" oninput="onCourseSearch(this.value)" onfocus="onCourseSearch(this.value)" onblur="setTimeout(()=>document.getElementById('courseSearchResults').classList.remove('show'),200)" autocomplete="off" />
         <i class="fas fa-search cs-icon"></i>
         <div class="course-search-results" id="courseSearchResults"></div>
       </div>
-      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px;flex-wrap:wrap">
-        <button class="dash-tab active" data-filter="all" onclick="filterCourses('all',this)">সব</button>
-        <button class="dash-tab" data-filter="recorded" onclick="filterCourses('recorded',this)">📼 রেকর্ডেড কোর্স</button>
-      </div>
+      <div style="display:none"></div>
       <div style="display:flex;gap:10px;justify-content:center;margin-bottom:24px;flex-wrap:wrap;max-width:720px;margin-left:auto;margin-right:auto">
         <select id="categoryFilter" onchange="onCategoryFilterChange()" style="max-width:260px">
           <option value="">সব ক্যাটাগরি</option>
@@ -1614,8 +1623,8 @@ header .logo span#logoLine1,header .logo span#logoLine2,header .logo #logoDivide
       <div class="section-head"><h2>আমার ড্যাশবোর্ড</h2><p id="dashUserName"></p></div>
       <div class="dash-tabs">
         <button class="dash-tab active" onclick="switchDash('myCourses',this)">আমার কোর্স</button>
-        <button class="dash-tab" onclick="switchDash('myRecorded',this)">রেকর্ডেড অ্যাক্সেস</button>
-        <button class="dash-tab" onclick="switchDash('myLive',this)">চলমান কোর্স ক্রয়</button>
+        <button class="dash-tab" onclick="switchDash('myRecorded',this)">কোর্স অ্যাক্সেস</button>
+        
         <button class="dash-tab" onclick="switchDash('profile',this)">প্রোফাইল</button>
       </div>
       <div id="dash-myCourses" class="dash-pane">
@@ -2024,7 +2033,7 @@ function _doNavigate(hash){
     const def = SITE_CONFIG?.siteSettings?.siteName || 'ইবনে খালদুন ইনস্টিটিউট';
     window.__updateSeo({
       title: def + ' — ইসলামি শিক্ষার ডিজিটাল প্ল্যাটফর্ম',
-      description: 'কুরআন, হাদিস, ফিকহ ও আরবি ভাষার অনলাইন কোর্স। লাইভ ও রেকর্ডেড ক্লাস।',
+      description: 'কুরআন, হাদিস, ফিকহ ও আরবি ভাষার অনলাইন কোর্স। লাইভ ও প্রিমিয়াম ক্লাস।',
       image: SITE_CONFIG?.siteSettings?.logo || ''
     });
   }
@@ -2127,20 +2136,26 @@ function applySiteConfig(cfg){
 
   // Hero
   const hero = cfg.hero || {};
-  if (hero.title) $('#heroTitle').textContent = hero.title;
-  if (hero.subtitle) $('#heroSubtitle').textContent = hero.subtitle;
-  if (hero.primaryButtonText) $('#heroBtnPrimary').innerHTML = `<i class="fas fa-book-open" style="margin-left:8px"></i> ${escapeHtml(hero.primaryButtonText)}`;
-  if (hero.secondaryButtonText) $('#heroBtnSecondary').textContent = hero.secondaryButtonText;
-  // Hero images (admin-controlled)
-  const himg = (id, url) => { const el = document.getElementById(id); if (el && url){ el.innerHTML = `<img src="${escapeHtml(url)}" alt=""/>`; } };
-  himg('heroImgMain', hero.imageMain);
-  himg('heroImgSide', hero.imageSide);
-  if (hero.badgeInstructorName) $('#heroBadgeInstructorName').textContent = hero.badgeInstructorName;
-  if (hero.badgeInstructorSub)  $('#heroBadgeInstructorSub').textContent  = hero.badgeInstructorSub;
-  if (hero.badgeCoursesNum)     $('#heroBadgeCoursesNum').textContent     = hero.badgeCoursesNum;
-  if (hero.badgeCoursesLabel)   $('#heroBadgeCoursesLabel').textContent   = hero.badgeCoursesLabel;
-  if (hero.badgeCongratsHead)   $('#heroBadgeCongratsHead').textContent   = hero.badgeCongratsHead;
-  if (hero.badgeCongratsTxt)    $('#heroBadgeCongratsTxt').textContent    = hero.badgeCongratsTxt;
+  const setTxt = (id, v) => { if (v !== undefined && v !== '') { const e=document.getElementById(id); if(e) e.textContent = v; } };
+  setTxt('heroPillText', hero.pill);
+  setTxt('heroSubtitle', hero.subtitle);
+  setTxt('heroBtnPrimaryTxt', hero.primaryButtonText);
+  setTxt('heroBtnSecondaryTxt', hero.secondaryButtonText);
+  if (hero.title){
+    const gold = hero.highlight || '';
+    const t = hero.title;
+    const i = gold ? t.indexOf(gold) : -1;
+    const h = document.getElementById('heroTitleH');
+    if (h){
+      if (i >= 0){
+        h.innerHTML = `<span>${escapeHtml(t.slice(0,i))}</span><span class="gold">${escapeHtml(gold)}</span><span>${escapeHtml(t.slice(i+gold.length))}</span>`;
+      } else {
+        h.textContent = t;
+      }
+    }
+  }
+  for (let k=1;k<=4;k++){ setTxt('heroStat'+k+'Num', hero['stat'+k+'Num']); setTxt('heroStat'+k+'Lbl', hero['stat'+k+'Lbl']); }
+  for (let k=1;k<=3;k++){ setTxt('heroCard'+k+'Title', hero['card'+k+'Title']); setTxt('heroCard'+k+'Desc', hero['card'+k+'Desc']); }
 
   // FAQ / Teachers section image — accept multiple admin field names
   const faqImg =
@@ -2303,7 +2318,7 @@ const DEFAULT_RECORDED_COURSES = [
 const DEFAULT_FAQS = [
   {question:'কোর্সে ভর্তি হতে কী কী লাগবে?',answer:'একটি স্মার্টফোন বা কম্পিউটার, ইন্টারনেট সংযোগ এবং কোর্স ফি (ফ্রি কোর্সের ক্ষেত্রে শুধু রেজিস্ট্রেশন)। এর বেশি কিছু লাগবে না।'},
   {question:'লাইভ ক্লাস কোথায় হবে?',answer:'লাইভ ক্লাসগুলো Zoom বা Google Meet-এ হয়। প্রবেশের লিংক WhatsApp গ্রুপে শেয়ার করা হয়।'},
-  {question:'রেকর্ডেড কোর্স কতদিন দেখা যাবে?',answer:'একবার এনরোল করলে আজীবন অ্যাক্সেস — যেকোনো সময়, যেকোনো ডিভাইস থেকে।'},
+  {question:'কোর্সসমূহ কতদিন দেখা যাবে?',answer:'একবার এনরোল করলে আজীবন অ্যাক্সেস — যেকোনো সময়, যেকোনো ডিভাইস থেকে।'},
   {question:'কোর্স শেষে সার্টিফিকেট পাব কি?',answer:'হ্যাঁ, প্রতিটি কোর্স সফলভাবে সম্পন্ন করার পর প্রতিষ্ঠান-স্বীকৃত ডিজিটাল সার্টিফিকেট দেওয়া হয়।'},
   {question:'পেমেন্ট কীভাবে করব?',answer:'বিকাশ, নগদ, রকেট, ব্যাংক ট্রান্সফার ও কার্ড পেমেন্ট সাপোর্টেড। চেকআউটে সব অপশন পাবেন।'},
   {question:'ক্লাস বুঝতে না পারলে কী করব?',answer:'প্রতিটি কোর্সের আলাদা WhatsApp সাপোর্ট গ্রুপ থাকে — শিক্ষকের কাছে সরাসরি প্রশ্ন করতে পারবেন।'},
@@ -2690,7 +2705,7 @@ function onCourseSearch(q){
       <img src="${c.thumbnail||'https://via.placeholder.com/80'}" loading="lazy"/>
       <div class="csr-info">
         <div class="csr-title">${escapeHtml(c.title)}</div>
-        <div class="csr-meta">${c.type==='live'?'🔴 লাইভ':'📼 রেকর্ডেড'} · ${escapeHtml(c.instructor||'')} · ${c.price>0?'৳'+fmt(c.price):'ফ্রি'}</div>
+        <div class="csr-meta">${c.type==='live'?'🔴 লাইভ':'📼 প্রিমিয়াম'} · ${escapeHtml(c.instructor||'')} · ${c.price>0?'৳'+fmt(c.price):'ফ্রি'}</div>
       </div>
     </div>`).join('');
   box.classList.add('show');
@@ -2841,7 +2856,7 @@ function courseCard(c){
       ${isLive?`<span class="live-pulse">🔴 LIVE</span>`:''}
     </div>
     <div class="card-body">
-      <span class="badge ${isLive?'badge-live':'badge-recorded'}">${isLive?'লাইভ কোর্স':'রেকর্ডেড কোর্স'}</span>
+      <span class="badge ${isLive?'badge-live':'badge-recorded'}">${isLive?'লাইভ কোর্স':'কোর্সসমূহ'}</span>
       <h3 class="card-title" style="margin-top:8px">${escapeHtml(c.title)}</h3>
       <p style="font-size:13px;color:var(--text-soft);margin-bottom:8px">${escapeHtml((c.shortDescription||c.description||'').slice(0,80))}</p>
       <div class="card-meta">
@@ -3508,7 +3523,7 @@ function openRecordedPurchase(courseId){
   if (!c) return;
   const pay = SITE_CONFIG.payment || {};
   $('#purchaseBody').innerHTML = `
-    <h3>রেকর্ডেড কোর্স এনরোলমেন্ট</h3>
+    <h3>কোর্সসমূহ এনরোলমেন্ট</h3>
     <div style="background:#ecfdf5;padding:14px;border-radius:10px;margin-bottom:16px">
       <strong>${escapeHtml(c.title)}</strong><br/>
       <span style="color:var(--primary);font-size:20px;font-weight:700">৳${fmt(c.price)}</span>
@@ -4214,7 +4229,7 @@ async function loadMyRecorded(){
         <td>${escapeHtml(p.courseTitle||'')}</td>
         <td><span class="badge ${p.status==='approved'?'badge-success':p.status==='rejected'?'badge-live':'badge-warn'}">${p.status}</span></td>
         <td>${new Date(p.createdAt).toLocaleDateString('bn-BD')}</td>
-      </tr>`).join('') : `<tr><td colspan="3" style="text-align:center;color:var(--text-soft)">কোনো রেকর্ডেড কোর্স অনুরোধ নেই</td></tr>`);
+      </tr>`).join('') : `<tr><td colspan="3" style="text-align:center;color:var(--text-soft)">কোনো কোর্সসমূহ অনুরোধ নেই</td></tr>`);
   }catch{
     $('#myRecordedTbl').innerHTML = `<tr><td style="text-align:center;color:var(--text-soft)">লোড করা যায়নি</td></tr>`;
   }
@@ -4285,8 +4300,8 @@ onSwr('/api/courses', (list)=>{
   const l = (ALL_COURSES||[]).filter(c=>c.type==='live').slice(0,6);
   const rEl = document.getElementById('recordedCourses');
   const lEl = document.getElementById('liveCourses');
-  if (rEl) rEl.innerHTML = r.length ? r.map(courseCard).join('') : emptyHtml('এখনো কোনো রেকর্ডেড কোর্স নেই');
-  if (lEl) lEl.innerHTML = l.length ? l.map(courseCard).join('') : emptyHtml('এই মুহূর্তে কোনো চলমান লাইভ কোর্স নেই');
+  if (rEl) rEl.innerHTML = r.length ? r.map(courseCard).join('') : emptyHtml('এখনো কোনো কোর্সসমূহ নেই');
+  if (lEl) lEl.innerHTML = '';
   const ac = document.getElementById('allCourses');
   if (ac && document.getElementById('page-courses')?.classList.contains('active')) applyCourseFilters();
   // Re-render topic counts now that fresh courses arrived

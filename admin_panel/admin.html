@@ -302,7 +302,7 @@ tr:hover td{background:#faf8ff}
     <div class="sidebar-section-label">মূল মেনু</div>
     <div class="sidebar-link active" data-section="dashboard"><i class="fas fa-th-large"></i> ড্যাশবোর্ড</div>
     <div class="sidebar-link" data-section="courses"><i class="fas fa-book-open"></i> কোর্স</div>
-    <div class="sidebar-link" data-section="accessRequests"><i class="fas fa-key"></i> রেকর্ডেড অ্যাক্সেস</div>
+    <div class="sidebar-link" data-section="accessRequests"><i class="fas fa-key"></i> কোর্স অ্যাক্সেস</div>
     <div class="sidebar-link" data-section="users"><i class="fas fa-user-graduate"></i> ছাত্রছাত্রী</div>
     <div class="sidebar-link" data-section="instructors"><i class="fas fa-chalkboard-teacher"></i> শিক্ষক</div>
     <div class="sidebar-link" data-section="testimonials"><i class="fas fa-star"></i> অভিমত</div>
@@ -365,13 +365,8 @@ tr:hover td{background:#faf8ff}
       </div>
 
       <div class="card" style="margin-top:14px">
-        <h3 style="margin-bottom:10px;font-size:16px"><i class="fas fa-fire" style="color:#ef4444"></i> আজকের জনপ্রিয় কোর্স (লাইভ ভিউ)</h3>
+        <h3 style="margin-bottom:10px;font-size:16px"><i class="fas fa-fire" style="color:#ef4444"></i> আজকের জনপ্রিয় কোর্স</h3>
         <div class="table-wrap" id="topCoursesTable"></div>
-      </div>
-
-      <div class="card" style="margin-top:14px">
-        <h3 style="margin-bottom:10px;font-size:16px">সাম্প্রতিক লাইভ কোর্স অনুরোধ</h3>
-        <div class="table-wrap" id="recentLive"></div>
       </div>
     </div>
 
@@ -391,7 +386,7 @@ tr:hover td{background:#faf8ff}
     <!-- ACCESS REQUESTS -->
     <div class="section" id="sec-accessRequests">
       <div class="card">
-        <h3 style="font-size:16px"><i class="fas fa-key"></i> রেকর্ডেড কোর্স অ্যাক্সেস অনুরোধ</h3>
+        <h3 style="font-size:16px"><i class="fas fa-key"></i> কোর্সসমূহ অ্যাক্সেস অনুরোধ</h3>
         <p class="text-soft">Approve করলে ছাত্র ইমেইলে কনফার্মেশন পাবে।</p>
       </div>
       <div class="table-wrap"><table id="accessTable"></table></div>
@@ -842,7 +837,7 @@ function openCourseModal(c={}){
         <div class="form-group"><label class="label">Slug *</label><input name="slug" value="${escapeHtml(c.slug||'')}" required /></div>
       </div>
       <div class="row">
-        <div class="form-group"><label class="label">ধরন</label><input type="hidden" name="type" value="recorded" /><input value="রেকর্ডেড কোর্স" disabled /></div>
+        <div class="form-group"><label class="label">ধরন</label><input type="hidden" name="type" value="recorded" /><input value="কোর্সসমূহ" disabled /></div>
         <div class="form-group">
           <label class="label">ক্যাটাগরি</label>
           <select name="category" id="courseCategorySel" onchange="onCourseCategoryChange(this.value)">
@@ -1001,7 +996,7 @@ function autoFillSeo(form){
   const cat   = (fd.get('category')||'').toString().trim();
   const sub   = (fd.get('subCategory')||'').toString().trim();
   const instr = (form.querySelector('#courseInstructorSel')?.selectedOptions[0]?.text || fd.get('instructor') || '').toString().trim();
-  const type  = fd.get('type')==='live' ? 'লাইভ' : 'রেকর্ডেড';
+  const type  = fd.get('type')==='live' ? 'লাইভ' : 'প্রিমিয়াম';
   const shortDesc = (fd.get('shortDescription')||'').toString().trim();
   const desc  = (fd.get('description')||'').toString().trim();
   const dur   = (fd.get('duration')||'').toString().trim();
@@ -1442,20 +1437,28 @@ const SETTINGS_FIELDS = {
   },
   hero:{
     title:'হোম পেজ — হিরো সেকশন',
-    desc:'হোম পেজের শীর্ষ ব্যানারের কন্টেন্ট, ছবি ও ফ্লোটিং ব্যাজ।',
+    desc:'হোম পেজের শীর্ষ ব্যানারের কন্টেন্ট। খালি রাখলে নিচের ডিফল্ট মান index.html থেকে দেখানো হবে।',
     fields:[
-      ['title','মূল শিরোনাম','text'],
-      ['subtitle','উপ-শিরোনাম','textarea'],
-      ['primaryButtonText','প্রাইমারি বাটন টেক্সট','text'],
-      ['secondaryButtonText','সেকেন্ডারি বাটন টেক্সট','text'],
-      ['imageMain','মূল ছবি (আপলোড)','image'],
-      ['imageSide','পার্শ্ব ছবি (আপলোড)','image'],
-      ['badgeInstructorName','ব্যাজ ১: ইন্সট্রাক্টর নাম','text'],
-      ['badgeInstructorSub','ব্যাজ ১: ইন্সট্রাক্টর সাব-টেক্সট','text'],
-      ['badgeCoursesNum','ব্যাজ ২: কোর্স সংখ্যা','text'],
-      ['badgeCoursesLabel','ব্যাজ ২: কোর্স লেবেল','text'],
-      ['badgeCongratsHead','ব্যাজ ৩: অভিনন্দন শিরোনাম','text'],
-      ['badgeCongratsTxt','ব্যাজ ৩: অভিনন্দন টেক্সট','text'],
+      ['pill','উপরের পিল টেক্সট','text','বাংলাদেশের নির্ভরযোগ্য ইসলামিক একাডেমি'],
+      ['title','মূল শিরোনাম','text','অনলাইনে নতুন দক্ষতা অর্জন করুন'],
+      ['highlight','গোল্ড হাইলাইট অংশ (শিরোনামের ভিতরে)','text','দক্ষতা অর্জন'],
+      ['subtitle','উপ-শিরোনাম','textarea','কুরআন, সীরাহ, ফিকাহ, হাদীস ও আরবি ভাষা — অভিজ্ঞ আলেমদের তত্ত্বাবধানে ঘরে বসেই দীন শিক্ষার আধুনিক প্ল্যাটফর্ম।'],
+      ['primaryButtonText','প্রাইমারি বাটন টেক্সট','text','সব কোর্স দেখুন'],
+      ['secondaryButtonText','সেকেন্ডারি বাটন টেক্সট','text','আমাদের সম্পর্কে'],
+      ['stat1Num','স্ট্যাট ১ — সংখ্যা','text','১২,০০০+'],
+      ['stat1Lbl','স্ট্যাট ১ — লেবেল','text','শিক্ষার্থী'],
+      ['stat2Num','স্ট্যাট ২ — সংখ্যা','text','৬০+'],
+      ['stat2Lbl','স্ট্যাট ২ — লেবেল','text','কোর্স'],
+      ['stat3Num','স্ট্যাট ৩ — সংখ্যা','text','২৫+'],
+      ['stat3Lbl','স্ট্যাট ৩ — লেবেল','text','শিক্ষক'],
+      ['stat4Num','স্ট্যাট ৪ — সংখ্যা','text','৪.৯★'],
+      ['stat4Lbl','স্ট্যাট ৪ — লেবেল','text','রেটিং'],
+      ['card1Title','গ্লাস কার্ড ১ — শিরোনাম','text','অথেনটিক কোর্স'],
+      ['card1Desc','গ্লাস কার্ড ১ — বিবরণ','textarea','কুরআন ও সহীহ হাদিসভিত্তিক যাচাইকৃত পাঠ্যক্রম।'],
+      ['card2Title','গ্লাস কার্ড ২ — শিরোনাম','text','অভিজ্ঞ আলেম'],
+      ['card2Desc','গ্লাস কার্ড ২ — বিবরণ','textarea','দেশ-বিদেশের প্রসিদ্ধ আলেমদের তত্ত্বাবধানে।'],
+      ['card3Title','গ্লাস কার্ড ৩ — শিরোনাম','text','সার্টিফিকেট'],
+      ['card3Desc','গ্লাস কার্ড ৩ — বিবরণ','textarea','প্রতিষ্ঠান-স্বীকৃত ডিজিটাল সনদ।'],
     ]
   },
   about:{
@@ -1567,11 +1570,14 @@ async function switchSetTab(key){
       <h4>${cfg.title}</h4>
       <p class="text-soft" style="margin-bottom:14px">${cfg.desc}</p>
       <form onsubmit="saveSet(event,'${key}')">
-        ${cfg.fields.map(([k,l,t,opts])=>`
+        ${cfg.fields.map(([k,l,t,opts])=>{
+          const def = (Array.isArray(opts) || t==='select') ? '' : (opts||'');
+          const cur = (val[k] !== undefined && val[k] !== '') ? val[k] : def;
+          return `
           <div class="form-group">
             <label class="label">${l}</label>
             ${t==='textarea'
-              ? `<textarea name="${k}" rows="3">${escapeHtml(val[k]||'')}</textarea>`
+              ? `<textarea name="${k}" rows="3" placeholder="${escapeHtml(def)}">${escapeHtml(cur)}</textarea>`
               : t==='select'
               ? `<select name="${k}">${(opts||[]).map(o=>`<option value="${escapeHtml(o)}" ${String(val[k])===String(o)?'selected':''}>${escapeHtml(o==='true'?'হ্যাঁ (চালু)':o==='false'?'না (বন্ধ)':o)}</option>`).join('')}</select>`
               : t==='image'
@@ -1591,8 +1597,8 @@ async function switchSetTab(key){
                   </div>
                   <small style="color:var(--text-soft);font-size:11px;display:block;margin-top:4px">JPG / PNG / WebP — সর্বোচ্চ 10MB</small>
                 </div>`
-              : `<input name="${k}" value="${escapeHtml(val[k]||'')}"/>`}
-          </div>`).join('')}
+              : `<input name="${k}" value="${escapeHtml(cur)}" placeholder="${escapeHtml(def)}"/>`}
+          </div>`;}).join('')}
         <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> সংরক্ষণ</button>
       </form>
     </div>`;
@@ -1822,9 +1828,9 @@ function openCategoryModal(cat={}){
       <div class="row">
         <div class="form-group"><label class="label">প্রযোজ্য</label>
           <select name="appliesTo">
-            <option value="both" ${(cat.appliesTo||'both')==='both'?'selected':''}>লাইভ ও রেকর্ডেড উভয়</option>
+            <option value="both" ${(cat.appliesTo||'both')==='both'?'selected':''}>লাইভ ও প্রিমিয়াম উভয়</option>
             <option value="live" ${cat.appliesTo==='live'?'selected':''}>শুধু লাইভ কোর্স</option>
-            <option value="recorded" ${cat.appliesTo==='recorded'?'selected':''}>শুধু রেকর্ডেড কোর্স</option>
+            <option value="recorded" ${cat.appliesTo==='recorded'?'selected':''}>শুধু কোর্সসমূহ</option>
           </select>
         </div>
         <div></div>
@@ -2021,7 +2027,7 @@ async function loadTopicCoursePicker(selectedIds=[]){
         <input type="checkbox" name="courseIds" value="${c._id}" ${selectedIds.includes(c._id)?'checked':''} style="width:auto;flex-shrink:0" />
         <span style="flex:1;min-width:0">
           <strong>${escapeHtml(c.title||'')}</strong>
-          <span class="badge ${c.type==='live'?'badge-danger':'badge-info'}" style="font-size:10px;margin-left:6px">${c.type==='live'?'লাইভ':'রেকর্ডেড'}</span>
+          <span class="badge ${c.type==='live'?'badge-danger':'badge-info'}" style="font-size:10px;margin-left:6px">${c.type==='live'?'লাইভ':'প্রিমিয়াম'}</span>
         </span>
       </label>`).join('');
   }catch(e){ picker.innerHTML = `<p class="text-soft">${escapeHtml(e.message)}</p>`; }
