@@ -2,68 +2,96 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#1e1b4b"/>
 <title>Admin Panel — ইবনে খালদুন ইনস্টিটিউট</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23066144'/%3E%3Ctext x='50' y='66' text-anchor='middle' fill='%23F5C518' font-size='52' font-family='sans-serif' font-weight='bold'%3Eإ%3C/text%3E%3C/svg%3E"/>
-<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%237c3aed'/%3E%3Ctext x='50' y='66' text-anchor='middle' fill='%23a3e635' font-size='52' font-family='sans-serif' font-weight='bold'%3Eإ%3C/text%3E%3C/svg%3E"/>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 <style>
-/* ══════════ DESIGN TOKENS ══════════ */
+/* ══════════ DESIGN TOKENS — Eduplex inspired ══════════ */
 :root{
-  --primary:#066144; --primary-dark:#044a34; --primary-soft:rgba(6,97,68,.08);
-  --accent:#F5C518; --accent-dark:#d4a90e; --accent-soft:rgba(245,197,24,.14);
-  --bg:#f6f7f9; --surface:#ffffff; --surface-2:#f9fafb; --surface-3:#f3f4f6;
-  --border:#e5e7eb; --border-2:#d1d5db;
-  --text:#111827; --text-2:#374151; --text-3:#6b7280; --text-4:#9ca3af;
-  --green:#16a34a; --green-bg:#dcfce7;
-  --red:#dc2626;   --red-bg:#fee2e2;
-  --blue:#2563eb;  --blue-bg:#dbeafe;
-  --orange:#ea580c;--orange-bg:#ffedd5;
-  --radius:12px; --radius-sm:8px; --radius-lg:16px;
-  --shadow-sm:0 1px 2px rgba(15,23,42,.06);
-  --shadow:0 4px 14px rgba(15,23,42,.08);
-  --shadow-lg:0 18px 50px rgba(15,23,42,.16);
-  --sidebar:262px;
+  --primary:#7c3aed;
+  --primary-dark:#5b21b6;
+  --primary-light:#ede9fe;
+  --primary-glow:#c4b5fd;
+  --primary-soft:rgba(124,58,237,.08);
+  --accent:#a3e635;
+  --accent-dark:#65a30d;
+  --secondary:#f59e0b;
+  --bg:#f5f5f7;
+  --surface:#ffffff;
+  --surface-2:#faf8ff;
+  --surface-3:#f3f0ff;
+  --surface-tint:#f3f0ff;
+  --text:#111827;
+  --text-2:#374151;
+  --text-3:#6b7280;
+  --text-4:#9ca3af;
+  --text-soft:#6b7280;
+  --border:#e5e7eb;
+  --border-2:#d1d5db;
+  --success:#16a34a; --green:#16a34a; --green-bg:#dcfce7;
+  --danger:#ef4444;  --red:#ef4444;   --red-bg:#fee2e2;
+  --info:#3b82f6;    --blue:#3b82f6;  --blue-bg:#dbeafe;
+  --orange:#ea580c;  --orange-bg:#ffedd5;
+  --accent-soft:rgba(163,230,53,.18);
+  --radius:14px; --radius-sm:10px; --radius-lg:18px;
+  --shadow-sm:0 1px 2px rgba(15,23,42,.05);
+  --shadow:0 1px 4px rgba(0,0,0,.06),0 2px 12px rgba(0,0,0,.04);
+  --shadow-lg:0 8px 32px rgba(124,58,237,.14);
+  --sidebar:240px;
+  --sidebar-bg:#1e1b4b;
+  --sidebar-bg-2:#13112e;
+  --sidebar-text:#c7c3f4;
+  --sidebar-active:#a3e635;
+  --sidebar-active-text:#13112e;
+  --sidebar-icon-bg:rgba(255,255,255,.07);
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
 html{overflow-x:hidden;-webkit-text-size-adjust:100%}
-body{font-family:'Hind Siliguri','Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.55;overflow-x:hidden}
+body{font-family:'Hind Siliguri','Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.55;overflow-x:hidden;min-height:100vh;min-height:100dvh}
 a{color:inherit;text-decoration:none}
 button{cursor:pointer;font-family:inherit;border:none;background:none;color:inherit}
 input,select,textarea{font-family:inherit;font-size:14px;color:var(--text);outline:none}
 img{max-width:100%;display:block}
 ::-webkit-scrollbar{width:8px;height:8px}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:8px}
-::-webkit-scrollbar-thumb:hover{background:var(--text-4)}
+::-webkit-scrollbar-thumb{background:#d6d3e6;border-radius:8px}
+::-webkit-scrollbar-thumb:hover{background:var(--primary-glow)}
 
 /* ══════════ LOGIN ══════════ */
-#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
-  background:radial-gradient(ellipse at 50% 0%,rgba(6,97,68,.10),transparent 60%),var(--bg)}
-.login-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:40px 34px;width:100%;max-width:400px;box-shadow:var(--shadow-lg)}
+#login-screen{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px;
+  background:linear-gradient(135deg,#1e1b4b 0%,#4c1d95 50%,#1e1b4b 100%);position:relative;overflow:hidden}
+#login-screen::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(163,230,53,.18),transparent 70%);top:-150px;right:-100px}
+#login-screen::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.4),transparent 70%);bottom:-150px;left:-80px}
+.login-card{background:rgba(255,255,255,.97);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:40px 34px;width:100%;max-width:420px;box-shadow:0 25px 80px rgba(0,0,0,.35);position:relative;z-index:1}
 .login-logo{display:flex;justify-content:center;margin-bottom:18px}
-.login-logo .logo-box{width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:34px;font-weight:800}
-.login-card h1{text-align:center;font-size:22px;color:var(--text);margin-bottom:6px}
+.login-logo .logo-box{width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:34px;font-weight:800;box-shadow:0 8px 24px rgba(124,58,237,.4)}
+.login-card h1{text-align:center;font-size:22px;color:var(--primary-dark);margin-bottom:6px;font-weight:800}
 .login-card .sub{text-align:center;color:var(--text-3);margin-bottom:24px;font-size:13px}
 .field{margin-bottom:14px}
 .field label{display:block;font-size:12.5px;font-weight:600;color:var(--text-2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
-.field input,.field select,.field textarea{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);transition:border-color .15s,box-shadow .15s}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+.field input,.field select,.field textarea{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:#fff;transition:border-color .15s,box-shadow .15s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(124,58,237,.1)}
 .field textarea{resize:vertical;min-height:90px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 18px;border-radius:var(--radius-sm);font-weight:600;font-size:14px;border:1.5px solid transparent;transition:transform .12s,background .15s,box-shadow .15s;white-space:nowrap}
+
+/* ══════════ BUTTONS ══════════ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 18px;border-radius:var(--radius-sm);font-weight:600;font-size:14px;border:1.5px solid transparent;transition:transform .12s,background .15s,box-shadow .15s;white-space:nowrap;line-height:1.2}
 .btn:hover{transform:translateY(-1px)}
 .btn:active{transform:translateY(0)}
-.btn-primary{background:var(--primary);color:#fff}
-.btn-primary:hover{background:var(--primary-dark)}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(124,58,237,.25)}
+.btn-primary:hover{background:var(--primary-dark);box-shadow:0 4px 14px rgba(124,58,237,.4)}
 .btn-accent{background:var(--accent);color:#1a1a1a}
-.btn-accent:hover{background:var(--accent-dark)}
-.btn-secondary{background:var(--surface-3);color:var(--text);border-color:var(--border)}
-.btn-secondary:hover{background:var(--border)}
-.btn-danger{background:var(--red);color:#fff}
+.btn-accent:hover{background:var(--accent-dark);color:#fff}
+.btn-secondary{background:var(--surface-3);color:var(--primary-dark);border-color:rgba(124,58,237,.15)}
+.btn-secondary:hover{background:var(--primary-light)}
+.btn-danger{background:var(--danger);color:#fff}
 .btn-danger:hover{filter:brightness(.92)}
 .btn-ghost{background:transparent;color:var(--text-2);border-color:var(--border)}
-.btn-ghost:hover{background:var(--surface-3)}
-.btn-sm{padding:6px 12px;font-size:13px;border-radius:7px}
+.btn-ghost:hover{background:var(--surface-3);color:var(--primary-dark)}
+.btn-sm{padding:6px 12px;font-size:12.5px;border-radius:8px}
 .btn-lg{padding:13px 22px;font-size:15px}
 .btn-full{width:100%}
 .btn-icon{padding:7px 9px;font-size:13px}
@@ -72,86 +100,188 @@ img{max-width:100%;display:block}
 .alert.error.show{display:block}
 
 /* ══════════ APP LAYOUT ══════════ */
-#app{display:none}
-.layout{display:flex;min-height:100vh}
-.sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;z-index:90;transition:transform .25s}
-.sidebar-head{padding:18px 18px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
-.sidebar-head .logo{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));display:flex;align-items:center;justify-content:center;color:var(--accent);font-weight:800;font-size:20px}
-.sidebar-head .brand{font-size:15px;font-weight:700;color:var(--text)}
-.sidebar-head .role{font-size:11.5px;color:var(--text-3)}
-.sidebar-close{display:none;margin-left:auto;font-size:20px;color:var(--text-3);padding:4px 8px}
-.sidebar-search{padding:14px 16px 6px}
-.sidebar-search input{width:100%;padding:9px 12px 9px 32px;background:var(--surface-2);border:1px solid var(--border);border-radius:9px;font-size:13px;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%239ca3af' viewBox='0 0 24 24'%3E%3Cpath d='M21.71 20.29 18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 7-7 7 7 0 0 1-7 7Z'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:11px center}
-.sidebar-nav{flex:1;overflow-y:auto;padding:8px 10px 18px}
-.nav-section{font-size:11px;font-weight:700;color:var(--text-4);text-transform:uppercase;letter-spacing:.6px;padding:14px 12px 6px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;color:var(--text-2);font-weight:500;font-size:13.5px;cursor:pointer;margin-bottom:2px;transition:background .15s}
-.nav-item:hover{background:var(--surface-3)}
-.nav-item.active{background:var(--primary-soft);color:var(--primary);font-weight:600}
-.nav-item .ic{width:22px;text-align:center;font-size:15px}
-.nav-item .badge{margin-left:auto;background:var(--red);color:#fff;font-size:11px;font-weight:700;padding:1px 7px;border-radius:10px;display:none}
-.nav-item .badge.show{display:inline-block}
-.sidebar-foot{padding:14px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.sidebar-foot .av{width:34px;height:34px;border-radius:50%;background:var(--primary);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
-.sidebar-foot .nm{flex:1;font-size:13px;font-weight:600;color:var(--text)}
-.sidebar-foot .nm small{display:block;color:var(--text-3);font-weight:400;font-size:11px}
-.sidebar-foot button{padding:7px 10px;border-radius:8px;font-size:12px;color:var(--red);background:var(--red-bg)}
+#app{display:none;min-height:100vh;min-height:100dvh}
+.layout{display:flex;min-height:100vh;min-height:100dvh}
 
+/* ══════════ SIDEBAR — Eduplex dark purple ══════════ */
+.sidebar{
+  width:var(--sidebar);
+  background:var(--sidebar-bg);
+  background-image:linear-gradient(180deg,var(--sidebar-bg) 0%,var(--sidebar-bg-2) 100%);
+  color:var(--sidebar-text);
+  display:flex;flex-direction:column;
+  position:fixed;inset:0 auto 0 0;
+  z-index:90;transition:transform .25s ease;
+  border-right:1px solid rgba(255,255,255,.04)
+}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:6px}
+
+.sidebar-head{
+  padding:20px 18px 16px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  display:flex;align-items:center;gap:12px
+}
+.sidebar-head .logo{
+  width:40px;height:40px;border-radius:11px;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  display:grid;place-items:center;color:var(--accent);
+  font-weight:800;font-size:20px;flex-shrink:0;
+  box-shadow:0 4px 12px rgba(124,58,237,.45)
+}
+.sidebar-head .brand{font-size:14.5px;font-weight:700;color:#fff;line-height:1.2}
+.sidebar-head .role{font-size:11px;color:rgba(199,195,244,.6);margin-top:2px}
+.sidebar-close{display:none;margin-left:auto;font-size:20px;color:rgba(199,195,244,.7);padding:4px 8px;background:none;border:none}
+
+.sidebar-search{padding:12px 16px 4px}
+.sidebar-search input{
+  width:100%;padding:9px 12px 9px 34px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:9px;font-size:12.5px;color:#fff;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%23c7c3f4' opacity='.6' viewBox='0 0 24 24'%3E%3Cpath d='M21.71 20.29 18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 7-7 7 7 0 0 1-7 7Z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:12px center
+}
+.sidebar-search input::placeholder{color:rgba(199,195,244,.5)}
+.sidebar-search input:focus{border-color:rgba(163,230,53,.4);background:rgba(255,255,255,.09)}
+
+.sidebar-nav{flex:1;overflow-y:auto;padding:6px 10px 14px}
+.nav-section{
+  font-size:10px;font-weight:700;
+  color:rgba(199,195,244,.4);
+  text-transform:uppercase;letter-spacing:1.5px;
+  padding:14px 12px 6px
+}
+.nav-item{
+  display:flex;align-items:center;gap:11px;
+  padding:9px 10px;border-radius:10px;
+  color:rgba(199,195,244,.78);font-weight:500;font-size:13px;
+  cursor:pointer;margin-bottom:2px;
+  transition:all .15s;user-select:none
+}
+.nav-item .ic{
+  width:30px;height:30px;border-radius:8px;
+  background:var(--sidebar-icon-bg);
+  display:grid;place-items:center;font-size:13px;flex-shrink:0;
+  transition:all .15s
+}
+.nav-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav-item:hover .ic{background:rgba(124,58,237,.32);color:#c4b5fd}
+.nav-item.active{
+  background:linear-gradient(90deg,rgba(163,230,53,.16),rgba(163,230,53,.06));
+  color:#fff;font-weight:600;
+  border:1px solid rgba(163,230,53,.22)
+}
+.nav-item.active .ic{
+  background:var(--sidebar-active);color:var(--sidebar-active-text);
+  box-shadow:0 3px 8px rgba(163,230,53,.35)
+}
+.nav-item .badge{
+  margin-left:auto;background:var(--danger);color:#fff;
+  font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:10px;display:none
+}
+.nav-item .badge.show{display:inline-block}
+
+.sidebar-foot{
+  padding:14px 16px;border-top:1px solid rgba(255,255,255,.07);
+  display:flex;align-items:center;gap:10px
+}
+.sidebar-foot .av{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:var(--accent);display:grid;place-items:center;
+  font-weight:700;font-size:14px;flex-shrink:0;
+  box-shadow:0 3px 10px rgba(124,58,237,.4)
+}
+.sidebar-foot .nm{flex:1;font-size:13px;font-weight:600;color:#fff;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sidebar-foot .nm small{display:block;color:rgba(199,195,244,.55);font-weight:400;font-size:11px;margin-top:1px}
+.sidebar-foot button{padding:7px 10px;border-radius:8px;font-size:12px;color:#fff;background:rgba(239,68,68,.85);border:none}
+.sidebar-foot button:hover{background:var(--danger)}
+
+/* ══════════ MAIN ══════════ */
 .main{flex:1;margin-left:var(--sidebar);min-width:0;display:flex;flex-direction:column;min-height:100vh}
-.topbar{height:60px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;padding:0 22px;position:sticky;top:0;z-index:30}
-.hamburger{display:none;font-size:22px;color:var(--text-2);padding:6px 8px;border-radius:8px}
-.topbar-title{font-size:16px;font-weight:700;color:var(--text)}
+.topbar{
+  background:#fff;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:14px;padding:0 22px;
+  height:62px;position:sticky;top:0;z-index:30;
+  box-shadow:0 1px 0 rgba(15,23,42,.04)
+}
+.hamburger{display:none;font-size:22px;color:var(--primary);padding:6px 8px;border-radius:8px;background:none;border:none}
+.topbar-title{font-size:16px;font-weight:700;color:var(--primary-dark)}
 .topbar-actions{margin-left:auto;display:flex;align-items:center;gap:8px}
-.tb-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:9px;background:var(--surface-3);color:var(--text-2);font-size:13px;font-weight:600;border:1px solid var(--border)}
-.tb-btn:hover{background:var(--border)}
-.tb-btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.tb-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:8px 14px;border-radius:9px;
+  background:var(--surface-3);color:var(--primary-dark);
+  font-size:13px;font-weight:600;
+  border:1px solid rgba(124,58,237,.12);transition:.15s
+}
+.tb-btn:hover{background:var(--primary-light);border-color:rgba(124,58,237,.3)}
+.tb-btn.primary{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 2px 8px rgba(124,58,237,.25)}
 .tb-btn.primary:hover{background:var(--primary-dark)}
 
-.content{flex:1;padding:24px 22px 60px;max-width:1400px;width:100%;margin:0 auto}
+.content{flex:1;padding:22px;max-width:1400px;width:100%;margin:0 auto}
 
-.page{display:none;animation:fade .25s ease}
+.page{display:none;animation:fade .3s ease}
 .page.active{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .page-head{margin-bottom:18px}
-.page-head h1{font-size:22px;color:var(--text);margin-bottom:4px;font-weight:700}
+.page-head h1{font-size:22px;color:var(--text);margin-bottom:4px;font-weight:800;font-family:'Plus Jakarta Sans','Hind Siliguri',sans-serif}
 .page-head p{color:var(--text-3);font-size:13.5px}
 
 /* ══════════ CARDS / TABLES ══════════ */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:18px}
-.card-h{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.card-h h3{font-size:15px;font-weight:700;color:var(--text);flex:1;min-width:160px}
+.card{background:var(--surface);border:1px solid rgba(0,0,0,.04);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:18px}
+.card-h{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#fff}
+.card-h h3{font-size:15px;font-weight:700;color:var(--primary-dark);flex:1;min-width:160px}
 .card-h .actions{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
 .card-b{padding:18px}
-.card-b.no-pad{padding:0}
+.card-b.no-pad{padding:0;overflow-x:auto;-webkit-overflow-scrolling:touch}
 
+/* ══════════ STAT GRID — Eduplex style ══════════ */
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:20px}
-.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm)}
-.stat .ic{width:46px;height:46px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--primary-soft);color:var(--primary)}
-.stat.green .ic{background:var(--green-bg);color:var(--green)}
-.stat.blue  .ic{background:var(--blue-bg);color:var(--blue)}
-.stat.orange .ic{background:var(--orange-bg);color:var(--orange)}
-.stat.accent .ic{background:var(--accent-soft);color:var(--accent-dark)}
-.stat .num{font-size:22px;font-weight:700;color:var(--text);line-height:1.2}
-.stat .lbl{color:var(--text-3);font-size:12.5px;margin-top:2px}
+.stat{
+  background:#fff;border:1px solid rgba(0,0,0,.04);border-radius:var(--radius);
+  padding:18px;display:flex;align-items:center;gap:14px;
+  box-shadow:var(--shadow);transition:.2s;
+  position:relative;overflow:hidden
+}
+.stat::after{
+  content:'';position:absolute;top:0;right:0;width:80px;height:80px;
+  border-radius:0 14px 0 80px;
+  background:linear-gradient(135deg,var(--surface-tint),transparent);
+  opacity:.7;pointer-events:none
+}
+.stat:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.stat .ic{
+  width:48px;height:48px;border-radius:12px;
+  display:grid;place-items:center;font-size:20px;flex-shrink:0;
+  background:var(--surface-tint);color:var(--primary);
+  box-shadow:0 2px 8px rgba(124,58,237,.12)
+}
+.stat.green .ic{background:var(--green-bg);color:var(--green);box-shadow:0 2px 8px rgba(22,163,74,.18)}
+.stat.blue  .ic{background:var(--blue-bg);color:var(--blue);box-shadow:0 2px 8px rgba(59,130,246,.18)}
+.stat.orange .ic{background:var(--orange-bg);color:var(--orange);box-shadow:0 2px 8px rgba(234,88,12,.18)}
+.stat.accent .ic{background:var(--accent-soft);color:var(--accent-dark);box-shadow:0 2px 8px rgba(163,230,53,.25)}
+.stat .num{font-size:22px;font-weight:800;color:var(--text);line-height:1.1;font-family:'Plus Jakarta Sans',sans-serif}
+.stat .lbl{color:var(--text-3);font-size:12.5px;margin-top:3px}
 
-table{width:100%;border-collapse:collapse;font-size:13.5px}
-thead th{text-align:left;background:var(--surface-2);color:var(--text-3);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:11px 16px;border-bottom:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520px}
+thead th{text-align:left;background:var(--surface-tint);color:var(--primary-dark);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:12px 16px;border-bottom:1px solid var(--border);white-space:nowrap}
 tbody td{padding:13px 16px;border-bottom:1px solid var(--border);color:var(--text-2);vertical-align:middle}
 tbody tr:last-child td{border-bottom:0}
-tbody tr:hover{background:var(--surface-2)}
-.row-actions{display:flex;gap:6px;justify-content:flex-end}
-.row-thumb{width:42px;height:42px;border-radius:8px;object-fit:cover;background:var(--surface-3)}
+tbody tr:hover td{background:#faf8ff}
+.row-actions{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+.row-thumb{width:42px;height:42px;border-radius:9px;object-fit:cover;background:var(--surface-3);flex-shrink:0;border:1px solid var(--border)}
 
-.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;font-size:11.5px;font-weight:600;text-transform:capitalize}
-.pill.green{background:var(--green-bg);color:var(--green)}
-.pill.red{background:var(--red-bg);color:var(--red)}
-.pill.blue{background:var(--blue-bg);color:var(--blue)}
-.pill.orange{background:var(--orange-bg);color:var(--orange)}
-.pill.gray{background:var(--surface-3);color:var(--text-2)}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;text-transform:capitalize}
+.pill.green{background:var(--green-bg);color:#166534}
+.pill.red{background:var(--red-bg);color:#991b1b}
+.pill.blue{background:var(--blue-bg);color:#1e40af}
+.pill.orange{background:#ffedd5;color:#9a3412}
+.pill.gray{background:#e5e7eb;color:#374151}
 
 .empty{padding:40px 20px;text-align:center;color:var(--text-3)}
-.empty .ic{font-size:38px;margin-bottom:10px}
+.empty .ic{font-size:38px;margin-bottom:10px;color:var(--primary-glow)}
 .loading{padding:36px;text-align:center;color:var(--text-3)}
 .spin{display:inline-block;width:22px;height:22px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:8px}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -161,72 +291,72 @@ tbody tr:hover{background:var(--surface-2)}
 .form-grid .full{grid-column:1/-1}
 
 /* ══════════ MODAL ══════════ */
-.modal{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:flex-start;justify-content:center;padding:30px 14px;z-index:200;overflow-y:auto}
+.modal{position:fixed;inset:0;background:rgba(15,10,40,.6);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding:30px 14px;z-index:200;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .modal.open{display:flex}
-.modal-box{background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:640px;box-shadow:var(--shadow-lg);animation:pop .2s ease;margin-top:30px}
+.modal-box{background:#fff;border-radius:var(--radius-lg);width:100%;max-width:640px;box-shadow:0 30px 80px rgba(0,0,0,.3),0 0 0 1px rgba(124,58,237,.08);animation:pop .22s ease;margin-top:30px}
 .modal-box.lg{max-width:900px}
 .modal-box.xl{max-width:1100px}
 @keyframes pop{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
-.modal-h{display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border)}
-.modal-h h3{font-size:16px;font-weight:700;color:var(--text);flex:1}
-.modal-h button{font-size:22px;color:var(--text-3);padding:4px 10px;border-radius:7px}
-.modal-h button:hover{background:var(--surface-3);color:var(--text)}
-.modal-b{padding:20px;max-height:70vh;overflow-y:auto}
-.modal-f{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;background:var(--surface-2);border-radius:0 0 var(--radius-lg) var(--radius-lg)}
+.modal-h{display:flex;align-items:center;padding:16px 22px;border-bottom:1px solid var(--border)}
+.modal-h h3{font-size:16px;font-weight:700;color:var(--primary-dark);flex:1}
+.modal-h button{font-size:18px;color:var(--primary);padding:8px 12px;border-radius:50%;width:36px;height:36px;background:#f5f3ff;display:grid;place-items:center;border:none}
+.modal-h button:hover{background:var(--danger);color:#fff}
+.modal-b{padding:22px;max-height:70vh;overflow-y:auto}
+.modal-f{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;background:var(--surface-2);border-radius:0 0 var(--radius-lg) var(--radius-lg)}
 
 /* ══════════ TOAST ══════════ */
-#toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:12px 18px;border-radius:10px;font-size:13.5px;font-weight:600;z-index:300;box-shadow:var(--shadow-lg);display:none;max-width:340px}
+#toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:13px 20px;border-radius:11px;font-size:13.5px;font-weight:600;z-index:300;box-shadow:var(--shadow-lg);display:none;max-width:340px}
 #toast.show{display:block;animation:toastIn .25s ease}
-#toast.success{background:var(--green)}
-#toast.error{background:var(--red)}
-#toast.info{background:var(--blue)}
+#toast.success{background:var(--success)}
+#toast.error{background:var(--danger)}
+#toast.info{background:var(--info)}
 @keyframes toastIn{from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1}}
 
-/* ══════════ TABS (within page) ══════════ */
-.tabbar{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:18px;overflow-x:auto;-webkit-overflow-scrolling:touch}
-.tabbar button{padding:10px 16px;border-bottom:2px solid transparent;color:var(--text-3);font-weight:600;font-size:13.5px;white-space:nowrap}
+/* ══════════ TABS ══════════ */
+.tabbar{display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:18px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tabbar button{padding:10px 16px;border-bottom:3px solid transparent;color:var(--text-3);font-weight:600;font-size:13.5px;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;margin-bottom:-2px;transition:.15s}
+.tabbar button:hover{color:var(--primary)}
 .tabbar button.active{color:var(--primary);border-bottom-color:var(--primary)}
 
-/* ══════════ HUB CARDS (Customize) ══════════ */
+/* ══════════ HUB CARDS ══════════ */
 .hub{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
-.hub-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:8px;box-shadow:var(--shadow-sm)}
-.hub-card:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--primary)}
-.hub-card .ic{width:42px;height:42px;border-radius:10px;background:var(--primary-soft);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:4px}
+.hub-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px;cursor:pointer;transition:all .18s;display:flex;flex-direction:column;gap:8px;box-shadow:var(--shadow-sm)}
+.hub-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--primary)}
+.hub-card .ic{width:42px;height:42px;border-radius:11px;background:var(--surface-tint);color:var(--primary);display:grid;place-items:center;font-size:18px;margin-bottom:4px}
 .hub-card h4{font-size:14px;font-weight:700;color:var(--text)}
 .hub-card p{font-size:12.5px;color:var(--text-3);line-height:1.4}
 
 /* ══════════ FILE UPLOAD ══════════ */
 .upload-box{border:2px dashed var(--border-2);padding:18px;border-radius:var(--radius-sm);text-align:center;color:var(--text-3);cursor:pointer;transition:all .15s;background:var(--surface-2)}
-.upload-box:hover{border-color:var(--primary);background:var(--primary-soft);color:var(--primary)}
-.upload-box.has-file{border-style:solid;border-color:var(--primary);color:var(--primary);background:var(--primary-soft)}
+.upload-box:hover{border-color:var(--primary);background:var(--primary-light);color:var(--primary)}
+.upload-box.has-file{border-style:solid;border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
 .preview-img{max-width:120px;max-height:90px;border-radius:8px;margin-top:10px;border:1px solid var(--border)}
 
 /* ══════════ UTILS ══════════ */
 .muted{color:var(--text-3);font-size:12.5px}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .gap{display:flex;gap:8px;flex-wrap:wrap}
-.list-item{display:flex;gap:12px;align-items:center;padding:11px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:9px;margin-bottom:8px}
+.list-item{display:flex;gap:12px;align-items:center;padding:12px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px}
 .list-item .ti{flex:1;min-width:0}
 .list-item .ti b{display:block;color:var(--text);font-size:13.5px}
 .list-item .ti small{color:var(--text-3);font-size:12px}
-
 .checkbox{display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 0;font-size:13px;color:var(--text-2)}
 .checkbox input{width:16px;height:16px;accent-color:var(--primary)}
-
 .color-input{display:flex;gap:6px;align-items:center}
-.color-input input[type=color]{width:42px;height:38px;padding:2px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:var(--surface)}
+.color-input input[type=color]{width:42px;height:38px;padding:2px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:#fff}
 
-#sidebar-bd{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:80;display:none}
+#sidebar-bd{position:fixed;inset:0;background:rgba(15,10,40,.55);backdrop-filter:blur(2px);z-index:80;display:none}
 #sidebar-bd.open{display:block}
 
 /* ══════════ RESPONSIVE ══════════ */
 @media (max-width:980px){
+  :root{--sidebar:260px}
   .sidebar{transform:translateX(-100%);box-shadow:var(--shadow-lg)}
   .sidebar.open{transform:none}
   .sidebar-close{display:block}
   .main{margin-left:0}
   .hamburger{display:inline-flex}
-  .content{padding:18px 14px 60px}
+  .content{padding:16px 14px 60px}
   .topbar{padding:0 14px;gap:10px}
   .topbar-title{font-size:15px}
   .tb-btn span:not(.ic){display:none}
@@ -235,12 +365,7 @@ tbody tr:hover{background:var(--surface-2)}
 @media (max-width:580px){
   .stat{padding:14px}
   .stat .num{font-size:18px}
-  thead{display:none}
-  table,tbody,tr,td{display:block;width:100%}
-  tbody tr{padding:10px 14px;border-bottom:8px solid var(--surface-2)}
-  tbody td{padding:6px 0;border:0;display:flex;justify-content:space-between;align-items:center;gap:10px}
-  tbody td::before{content:attr(data-l);font-weight:600;color:var(--text-3);font-size:12px;text-transform:uppercase}
-  .row-actions{justify-content:flex-end}
+  table{min-width:460px}
 }
 </style>
 </head>
@@ -261,7 +386,7 @@ tbody tr:hover{background:var(--surface-2)}
       <label>Password</label>
       <input type="password" id="login-password" autocomplete="current-password" placeholder="••••••••" onkeydown="if(event.key==='Enter') doLogin()"/>
     </div>
-    <button class="btn btn-primary btn-full btn-lg" id="login-btn" onclick="doLogin()">লগইন করুন</button>
+    <button class="btn btn-primary btn-full btn-lg" id="login-btn" onclick="doLogin()"><i class="fas fa-arrow-right-to-bracket"></i> লগইন করুন</button>
   </div>
 </div>
 
@@ -274,11 +399,11 @@ tbody tr:hover{background:var(--surface-2)}
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-head">
       <div class="logo">إ</div>
-      <div>
+      <div style="min-width:0;flex:1">
         <div class="brand">ইবনে খালদুন</div>
         <div class="role">Admin Dashboard</div>
       </div>
-      <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+      <button class="sidebar-close" onclick="closeSidebar()"><i class="fas fa-times"></i></button>
     </div>
     <div class="sidebar-search">
       <input type="text" id="nav-search" placeholder="মেনু খুঁজুন..." oninput="filterNav(this.value)"/>
@@ -286,62 +411,62 @@ tbody tr:hover{background:var(--surface-2)}
     <nav class="sidebar-nav" id="sidebar-nav">
 
       <div class="nav-section">ওভারভিউ</div>
-      <div class="nav-item active" data-page="dashboard"><span class="ic">📊</span> ড্যাশবোর্ড</div>
+      <div class="nav-item active" data-page="dashboard"><span class="ic"><i class="fas fa-th-large"></i></span> ড্যাশবোর্ড</div>
 
       <div class="nav-section">নিয়মিত পরিচালনা</div>
-      <div class="nav-item" data-page="courses"><span class="ic">📚</span> কোর্স ম্যানেজমেন্ট</div>
-      <div class="nav-item" data-page="enrollments"><span class="ic">📋</span> এনরোলমেন্ট<span class="badge" id="bd-enroll">0</span></div>
-      <div class="nav-item" data-page="access-requests"><span class="ic">🔐</span> অ্যাক্সেস রিকোয়েস্ট<span class="badge" id="bd-access">0</span></div>
-      <div class="nav-item" data-page="contact-msgs"><span class="ic">📨</span> যোগাযোগ মেসেজ<span class="badge" id="bd-msg">0</span></div>
-      <div class="nav-item" data-page="users"><span class="ic">👥</span> ব্যবহারকারী</div>
-      <div class="nav-item" data-page="notices"><span class="ic">📢</span> নোটিশ</div>
+      <div class="nav-item" data-page="courses"><span class="ic"><i class="fas fa-book-open"></i></span> কোর্স ম্যানেজমেন্ট</div>
+      <div class="nav-item" data-page="enrollments"><span class="ic"><i class="fas fa-clipboard-list"></i></span> এনরোলমেন্ট<span class="badge" id="bd-enroll">0</span></div>
+      <div class="nav-item" data-page="access-requests"><span class="ic"><i class="fas fa-key"></i></span> অ্যাক্সেস রিকোয়েস্ট<span class="badge" id="bd-access">0</span></div>
+      <div class="nav-item" data-page="contact-msgs"><span class="ic"><i class="fas fa-envelope"></i></span> যোগাযোগ মেসেজ<span class="badge" id="bd-msg">0</span></div>
+      <div class="nav-item" data-page="users"><span class="ic"><i class="fas fa-user-graduate"></i></span> ব্যবহারকারী</div>
+      <div class="nav-item" data-page="notices"><span class="ic"><i class="fas fa-bell"></i></span> নোটিশ</div>
 
       <div class="nav-section">ইনডেক্স পেজ</div>
-      <div class="nav-item" data-page="hero"><span class="ic">🎯</span> Hero সেকশন</div>
-      <div class="nav-item" data-page="features"><span class="ic">⭐</span> ফিচারস</div>
-      <div class="nav-item" data-page="categories"><span class="ic">🏷️</span> ক্যাটাগরি</div>
-      <div class="nav-item" data-page="course-tabs"><span class="ic">📑</span> কোর্স ট্যাব</div>
-      <div class="nav-item" data-page="featured-config"><span class="ic">🌟</span> ফিচার্ড কোর্স কনফিগ</div>
-      <div class="nav-item" data-page="instructors"><span class="ic">👨‍🏫</span> ইন্সট্রাক্টর</div>
-      <div class="nav-item" data-page="testimonials"><span class="ic">💬</span> রিভিউ/Testimonial</div>
-      <div class="nav-item" data-page="cta"><span class="ic">📣</span> CTA সেকশন</div>
-      <div class="nav-item" data-page="blog"><span class="ic">✍️</span> ব্লগ পোস্ট</div>
-      <div class="nav-item" data-page="faqs"><span class="ic">❓</span> FAQ</div>
-      <div class="nav-item" data-page="welcome-popup"><span class="ic">🎉</span> Welcome Popup</div>
+      <div class="nav-item" data-page="hero"><span class="ic"><i class="fas fa-bullseye"></i></span> Hero সেকশন</div>
+      <div class="nav-item" data-page="features"><span class="ic"><i class="fas fa-star"></i></span> ফিচারস</div>
+      <div class="nav-item" data-page="categories"><span class="ic"><i class="fas fa-folder-open"></i></span> ক্যাটাগরি</div>
+      <div class="nav-item" data-page="course-tabs"><span class="ic"><i class="fas fa-list"></i></span> কোর্স ট্যাব</div>
+      <div class="nav-item" data-page="featured-config"><span class="ic"><i class="fas fa-award"></i></span> ফিচার্ড কোর্স কনফিগ</div>
+      <div class="nav-item" data-page="instructors"><span class="ic"><i class="fas fa-chalkboard-teacher"></i></span> ইন্সট্রাক্টর</div>
+      <div class="nav-item" data-page="testimonials"><span class="ic"><i class="fas fa-comment-dots"></i></span> রিভিউ/Testimonial</div>
+      <div class="nav-item" data-page="cta"><span class="ic"><i class="fas fa-bullhorn"></i></span> CTA সেকশন</div>
+      <div class="nav-item" data-page="blog"><span class="ic"><i class="fas fa-newspaper"></i></span> ব্লগ পোস্ট</div>
+      <div class="nav-item" data-page="faqs"><span class="ic"><i class="fas fa-question-circle"></i></span> FAQ</div>
+      <div class="nav-item" data-page="welcome-popup"><span class="ic"><i class="fas fa-gift"></i></span> Welcome Popup</div>
 
       <div class="nav-section">অন্যান্য পেজ</div>
-      <div class="nav-item" data-page="about"><span class="ic">ℹ️</span> About পেজ</div>
-      <div class="nav-item" data-page="contact-page"><span class="ic">📞</span> Contact পেজ</div>
+      <div class="nav-item" data-page="about"><span class="ic"><i class="fas fa-info-circle"></i></span> About পেজ</div>
+      <div class="nav-item" data-page="contact-page"><span class="ic"><i class="fas fa-phone"></i></span> Contact পেজ</div>
 
       <div class="nav-section">সাইট ও থিম</div>
-      <div class="nav-item" data-page="site-settings"><span class="ic">🏛️</span> সাইট সেটিংস</div>
-      <div class="nav-item" data-page="navigation"><span class="ic">🧭</span> নেভিগেশন</div>
-      <div class="nav-item" data-page="footer"><span class="ic">⬇️</span> ফুটার</div>
-      <div class="nav-item" data-page="theme"><span class="ic">🎨</span> থিম/রং</div>
+      <div class="nav-item" data-page="site-settings"><span class="ic"><i class="fas fa-mosque"></i></span> সাইট সেটিংস</div>
+      <div class="nav-item" data-page="navigation"><span class="ic"><i class="fas fa-compass"></i></span> নেভিগেশন</div>
+      <div class="nav-item" data-page="footer"><span class="ic"><i class="fas fa-arrow-down"></i></span> ফুটার</div>
+      <div class="nav-item" data-page="theme"><span class="ic"><i class="fas fa-palette"></i></span> থিম/রং</div>
 
       <div class="nav-section">অ্যানালিটিক্স</div>
-      <div class="nav-item" data-page="analytics"><span class="ic">📈</span> Analytics</div>
+      <div class="nav-item" data-page="analytics"><span class="ic"><i class="fas fa-chart-line"></i></span> Analytics</div>
 
       <div class="nav-section">সিস্টেম</div>
-      <div class="nav-item" data-page="snapshot"><span class="ic">📦</span> Snapshot ও Download</div>
-      <div class="nav-item" data-page="password"><span class="ic">⚙️</span> পাসওয়ার্ড</div>
+      <div class="nav-item" data-page="snapshot"><span class="ic"><i class="fas fa-box"></i></span> Snapshot ও Download</div>
+      <div class="nav-item" data-page="password"><span class="ic"><i class="fas fa-lock"></i></span> পাসওয়ার্ড</div>
     </nav>
 
     <div class="sidebar-foot">
       <div class="av" id="admin-av">A</div>
       <div class="nm"><span id="admin-name">Admin</span><small>Administrator</small></div>
-      <button onclick="doLogout()">লগআউট</button>
+      <button onclick="doLogout()" title="লগআউট"><i class="fas fa-sign-out-alt"></i></button>
     </div>
   </aside>
 
   <!-- ─── MAIN ─── -->
   <main class="main">
     <div class="topbar">
-      <button class="hamburger" onclick="toggleSidebar()">☰</button>
+      <button class="hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
       <div class="topbar-title" id="page-title">ড্যাশবোর্ড</div>
       <div class="topbar-actions">
-        <button class="tb-btn primary" onclick="rebuildSnapshot()" title="ওয়েবসাইটের static snapshot তৈরি করুন"><span class="ic">📦</span><span>Snapshot</span></button>
-        <a class="tb-btn" target="_blank" id="site-link" href="https://ibnkhalduninstitute.online"><span class="ic">🌐</span><span>সাইট দেখুন</span></a>
+        <button class="tb-btn primary" onclick="rebuildSnapshot()" title="ওয়েবসাইটের static snapshot তৈরি করুন"><i class="fas fa-box"></i><span>Snapshot</span></button>
+        <a class="tb-btn" target="_blank" id="site-link" href="https://ibnkhalduninstitute.online"><i class="fas fa-globe"></i><span>সাইট দেখুন</span></a>
       </div>
     </div>
 
@@ -363,12 +488,12 @@ tbody tr:hover{background:var(--surface-2)}
 
       <!-- ═══ COURSES ═══ -->
       <div class="page" id="page-courses">
-        <div class="page-head"><h1>📚 কোর্স ম্যানেজমেন্ট</h1><p>সব কোর্স ও তাদের পাঠ্যসূচি পরিচালনা করুন</p></div>
+        <div class="page-head"><h1><i class="fas fa-book-open" style="color:var(--primary)"></i> কোর্স ম্যানেজমেন্ট</h1><p>সব কোর্স ও তাদের পাঠ্যসূচি পরিচালনা করুন</p></div>
         <div class="card">
           <div class="card-h">
             <input type="text" id="course-search" placeholder="🔍 কোর্স খুঁজুন..." oninput="renderCourses()" style="padding:9px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;min-width:220px"/>
-            <select id="course-cat" onchange="renderCourses()" style="padding:9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px"><option value="">সব ক্যাটাগরি</option></select>
-            <div class="actions"><button class="btn btn-primary" onclick="openCourseModal()">+ নতুন কোর্স</button></div>
+            <select id="course-cat" onchange="renderCourses()" style="padding:9px 12px;background:#fff;border:1px solid var(--border);border-radius:8px"><option value="">সব ক্যাটাগরি</option></select>
+            <div class="actions"><button class="btn btn-primary" onclick="openCourseModal()"><i class="fas fa-plus"></i> নতুন কোর্স</button></div>
           </div>
           <div class="card-b no-pad"><table><thead><tr><th>শিরোনাম</th><th>ক্যাটাগরি</th><th>মূল্য</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th></tr></thead><tbody id="courses-tbody"><tr><td colspan="5" class="loading">লোড হচ্ছে...</td></tr></tbody></table></div>
         </div>
@@ -376,12 +501,12 @@ tbody tr:hover{background:var(--surface-2)}
 
       <!-- ═══ ENROLLMENTS ═══ -->
       <div class="page" id="page-enrollments">
-        <div class="page-head"><h1>📋 এনরোলমেন্ট</h1><p>ছাত্রদের ভর্তি অনুরোধ — Approve/Reject করুন</p></div>
+        <div class="page-head"><h1><i class="fas fa-clipboard-list" style="color:var(--primary)"></i> এনরোলমেন্ট</h1><p>ছাত্রদের ভর্তি অনুরোধ — Approve/Reject করুন</p></div>
         <div class="card">
           <div class="card-h">
-            <select id="enroll-status" onchange="renderEnroll()" style="padding:9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px"><option value="">সব স্ট্যাটাস</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select>
+            <select id="enroll-status" onchange="renderEnroll()" style="padding:9px 12px;background:#fff;border:1px solid var(--border);border-radius:8px"><option value="">সব স্ট্যাটাস</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select>
             <input type="text" id="enroll-search" placeholder="🔍 খুঁজুন..." oninput="renderEnroll()" style="padding:9px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;min-width:200px"/>
-            <div class="actions"><button class="btn btn-ghost btn-sm" onclick="loadEnroll()">🔄 রিফ্রেশ</button></div>
+            <div class="actions"><button class="btn btn-ghost btn-sm" onclick="loadEnroll()"><i class="fas fa-sync"></i> রিফ্রেশ</button></div>
           </div>
           <div class="card-b no-pad"><table><thead><tr><th>নাম</th><th>কোর্স</th><th>ফোন</th><th>পেমেন্ট</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th></tr></thead><tbody id="enroll-tbody"><tr><td colspan="6" class="loading">লোড হচ্ছে...</td></tr></tbody></table></div>
         </div>
@@ -389,25 +514,25 @@ tbody tr:hover{background:var(--surface-2)}
 
       <!-- ═══ ACCESS REQUESTS ═══ -->
       <div class="page" id="page-access-requests">
-        <div class="page-head"><h1>🔐 অ্যাক্সেস রিকোয়েস্ট</h1><p>কোর্স অ্যাক্সেসের জন্য অনুরোধ পরিচালনা করুন</p></div>
+        <div class="page-head"><h1><i class="fas fa-key" style="color:var(--primary)"></i> অ্যাক্সেস রিকোয়েস্ট</h1><p>কোর্স অ্যাক্সেসের জন্য অনুরোধ পরিচালনা করুন</p></div>
         <div class="card">
-          <div class="card-h"><div class="actions"><button class="btn btn-ghost btn-sm" onclick="loadAccess()">🔄 রিফ্রেশ</button></div></div>
+          <div class="card-h"><div class="actions"><button class="btn btn-ghost btn-sm" onclick="loadAccess()"><i class="fas fa-sync"></i> রিফ্রেশ</button></div></div>
           <div class="card-b no-pad"><table><thead><tr><th>ব্যবহারকারী</th><th>কোর্স</th><th>মেসেজ</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th></tr></thead><tbody id="access-tbody"><tr><td colspan="5" class="loading">লোড হচ্ছে...</td></tr></tbody></table></div>
         </div>
       </div>
 
       <!-- ═══ CONTACT MESSAGES ═══ -->
       <div class="page" id="page-contact-msgs">
-        <div class="page-head"><h1>📨 যোগাযোগ মেসেজ</h1><p>ভিজিটরদের পাঠানো বার্তাসমূহ</p></div>
+        <div class="page-head"><h1><i class="fas fa-envelope" style="color:var(--primary)"></i> যোগাযোগ মেসেজ</h1><p>ভিজিটরদের পাঠানো বার্তাসমূহ</p></div>
         <div class="card">
-          <div class="card-h"><div class="actions"><button class="btn btn-danger btn-sm" onclick="deleteAllMsgs()">🗑 সব ডিলিট</button><button class="btn btn-ghost btn-sm" onclick="loadMsgs()">🔄 রিফ্রেশ</button></div></div>
+          <div class="card-h"><div class="actions"><button class="btn btn-danger btn-sm" onclick="deleteAllMsgs()"><i class="fas fa-trash"></i> সব ডিলিট</button><button class="btn btn-ghost btn-sm" onclick="loadMsgs()"><i class="fas fa-sync"></i> রিফ্রেশ</button></div></div>
           <div class="card-b no-pad"><table><thead><tr><th>নাম</th><th>ইমেইল</th><th>মেসেজ</th><th>তারিখ</th><th>অ্যাকশন</th></tr></thead><tbody id="msgs-tbody"><tr><td colspan="5" class="loading">লোড হচ্ছে...</td></tr></tbody></table></div>
         </div>
       </div>
 
       <!-- ═══ USERS ═══ -->
       <div class="page" id="page-users">
-        <div class="page-head"><h1>👥 ব্যবহারকারী</h1><p>রেজিস্টার্ড সব ব্যবহারকারী</p></div>
+        <div class="page-head"><h1><i class="fas fa-user-graduate" style="color:var(--primary)"></i> ব্যবহারকারী</h1><p>রেজিস্টার্ড সব ব্যবহারকারী</p></div>
         <div class="card">
           <div class="card-h"><input type="text" id="user-search" placeholder="🔍 খুঁজুন..." oninput="renderUsers()" style="padding:9px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;min-width:220px"/></div>
           <div class="card-b no-pad"><table><thead><tr><th>নাম</th><th>ইমেইল</th><th>ফোন</th><th>রেজিস্ট্রেশন</th></tr></thead><tbody id="users-tbody"><tr><td colspan="4" class="loading">লোড হচ্ছে...</td></tr></tbody></table></div>
@@ -416,16 +541,16 @@ tbody tr:hover{background:var(--surface-2)}
 
       <!-- ═══ NOTICES ═══ -->
       <div class="page" id="page-notices">
-        <div class="page-head"><h1>📢 নোটিশ</h1><p>হোম পেজের উপরে স্ক্রল হওয়া নোটিশ</p></div>
+        <div class="page-head"><h1><i class="fas fa-bell" style="color:var(--primary)"></i> নোটিশ</h1><p>হোম পেজের উপরে স্ক্রল হওয়া নোটিশ</p></div>
         <div class="card">
-          <div class="card-h"><div class="actions"><button class="btn btn-primary" onclick="openNoticeModal()">+ নতুন নোটিশ</button></div></div>
+          <div class="card-h"><div class="actions"><button class="btn btn-primary" onclick="openNoticeModal()"><i class="fas fa-plus"></i> নতুন নোটিশ</button></div></div>
           <div class="card-b no-pad"><table><thead><tr><th>টেক্সট</th><th>লিংক</th><th>সক্রিয়</th><th>অ্যাকশন</th></tr></thead><tbody id="notices-tbody"><tr><td colspan="4" class="loading">লোড হচ্ছে...</td></tr></tbody></table></div>
         </div>
       </div>
 
       <!-- ═══ HERO ═══ -->
       <div class="page" id="page-hero">
-        <div class="page-head"><h1>🎯 Hero সেকশন</h1><p>হোম পেজের প্রধান ব্যানার</p></div>
+        <div class="page-head"><h1><i class="fas fa-bullseye" style="color:var(--primary)"></i> Hero সেকশন</h1><p>হোম পেজের প্রধান ব্যানার</p></div>
         <form class="card" onsubmit="event.preventDefault();saveHero()">
           <div class="card-b">
             <div class="form-grid">
@@ -442,34 +567,34 @@ tbody tr:hover{background:var(--surface-2)}
               </div>
             </div>
           </div>
-          <div class="card-h" style="border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end"><button class="btn btn-primary" type="submit">💾 সেভ করুন</button></div>
+          <div class="card-h" style="border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end"><button class="btn btn-primary" type="submit"><i class="fas fa-save"></i> সেভ করুন</button></div>
         </form>
       </div>
 
       <!-- ═══ FEATURES ═══ -->
       <div class="page" id="page-features">
-        <div class="page-head"><h1>⭐ ফিচারস</h1><p>"কেন আমাদের বেছে নেবেন" সেকশন</p></div>
-        <div class="card"><div class="card-h"><div class="actions"><button class="btn btn-primary" onclick="openFeatModal()">+ নতুন ফিচার</button></div></div>
+        <div class="page-head"><h1><i class="fas fa-star" style="color:var(--primary)"></i> ফিচারস</h1><p>"কেন আমাদের বেছে নেবেন" সেকশন</p></div>
+        <div class="card"><div class="card-h"><div class="actions"><button class="btn btn-primary" onclick="openFeatModal()"><i class="fas fa-plus"></i> নতুন ফিচার</button></div></div>
         <div class="card-b no-pad"><table><thead><tr><th>আইকন</th><th>শিরোনাম</th><th>বর্ণনা</th><th>অ্যাকশন</th></tr></thead><tbody id="feats-tbody"><tr><td colspan="4" class="loading">লোড হচ্ছে...</td></tr></tbody></table></div></div>
       </div>
 
       <!-- ═══ CATEGORIES ═══ -->
       <div class="page" id="page-categories">
-        <div class="page-head"><h1>🏷️ ক্যাটাগরি</h1><p>কোর্সের ক্যাটাগরি ও সাব-ক্যাটাগরি</p></div>
-        <div class="card"><div class="card-h"><div class="actions"><button class="btn btn-primary" onclick="openCatModal()">+ নতুন ক্যাটাগরি</button></div></div>
+        <div class="page-head"><h1><i class="fas fa-folder-open" style="color:var(--primary)"></i> ক্যাটাগরি</h1><p>কোর্সের ক্যাটাগরি ও সাব-ক্যাটাগরি</p></div>
+        <div class="card"><div class="card-h"><div class="actions"><button class="btn btn-primary" onclick="openCatModal()"><i class="fas fa-plus"></i> নতুন ক্যাটাগরি</button></div></div>
         <div class="card-b" id="cats-list"><div class="loading"><span class="spin"></span>লোড হচ্ছে...</div></div></div>
       </div>
 
       <!-- ═══ COURSE TABS ═══ -->
       <div class="page" id="page-course-tabs">
-        <div class="page-head"><h1>📑 কোর্স ট্যাব</h1><p>হোম পেজে কোর্স তালিকার ট্যাব</p></div>
-        <div class="card"><div class="card-h"><div class="actions"><button class="btn btn-primary" onclick="openTabModal()">+ নতুন ট্যাব</button></div></div>
+        <div class="page-head"><h1><i class="fas fa-list" style="color:var(--primary)"></i> কোর্স ট্যাব</h1><p>হোম পেজে কোর্স তালিকার ট্যাব</p></div>
+        <div class="card"><div class="card-h"><div class="actions"><button class="btn btn-primary" onclick="openTabModal()"><i class="fas fa-plus"></i> নতুন ট্যাব</button></div></div>
         <div class="card-b no-pad"><table><thead><tr><th>লেবেল</th><th>ফিল্টার</th><th>ক্রম</th><th>অ্যাকশন</th></tr></thead><tbody id="tabs-tbody"><tr><td colspan="4" class="loading">লোড হচ্ছে...</td></tr></tbody></table></div></div>
       </div>
 
       <!-- ═══ FEATURED CONFIG ═══ -->
       <div class="page" id="page-featured-config">
-        <div class="page-head"><h1>🌟 ফিচার্ড কোর্স কনফিগ</h1><p>হোম পেজে কয়টি ও কোন কোর্স দেখাবেন</p></div>
+        <div class="page-head"><h1><i class="fas fa-award" style="color:var(--primary)"></i> ফিচার্ড কোর্স কনফিগ</h1><p>হোম পেজে কয়টি ও কোন কোর্স দেখাবেন</p></div>
         <form class="card" onsubmit="event.preventDefault();saveFeatured()">
           <div class="card-b">
             <div class="form-grid">
@@ -479,27 +604,27 @@ tbody tr:hover{background:var(--surface-2)}
               <div class="field full"><label>সাব-টাইটেল</label><input id="fc-sub"/></div>
             </div>
           </div>
-          <div class="card-h" style="border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end"><button class="btn btn-primary" type="submit">💾 সেভ</button></div>
+          <div class="card-h" style="border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end"><button class="btn btn-primary" type="submit"><i class="fas fa-save"></i> সেভ</button></div>
         </form>
       </div>
 
       <!-- ═══ INSTRUCTORS ═══ -->
       <div class="page" id="page-instructors">
-        <div class="page-head"><h1>👨‍🏫 ইন্সট্রাক্টর</h1><p>শিক্ষকদের প্রোফাইল</p></div>
-        <div class="card"><div class="card-h"><div class="actions"><button class="btn btn-primary" onclick="openInsModal()">+ নতুন ইন্সট্রাক্টর</button></div></div>
+        <div class="page-head"><h1><i class="fas fa-chalkboard-teacher" style="color:var(--primary)"></i> ইন্সট্রাক্টর</h1><p>শিক্ষকদের প্রোফাইল</p></div>
+        <div class="card"><div class="card-h"><div class="actions"><button class="btn btn-primary" onclick="openInsModal()"><i class="fas fa-plus"></i> নতুন ইন্সট্রাক্টর</button></div></div>
         <div class="card-b no-pad"><table><thead><tr><th>ছবি</th><th>নাম</th><th>বিশেষজ্ঞতা</th><th>বায়ো</th><th>অ্যাকশন</th></tr></thead><tbody id="ins-tbody"><tr><td colspan="5" class="loading">লোড হচ্ছে...</td></tr></tbody></table></div></div>
       </div>
 
       <!-- ═══ TESTIMONIALS ═══ -->
       <div class="page" id="page-testimonials">
-        <div class="page-head"><h1>💬 রিভিউ / Testimonials</h1><p>ছাত্রদের অভিজ্ঞতা</p></div>
-        <div class="card"><div class="card-h"><div class="actions"><button class="btn btn-primary" onclick="openTestModal()">+ নতুন রিভিউ</button></div></div>
+        <div class="page-head"><h1><i class="fas fa-comment-dots" style="color:var(--primary)"></i> রিভিউ / Testimonials</h1><p>ছাত্রদের অভিজ্ঞতা</p></div>
+        <div class="card"><div class="card-h"><div class="actions"><button class="btn btn-primary" onclick="openTestModal()"><i class="fas fa-plus"></i> নতুন রিভিউ</button></div></div>
         <div class="card-b no-pad"><table><thead><tr><th>ছবি</th><th>নাম</th><th>রিভিউ</th><th>রেটিং</th><th>অ্যাকশন</th></tr></thead><tbody id="test-tbody"><tr><td colspan="5" class="loading">লোড হচ্ছে...</td></tr></tbody></table></div></div>
       </div>
 
       <!-- ═══ CTA ═══ -->
       <div class="page" id="page-cta">
-        <div class="page-head"><h1>📣 CTA সেকশন</h1><p>হোম পেজের call-to-action</p></div>
+        <div class="page-head"><h1><i class="fas fa-bullhorn" style="color:var(--primary)"></i> CTA সেকশন</h1><p>হোম পেজের call-to-action</p></div>
         <form class="card" onsubmit="event.preventDefault();saveCta()">
           <div class="card-b"><div class="form-grid">
             <div class="field full"><label>শিরোনাম</label><input id="cta-title"/></div>
@@ -507,27 +632,27 @@ tbody tr:hover{background:var(--surface-2)}
             <div class="field"><label>বাটন টেক্সট</label><input id="cta-btn"/></div>
             <div class="field"><label>বাটন লিংক</label><input id="cta-link"/></div>
           </div></div>
-          <div class="card-h" style="border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end"><button class="btn btn-primary" type="submit">💾 সেভ</button></div>
+          <div class="card-h" style="border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end"><button class="btn btn-primary" type="submit"><i class="fas fa-save"></i> সেভ</button></div>
         </form>
       </div>
 
       <!-- ═══ BLOG ═══ -->
       <div class="page" id="page-blog">
-        <div class="page-head"><h1>✍️ ব্লগ পোস্ট</h1><p>আর্টিকেল প্রকাশ ও পরিচালনা</p></div>
-        <div class="card"><div class="card-h"><div class="actions"><button class="btn btn-primary" onclick="openBlogModal()">+ নতুন পোস্ট</button></div></div>
+        <div class="page-head"><h1><i class="fas fa-newspaper" style="color:var(--primary)"></i> ব্লগ পোস্ট</h1><p>আর্টিকেল প্রকাশ ও পরিচালনা</p></div>
+        <div class="card"><div class="card-h"><div class="actions"><button class="btn btn-primary" onclick="openBlogModal()"><i class="fas fa-plus"></i> নতুন পোস্ট</button></div></div>
         <div class="card-b no-pad"><table><thead><tr><th>শিরোনাম</th><th>লেখক</th><th>প্রকাশ</th><th>অ্যাকশন</th></tr></thead><tbody id="blog-tbody"><tr><td colspan="4" class="loading">লোড হচ্ছে...</td></tr></tbody></table></div></div>
       </div>
 
       <!-- ═══ FAQS ═══ -->
       <div class="page" id="page-faqs">
-        <div class="page-head"><h1>❓ FAQ</h1><p>প্রশ্ন ও উত্তর</p></div>
-        <div class="card"><div class="card-h"><div class="actions"><button class="btn btn-primary" onclick="openFaqModal()">+ নতুন FAQ</button></div></div>
+        <div class="page-head"><h1><i class="fas fa-question-circle" style="color:var(--primary)"></i> FAQ</h1><p>প্রশ্ন ও উত্তর</p></div>
+        <div class="card"><div class="card-h"><div class="actions"><button class="btn btn-primary" onclick="openFaqModal()"><i class="fas fa-plus"></i> নতুন FAQ</button></div></div>
         <div class="card-b" id="faqs-list"><div class="loading"><span class="spin"></span>লোড হচ্ছে...</div></div></div>
       </div>
 
       <!-- ═══ WELCOME POPUP ═══ -->
       <div class="page" id="page-welcome-popup">
-        <div class="page-head"><h1>🎉 Welcome Popup</h1><p>সাইট ভিজিটে যে পপ-আপ দেখাবে</p></div>
+        <div class="page-head"><h1><i class="fas fa-gift" style="color:var(--primary)"></i> Welcome Popup</h1><p>সাইট ভিজিটে যে পপ-আপ দেখাবে</p></div>
         <form class="card" onsubmit="event.preventDefault();saveWelcome()">
           <div class="card-b"><div class="form-grid">
             <label class="checkbox full"><input type="checkbox" id="wp-active"/> পপআপ চালু রাখুন</label>
@@ -537,26 +662,26 @@ tbody tr:hover{background:var(--surface-2)}
             <div class="field"><label>বাটন লিংক</label><input id="wp-link"/></div>
             <div class="field full"><label>ইমেজ URL (অপশনাল)</label><input id="wp-img"/></div>
           </div></div>
-          <div class="card-h" style="border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end"><button class="btn btn-primary" type="submit">💾 সেভ</button></div>
+          <div class="card-h" style="border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end"><button class="btn btn-primary" type="submit"><i class="fas fa-save"></i> সেভ</button></div>
         </form>
       </div>
 
       <!-- ═══ ABOUT PAGE ═══ -->
       <div class="page" id="page-about">
-        <div class="page-head"><h1>ℹ️ About পেজ</h1><p>"আমাদের সম্পর্কে" পেজের বিষয়বস্তু</p></div>
+        <div class="page-head"><h1><i class="fas fa-info-circle" style="color:var(--primary)"></i> About পেজ</h1><p>"আমাদের সম্পর্কে" পেজের বিষয়বস্তু</p></div>
         <form class="card" onsubmit="event.preventDefault();saveAbout()">
           <div class="card-b"><div class="form-grid">
             <div class="field full"><label>হেডার শিরোনাম</label><input id="ab-title"/></div>
             <div class="field full"><label>হেডার সাব</label><input id="ab-sub"/></div>
             <div class="field full"><label>বিষয়বস্তু (HTML অনুমোদিত)</label><textarea id="ab-content" rows="14"></textarea></div>
           </div></div>
-          <div class="card-h" style="border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end"><button class="btn btn-primary" type="submit">💾 সেভ</button></div>
+          <div class="card-h" style="border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end"><button class="btn btn-primary" type="submit"><i class="fas fa-save"></i> সেভ</button></div>
         </form>
       </div>
 
       <!-- ═══ CONTACT PAGE ═══ -->
       <div class="page" id="page-contact-page">
-        <div class="page-head"><h1>📞 Contact পেজ</h1><p>যোগাযোগ পেজের তথ্য</p></div>
+        <div class="page-head"><h1><i class="fas fa-phone" style="color:var(--primary)"></i> Contact পেজ</h1><p>যোগাযোগ পেজের তথ্য</p></div>
         <form class="card" onsubmit="event.preventDefault();saveContactPage()">
           <div class="card-b"><div class="form-grid">
             <div class="field"><label>ইমেইল</label><input id="cp-email"/></div>
@@ -566,13 +691,13 @@ tbody tr:hover{background:var(--surface-2)}
             <div class="field full"><label>ঠিকানা</label><input id="cp-address"/></div>
             <div class="field full"><label>Google Maps Embed URL</label><input id="cp-map"/></div>
           </div></div>
-          <div class="card-h" style="border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end"><button class="btn btn-primary" type="submit">💾 সেভ</button></div>
+          <div class="card-h" style="border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end"><button class="btn btn-primary" type="submit"><i class="fas fa-save"></i> সেভ</button></div>
         </form>
       </div>
 
       <!-- ═══ SITE SETTINGS ═══ -->
       <div class="page" id="page-site-settings">
-        <div class="page-head"><h1>🏛️ সাইট সেটিংস</h1><p>লোগো, ব্র্যান্ড নাম, যোগাযোগ ও সোশ্যাল লিংক</p></div>
+        <div class="page-head"><h1><i class="fas fa-mosque" style="color:var(--primary)"></i> সাইট সেটিংস</h1><p>লোগো, ব্র্যান্ড নাম, যোগাযোগ ও সোশ্যাল লিংক</p></div>
         <form class="card" onsubmit="event.preventDefault();saveSiteSettings()">
           <div class="card-b"><div class="form-grid">
             <div class="field"><label>সাইটের নাম</label><input id="ss-brandName"/></div>
@@ -586,20 +711,20 @@ tbody tr:hover{background:var(--surface-2)}
             <div class="field"><label>Instagram</label><input id="ss-instagram"/></div>
             <div class="field"><label>WhatsApp Number</label><input id="ss-whatsapp"/></div>
           </div></div>
-          <div class="card-h" style="border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end"><button class="btn btn-primary" type="submit">💾 সেভ</button></div>
+          <div class="card-h" style="border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end"><button class="btn btn-primary" type="submit"><i class="fas fa-save"></i> সেভ</button></div>
         </form>
       </div>
 
       <!-- ═══ NAVIGATION ═══ -->
       <div class="page" id="page-navigation">
-        <div class="page-head"><h1>🧭 নেভিগেশন</h1><p>উপরের মেনু আইটেম</p></div>
-        <div class="card"><div class="card-h"><div class="actions"><button class="btn btn-primary" onclick="addNavItem()">+ নতুন আইটেম</button><button class="btn btn-secondary" onclick="saveNavigation()">💾 সেভ</button></div></div>
+        <div class="page-head"><h1><i class="fas fa-compass" style="color:var(--primary)"></i> নেভিগেশন</h1><p>উপরের মেনু আইটেম</p></div>
+        <div class="card"><div class="card-h"><div class="actions"><button class="btn btn-primary" onclick="addNavItem()"><i class="fas fa-plus"></i> নতুন আইটেম</button><button class="btn btn-secondary" onclick="saveNavigation()"><i class="fas fa-save"></i> সেভ</button></div></div>
         <div class="card-b" id="nav-list"><div class="loading"><span class="spin"></span>লোড হচ্ছে...</div></div></div>
       </div>
 
       <!-- ═══ FOOTER ═══ -->
       <div class="page" id="page-footer">
-        <div class="page-head"><h1>⬇️ ফুটার</h1><p>সাইটের নিচের অংশ</p></div>
+        <div class="page-head"><h1><i class="fas fa-arrow-down" style="color:var(--primary)"></i> ফুটার</h1><p>সাইটের নিচের অংশ</p></div>
         <form class="card" onsubmit="event.preventDefault();saveFooter()">
           <div class="card-b"><div class="form-grid">
             <div class="field full"><label>About টেক্সট</label><textarea id="ft-about"></textarea></div>
@@ -608,13 +733,13 @@ tbody tr:hover{background:var(--surface-2)}
             <div class="field full"><label>Quick Links (Label | URL — প্রতি লাইনে একটি)</label><textarea id="ft-quickLinks" rows="5"></textarea></div>
             <div class="field full"><label>Resources (Label | URL)</label><textarea id="ft-resources" rows="5"></textarea></div>
           </div></div>
-          <div class="card-h" style="border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end"><button class="btn btn-primary" type="submit">💾 সেভ</button></div>
+          <div class="card-h" style="border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end"><button class="btn btn-primary" type="submit"><i class="fas fa-save"></i> সেভ</button></div>
         </form>
       </div>
 
       <!-- ═══ THEME ═══ -->
       <div class="page" id="page-theme">
-        <div class="page-head"><h1>🎨 থিম ও রং</h1><p>সাইটের প্রাথমিক রং কাস্টমাইজ করুন</p></div>
+        <div class="page-head"><h1><i class="fas fa-palette" style="color:var(--primary)"></i> থিম ও রং</h1><p>সাইটের প্রাথমিক রং কাস্টমাইজ করুন</p></div>
         <form class="card" onsubmit="event.preventDefault();saveTheme()">
           <div class="card-b"><div class="form-grid">
             <div class="field"><label>প্রাইমারি কালার</label><div class="color-input"><input type="color" id="tm-primary"/><input id="tm-primary-text"/></div></div>
@@ -622,13 +747,13 @@ tbody tr:hover{background:var(--surface-2)}
             <div class="field"><label>ব্যাকগ্রাউন্ড</label><div class="color-input"><input type="color" id="tm-bg"/><input id="tm-bg-text"/></div></div>
             <div class="field"><label>টেক্সট</label><div class="color-input"><input type="color" id="tm-text"/><input id="tm-text-text"/></div></div>
           </div></div>
-          <div class="card-h" style="border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end"><button class="btn btn-primary" type="submit">💾 সেভ</button></div>
+          <div class="card-h" style="border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end"><button class="btn btn-primary" type="submit"><i class="fas fa-save"></i> সেভ</button></div>
         </form>
       </div>
 
       <!-- ═══ ANALYTICS ═══ -->
       <div class="page" id="page-analytics">
-        <div class="page-head"><h1>📈 Analytics</h1><p>রিয়েলটাইম ভিজিটর এবং কনফিগ</p></div>
+        <div class="page-head"><h1><i class="fas fa-chart-line" style="color:var(--primary)"></i> Analytics</h1><p>রিয়েলটাইম ভিজিটর এবং কনফিগ</p></div>
         <div class="stat-grid" id="rt-grid"><div class="loading"><span class="spin"></span>লোড হচ্ছে...</div></div>
         <form class="card" onsubmit="event.preventDefault();saveAnalytics()">
           <div class="card-h"><h3>Analytics কনফিগ</h3></div>
@@ -637,21 +762,21 @@ tbody tr:hover{background:var(--surface-2)}
             <div class="field"><label>Facebook Pixel ID</label><input id="an-fbId"/></div>
             <label class="checkbox full"><input type="checkbox" id="an-enabled"/> Tracking চালু রাখুন</label>
           </div></div>
-          <div class="card-h" style="border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end"><button class="btn btn-primary" type="submit">💾 সেভ</button></div>
+          <div class="card-h" style="border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end"><button class="btn btn-primary" type="submit"><i class="fas fa-save"></i> সেভ</button></div>
         </form>
       </div>
 
       <!-- ═══ SNAPSHOT ═══ -->
       <div class="page" id="page-snapshot">
-        <div class="page-head"><h1>📦 Snapshot ও Download</h1><p>Static snapshot তৈরি করুন এবং ফাইল ডাউনলোড করুন</p></div>
+        <div class="page-head"><h1><i class="fas fa-box" style="color:var(--primary)"></i> Snapshot ও Download</h1><p>Static snapshot তৈরি করুন এবং ফাইল ডাউনলোড করুন</p></div>
         <div class="card">
           <div class="card-b">
             <p id="snap-status" class="muted">শেষ snapshot: লোড হচ্ছে...</p>
             <div class="gap" style="margin-top:14px">
-              <button class="btn btn-primary" onclick="rebuildSnapshot()">🔄 এখনই Snapshot তৈরি</button>
-              <button class="btn btn-secondary" onclick="downloadFile('/api/admin/download-snapshot','snapshot.json')">⬇️ Snapshot ডাউনলোড</button>
-              <button class="btn btn-secondary" onclick="downloadFile('/api/admin/download-index','index.html')">⬇️ index.html ডাউনলোড</button>
-              <button class="btn btn-secondary" onclick="downloadFile('/api/admin/download-admin','admin.html')">⬇️ admin.html ডাউনলোড</button>
+              <button class="btn btn-primary" onclick="rebuildSnapshot()"><i class="fas fa-sync"></i> এখনই Snapshot তৈরি</button>
+              <button class="btn btn-secondary" onclick="downloadFile('/api/admin/download-snapshot','snapshot.json')"><i class="fas fa-download"></i> Snapshot ডাউনলোড</button>
+              <button class="btn btn-secondary" onclick="downloadFile('/api/admin/download-index','index.html')"><i class="fas fa-download"></i> index.html ডাউনলোড</button>
+              <button class="btn btn-secondary" onclick="downloadFile('/api/admin/download-admin','admin.html')"><i class="fas fa-download"></i> admin.html ডাউনলোড</button>
             </div>
           </div>
         </div>
@@ -659,14 +784,14 @@ tbody tr:hover{background:var(--surface-2)}
 
       <!-- ═══ PASSWORD ═══ -->
       <div class="page" id="page-password">
-        <div class="page-head"><h1>⚙️ পাসওয়ার্ড পরিবর্তন</h1></div>
+        <div class="page-head"><h1><i class="fas fa-lock" style="color:var(--primary)"></i> পাসওয়ার্ড পরিবর্তন</h1></div>
         <form class="card" onsubmit="event.preventDefault();changePass()">
           <div class="card-b"><div class="form-grid">
             <div class="field full"><label>বর্তমান পাসওয়ার্ড</label><input type="password" id="cp-old"/></div>
             <div class="field"><label>নতুন পাসওয়ার্ড</label><input type="password" id="cp-new"/></div>
             <div class="field"><label>কনফার্ম</label><input type="password" id="cp-conf"/></div>
           </div></div>
-          <div class="card-h" style="border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end"><button class="btn btn-primary" type="submit">পাসওয়ার্ড পরিবর্তন</button></div>
+          <div class="card-h" style="border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end"><button class="btn btn-primary" type="submit"><i class="fas fa-key"></i> পাসওয়ার্ড পরিবর্তন</button></div>
         </form>
       </div>
 
@@ -678,7 +803,7 @@ tbody tr:hover{background:var(--surface-2)}
 <!-- ═══════════ MODAL ═══════════ -->
 <div class="modal" id="modal">
   <div class="modal-box lg">
-    <div class="modal-h"><h3 id="modal-title">Title</h3><button onclick="closeModal()">✕</button></div>
+    <div class="modal-h"><h3 id="modal-title">Title</h3><button onclick="closeModal()"><i class="fas fa-times"></i></button></div>
     <div class="modal-b" id="modal-body"></div>
     <div class="modal-f" id="modal-foot"></div>
   </div>
@@ -688,7 +813,7 @@ tbody tr:hover{background:var(--surface-2)}
 
 <script>
 /* ════════════════════════════════════════
-   CONFIG & HELPERS
+   CONFIG & HELPERS — IbnKhaldun backend
 ═══════════════════════════════════════ */
 const API = (location.hostname==='localhost'||location.hostname==='127.0.0.1')
   ? 'http://localhost:5000'
@@ -772,7 +897,7 @@ async function doLogin(){
     const r=await api('POST','/api/admin/login',{username:u,password:p});
     setAuth(r.token,u); afterLogin();
   }catch(e){ err.textContent=e.message; err.classList.add('show') }
-  finally{ btn.disabled=false; btn.textContent='লগইন করুন' }
+  finally{ btn.disabled=false; btn.innerHTML='<i class="fas fa-arrow-right-to-bracket"></i> লগইন করুন' }
 }
 function doLogout(){ if(confirm('লগআউট করবেন?')){ clearAuth(); location.reload() } }
 
@@ -813,12 +938,12 @@ async function loadDashboard(){
   try{
     const s=await api('GET','/api/admin/stats');
     const stats=[
-      {icon:'📚',num:s.totalCourses||0,lbl:'মোট কোর্স',cls:'blue'},
-      {icon:'👥',num:s.totalUsers||0,lbl:'মোট ব্যবহারকারী',cls:'green'},
-      {icon:'📋',num:s.totalEnrollments||0,lbl:'মোট এনরোলমেন্ট',cls:'orange'},
-      {icon:'⏳',num:s.pendingEnrollments||0,lbl:'Pending এনরোলমেন্ট',cls:'accent'},
-      {icon:'💰',num:'৳'+(s.totalRevenue||0),lbl:'মোট রেভিনিউ',cls:'green'},
-      {icon:'📨',num:s.totalMessages||0,lbl:'যোগাযোগ মেসেজ',cls:'blue'},
+      {icon:'<i class="fas fa-book-open"></i>',num:s.totalCourses||0,lbl:'মোট কোর্স',cls:'blue'},
+      {icon:'<i class="fas fa-users"></i>',num:s.totalUsers||0,lbl:'মোট ব্যবহারকারী',cls:'green'},
+      {icon:'<i class="fas fa-clipboard-list"></i>',num:s.totalEnrollments||0,lbl:'মোট এনরোলমেন্ট',cls:'orange'},
+      {icon:'<i class="fas fa-hourglass-half"></i>',num:s.pendingEnrollments||0,lbl:'Pending এনরোলমেন্ট',cls:'accent'},
+      {icon:'<i class="fas fa-sack-dollar"></i>',num:'৳'+(s.totalRevenue||0),lbl:'মোট রেভিনিউ',cls:'green'},
+      {icon:'<i class="fas fa-envelope"></i>',num:s.totalMessages||0,lbl:'যোগাযোগ মেসেজ',cls:'blue'},
     ];
     $('stats-grid').innerHTML = stats.map(x=>`<div class="stat ${x.cls}"><div class="ic">${x.icon}</div><div><div class="num">${x.num}</div><div class="lbl">${x.lbl}</div></div></div>`).join('');
   }catch(e){ $('stats-grid').innerHTML='<div class="empty">লোড করা যায়নি — '+esc(e.message)+'</div>' }
@@ -827,10 +952,10 @@ async function loadDashboard(){
     const list=await api('GET','/api/admin/enrollments');
     const recent=(list||[]).slice(0,8);
     $('recent-enroll').innerHTML = recent.length? recent.map(e=>`
-      <tr><td data-l="নাম">${esc(e.name||e.studentName||'-')}</td>
-      <td data-l="কোর্স">${esc(e.courseName||e.course||'-')}</td>
-      <td data-l="স্ট্যাটাস"><span class="pill ${e.status==='approved'?'green':e.status==='rejected'?'red':'orange'}">${esc(e.status||'pending')}</span></td>
-      <td data-l="তারিখ">${fmtDate(e.createdAt||e.date)}</td></tr>`).join('')
+      <tr><td>${esc(e.name||e.studentName||'-')}</td>
+      <td>${esc(e.courseName||e.course||'-')}</td>
+      <td><span class="pill ${e.status==='approved'?'green':e.status==='rejected'?'red':'orange'}">${esc(e.status||'pending')}</span></td>
+      <td>${fmtDate(e.createdAt||e.date)}</td></tr>`).join('')
       : '<tr><td colspan="4" class="empty">কোনো এনরোলমেন্ট নেই</td></tr>';
   }catch(_){ $('recent-enroll').innerHTML='<tr><td colspan="4" class="empty">লোড করা যায়নি</td></tr>' }
 
@@ -838,8 +963,8 @@ async function loadDashboard(){
     const m=await api('GET','/api/admin/contact-messages');
     const recent=(m||[]).slice(0,6);
     $('recent-msgs').innerHTML = recent.length? recent.map(x=>`
-      <tr><td data-l="নাম">${esc(x.name)}</td><td data-l="ইমেইল">${esc(x.email)}</td>
-      <td data-l="মেসেজ">${esc(truncate(x.message,80))}</td><td data-l="তারিখ">${fmtDate(x.createdAt)}</td></tr>`).join('')
+      <tr><td>${esc(x.name)}</td><td>${esc(x.email)}</td>
+      <td>${esc(truncate(x.message,80))}</td><td>${fmtDate(x.createdAt)}</td></tr>`).join('')
       : '<tr><td colspan="4" class="empty">কোনো মেসেজ নেই</td></tr>';
   }catch(_){ $('recent-msgs').innerHTML='<tr><td colspan="4" class="empty">লোড করা যায়নি</td></tr>' }
 }
@@ -884,17 +1009,17 @@ function renderCourses(){
   if(!list.length){ $('courses-tbody').innerHTML='<tr><td colspan="5" class="empty">কোনো কোর্স পাওয়া যায়নি</td></tr>'; return }
   $('courses-tbody').innerHTML = list.map(c=>`
     <tr>
-      <td data-l="শিরোনাম"><div style="display:flex;gap:10px;align-items:center">
+      <td><div style="display:flex;gap:10px;align-items:center">
         <img class="row-thumb" src="${esc(c.thumbnail||'https://via.placeholder.com/60')}" onerror="this.style.background='var(--surface-3)';this.removeAttribute('src')"/>
         <div><b style="color:var(--text)">${esc(c.title)}</b><br><small class="muted">${esc(c.slug||'')}</small></div>
       </div></td>
-      <td data-l="ক্যাটাগরি">${esc(c.category||'-')}</td>
-      <td data-l="মূল্য">৳${c.price||0}</td>
-      <td data-l="স্ট্যাটাস"><span class="pill ${c.published?'green':'gray'}">${c.published?'প্রকাশিত':'খসড়া'}</span></td>
-      <td data-l="অ্যাকশন"><div class="row-actions">
-        <button class="btn btn-secondary btn-sm" onclick="openCurriculum('${c._id}')">📑 পাঠ</button>
-        <button class="btn btn-secondary btn-sm" onclick="openCourseModal('${c._id}')">✏️</button>
-        <button class="btn btn-danger btn-sm" onclick="delCourse('${c._id}')">🗑</button>
+      <td>${esc(c.category||'-')}</td>
+      <td>৳${c.price||0}</td>
+      <td><span class="pill ${c.published?'green':'gray'}">${c.published?'প্রকাশিত':'খসড়া'}</span></td>
+      <td><div class="row-actions">
+        <button class="btn btn-secondary btn-sm" onclick="openCurriculum('${c._id}')" title="পাঠ্যসূচি"><i class="fas fa-list-ol"></i></button>
+        <button class="btn btn-secondary btn-sm" onclick="openCourseModal('${c._id}')" title="সম্পাদনা"><i class="fas fa-pen"></i></button>
+        <button class="btn btn-danger btn-sm" onclick="delCourse('${c._id}')" title="ডিলিট"><i class="fas fa-trash"></i></button>
       </div></td>
     </tr>`).join('');
 }
@@ -943,13 +1068,13 @@ async function delCourse(id){
   try{ await api('DELETE','/api/admin/courses/'+id); toast('ডিলিট হয়েছে'); loadCourses() }catch(e){ toast(e.message,'error') }
 }
 
-/* CURRICULUM (lessons) */
+/* CURRICULUM */
 async function openCurriculum(id){
   let detail={};
   try{ detail=await api('GET','/api/admin/course-detail/'+id); }catch(_){}
   const lessons = detail.lessons||detail.curriculum||[];
   openModalEx({
-    title:'📑 পাঠ্যসূচি ও বিস্তারিত',
+    title:'পাঠ্যসূচি ও বিস্তারিত',
     size:'xl',
     body:`
       <div class="tabbar" id="cd-tabs">
@@ -957,7 +1082,7 @@ async function openCurriculum(id){
         <button data-t="info">কোর্সের বিস্তারিত</button>
       </div>
       <div data-t="lessons" class="cd-tab">
-        <div class="row" style="margin-bottom:10px"><button class="btn btn-primary btn-sm" onclick="addLesson()">+ পাঠ যোগ করুন</button><span class="muted">টেনে নামিয়ে ক্রম পরিবর্তন (drag আনুমানিক)</span></div>
+        <div class="row" style="margin-bottom:10px"><button class="btn btn-primary btn-sm" onclick="addLesson()"><i class="fas fa-plus"></i> পাঠ যোগ করুন</button><span class="muted">↑↓ দিয়ে ক্রম পরিবর্তন</span></div>
         <div id="lessons-list"></div>
       </div>
       <div data-t="info" class="cd-tab" style="display:none">
@@ -982,7 +1107,6 @@ async function openCurriculum(id){
       toast('সংরক্ষণ হয়েছে'); closeModal();
     }
   });
-  // tab switching
   $$('#cd-tabs button').forEach(b=>b.onclick=()=>{
     $$('#cd-tabs button').forEach(x=>x.classList.toggle('active',x===b));
     $$('.cd-tab').forEach(x=>x.style.display=x.dataset.t===b.dataset.t?'':'none');
@@ -994,23 +1118,22 @@ function renderLessons(){
   const list=window._lessons||[];
   $('lessons-list').innerHTML = list.length? list.map((l,i)=>`
     <div class="list-item">
-      <span style="background:var(--primary);color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">${i+1}</span>
+      <span style="background:var(--primary);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">${i+1}</span>
       <div class="ti"><b>${esc(l.title||'(শিরোনামহীন)')}</b><small>${esc(l.videoUrl||l.duration||'')}</small></div>
       <div class="gap">
-        <button class="btn btn-ghost btn-sm" onclick="moveLesson(${i},-1)">↑</button>
-        <button class="btn btn-ghost btn-sm" onclick="moveLesson(${i},1)">↓</button>
-        <button class="btn btn-secondary btn-sm" onclick="editLesson(${i})">✏️</button>
-        <button class="btn btn-danger btn-sm" onclick="delLesson(${i})">🗑</button>
+        <button class="btn btn-ghost btn-sm" onclick="moveLesson(${i},-1)"><i class="fas fa-arrow-up"></i></button>
+        <button class="btn btn-ghost btn-sm" onclick="moveLesson(${i},1)"><i class="fas fa-arrow-down"></i></button>
+        <button class="btn btn-secondary btn-sm" onclick="editLesson(${i})"><i class="fas fa-pen"></i></button>
+        <button class="btn btn-danger btn-sm" onclick="delLesson(${i})"><i class="fas fa-trash"></i></button>
       </div>
     </div>`).join('')
-    : '<div class="empty">এখনো কোনো পাঠ নেই — উপরের বাটন দিয়ে যোগ করুন</div>';
+    : '<div class="empty"><div class="ic"><i class="fas fa-inbox"></i></div>এখনো কোনো পাঠ নেই</div>';
 }
 function addLesson(){ window._lessons.push({title:'নতুন পাঠ',videoUrl:'',duration:'',description:''}); editLesson(window._lessons.length-1) }
 function moveLesson(i,d){ const l=window._lessons; const j=i+d; if(j<0||j>=l.length) return; [l[i],l[j]]=[l[j],l[i]]; renderLessons() }
 function delLesson(i){ if(!confirm('পাঠ ডিলিট?')) return; window._lessons.splice(i,1); renderLessons() }
 function editLesson(i){
   const l=window._lessons[i];
-  // inline mini-form: replace lessons-list area
   const wrap=document.createElement('div');
   wrap.className='card-b'; wrap.style.background='var(--surface-2)'; wrap.style.borderRadius='10px'; wrap.style.marginBottom='10px';
   wrap.innerHTML = `
@@ -1053,15 +1176,15 @@ function renderEnroll(){
   if(!list.length){ $('enroll-tbody').innerHTML='<tr><td colspan="6" class="empty">কোনো এনরোলমেন্ট নেই</td></tr>'; return }
   $('enroll-tbody').innerHTML = list.map(e=>`
     <tr>
-      <td data-l="নাম"><b style="color:var(--text)">${esc(e.name)}</b><br><small class="muted">${esc(e.email||'')}</small></td>
-      <td data-l="কোর্স">${esc(e.courseName||e.course||'-')}</td>
-      <td data-l="ফোন">${esc(e.phone||'-')}</td>
-      <td data-l="পেমেন্ট"><b>৳${e.amount||e.price||0}</b><br><small class="muted">${esc(e.transactionId||e.txnId||'-')}</small></td>
-      <td data-l="স্ট্যাটাস"><span class="pill ${e.status==='approved'?'green':e.status==='rejected'?'red':'orange'}">${esc(e.status||'pending')}</span></td>
-      <td data-l="অ্যাকশন"><div class="row-actions">
-        ${e.status!=='approved'?`<button class="btn btn-primary btn-sm" onclick="setEnroll('${e._id}','approved')">✓ Approve</button>`:''}
-        ${e.status!=='rejected'?`<button class="btn btn-secondary btn-sm" onclick="setEnroll('${e._id}','rejected')">✗ Reject</button>`:''}
-        <button class="btn btn-danger btn-sm" onclick="delEnroll('${e._id}')">🗑</button>
+      <td><b style="color:var(--text)">${esc(e.name)}</b><br><small class="muted">${esc(e.email||'')}</small></td>
+      <td>${esc(e.courseName||e.course||'-')}</td>
+      <td>${esc(e.phone||'-')}</td>
+      <td><b>৳${e.amount||e.price||0}</b><br><small class="muted">${esc(e.transactionId||e.txnId||'-')}</small></td>
+      <td><span class="pill ${e.status==='approved'?'green':e.status==='rejected'?'red':'orange'}">${esc(e.status||'pending')}</span></td>
+      <td><div class="row-actions">
+        ${e.status!=='approved'?`<button class="btn btn-primary btn-sm" onclick="setEnroll('${e._id}','approved')"><i class="fas fa-check"></i></button>`:''}
+        ${e.status!=='rejected'?`<button class="btn btn-secondary btn-sm" onclick="setEnroll('${e._id}','rejected')"><i class="fas fa-xmark"></i></button>`:''}
+        <button class="btn btn-danger btn-sm" onclick="delEnroll('${e._id}')"><i class="fas fa-trash"></i></button>
       </div></td>
     </tr>`).join('');
 }
@@ -1083,13 +1206,13 @@ async function loadAccess(){
     if(!(list||[]).length){ $('access-tbody').innerHTML='<tr><td colspan="5" class="empty">কোনো রিকোয়েস্ট নেই</td></tr>'; return }
     $('access-tbody').innerHTML = list.map(r=>`
       <tr>
-        <td data-l="ব্যবহারকারী"><b>${esc(r.userName||r.name||'-')}</b><br><small class="muted">${esc(r.userEmail||r.email||'')}</small></td>
-        <td data-l="কোর্স">${esc(r.courseName||r.course||'-')}</td>
-        <td data-l="মেসেজ">${esc(truncate(r.message,80))}</td>
-        <td data-l="স্ট্যাটাস"><span class="pill ${r.status==='approved'?'green':r.status==='rejected'?'red':'orange'}">${esc(r.status||'pending')}</span></td>
-        <td data-l="অ্যাকশন"><div class="row-actions">
-          ${r.status!=='approved'?`<button class="btn btn-primary btn-sm" onclick="setAccess('${r._id}','approved')">✓</button>`:''}
-          ${r.status!=='rejected'?`<button class="btn btn-secondary btn-sm" onclick="setAccess('${r._id}','rejected')">✗</button>`:''}
+        <td><b>${esc(r.userName||r.name||'-')}</b><br><small class="muted">${esc(r.userEmail||r.email||'')}</small></td>
+        <td>${esc(r.courseName||r.course||'-')}</td>
+        <td>${esc(truncate(r.message,80))}</td>
+        <td><span class="pill ${r.status==='approved'?'green':r.status==='rejected'?'red':'orange'}">${esc(r.status||'pending')}</span></td>
+        <td><div class="row-actions">
+          ${r.status!=='approved'?`<button class="btn btn-primary btn-sm" onclick="setAccess('${r._id}','approved')"><i class="fas fa-check"></i></button>`:''}
+          ${r.status!=='rejected'?`<button class="btn btn-secondary btn-sm" onclick="setAccess('${r._id}','rejected')"><i class="fas fa-xmark"></i></button>`:''}
         </div></td>
       </tr>`).join('');
   }catch(e){ $('access-tbody').innerHTML='<tr><td colspan="5" class="empty">'+esc(e.message)+'</td></tr>' }
@@ -1107,9 +1230,9 @@ async function loadMsgs(){
     const list=await api('GET','/api/admin/contact-messages');
     if(!(list||[]).length){ $('msgs-tbody').innerHTML='<tr><td colspan="5" class="empty">কোনো মেসেজ নেই</td></tr>'; return }
     $('msgs-tbody').innerHTML=list.map(m=>`
-      <tr><td data-l="নাম"><b>${esc(m.name)}</b></td><td data-l="ইমেইল">${esc(m.email)}</td>
-      <td data-l="মেসেজ">${esc(truncate(m.message,100))}</td><td data-l="তারিখ">${fmtDate(m.createdAt)}</td>
-      <td data-l="অ্যাকশন"><div class="row-actions"><button class="btn btn-ghost btn-sm" onclick="viewMsg('${m._id}')">👁</button><button class="btn btn-danger btn-sm" onclick="delMsg('${m._id}')">🗑</button></div></td></tr>`).join('');
+      <tr><td><b>${esc(m.name)}</b></td><td>${esc(m.email)}</td>
+      <td>${esc(truncate(m.message,100))}</td><td>${fmtDate(m.createdAt)}</td>
+      <td><div class="row-actions"><button class="btn btn-ghost btn-sm" onclick="viewMsg('${m._id}')"><i class="fas fa-eye"></i></button><button class="btn btn-danger btn-sm" onclick="delMsg('${m._id}')"><i class="fas fa-trash"></i></button></div></td></tr>`).join('');
     window._msgs=list;
   }catch(e){ $('msgs-tbody').innerHTML='<tr><td colspan="5" class="empty">'+esc(e.message)+'</td></tr>' }
 }
@@ -1138,11 +1261,11 @@ function renderUsers(){
   const q=($('user-search').value||'').toLowerCase();
   let list=(_users||[]).filter(u=>!q || (u.name+' '+u.email+' '+(u.phone||'')).toLowerCase().includes(q));
   if(!list.length){ $('users-tbody').innerHTML='<tr><td colspan="4" class="empty">কোনো ব্যবহারকারী নেই</td></tr>'; return }
-  $('users-tbody').innerHTML=list.map(u=>`<tr><td data-l="নাম"><b>${esc(u.name)}</b></td><td data-l="ইমেইল">${esc(u.email)}</td><td data-l="ফোন">${esc(u.phone||'-')}</td><td data-l="রেজিস্ট্রেশন">${fmtDate(u.createdAt)}</td></tr>`).join('');
+  $('users-tbody').innerHTML=list.map(u=>`<tr><td><b>${esc(u.name)}</b></td><td>${esc(u.email)}</td><td>${esc(u.phone||'-')}</td><td>${fmtDate(u.createdAt)}</td></tr>`).join('');
 }
 
 /* ════════════════════════════════════════
-   GENERIC CRUD via JSON
+   GENERIC CRUD
 ═══════════════════════════════════════ */
 async function loadList(endpoint, tbodyId, render){
   try{
@@ -1157,9 +1280,9 @@ async function loadList(endpoint, tbodyId, render){
 let _notices=[];
 async function loadNotices(){
   _notices=await loadList('/api/admin/notices','notices-tbody', n=>`
-    <tr><td data-l="টেক্সট">${esc(n.text||n.title||'-')}</td><td data-l="লিংক">${esc(n.link||'-')}</td>
-    <td data-l="সক্রিয়"><span class="pill ${n.active?'green':'gray'}">${n.active?'হ্যাঁ':'না'}</span></td>
-    <td data-l="অ্যাকশন"><div class="row-actions"><button class="btn btn-secondary btn-sm" onclick="openNoticeModal('${n._id}')">✏️</button><button class="btn btn-danger btn-sm" onclick="delNotice('${n._id}')">🗑</button></div></td></tr>`);
+    <tr><td>${esc(n.text||n.title||'-')}</td><td>${esc(n.link||'-')}</td>
+    <td><span class="pill ${n.active?'green':'gray'}">${n.active?'হ্যাঁ':'না'}</span></td>
+    <td><div class="row-actions"><button class="btn btn-secondary btn-sm" onclick="openNoticeModal('${n._id}')"><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm" onclick="delNotice('${n._id}')"><i class="fas fa-trash"></i></button></div></td></tr>`);
 }
 function openNoticeModal(id){
   const n = id?_notices.find(x=>x._id===id):{};
@@ -1181,9 +1304,9 @@ async function delNotice(id){ if(!confirm('ডিলিট?')) return; try{ awai
 let _feats=[];
 async function loadFeats(){
   _feats=await loadList('/api/admin/features','feats-tbody', f=>`
-    <tr><td data-l="আইকন" style="font-size:22px">${esc(f.icon||'⭐')}</td>
-    <td data-l="শিরোনাম"><b>${esc(f.title)}</b></td><td data-l="বর্ণনা">${esc(truncate(f.description,80))}</td>
-    <td data-l="অ্যাকশন"><div class="row-actions"><button class="btn btn-secondary btn-sm" onclick="openFeatModal('${f._id}')">✏️</button><button class="btn btn-danger btn-sm" onclick="delFeat('${f._id}')">🗑</button></div></td></tr>`);
+    <tr><td style="font-size:22px">${esc(f.icon||'⭐')}</td>
+    <td><b>${esc(f.title)}</b></td><td>${esc(truncate(f.description,80))}</td>
+    <td><div class="row-actions"><button class="btn btn-secondary btn-sm" onclick="openFeatModal('${f._id}')"><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm" onclick="delFeat('${f._id}')"><i class="fas fa-trash"></i></button></div></td></tr>`);
 }
 function openFeatModal(id){
   const f=id?_feats.find(x=>x._id===id):{};
@@ -1213,8 +1336,8 @@ async function loadCats(){
         <span style="font-size:22px">${esc(c.icon||'🏷️')}</span>
         <div class="ti"><b>${esc(c.name||c.title)}</b><small>${(c.subcategories||[]).length} সাব-ক্যাটাগরি</small></div>
         <div class="gap">
-          <button class="btn btn-secondary btn-sm" onclick="openCatModal('${c._id}')">✏️</button>
-          <button class="btn btn-danger btn-sm" onclick="delCat('${c._id}')">🗑</button>
+          <button class="btn btn-secondary btn-sm" onclick="openCatModal('${c._id}')"><i class="fas fa-pen"></i></button>
+          <button class="btn btn-danger btn-sm" onclick="delCat('${c._id}')"><i class="fas fa-trash"></i></button>
         </div>
       </div>`).join('');
   }catch(e){ $('cats-list').innerHTML='<div class="empty">'+esc(e.message)+'</div>' }
@@ -1243,9 +1366,9 @@ async function delCat(id){ if(!confirm('ডিলিট?')) return; try{ await a
 let _tabs=[];
 async function loadTabs(){
   _tabs=await loadList('/api/admin/course-tabs','tabs-tbody', t=>`
-    <tr><td data-l="লেবেল"><b>${esc(t.label)}</b></td><td data-l="ফিল্টার">${esc(t.filter||'all')}</td>
-    <td data-l="ক্রম">${t.order||0}</td>
-    <td data-l="অ্যাকশন"><div class="row-actions"><button class="btn btn-secondary btn-sm" onclick="openTabModal('${t._id}')">✏️</button><button class="btn btn-danger btn-sm" onclick="delTab('${t._id}')">🗑</button></div></td></tr>`);
+    <tr><td><b>${esc(t.label)}</b></td><td>${esc(t.filter||'all')}</td>
+    <td>${t.order||0}</td>
+    <td><div class="row-actions"><button class="btn btn-secondary btn-sm" onclick="openTabModal('${t._id}')"><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm" onclick="delTab('${t._id}')"><i class="fas fa-trash"></i></button></div></td></tr>`);
 }
 function openTabModal(id){
   const t=id?_tabs.find(x=>x._id===id):{};
@@ -1267,10 +1390,10 @@ async function delTab(id){ if(!confirm('ডিলিট?')) return; try{ await a
 let _ins=[];
 async function loadIns(){
   _ins=await loadList('/api/admin/instructors','ins-tbody', i=>`
-    <tr><td data-l="ছবি"><img class="row-thumb" src="${esc(i.photo||'')}" onerror="this.style.background='var(--surface-3)';this.removeAttribute('src')"/></td>
-    <td data-l="নাম"><b>${esc(i.name)}</b></td><td data-l="বিশেষজ্ঞতা">${esc(i.expertise||i.role||'-')}</td>
-    <td data-l="বায়ো">${esc(truncate(i.bio,80))}</td>
-    <td data-l="অ্যাকশন"><div class="row-actions"><button class="btn btn-secondary btn-sm" onclick="openInsModal('${i._id}')">✏️</button><button class="btn btn-danger btn-sm" onclick="delIns('${i._id}')">🗑</button></div></td></tr>`);
+    <tr><td><img class="row-thumb" src="${esc(i.photo||'')}" onerror="this.style.background='var(--surface-3)';this.removeAttribute('src')"/></td>
+    <td><b>${esc(i.name)}</b></td><td>${esc(i.expertise||i.role||'-')}</td>
+    <td>${esc(truncate(i.bio,80))}</td>
+    <td><div class="row-actions"><button class="btn btn-secondary btn-sm" onclick="openInsModal('${i._id}')"><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm" onclick="delIns('${i._id}')"><i class="fas fa-trash"></i></button></div></td></tr>`);
 }
 function openInsModal(id){
   const i=id?_ins.find(x=>x._id===id):{};
@@ -1295,11 +1418,11 @@ async function delIns(id){ if(!confirm('ডিলিট?')) return; try{ await a
 let _tests=[];
 async function loadTests(){
   _tests=await loadList('/api/admin/testimonials','test-tbody', t=>`
-    <tr><td data-l="ছবি"><img class="row-thumb" src="${esc(t.avatar||'')}" onerror="this.style.background='var(--surface-3)';this.removeAttribute('src')"/></td>
-    <td data-l="নাম"><b>${esc(t.name)}</b><br><small class="muted">${esc(t.role||t.course||'')}</small></td>
-    <td data-l="রিভিউ">${esc(truncate(t.message||t.text,90))}</td>
-    <td data-l="রেটিং">${'⭐'.repeat(Number(t.rating)||5)}</td>
-    <td data-l="অ্যাকশন"><div class="row-actions"><button class="btn btn-secondary btn-sm" onclick="openTestModal('${t._id}')">✏️</button><button class="btn btn-danger btn-sm" onclick="delTest('${t._id}')">🗑</button></div></td></tr>`);
+    <tr><td><img class="row-thumb" src="${esc(t.avatar||'')}" onerror="this.style.background='var(--surface-3)';this.removeAttribute('src')"/></td>
+    <td><b>${esc(t.name)}</b><br><small class="muted">${esc(t.role||t.course||'')}</small></td>
+    <td>${esc(truncate(t.message||t.text,90))}</td>
+    <td>${'⭐'.repeat(Number(t.rating)||5)}</td>
+    <td><div class="row-actions"><button class="btn btn-secondary btn-sm" onclick="openTestModal('${t._id}')"><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm" onclick="delTest('${t._id}')"><i class="fas fa-trash"></i></button></div></td></tr>`);
 }
 function openTestModal(id){
   const t=id?_tests.find(x=>x._id===id):{};
@@ -1323,9 +1446,9 @@ async function delTest(id){ if(!confirm('ডিলিট?')) return; try{ await 
 let _blog=[];
 async function loadBlog(){
   _blog=await loadList('/api/admin/blog','blog-tbody', b=>`
-    <tr><td data-l="শিরোনাম"><b>${esc(b.title)}</b><br><small class="muted">${esc(b.slug||'')}</small></td>
-    <td data-l="লেখক">${esc(b.author||'-')}</td><td data-l="প্রকাশ">${fmtDate(b.createdAt||b.publishedAt)}</td>
-    <td data-l="অ্যাকশন"><div class="row-actions"><button class="btn btn-secondary btn-sm" onclick="openBlogModal('${b._id}')">✏️</button><button class="btn btn-danger btn-sm" onclick="delBlog('${b._id}')">🗑</button></div></td></tr>`);
+    <tr><td><b>${esc(b.title)}</b><br><small class="muted">${esc(b.slug||'')}</small></td>
+    <td>${esc(b.author||'-')}</td><td>${fmtDate(b.createdAt||b.publishedAt)}</td>
+    <td><div class="row-actions"><button class="btn btn-secondary btn-sm" onclick="openBlogModal('${b._id}')"><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm" onclick="delBlog('${b._id}')"><i class="fas fa-trash"></i></button></div></td></tr>`);
 }
 function openBlogModal(id){
   const b=id?_blog.find(x=>x._id===id):{};
@@ -1356,7 +1479,7 @@ async function loadFaqs(){
     $('faqs-list').innerHTML=_faqs.map(f=>`
       <div class="list-item">
         <div class="ti"><b>${esc(f.question||f.q)}</b><small>${esc(truncate(f.answer||f.a,140))}</small></div>
-        <div class="gap"><button class="btn btn-secondary btn-sm" onclick="openFaqModal('${f._id}')">✏️</button><button class="btn btn-danger btn-sm" onclick="delFaq('${f._id}')">🗑</button></div>
+        <div class="gap"><button class="btn btn-secondary btn-sm" onclick="openFaqModal('${f._id}')"><i class="fas fa-pen"></i></button><button class="btn btn-danger btn-sm" onclick="delFaq('${f._id}')"><i class="fas fa-trash"></i></button></div>
       </div>`).join('');
   }catch(e){ $('faqs-list').innerHTML='<div class="empty">'+esc(e.message)+'</div>' }
 }
@@ -1369,7 +1492,6 @@ function openFaqModal(id){
     </div>`,onSave:async()=>{
     const data={question:$('fq-q').value,answer:$('fq-a').value};
     if(!data.question) throw new Error('প্রশ্ন দিন');
-    // backend might be POST-only with array; try generic POST
     if(id) await api('PUT','/api/admin/faqs/'+id,data).catch(()=>api('POST','/api/admin/faqs',{...data,_id:id}));
     else await api('POST','/api/admin/faqs',data);
     toast('সংরক্ষণ'); closeModal(); loadFaqs();
@@ -1378,7 +1500,7 @@ function openFaqModal(id){
 async function delFaq(id){ if(!confirm('ডিলিট?')) return; try{ await api('DELETE','/api/admin/faqs/'+id); toast('ডিলিট'); loadFaqs() }catch(e){toast(e.message,'error')} }
 
 /* ════════════════════════════════════════
-   SINGLE-DOC FORMS (Hero, CTA, Welcome, About, Contact, Site, Footer, Theme, Featured)
+   SINGLE-DOC FORMS
 ═══════════════════════════════════════ */
 async function loadHero(){
   try{
@@ -1474,7 +1596,7 @@ function renderNav(){
           <div class="field"><label>লিংক</label><input value="${esc(n.link||n.url||n.href)}" oninput="_nav[${i}].link=this.value"/></div>
         </div>
       </div>
-      <button class="btn btn-danger btn-sm" onclick="_nav.splice(${i},1);renderNav()">🗑</button>
+      <button class="btn btn-danger btn-sm" onclick="_nav.splice(${i},1);renderNav()"><i class="fas fa-trash"></i></button>
     </div>`).join('');
 }
 function addNavItem(){ _nav.push({label:'নতুন',link:'/'}); renderNav() }
@@ -1500,7 +1622,7 @@ async function saveFooter(){
 /* THEME */
 async function loadTheme(){
   try{ const t=await api('GET','/api/admin/theme-settings');
-    [['primary',t.primary||t.primaryColor||'#066144'],['accent',t.accent||t.accentColor||'#F5C518'],['bg',t.background||t.bg||'#ffffff'],['text',t.text||t.textColor||'#111827']].forEach(([k,v])=>{
+    [['primary',t.primary||t.primaryColor||'#7c3aed'],['accent',t.accent||t.accentColor||'#a3e635'],['bg',t.background||t.bg||'#ffffff'],['text',t.text||t.textColor||'#111827']].forEach(([k,v])=>{
       $('tm-'+k).value=v; $('tm-'+k+'-text').value=v;
       $('tm-'+k).oninput=()=>$('tm-'+k+'-text').value=$('tm-'+k).value;
       $('tm-'+k+'-text').oninput=()=>{ try{$('tm-'+k).value=$('tm-'+k+'-text').value}catch(_){} };
@@ -1529,9 +1651,9 @@ async function loadAnalytics(){
   try{
     const v=await api('GET','/api/admin/realtime-visitors').catch(()=>({}));
     const stats=[
-      {icon:'👁',num:v.activeVisitors||v.active||0,lbl:'বর্তমান ভিজিটর',cls:'green'},
-      {icon:'📊',num:v.todayVisitors||v.today||0,lbl:'আজকের ভিজিটর',cls:'blue'},
-      {icon:'📅',num:v.totalVisitors||v.total||0,lbl:'মোট ভিজিটর',cls:'orange'}
+      {icon:'<i class="fas fa-eye"></i>',num:v.activeVisitors||v.active||0,lbl:'বর্তমান ভিজিটর',cls:'green'},
+      {icon:'<i class="fas fa-chart-bar"></i>',num:v.todayVisitors||v.today||0,lbl:'আজকের ভিজিটর',cls:'blue'},
+      {icon:'<i class="fas fa-calendar"></i>',num:v.totalVisitors||v.total||0,lbl:'মোট ভিজিটর',cls:'orange'}
     ];
     $('rt-grid').innerHTML=stats.map(x=>`<div class="stat ${x.cls}"><div class="ic">${x.icon}</div><div><div class="num">${x.num}</div><div class="lbl">${x.lbl}</div></div></div>`).join('');
   }catch(_){ $('rt-grid').innerHTML='<div class="empty">রিয়েলটাইম ডেটা পাওয়া যায়নি</div>' }
@@ -1580,13 +1702,10 @@ const PAGE_LOADERS={
   password:()=>{}
 };
 
-/* ════════════════════════════════════════
-   NAV CLICKS + INIT
-═══════════════════════════════════════ */
+/* NAV CLICKS + INIT */
 $$('.nav-item').forEach(i=>i.addEventListener('click',()=>navTo(i.dataset.page)));
 
 (async function init(){
-  // optional ?api= override
   const qs=new URLSearchParams(location.search);
   const ov=qs.get('api')||localStorage.getItem('IKH_API_BASE');
   if(ov){ window.IKH_API_BASE=ov; if(qs.get('api')) localStorage.setItem('IKH_API_BASE',ov) }
