@@ -136,6 +136,50 @@ td .tbl-actions{display:flex;gap:6px;justify-content:flex-end}
 .modal-bg.open{opacity:1;visibility:visible}
 .modal{background:#fff;border-radius:16px;max-width:560px;width:100%;padding:24px;position:relative;margin:auto;max-height:90vh;overflow-y:auto}
 .modal-lg{max-width:820px}
+.modal-xl{max-width:1000px}
+
+/* Course form tabs */
+.cf-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:18px;overflow-x:auto}
+.cf-tab{padding:10px 16px;border:none;background:transparent;cursor:pointer;font-family:inherit;font-weight:600;font-size:13.5px;color:var(--text-soft);border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:.15s;display:flex;align-items:center;gap:6px}
+.cf-tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.cf-tab:hover{color:var(--primary)}
+.cf-panel{display:none}.cf-panel.active{display:block}
+
+/* Curriculum builder */
+.curr-section{background:#f8faf9;border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.curr-section-head{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f4f2;border-bottom:1px solid var(--border)}
+.curr-section-head input{flex:1;background:transparent;border:none;font-weight:700;font-size:14px;padding:2px 4px;color:var(--text)}
+.curr-section-head input:focus{outline:none;border-bottom:1px solid var(--primary)}
+.curr-lessons{padding:10px 14px}
+.lesson-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:8px 10px}
+.lesson-row input{flex:1;border:none;padding:2px 4px;background:transparent;font-size:13px}
+.lesson-row input:focus{outline:none;border-bottom:1px solid var(--primary)}
+.lesson-dur{width:70px;border:1px solid var(--border)!important;border-radius:6px!important;padding:4px 6px!important;font-size:12px!important;text-align:center}
+.lesson-vid{width:130px;border:1px solid var(--border)!important;border-radius:6px!important;padding:4px 6px!important;font-size:12px!important;direction:ltr}
+.lesson-free{width:18px;height:18px;cursor:pointer;flex-shrink:0}
+.free-lbl{font-size:11px;color:var(--text-soft);white-space:nowrap}
+
+/* QnA */
+.qna-item{background:#f8faf9;border:1px solid var(--border);border-radius:9px;padding:12px;margin-bottom:10px}
+.qna-item textarea{margin-bottom:6px}
+
+/* YouTube ID input with auto extract */
+.yt-input-wrap{position:relative}
+.yt-badge{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#ff0000;font-size:14px;pointer-events:none}
+.yt-id-display{font-size:11px;color:var(--success);margin-top:3px;font-weight:600}
+
+/* Includes / Features list */
+.list-builder{border:1.5px solid var(--border);border-radius:9px;padding:10px;background:#fff}
+.list-builder-item{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.list-builder-item input{flex:1;border:none;border-bottom:1px solid var(--border);border-radius:0;padding:4px 4px;font-size:13px;background:transparent}
+.list-builder-item input:focus{outline:none;border-bottom-color:var(--primary)}
+
+/* Mobile modal fix */
+@media(max-width:600px){
+  .modal-xl,.modal-lg{max-width:100%}
+  .cf-tab{padding:8px 10px;font-size:12px}
+  .lesson-row{flex-wrap:wrap}
+}
 .modal-close{position:absolute;top:12px;right:12px;background:#f1f5f9;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:17px;color:var(--text-soft);display:flex;align-items:center;justify-content:center;transition:.15s}
 .modal-close:hover{background:var(--danger);color:#fff;transform:rotate(90deg)}
 .modal h3{margin-bottom:18px;font-size:19px;padding-right:36px}
@@ -713,7 +757,7 @@ textarea{resize:vertical;min-height:90px}
 <!-- ===== MODALS ===== -->
 <!-- Course Modal -->
 <div class="modal-bg" id="course-modal">
-  <div class="modal modal-lg">
+  <div class="modal modal-xl">
     <button class="modal-close" onclick="closeModal('course-modal')">×</button>
     <div id="course-modal-body"></div>
   </div>
@@ -1027,69 +1071,416 @@ function liveCourseRow(c){
   </tr>`;
 }
 
+// ── YouTube URL → ID helper ──
+function extractYouTubeId(input){
+  if(!input) return '';
+  input=input.trim();
+  // already an ID (11 chars, no slash/dot)
+  if(/^[A-Za-z0-9_-]{11}$/.test(input)) return input;
+  const m=input.match(/(?:v=|\/embed\/|\/shorts\/|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  return m?m[1]:'';
+}
+
+// ── Course curriculum & QnA state (for current modal) ──
+let CM_CURRICULUM=[];
+let CM_QNA=[];
+let CM_FEATURES=[];
+let CM_INCLUDES=[];
+let CM_EDIT_ID=null;
+let CM_TYPE='recorded';
+
 function openCourseModal(type='recorded', editId=null){
+  CM_TYPE=type;
+  CM_EDIT_ID=editId;
   const isLive=type==='live';
   const course=editId?ALL_COURSES_DATA.find(c=>c._id===editId):null;
   const v=course||{};
+  CM_CURRICULUM=Array.isArray(v.curriculum)?JSON.parse(JSON.stringify(v.curriculum)):[];
+  CM_QNA=Array.isArray(v.qna)?JSON.parse(JSON.stringify(v.qna)):[];
+  CM_FEATURES=Array.isArray(v.features)?[...v.features]:[];
+  CM_INCLUDES=Array.isArray(v.includes)?[...v.includes]:[];
+  const prevId=extractYouTubeId(v.previewVideoId||v.previewVideo||v.youtubePreview||'');
   $('#course-modal-body').innerHTML=`
-    <h3><i class="fas fa-${isLive?'video':'play-circle'}" style="color:var(--primary)"></i> ${editId?'কোর্স সম্পাদনা':'নতুন কোর্স'}</h3>
-    <form id="course-form" onsubmit="saveCourse(event,'${editId||''}','${isLive?'live':'recorded'}')">
-      <div class="form-row">
-        <div class="form-group"><label class="label">কোর্সের শিরোনাম *</label><input name="title" value="${esc(v.title||'')}" required placeholder="কোর্সের নাম"/></div>
-        <div class="form-group"><label class="label">ধরন</label>
-          <select name="type"><option value="recorded" ${!isLive?'selected':''}>রেকর্ডেড</option><option value="live" ${isLive?'selected':''}>লাইভ</option></select>
+    <h3><i class="fas fa-${isLive?'video':'play-circle'}" style="color:var(--primary)"></i> ${editId?'কোর্স সম্পাদনা':'নতুন '+(isLive?'লাইভ ':'')+'কোর্স'}</h3>
+
+    <!-- Tabs -->
+    <div class="cf-tabs">
+      <button class="cf-tab active" onclick="cfTab(this,'cf-basic')"><i class="fas fa-info-circle"></i> মূল তথ্য</button>
+      <button class="cf-tab" onclick="cfTab(this,'cf-media')"><i class="fab fa-youtube"></i> মিডিয়া</button>
+      <button class="cf-tab" onclick="cfTab(this,'cf-details')"><i class="fas fa-list-ul"></i> বিবরণ</button>
+      ${!isLive?`<button class="cf-tab" onclick="cfTab(this,'cf-curriculum')"><i class="fas fa-film"></i> ভিডিও কারিকুলাম</button>`:''}
+      <button class="cf-tab" onclick="cfTab(this,'cf-qna')"><i class="fas fa-question-circle"></i> প্রশ্ন-উত্তর</button>
+      <button class="cf-tab" onclick="cfTab(this,'cf-seo')"><i class="fas fa-search"></i> SEO</button>
+    </div>
+
+    <form id="course-form" onsubmit="saveCourse(event)">
+
+      <!-- ── TAB 1: মূল তথ্য ── -->
+      <div class="cf-panel active" id="cf-basic">
+        <div class="form-row">
+          <div class="form-group"><label class="label">কোর্সের শিরোনাম *</label><input name="title" value="${esc(v.title||'')}" required placeholder="কোর্সের নাম লিখুন"/></div>
+          <div class="form-group"><label class="label">Slug *</label><input name="slug" value="${esc(v.slug||'')}" placeholder="auto-generate" style="direction:ltr"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="label">বিষয় / ক্যাটাগরি</label><input name="category" value="${esc(v.category||'')}" placeholder="কুরআন, ফিকাহ, আরবি..."/></div>
+          <div class="form-group"><label class="label">উপ-বিষয়</label><input name="subCategory" value="${esc(v.subCategory||'')}" placeholder="উপ-ক্যাটাগরি"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="label">কোর্স ধরন</label>
+            <select name="type">
+              <option value="recorded" ${!isLive?'selected':''}>রেকর্ডেড</option>
+              <option value="live" ${isLive?'selected':''}>লাইভ কোর্স</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="label">স্তর (Level)</label>
+            <select name="level">
+              <option value="beginner" ${(v.level||'beginner')==='beginner'?'selected':''}>সহজ (Beginner)</option>
+              <option value="intermediate" ${v.level==='intermediate'?'selected':''}>মধ্যবর্তী (Intermediate)</option>
+              <option value="advanced" ${v.level==='advanced'?'selected':''}>উন্নত (Advanced)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label class="label">সংক্ষিপ্ত বিবরণ (এক লাইন)</label><input name="shortDescription" value="${esc(v.shortDescription||'')}" placeholder="কোর্স সম্পর্কে সংক্ষিপ্ত বর্ণনা..."/></div>
+        <div class="form-group"><label class="label">বিস্তারিত বিবরণ</label><textarea name="description" rows="4" placeholder="কোর্স সম্পর্কে বিস্তারিত...">${esc(v.description||'')}</textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label class="label">মূল্য (৳) — ০ = ফ্রি</label><input name="price" type="number" min="0" value="${v.price||0}"/></div>
+          <div class="form-group"><label class="label">পুরনো মূল্য (কাটা দাম)</label><input name="oldPrice" type="number" min="0" value="${v.oldPrice||0}"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="label">শিক্ষক (নাম)</label><input name="instructor" value="${esc(v.instructor||'')}" placeholder="উস্তাদ / শিক্ষকের নাম..."/></div>
+          <div class="form-group"><label class="label">সময়কাল / মেয়াদ</label><input name="duration" value="${esc(v.duration||'')}" placeholder="৩০ ভিডিও / ১ মাস"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="label">মোট পাঠ সংখ্যা</label><input name="totalLessons" type="number" min="0" value="${v.totalLessons||0}"/></div>
+          <div class="form-group"><label class="label">অবস্থা</label>
+            <select name="isActive">
+              <option value="true" ${v.isActive!==false?'selected':''}>সক্রিয়</option>
+              <option value="false" ${v.isActive===false?'selected':''}>নিষ্ক্রিয়</option>
+            </select>
+          </div>
+        </div>
+        ${isLive?`
+        <div class="form-group"><label class="label">লাইভ সময়সূচি</label><input name="liveSchedule" value="${esc(v.liveSchedule||'')}" placeholder="প্রতি শুক্র ও শনি, রাত ৯টা"/></div>`:''}
+        <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:4px">
+          <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-weight:600;font-size:13px">
+            <input type="checkbox" name="isFeatured" ${v.isFeatured?'checked':''} style="width:15px;height:15px"/> ফিচার্ড কোর্স
+          </label>
+          <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-weight:600;font-size:13px">
+            <input type="checkbox" name="isActiveChk" ${v.isActive!==false?'checked':''} style="width:15px;height:15px"/> প্রকাশিত (Published)
+          </label>
         </div>
       </div>
-      <div class="form-group"><label class="label">সংক্ষিপ্ত বিবরণ</label><input name="shortDescription" value="${esc(v.shortDescription||'')}" placeholder="এক লাইনে কোর্স সম্পর্কে..."/></div>
-      <div class="form-group"><label class="label">বিস্তারিত বিবরণ</label><textarea name="description" rows="4">${esc(v.description||'')}</textarea></div>
-      <div class="form-row">
-        <div class="form-group"><label class="label">মূল্য (টাকা) — ০ = ফ্রি</label><input name="price" type="number" min="0" value="${v.price||0}"/></div>
-        <div class="form-group"><label class="label">পুরনো মূল্য (কাটা দাম)</label><input name="oldPrice" type="number" min="0" value="${v.oldPrice||0}"/></div>
+
+      <!-- ── TAB 2: মিডিয়া ── -->
+      <div class="cf-panel" id="cf-media">
+        <div class="form-group">
+          <label class="label"><i class="fab fa-youtube" style="color:#ff0000"></i> প্রিভিউ ভিডিও (YouTube URL বা ID)</label>
+          <div class="yt-input-wrap">
+            <input id="cm-preview-input" name="previewVideoUrl" value="${esc(v.previewVideoId||v.previewVideo||v.youtubePreview||'')}" placeholder="YouTube URL অথবা Video ID (যেকোনো একটি দিন)" oninput="cmYtExtract(this,'cm-preview-id','cm-preview-badge')" style="direction:ltr;padding-left:10px"/>
+          </div>
+          <div id="cm-preview-badge" class="yt-id-display" style="display:${prevId?'block':'none'}">
+            ✅ YouTube ID: <strong id="cm-preview-id">${prevId}</strong>
+          </div>
+        </div>
+        <input type="hidden" name="previewVideoId" id="cm-preview-hidden" value="${prevId}"/>
+
+        <div class="form-group">
+          <label class="label">থাম্বনেইল URL বা আপলোড</label>
+          <input name="thumbnailUrl" value="${esc(v.thumbnail||'')}" placeholder="https://... (URL)"/>
+          ${v.thumbnail?`<img src="${esc(v.thumbnail)}" style="height:90px;border-radius:8px;margin-top:8px;border:2px solid var(--border)" onerror="this.style.display='none'"/>`:``}
+        </div>
+
+        <div class="form-group">
+          <label class="label">ভিডিও পাঠের মোট সময়</label>
+          <input name="videoLessonsTime" value="${esc(v.videoLessonsTime||'')}" placeholder="০৪ : ৩২ : ১০" style="direction:ltr;max-width:200px"/>
+        </div>
+
+        <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:9px;padding:12px;font-size:13px;color:#856404">
+          <i class="fas fa-info-circle"></i> <strong>টিপস:</strong> YouTube URL দিলে স্বয়ংক্রিয়ভাবে Video ID বের হয়ে যাবে। পুরো URL বা শুধু ID — দুটোই কাজ করবে।
+        </div>
       </div>
-      <div class="form-row">
-        <div class="form-group"><label class="label">শিক্ষকের নাম</label><input name="instructor" value="${esc(v.instructor||'')}" placeholder="উস্তাদ..."/></div>
-        <div class="form-group"><label class="label">সময়কাল</label><input name="duration" value="${esc(v.duration||'')}" placeholder="৩০ ভিডিও / ৮ ঘণ্টা"/></div>
+
+      <!-- ── TAB 3: বিবরণ (includes, features) ── -->
+      <div class="cf-panel" id="cf-details">
+        <div class="form-group">
+          <label class="label"><i class="fas fa-check-circle" style="color:var(--primary)"></i> এই কোর্সে যা শিখবেন (Features)</label>
+          <div class="list-builder" id="cm-features-wrap"></div>
+          <button type="button" class="btn btn-outline btn-sm" style="margin-top:8px" onclick="cmAddItem('features')"><i class="fas fa-plus"></i> আরো যোগ করুন</button>
+        </div>
+
+        <div class="form-group">
+          <label class="label"><i class="fas fa-box" style="color:var(--primary)"></i> কোর্সে যা অন্তর্ভুক্ত (Includes / Sidebar List)</label>
+          <div class="list-builder" id="cm-includes-wrap"></div>
+          <button type="button" class="btn btn-outline btn-sm" style="margin-top:8px" onclick="cmAddItem('includes')"><i class="fas fa-plus"></i> আরো যোগ করুন</button>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group"><label class="label">শিক্ষার্থী সংখ্যা</label><input name="students" type="number" min="0" value="${v.students||0}"/></div>
+          <div class="form-group"><label class="label">রেটিং (০-৫)</label><input name="rating" type="number" min="0" max="5" step="0.1" value="${v.rating||0}"/></div>
+        </div>
+        <div class="form-group"><label class="label">শিক্ষকের সংক্ষিপ্ত পরিচয় (Instructor Bio)</label><textarea name="instructorBio" rows="3" placeholder="শিক্ষক সম্পর্কে...">${esc(v.instructorBio||'')}</textarea></div>
+        <div class="form-group"><label class="label">শিক্ষকের ছবি URL</label><input name="instructorPhoto" value="${esc(v.instructorPhoto||'')}" placeholder="https://..."/></div>
       </div>
-      ${isLive?`<div class="form-group"><label class="label">লাইভ সময়সূচি</label><input name="liveSchedule" value="${esc(v.liveSchedule||'')}" placeholder="প্রতি শুক্র ও শনি, রাত ৯টা"/></div>`:''}
-      <div class="form-group"><label class="label">থাম্বনেইল URL</label><input name="thumbnail" value="${esc(v.thumbnail||'')}" placeholder="https://..."/></div>
-      <div class="form-group"><label class="label">প্রিভিউ ভিডিও (YouTube ID বা URL)</label><input name="previewVideo" value="${esc(v.previewVideo||v.youtubePreview||'')}" placeholder="dQw4w9WgXcQ"/></div>
-      <div class="form-group"><label class="label">ক্যাটাগরি</label><input name="category" value="${esc(v.category||'')}" placeholder="কুরআন, ফিকাহ..."/></div>
-      <div style="margin-bottom:12px">
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:600;font-size:13px">
-          <input type="checkbox" name="published" ${v.published!==false?'checked':''} style="width:15px;height:15px"/> প্রকাশিত (Published)
-        </label>
+
+      <!-- ── TAB 4: কারিকুলাম / ভিডিও ── -->
+      ${!isLive?`
+      <div class="cf-panel" id="cf-curriculum">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+          <div style="font-size:13px;color:var(--text-soft)">সেকশন ও পাঠ যোগ করুন। YouTube URL বা ID দিলে স্বয়ংক্রিয় সংরক্ষিত হবে।</div>
+          <button type="button" class="btn btn-primary btn-sm" onclick="cmAddSection()"><i class="fas fa-plus"></i> নতুন সেকশন</button>
+        </div>
+        <div id="cm-curriculum-wrap"></div>
+        <div style="font-size:12px;color:var(--text-soft);margin-top:8px"><i class="fas fa-info-circle"></i> ফ্রি = বিনামূল্যে দেখা যাবে</div>
+      </div>`:''}
+
+      <!-- ── TAB 5: প্রশ্ন-উত্তর ── -->
+      <div class="cf-panel" id="cf-qna">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+          <div style="font-size:13px;color:var(--text-soft)">কোর্স সম্পর্কে সাধারণ প্রশ্ন ও উত্তর যোগ করুন।</div>
+          <button type="button" class="btn btn-primary btn-sm" onclick="cmAddQna()"><i class="fas fa-plus"></i> নতুন প্রশ্ন যোগ</button>
+        </div>
+        <div id="cm-qna-wrap"></div>
       </div>
-      <div style="display:flex;gap:10px;justify-content:flex-end">
+
+      <!-- ── TAB 6: SEO ── -->
+      <div class="cf-panel" id="cf-seo">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <span style="font-size:13px;color:var(--text-soft)"><i class="fas fa-search"></i> SEO অপ্টিমাইজেশন (Google, Bing, Yahoo, DuckDuckGo)</span>
+          <button type="button" class="btn btn-outline btn-sm" onclick="cmAutoSeo()"><i class="fas fa-magic"></i> অটো SEO</button>
+        </div>
+        <div class="form-group"><label class="label">SEO শিরোনাম (৫০-৬০ অক্ষর)</label><textarea name="seoTitle" rows="2" placeholder="পেজ টাইটেল...">${esc(v.seoTitle||'')}</textarea></div>
+        <div class="form-group"><label class="label">SEO বিবরণ (১৫০-১৬০ অক্ষর)</label><textarea name="seoDescription" rows="3" placeholder="Meta description...">${esc(v.seoDescription||'')}</textarea></div>
+        <div class="form-group"><label class="label">SEO কীওয়ার্ড</label><input name="seoKeywords" value="${esc(v.seoKeywords||'')}" placeholder="কুরআন, ইসলাম, অনলাইন কোর্স..."/></div>
+        <div class="form-group"><label class="label">OG Image URL (Social Share ছবি)</label><input name="ogImage" value="${esc(v.ogImage||'')}" placeholder="https://..."/></div>
+        <div class="form-group"><label class="label">Canonical URL (ঐচ্ছিক)</label><input name="canonicalUrl" value="${esc(v.canonicalUrl||'')}" placeholder="https://..." style="direction:ltr"/></div>
+      </div>
+
+      <!-- Save bar -->
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
         <button type="button" class="btn btn-outline" onclick="closeModal('course-modal')">বাতিল</button>
-        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> সংরক্ষণ</button>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> সংরক্ষণ করুন</button>
       </div>
+
     </form>`;
+
+  // render dynamic lists
+  cmRenderFeatures();
+  cmRenderIncludes();
+  if(!isLive) cmRenderCurriculum();
+  cmRenderQna();
+
   openModal('course-modal');
 }
 
-async function saveCourse(e, editId, defaultType){
+// ── Tab switching ──
+function cfTab(btn, panelId){
+  document.querySelectorAll('#course-modal-body .cf-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#course-modal-body .cf-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  const p=document.getElementById(panelId);
+  if(p) p.classList.add('active');
+}
+
+// ── YouTube ID extract ──
+function cmYtExtract(input, idElem, badgeElem){
+  const id=extractYouTubeId(input.value);
+  const badge=document.getElementById(badgeElem);
+  const idEl=document.getElementById(idElem);
+  const hidden=document.getElementById('cm-preview-hidden');
+  if(id){
+    if(badge) badge.style.display='block';
+    if(idEl) idEl.textContent=id;
+    if(hidden) hidden.value=id;
+  } else {
+    if(badge) badge.style.display='none';
+    if(hidden) hidden.value='';
+  }
+}
+
+// ── Features list ──
+function cmRenderFeatures(){
+  const wrap=document.getElementById('cm-features-wrap');
+  if(!wrap)return;
+  wrap.innerHTML=CM_FEATURES.map((f,i)=>`
+    <div class="list-builder-item">
+      <i class="fas fa-check-circle" style="color:var(--success);flex-shrink:0"></i>
+      <input value="${esc(f)}" placeholder="কী শিখবেন..." oninput="CM_FEATURES[${i}]=this.value"/>
+      <button type="button" class="btn btn-danger btn-sm" style="padding:4px 8px;border-radius:6px" onclick="CM_FEATURES.splice(${i},1);cmRenderFeatures()"><i class="fas fa-times"></i></button>
+    </div>`).join('')||'<div style="font-size:13px;color:var(--text-soft);padding:6px 4px">এখনো কিছু যোগ করা হয়নি</div>';
+}
+function cmAddItem(type){
+  if(type==='features'){CM_FEATURES.push('');cmRenderFeatures();}
+  else{CM_INCLUDES.push('');cmRenderIncludes();}
+}
+
+// ── Includes list ──
+function cmRenderIncludes(){
+  const wrap=document.getElementById('cm-includes-wrap');
+  if(!wrap)return;
+  wrap.innerHTML=CM_INCLUDES.map((f,i)=>`
+    <div class="list-builder-item">
+      <i class="fas fa-box-open" style="color:var(--primary);flex-shrink:0"></i>
+      <input value="${esc(f)}" placeholder="অন্তর্ভুক্ত বিষয়..." oninput="CM_INCLUDES[${i}]=this.value"/>
+      <button type="button" class="btn btn-danger btn-sm" style="padding:4px 8px;border-radius:6px" onclick="CM_INCLUDES.splice(${i},1);cmRenderIncludes()"><i class="fas fa-times"></i></button>
+    </div>`).join('')||'<div style="font-size:13px;color:var(--text-soft);padding:6px 4px">এখনো কিছু যোগ করা হয়নি</div>';
+}
+
+// ── Curriculum ──
+function cmRenderCurriculum(){
+  const wrap=document.getElementById('cm-curriculum-wrap');
+  if(!wrap)return;
+  if(!CM_CURRICULUM.length){
+    wrap.innerHTML='<div style="font-size:13px;color:var(--text-soft);padding:12px;text-align:center"><i class="fas fa-film" style="font-size:28px;display:block;margin-bottom:6px;opacity:.4"></i> কোনো সেকশন নেই — উপরে "নতুন সেকশন" বাটনে ক্লিক করুন</div>';
+    return;
+  }
+  wrap.innerHTML=CM_CURRICULUM.map((sec,si)=>`
+    <div class="curr-section">
+      <div class="curr-section-head">
+        <i class="fas fa-grip-vertical" style="color:#94a3b8;cursor:grab"></i>
+        <input value="${esc(sec.sectionTitle||'')}" placeholder="সেকশনের নাম (যেমন: পরিচিতি পর্ব)" oninput="CM_CURRICULUM[${si}].sectionTitle=this.value"/>
+        <button type="button" class="btn btn-primary btn-sm" onclick="cmAddLesson(${si})"><i class="fas fa-plus"></i> পাঠ</button>
+        <button type="button" class="btn btn-danger btn-sm" onclick="CM_CURRICULUM.splice(${si},1);cmRenderCurriculum()"><i class="fas fa-trash"></i></button>
+      </div>
+      <div class="curr-lessons">
+        ${(sec.lessons||[]).map((ls,li)=>`
+          <div class="lesson-row">
+            <i class="fas fa-play-circle" style="color:var(--primary);flex-shrink:0;font-size:13px"></i>
+            <input value="${esc(ls.title||'')}" placeholder="পাঠের নাম..." oninput="CM_CURRICULUM[${si}].lessons[${li}].title=this.value"/>
+            <input class="lesson-dur" value="${esc(ls.duration||'')}" placeholder="মিনিট" title="সময়কাল (যেমন: 12:30)" oninput="CM_CURRICULUM[${si}].lessons[${li}].duration=this.value"/>
+            <input class="lesson-vid" value="${esc(ls.videoId||'')}" placeholder="YouTube ID/URL" title="YouTube ভিডিও ID বা URL দিন" oninput="cmLessonVideoInput(this,${si},${li})" style="direction:ltr"/>
+            <input type="checkbox" class="lesson-free" title="ফ্রি প্রিভিউ" ${ls.isFree?'checked':''} onchange="CM_CURRICULUM[${si}].lessons[${li}].isFree=this.checked"/>
+            <span class="free-lbl">ফ্রি</span>
+            <button type="button" class="btn btn-danger btn-sm" style="padding:3px 7px;flex-shrink:0" onclick="CM_CURRICULUM[${si}].lessons.splice(${li},1);cmRenderCurriculum()"><i class="fas fa-times"></i></button>
+          </div>`).join('')}
+        ${!(sec.lessons&&sec.lessons.length)?'<div style="font-size:12px;color:#94a3b8;padding:4px">এখনো কোনো পাঠ নেই</div>':''}
+      </div>
+    </div>`).join('');
+}
+function cmAddSection(){
+  CM_CURRICULUM.push({sectionTitle:'',lessons:[]});
+  cmRenderCurriculum();
+}
+function cmAddLesson(si){
+  if(!CM_CURRICULUM[si].lessons) CM_CURRICULUM[si].lessons=[];
+  CM_CURRICULUM[si].lessons.push({title:'',duration:'',videoId:'',isFree:false});
+  cmRenderCurriculum();
+}
+function cmLessonVideoInput(input,si,li){
+  const id=extractYouTubeId(input.value)||input.value;
+  CM_CURRICULUM[si].lessons[li].videoId=id;
+  input.value=id; // replace with extracted ID
+}
+
+// ── QnA ──
+function cmRenderQna(){
+  const wrap=document.getElementById('cm-qna-wrap');
+  if(!wrap)return;
+  if(!CM_QNA.length){
+    wrap.innerHTML='<div style="font-size:13px;color:var(--text-soft);padding:12px;text-align:center"><i class="fas fa-question-circle" style="font-size:28px;display:block;margin-bottom:6px;opacity:.4"></i> কোনো প্রশ্ন-উত্তর নেই</div>';
+    return;
+  }
+  wrap.innerHTML=CM_QNA.map((q,i)=>`
+    <div class="qna-item">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <span style="font-weight:700;font-size:13px;color:var(--primary)">প্রশ্ন ${i+1}</span>
+        <button type="button" class="btn btn-danger btn-sm" style="padding:3px 8px" onclick="CM_QNA.splice(${i},1);cmRenderQna()"><i class="fas fa-trash"></i></button>
+      </div>
+      <textarea placeholder="প্রশ্ন লিখুন..." rows="2" oninput="CM_QNA[${i}].question=this.value">${esc(q.question||'')}</textarea>
+      <textarea placeholder="উত্তর লিখুন..." rows="3" oninput="CM_QNA[${i}].answer=this.value">${esc(q.answer||'')}</textarea>
+    </div>`).join('');
+}
+function cmAddQna(){
+  CM_QNA.push({question:'',answer:''});
+  cmRenderQna();
+}
+
+// ── Auto SEO ──
+function cmAutoSeo(){
+  const f=document.getElementById('course-form');
+  if(!f)return;
+  const title=f.elements['title']?.value||'';
+  const desc=f.elements['description']?.value||f.elements['shortDescription']?.value||'';
+  const cat=f.elements['category']?.value||'';
+  if(f.elements['seoTitle']) f.elements['seoTitle'].value=title.slice(0,60);
+  if(f.elements['seoDescription']) f.elements['seoDescription'].value=(desc||title).slice(0,160);
+  if(f.elements['seoKeywords']) f.elements['seoKeywords'].value=[title,cat,'অনলাইন কোর্স','ইসলাম','ইবনে খালদুন'].filter(Boolean).join(', ');
+  toast('অটো SEO তৈরি হয়েছে ✅','success');
+  // Switch to SEO tab
+  document.querySelectorAll('#course-modal-body .cf-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#course-modal-body .cf-panel').forEach(p=>p.classList.remove('active'));
+  const seoBtn=Array.from(document.querySelectorAll('#course-modal-body .cf-tab')).find(b=>b.textContent.includes('SEO'));
+  if(seoBtn){seoBtn.classList.add('active');document.getElementById('cf-seo')?.classList.add('active');}
+}
+
+async function saveCourse(e){
   e.preventDefault();
   const fd=new FormData(e.target);
+  // collect features & includes from dynamic state, filter empty
+  const features=CM_FEATURES.filter(f=>f.trim());
+  const includes=CM_INCLUDES.filter(f=>f.trim());
+  // collect curriculum from state
+  const curriculum=CM_CURRICULUM.map(sec=>({
+    sectionTitle:sec.sectionTitle||'',
+    lessons:(sec.lessons||[]).map(ls=>({
+      title:ls.title||'',
+      duration:ls.duration||'',
+      videoId:extractYouTubeId(ls.videoId||'')||ls.videoId||'',
+      isFree:!!ls.isFree
+    }))
+  }));
+  // collect qna
+  const qna=CM_QNA.filter(q=>q.question||q.answer);
+  // extract previewVideoId
+  const previewVideoId=document.getElementById('cm-preview-hidden')?.value || extractYouTubeId(fd.get('previewVideoUrl')||'');
+
   const body={
-    title:fd.get('title'),shortDescription:fd.get('shortDescription'),
-    description:fd.get('description'),price:Number(fd.get('price')),
-    oldPrice:Number(fd.get('oldPrice')),instructor:fd.get('instructor'),
-    duration:fd.get('duration'),thumbnail:fd.get('thumbnail'),
-    previewVideo:fd.get('previewVideo'),category:fd.get('category'),
-    type:fd.get('type')||defaultType,
+    title:fd.get('title'),
+    slug:fd.get('slug')||undefined,
+    shortDescription:fd.get('shortDescription'),
+    description:fd.get('description'),
+    price:Number(fd.get('price')||0),
+    oldPrice:Number(fd.get('oldPrice')||0),
+    instructor:fd.get('instructor'),
+    instructorBio:fd.get('instructorBio'),
+    instructorPhoto:fd.get('instructorPhoto'),
+    duration:fd.get('duration'),
+    videoLessonsTime:fd.get('videoLessonsTime'),
+    totalLessons:Number(fd.get('totalLessons')||0),
+    students:Number(fd.get('students')||0),
+    rating:Number(fd.get('rating')||0),
+    thumbnail:fd.get('thumbnailUrl')||undefined,
+    previewVideoId,
+    previewVideo:previewVideoId,
+    category:fd.get('category'),
+    subCategory:fd.get('subCategory'),
+    level:fd.get('level')||'beginner',
+    type:fd.get('type')||CM_TYPE,
     liveSchedule:fd.get('liveSchedule')||undefined,
-    published:fd.get('published')==='on',
+    isFeatured:fd.get('isFeatured')==='on',
+    isActive:fd.get('isActiveChk')==='on',
+    features:JSON.stringify(features),
+    includes:JSON.stringify(includes),
+    curriculum:JSON.stringify(curriculum),
+    qna:JSON.stringify(qna),
+    seoTitle:fd.get('seoTitle'),
+    seoDescription:fd.get('seoDescription'),
+    seoKeywords:fd.get('seoKeywords'),
+    ogImage:fd.get('ogImage'),
+    canonicalUrl:fd.get('canonicalUrl'),
   };
+  // remove undefined keys
+  Object.keys(body).forEach(k=>{if(body[k]===undefined||body[k]==='')delete body[k];});
+
   const btn=e.target.querySelector('[type=submit]');
   btn.disabled=true;btn.innerHTML='<span class="loader" style="width:14px;height:14px;border-width:2px"></span> সংরক্ষণ...';
   try{
-    if(editId) await adminApi('/api/admin/courses/'+editId,{method:'PUT',body});
+    if(CM_EDIT_ID) await adminApi('/api/admin/courses/'+CM_EDIT_ID,{method:'PUT',body});
     else await adminApi('/api/admin/courses',{method:'POST',body});
     closeModal('course-modal');
-    toast(editId?'কোর্স আপডেট হয়েছে':'কোর্স যোগ হয়েছে','success');
+    toast(CM_EDIT_ID?'কোর্স আপডেট হয়েছে ✅':'কোর্স যোগ হয়েছে ✅','success');
     loadCourses();loadLiveCourses();
   }catch(err){toast(err.message,'error');}
-  finally{btn.disabled=false;btn.innerHTML='<i class="fas fa-save"></i> সংরক্ষণ';}
+  finally{btn.disabled=false;btn.innerHTML='<i class="fas fa-save"></i> সংরক্ষণ করুন';}
 }
 
 async function deleteCourse(id, title){
