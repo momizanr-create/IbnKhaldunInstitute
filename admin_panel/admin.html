@@ -288,7 +288,7 @@ tr:hover td{background:#faf8ff}
       <div class="form-group"><label class="label">পাসওয়ার্ড</label><input type="password" id="password" autocomplete="current-password" required /></div>
       <button class="btn btn-primary btn-block" style="padding:11px">লগইন</button>
       <p style="text-align:center;margin-top:12px;font-size:12px;color:var(--text-soft)">ইউজারনেম ও পাসওয়ার্ড সার্ভারের <code>.env</code> ফাইলে সেট করা।</p>
-      <p style="text-align:center;margin-top:6px;font-size:11px;color:#94a3b8">🔗 Server: <code style="font-size:10px">ibnkhalduninstitute.onrender.com</code></p>
+      <p style="text-align:center;margin-top:6px;font-size:11px;color:#94a3b8">🔗 Server: <code style="font-size:10px" id="serverHostTag">ibnkhalduninstitute.onrender.com</code></p>
     </form>
   </div>
 </div>
@@ -457,6 +457,16 @@ tr:hover td{background:#faf8ff}
           <button data-set="footer">ফুটার</button>
           <button data-set="welcomePopup">ওয়েলকাম পপআপ</button>
           <button data-set="cta">CTA সেকশন</button>
+          <button data-set="sectionTitles">সেকশন শিরোনাম</button>
+          <button data-set="seoMeta">SEO / মেটা</button>
+          <button data-set="topicsHeader">টপিকস হেডার</button>
+          <button data-set="coursesHeader">কোর্স হেডার</button>
+          <button data-set="instructorsHeader">শিক্ষক হেডার</button>
+          <button data-set="blogHeader">ব্লগ হেডার</button>
+          <button data-set="testimonialsHeader">অভিমত হেডার</button>
+          <button data-set="contactHeader">যোগাযোগ হেডার</button>
+          <button data-set="faqHeader">FAQ হেডার</button>
+          <button data-set="aboutPage">পরিচিতি পেজ (বিস্তারিত)</button>
         </div>
         <div id="setPane"></div>
       </div>
@@ -484,8 +494,45 @@ const fmt = n => Number(n||0).toLocaleString('en-US');
 const fmtDate = d => d ? new Date(d).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'2-digit' }) : '—';
 const fmtDateTime = d => d ? new Date(d).toLocaleString('en-US', { year:'numeric', month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit' }) : '—';
 
-const DEFAULT_API = 'https://ibnkhalduninstitute.onrender.com';
+// API base is auto-discovered from server's /api/public/admin-config
+// (which reads FRONTEND_URL / host from the .env file). User-set overrides
+// in localStorage take priority, then any window.__API_BASE__ injected by
+// hosting, then the same-origin or onrender default.
+const DEFAULT_API =
+  (typeof window !== 'undefined' && window.__API_BASE__) ||
+  (location.protocol === 'https:' && location.hostname && !/^(localhost|127\.|0\.0\.0\.0)/.test(location.hostname)
+    ? `${location.protocol}//${location.hostname.replace(/^admin\./,'')}`.replace('ibnkhalduninstitute.online','ibnkhalduninstitute.onrender.com')
+    : 'https://ibnkhalduninstitute.onrender.com');
 let API = localStorage.getItem('adminApiUrl') || DEFAULT_API;
+
+// ── Auto-load API base + site config from server's .env-backed endpoint ──
+let ENV_CONFIG = {};
+(async function bootstrapEnv(){
+  const tryBases = [API, location.origin, 'https://ibnkhalduninstitute.onrender.com'];
+  for (const base of tryBases){
+    try{
+      const r = await fetch(base.replace(/\/$/,'') + '/api/public/admin-config', { cache:'no-store' });
+      if (!r.ok) continue;
+      const cfg = await r.json();
+      ENV_CONFIG = cfg || {};
+      if (cfg.apiBase && !localStorage.getItem('adminApiUrl')) API = cfg.apiBase;
+      // Reflect in UI
+      try{
+        const tag = document.querySelector('#serverHostTag');
+        if (tag) tag.textContent = (API||'').replace(/^https?:\/\//,'');
+        if (cfg.siteName){
+          document.title = `অ্যাডমিন প্যানেল — ${cfg.siteName}`;
+          document.querySelectorAll('[data-env-sitename]').forEach(el=>el.textContent = cfg.siteName);
+        }
+        if (cfg.adminUsername){
+          const u = document.getElementById('username');
+          if (u && !u.value) u.placeholder = cfg.adminUsername;
+        }
+      }catch{}
+      break;
+    }catch{ /* try next */ }
+  }
+})();
 
 // ── Admin SWR cache (silent background refresh, no spinner on refresh) ──
 const _ADM_CACHE = 'tia_admin_cache_v1::';
@@ -1554,6 +1601,100 @@ const SETTINGS_FIELDS = {
       ['buttonText','বাটন টেক্সট','text'],
       ['buttonLink','বাটন লিংক','text'],
       ['backgroundImage','ব্যাকগ্রাউন্ড ছবি (আপলোড)','image'],
+    ]
+  },
+  sectionTitles:{
+    title:'সকল সেকশনের শিরোনাম',
+    desc:'হোম ও অন্যান্য পেজের সেকশন শিরোনাম এক জায়গা থেকে পরিবর্তন করুন।',
+    fields:[
+      ['topicsTitle','টপিকস সেকশন শিরোনাম','text','কোন বিষয়ে আপনি ইলম অর্জন করতে চান?'],
+      ['coursesTitle','কোর্স সেকশন শিরোনাম','text','কোর্সসমূহ'],
+      ['allCoursesTitle','"সকল কোর্স" পেজ শিরোনাম','text','সকল কোর্স'],
+      ['instructorsTitle','শিক্ষক সেকশন শিরোনাম','text','আমাদের শিক্ষকবৃন্দ'],
+      ['blogTitle','ব্লগ সেকশন শিরোনাম','text','সাম্প্রতিক ব্লগ থেকে পড়ুন'],
+      ['blogPageTitle','ব্লগ পেজ শিরোনাম','text','আমাদের ব্লগ'],
+      ['testimonialsTitle','অভিমত শিরোনাম','text','হাজারো শিক্ষার্থীর ভালোবাসা'],
+      ['contactTitle','যোগাযোগ শিরোনাম','text','যোগাযোগ করুন'],
+      ['contactSubtitle','যোগাযোগ উপ-শিরোনাম','text','আপনার প্রশ্ন বা পরামর্শ — আমরা শুনতে আগ্রহী'],
+      ['faqTitle','FAQ শিরোনাম','text','কোর্স সম্পর্কিত প্রশ্নোত্তর'],
+    ]
+  },
+  seoMeta:{
+    title:'SEO ও মেটা ট্যাগ',
+    desc:'index.html-এর <title>, description, og:image ইত্যাদি।',
+    fields:[
+      ['pageTitle','Page Title','text','ইবনে খালদুন ইনস্টিটিউট – অনলাইনে নতুন দক্ষতা অর্জন করুন'],
+      ['metaDescription','Meta Description','textarea','ইবনে খালদুন ইনস্টিটিউট - বাংলাদেশের শীর্ষস্থানীয় অনলাইন শিক্ষা প্ল্যাটফর্ম।'],
+      ['metaKeywords','Meta Keywords','text','ইবনে খালদুন, Ibn Khaldun Institute, অনলাইন কোর্স, ইসলামিক কোর্স'],
+      ['ogTitle','Open Graph Title','text','ইবনে খালদুন ইনস্টিটিউট'],
+      ['ogDescription','Open Graph Description','textarea','অনলাইনে নতুন দক্ষতা অর্জন করুন।'],
+      ['ogImage','Open Graph Image (URL/আপলোড)','image'],
+      ['canonicalUrl','Canonical URL','text','https://ibnkhalduninstitute.online/'],
+      ['themeColor','Theme Color','text','#066144'],
+      ['gaId','Google Analytics ID','text','G-N2V94S7D9H'],
+    ]
+  },
+  topicsHeader:{
+    title:'টপিকস সেকশন', desc:'হোম পেজের "কোন বিষয়ে…" সেকশনের শিরোনাম/বিবরণ।',
+    fields:[
+      ['title','শিরোনাম','text','কোন বিষয়ে আপনি ইলম অর্জন করতে চান?'],
+      ['subtitle','উপ-শিরোনাম','textarea',''],
+    ]
+  },
+  coursesHeader:{
+    title:'কোর্স সেকশন হেডার', desc:'হোম পেজের কোর্স সেকশনের শিরোনাম/বিবরণ।',
+    fields:[
+      ['title','শিরোনাম','text','কোর্সসমূহ'],
+      ['subtitle','উপ-শিরোনাম','textarea',''],
+      ['viewAllText','"সব দেখুন" বাটন টেক্সট','text','সব কোর্স দেখুন'],
+    ]
+  },
+  instructorsHeader:{
+    title:'শিক্ষক সেকশন হেডার', desc:'',
+    fields:[
+      ['title','শিরোনাম','text','আমাদের শিক্ষকবৃন্দ'],
+      ['subtitle','উপ-শিরোনাম','textarea',''],
+    ]
+  },
+  blogHeader:{
+    title:'ব্লগ সেকশন হেডার', desc:'',
+    fields:[
+      ['title','হোম পেজ ব্লগ শিরোনাম','text','সাম্প্রতিক ব্লগ থেকে পড়ুন'],
+      ['pageTitle','ব্লগ পেজ শিরোনাম','text','আমাদের ব্লগ'],
+      ['subtitle','উপ-শিরোনাম','textarea',''],
+    ]
+  },
+  testimonialsHeader:{
+    title:'অভিমত সেকশন হেডার', desc:'',
+    fields:[
+      ['title','শিরোনাম','text','হাজারো শিক্ষার্থীর ভালোবাসা'],
+      ['subtitle','উপ-শিরোনাম','textarea',''],
+    ]
+  },
+  contactHeader:{
+    title:'যোগাযোগ সেকশন হেডার', desc:'',
+    fields:[
+      ['title','শিরোনাম','text','যোগাযোগ করুন'],
+      ['subtitle','উপ-শিরোনাম','textarea','আপনার প্রশ্ন বা পরামর্শ — আমরা শুনতে আগ্রহী'],
+    ]
+  },
+  faqHeader:{
+    title:'FAQ সেকশন হেডার', desc:'',
+    fields:[
+      ['title','শিরোনাম','text','কোর্স সম্পর্কিত প্রশ্নোত্তর'],
+      ['subtitle','উপ-শিরোনাম','textarea',''],
+    ]
+  },
+  aboutPage:{
+    title:'পরিচিতি পেজ (বিস্তারিত)', desc:'About পেজের সম্পূর্ণ কন্টেন্ট।',
+    fields:[
+      ['heroImage','হিরো ছবি','image'],
+      ['title','পেজ শিরোনাম','text','ইবনে খালদুন ইনস্টিটিউট সম্পর্কে'],
+      ['intro','পরিচিতি অনুচ্ছেদ','textarea',''],
+      ['mission','আমাদের লক্ষ্য','textarea',''],
+      ['vision','আমাদের ভিশন','textarea',''],
+      ['values','আমাদের মূল্যবোধ','textarea',''],
+      ['history','ইতিহাস','textarea',''],
     ]
   },
 };

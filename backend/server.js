@@ -659,13 +659,36 @@ app.post('/api/admin/settings/:key', authMiddleware, async (req, res) => {
 
 app.get('/api/public/config', async (_, res) => {
   try {
-    const keys = ['siteSettings','hero','navigation','footer','theme','welcomePopup','cta','contactContent','aboutPage','featuredCoursesConfig','whatsapp','contact','payment','social','notice','about'];
+    const keys = ['siteSettings','hero','navigation','footer','theme','welcomePopup','cta','contactContent','aboutPage','featuredCoursesConfig','whatsapp','contact','payment','social','notice','about','faqSection','whyJoin','sectionTitles','homeContent'];
     const all = await Settings.find({ key: { $in: keys } });
     const out = {};
     keys.forEach(k => { out[k] = all.find(s=>s.key===k)?.value || {}; });
     out.siteName = SITE_NAME;
+    // ── .env-driven defaults (safe, non-secret values only) ──
+    out.env = {
+      siteName: SITE_NAME,
+      frontendUrl: process.env.FRONTEND_URL || '',
+      adminUrl: process.env.ADMIN_URL || '',
+      cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME || '',
+      hasGoogleScript: !!process.env.GOOGLE_SCRIPT_URL,
+      adminNotifyEmail: process.env.ADMIN_NOTIFY_EMAIL || '',
+    };
     res.json(out);
   } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Admin-bootstrap config: returns safe .env values so admin.html can
+//    auto-discover the API base, site name, etc. without hardcoding URLs. ──
+app.get('/api/public/admin-config', (req, res) => {
+  res.json({
+    siteName: SITE_NAME,
+    apiBase: `${req.protocol}://${req.get('host')}`,
+    frontendUrl: process.env.FRONTEND_URL || '',
+    adminUrl: process.env.ADMIN_URL || '',
+    cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME || '',
+    hasGoogleScript: !!process.env.GOOGLE_SCRIPT_URL,
+    adminUsername: process.env.ADMIN_USERNAME || 'admin',
+  });
 });
 
 // ============================================================
