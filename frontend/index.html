@@ -674,6 +674,31 @@ th{background:#f1f5f9;font-weight:600}
 .cd-lesson .lesson-prog{font-size:11px;color:var(--secondary);font-weight:700;margin-right:6px}
 .cd-lesson .ico.watched{background:var(--success)}
 
+/* ── Certificate Banner & Modal ── */
+.cert-banner{background:linear-gradient(135deg,#065f46 0%,#047857 50%,#059669 100%);border-radius:14px;padding:22px 20px;display:flex;align-items:center;gap:16px;margin-bottom:18px;box-shadow:0 8px 32px rgba(6,97,68,.25);animation:certAppear .5s ease-out}
+@keyframes certAppear{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+.cert-banner .cert-icon{width:56px;height:56px;background:rgba(255,255,255,.15);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;color:#fde68a;flex-shrink:0}
+.cert-banner .cert-txt h4{color:#fff;font-size:16px;margin-bottom:4px}
+.cert-banner .cert-txt p{color:rgba(255,255,255,.8);font-size:13px;margin-bottom:10px}
+.cert-banner .cert-actions{display:flex;gap:8px;flex-wrap:wrap}
+.cert-dl-btn{background:#F5C518;color:#1a2e25;border:none;padding:9px 18px;border-radius:9px;font-weight:700;cursor:pointer;font-family:inherit;font-size:13px;display:inline-flex;align-items:center;gap:6px;transition:.15s}
+.cert-dl-btn:hover{background:#fbbf24}
+.cert-dl-btn.outline{background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.4)}
+.cert-dl-btn.outline:hover{background:rgba(255,255,255,.25)}
+/* Certificate modal overlay */
+.cert-modal-bg{position:fixed;inset:0;background:rgba(10,20,15,.8);z-index:3000;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;visibility:hidden;transition:.25s;backdrop-filter:blur(4px)}
+.cert-modal-bg.open{opacity:1;visibility:visible}
+.cert-modal-box{background:#fff;border-radius:16px;max-width:760px;width:100%;padding:24px;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.35);animation:certModalIn .3s ease-out}
+@keyframes certModalIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+.cert-modal-close{position:absolute;top:12px;right:12px;width:32px;height:32px;background:#f1f5f9;border:none;border-radius:50%;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;transition:.15s}
+.cert-modal-close:hover{background:var(--danger);color:#fff}
+.cert-preview-wrap{border:2px solid var(--border);border-radius:10px;overflow:hidden;position:relative;aspect-ratio:1120/792;width:100%;background:#f8faf9;margin:14px 0}
+.cert-preview-wrap img{width:100%;height:100%;object-fit:contain}
+/* Progress bar in sidebar */
+.course-progress-bar{height:6px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin:8px 0 4px}
+.course-progress-bar-fill{height:100%;background:var(--success);border-radius:99px;transition:width .4s ease}
+.course-progress-txt{font-size:12px;color:var(--text-soft);font-weight:600}
+
 /* WhatsApp floating button */
 .wa-float{position:fixed;bottom:20px;left:20px;width:56px;height:56px;background:#25d366;color:#fff;border-radius:50%;display:none;align-items:center;justify-content:center;font-size:28px;box-shadow:0 6px 20px rgba(37,211,102,.4);z-index:500;text-decoration:none;animation:waPulse 2s infinite}
 @keyframes waPulse{0%,100%{box-shadow:0 6px 20px rgba(37,211,102,.4)}50%{box-shadow:0 6px 20px rgba(37,211,102,.7),0 0 0 10px rgba(37,211,102,.1)}}
@@ -2901,6 +2926,17 @@ async function loadCourseDetail(id){
 
     return renderRecordedDetail(c);
   } catch(e){ $('#course-detail-content').innerHTML = emptyHtml(e.message) }
+  // After render: check progress & certificate state
+  setTimeout(()=>{
+    if(CURRENT_COURSE && isUserEnrolled(CURRENT_COURSE._id)){
+      cdCheckCourseCompletion(CURRENT_COURSE._id, CURRENT_COURSE.curriculum||[]);
+      // If already completed before, show side button
+      if(certIsComplete(CURRENT_COURSE._id)){
+        const sideBtn = document.getElementById('cd-cert-side-btn');
+        if(sideBtn) sideBtn.style.display='flex';
+      }
+    }
+  }, 400);
 }
 
 function isUserEnrolled(courseId){
@@ -3004,6 +3040,7 @@ function renderRecordedDetail(c){
               <button class="cd-tab" onclick="cdSwitchTab(this,'instructor')">ইন্সট্রাক্টর</button>
               <button class="cd-tab" onclick="cdSwitchTab(this,'qna')"><i class="fas fa-question-circle"></i> প্রশ্নোত্তর</button>
               <button class="cd-tab" onclick="cdSwitchTab(this,'comments');loadCourseComments()"><i class="fas fa-comments"></i> মন্তব্য</button>
+              ${enrolled && c.certificateImage ? `<button class="cd-tab" id="cert-tab-btn" onclick="cdSwitchTab(this,'certificate')"><i class="fas fa-certificate" style="color:#F5C518"></i> সার্টিফিকেট</button>` : ''}
             </div>
 
             <div id="cd-pane-desc" class="cd-tabpane active">
@@ -3053,6 +3090,14 @@ function renderRecordedDetail(c){
                 <div id="cd-comments-list"><div class="loading-state"><div class="loader"></div></div></div>
               </div>
             </div>
+
+            <!-- ── Certificate Tab Pane ── -->
+            <div id="cd-pane-certificate" class="cd-tabpane">
+              <div id="cert-pane-content">
+                ${enrolled && c.certificateImage ? certPaneHtml(c) : ''}
+              </div>
+            </div>
+
           </div>
 
           <aside class="cd-side">
@@ -3061,6 +3106,16 @@ function renderRecordedDetail(c){
                 <img src="${escapeHtml(c.thumbnail||previewThumb)}"/>
               </div>
               <div class="cd-side-body">
+                ${enrolled ? `
+                  <div style="margin-bottom:12px">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                      <span style="font-size:13px;font-weight:700;color:var(--text)"><i class="fas fa-chart-line" style="color:var(--primary)"></i> অগ্রগতি</span>
+                      <span class="course-progress-txt" id="cd-prog-pct">গণনা হচ্ছে...</span>
+                    </div>
+                    <div class="course-progress-bar"><div class="course-progress-bar-fill" id="cd-prog-fill" style="width:0%"></div></div>
+                    <div id="cd-prog-label" style="font-size:11px;color:var(--text-soft);margin-bottom:4px"></div>
+                    ${c.certificateImage ? `<button class="cert-dl-btn" id="cd-cert-side-btn" onclick="openCertModal()" style="width:100%;justify-content:center;margin-top:6px;display:none"><i class="fas fa-certificate"></i> সার্টিফিকেট ডাউনলোড</button>` : ''}
+                  </div>` : ''}
                 ${priceHtml}
                 <ul class="cd-stats-list">
                   ${c.students?`<li><i class="fas fa-user"></i><span class="lbl">শিক্ষার্থী</span><span class="val">${fmt(c.students)}</span></li>`:''}
@@ -3090,6 +3145,190 @@ function renderRecordedDetail(c){
         </div>
       </div>
     </div>`;
+}
+
+// ═══════════════════════════════════════════════
+// CERTIFICATE SYSTEM
+// ═══════════════════════════════════════════════
+function certCompletionKey(courseId){ return 'certComplete:'+courseId; }
+function certMarkComplete(courseId){ try{ localStorage.setItem(certCompletionKey(courseId),'1'); }catch{} }
+function certIsComplete(courseId){ try{ return localStorage.getItem(certCompletionKey(courseId))==='1'; }catch{ return false; } }
+
+function certPaneHtml(c){
+  const userName = CURRENT_USER?.name || 'শিক্ষার্থী';
+  const isComplete = certIsComplete(c._id);
+  if(!c.certificateImage) return `<div class="card" style="padding:24px;text-align:center"><p style="color:var(--text-soft)">এই কোর্সে সার্টিফিকেট নেই।</p></div>`;
+  if(!isComplete) return `
+    <div class="card" style="padding:28px;text-align:center">
+      <div style="width:70px;height:70px;background:#ede9fe;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:30px;color:#7c3aed">
+        <i class="fas fa-lock"></i>
+      </div>
+      <h3 style="margin-bottom:8px">সার্টিফিকেট এখনো পাননি</h3>
+      <p style="color:var(--text-soft);font-size:14px;max-width:380px;margin:0 auto">কারিকুলামের সকল ভিডিও ১০০% দেখা শেষ করলে সার্টিফিকেটটি স্বয়ংক্রিয়ভাবে উন্মুক্ত হবে।</p>
+      <div style="margin-top:16px;background:#f0fdf4;border-radius:10px;padding:14px;max-width:340px;margin-left:auto;margin-right:auto">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <span style="font-size:13px;font-weight:700">অগ্রগতি</span>
+          <span id="cert-pane-pct" style="font-size:13px;font-weight:700;color:var(--primary)">গণনা হচ্ছে...</span>
+        </div>
+        <div class="course-progress-bar"><div class="course-progress-bar-fill" id="cert-pane-fill" style="width:0%"></div></div>
+      </div>
+    </div>`;
+  return `
+    <div class="card" style="padding:24px">
+      <div style="text-align:center;margin-bottom:18px">
+        <div style="width:64px;height:64px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:#16a34a;margin:0 auto 10px"><i class="fas fa-certificate"></i></div>
+        <h3 style="margin-bottom:4px">অভিনন্দন! 🎉</h3>
+        <p style="color:var(--text-soft);font-size:14px">আপনি সফলভাবে কোর্সটি সম্পন্ন করেছেন</p>
+      </div>
+      <div class="cert-preview-wrap">
+        <img id="cert-preview-img" src="${escapeHtml(c.certificateImage)}" alt="সার্টিফিকেট"/>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px">
+        <button class="cert-dl-btn" onclick="downloadCertificate('${escapeHtml(c.certificateImage)}','${escapeHtml(c.title)}','${escapeHtml(userName)}')">
+          <i class="fas fa-download"></i> সার্টিফিকেট ডাউনলোড করুন
+        </button>
+        <button class="cert-dl-btn outline" onclick="openCertModal()">
+          <i class="fas fa-expand"></i> বড় করে দেখুন
+        </button>
+      </div>
+    </div>`;
+}
+
+function openCertModal(){
+  const c = CURRENT_COURSE;
+  if(!c?.certificateImage) return;
+  const userName = CURRENT_USER?.name || 'শিক্ষার্থী';
+  let modal = document.getElementById('cert-full-modal');
+  if(!modal){
+    modal = document.createElement('div');
+    modal.id = 'cert-full-modal';
+    modal.className = 'cert-modal-bg';
+    modal.innerHTML = `
+      <div class="cert-modal-box">
+        <button class="cert-modal-close" onclick="closeCertModal()">×</button>
+        <h3 style="margin-bottom:4px;padding-right:36px"><i class="fas fa-certificate" style="color:#F5C518"></i> আপনার সার্টিফিকেট</h3>
+        <p style="font-size:13px;color:var(--text-soft);margin-bottom:14px">ডাউনলোড করে রাখুন অথবা শেয়ার করুন</p>
+        <div class="cert-preview-wrap">
+          <img id="cert-modal-img" src="${escapeHtml(c.certificateImage)}" alt="সার্টিফিকেট" style="width:100%;height:100%;object-fit:contain"/>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px">
+          <button class="cert-dl-btn" onclick="downloadCertificate('${escapeHtml(c.certificateImage)}','${escapeHtml(c.title)}','${escapeHtml(userName)}')">
+            <i class="fas fa-download"></i> ডাউনলোড (PNG)
+          </button>
+          <button class="cert-dl-btn outline" style="background:#f1f5f9;color:var(--text)" onclick="closeCertModal()">বন্ধ করুন</button>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+    modal.addEventListener('click', e=>{ if(e.target===modal) closeCertModal(); });
+  }
+  setTimeout(()=>modal.classList.add('open'), 10);
+  document.body.style.overflow='hidden';
+}
+
+function closeCertModal(){
+  const modal = document.getElementById('cert-full-modal');
+  if(modal){ modal.classList.remove('open'); }
+  document.body.style.overflow='';
+}
+
+async function downloadCertificate(imgUrl, courseTitle, userName){
+  toast('সার্টিফিকেট তৈরি হচ্ছে...','info');
+  try{
+    // Load image via canvas to generate downloadable PNG
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function(){
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth || 1120;
+      canvas.height = img.naturalHeight || 792;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      // Download
+      const link = document.createElement('a');
+      const safeTitle = (courseTitle||'course').replace(/[^a-zA-Z0-9\u0980-\u09FF]/g,'_').slice(0,40);
+      link.download = `সার্টিফিকেট_${safeTitle}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      toast('সার্টিফিকেট ডাউনলোড হচ্ছে ✅','success');
+    };
+    img.onerror = function(){
+      // Fallback: direct link open
+      window.open(imgUrl, '_blank');
+      toast('সার্টিফিকেট নতুন ট্যাবে খুলেছে','success');
+    };
+    img.src = imgUrl + (imgUrl.includes('?') ? '&' : '?') + '_cb='+Date.now();
+  }catch(e){
+    window.open(imgUrl, '_blank');
+  }
+}
+
+// Check overall course completion % and trigger certificate if 100%
+function cdCheckCourseCompletion(courseId, curriculum){
+  const allLessons = [];
+  (curriculum||[]).forEach(sec=>(sec.lessons||[]).forEach(ls=>{ const id=tiaExtractYouTubeId(ls.videoId||''); if(id) allLessons.push(id); }));
+  if(!allLessons.length) return;
+  const completed = allLessons.filter(vid=>{ const s=tiaGetSavedProgress(courseId,vid); return s&&s.completed; }).length;
+  const pct = Math.round((completed/allLessons.length)*100);
+  // Update sidebar progress bar
+  const fill = document.getElementById('cd-prog-fill');
+  const pctEl = document.getElementById('cd-prog-pct');
+  const label = document.getElementById('cd-prog-label');
+  if(fill) fill.style.width=pct+'%';
+  if(pctEl) pctEl.textContent=pct+'%';
+  if(label) label.textContent=`${completed}/${allLessons.length} লেসন সম্পন্ন`;
+  // cert pane progress
+  const certFill = document.getElementById('cert-pane-fill');
+  const certPct = document.getElementById('cert-pane-pct');
+  if(certFill) certFill.style.width=pct+'%';
+  if(certPct) certPct.textContent=pct+'%';
+
+  if(pct>=100 && !certIsComplete(courseId)){
+    certMarkComplete(courseId);
+    // Show certificate banner
+    cdShowCertBanner(courseId);
+    // Show sidebar download button
+    const sideBtn = document.getElementById('cd-cert-side-btn');
+    if(sideBtn) sideBtn.style.display='flex';
+    // If certificate tab exists, refresh it
+    const certTab = document.getElementById('cert-tab-btn');
+    if(certTab){ certTab.style.display=''; }
+    const certPane = document.getElementById('cert-pane-content');
+    if(certPane && CURRENT_COURSE) certPane.innerHTML = certPaneHtml(CURRENT_COURSE);
+  } else if(certIsComplete(courseId)){
+    const sideBtn = document.getElementById('cd-cert-side-btn');
+    if(sideBtn) sideBtn.style.display='flex';
+  }
+}
+
+function cdShowCertBanner(courseId){
+  const c = CURRENT_COURSE;
+  if(!c?.certificateImage) return;
+  const userName = CURRENT_USER?.name || 'শিক্ষার্থী';
+  // Remove existing banner
+  document.getElementById('cd-cert-banner')?.remove();
+  const banner = document.createElement('div');
+  banner.id = 'cd-cert-banner';
+  banner.className = 'cert-banner';
+  banner.innerHTML = `
+    <div class="cert-icon"><i class="fas fa-certificate"></i></div>
+    <div class="cert-txt" style="flex:1">
+      <h4>🎉 অভিনন্দন! কোর্স সম্পন্ন হয়েছে!</h4>
+      <p>আপনি সকল ভিডিও ১০০% দেখেছেন। আপনার সার্টিফিকেট প্রস্তুত।</p>
+      <div class="cert-actions">
+        <button class="cert-dl-btn" onclick="downloadCertificate('${escapeHtml(c.certificateImage)}','${escapeHtml(c.title)}','${escapeHtml(userName)}')">
+          <i class="fas fa-download"></i> ডাউনলোড করুন
+        </button>
+        <button class="cert-dl-btn outline" onclick="openCertModal()">
+          <i class="fas fa-eye"></i> দেখুন
+        </button>
+        <button class="cert-dl-btn outline" onclick="document.getElementById('cd-cert-banner')?.remove()" style="padding:9px 12px">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>`;
+  // Insert before cd-preview
+  const preview = document.getElementById('cd-preview');
+  if(preview?.parentNode) preview.parentNode.insertBefore(banner, preview);
 }
 
 function renderCurriculumHTML(c, enrolled){
@@ -3446,11 +3685,15 @@ function cdPlayLesson(videoId, title, dur){
       // update curriculum lesson progress badge
       const el = document.querySelector(`[data-lesson-vid="${videoId}"] .lesson-prog`);
       if (el) el.textContent = pct.toLocaleString('bn-BD')+'%';
+      // update overall progress
+      cdCheckCourseCompletion(courseId, CURRENT_COURSE?.curriculum||[]);
     },
     onComplete:()=>{
       const row = document.querySelector(`[data-lesson-vid="${videoId}"]`);
       if (row){ row.querySelector('.ico')?.classList.add('watched'); const p=row.querySelector('.lesson-prog'); if (p){ p.textContent='✓ সম্পূর্ণ'; } }
       toast('লেসন সম্পন্ন হয়েছে — ✓','success');
+      // check if whole course is now done
+      cdCheckCourseCompletion(courseId, CURRENT_COURSE?.curriculum||[]);
     }
   });
   toast('▶ '+title+(dur?' ('+dur+')':''));

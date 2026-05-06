@@ -142,6 +142,8 @@ const courseSchema = new mongoose.Schema({
   seoKeywords:    String,
   ogImage:        String,
   canonicalUrl:   String,
+  // ── Certificate
+  certificateImage: String,            // URL of certificate template image
   // ── Analytics counters
   views:        { type: Number, default: 0 },
   viewsToday:   { type: Number, default: 0 },

@@ -321,9 +321,7 @@ textarea{resize:vertical;min-height:90px}
       <div class="nav-item" onclick="showPanel('courses')">
         <span class="ico"><i class="fas fa-play-circle"></i></span> কোর্সসমূহ
       </div>
-      <div class="nav-item" onclick="showPanel('live-courses')">
-        <span class="ico"><i class="fas fa-video"></i></span> লাইভ কোর্স
-      </div>
+
       <div class="nav-item" onclick="showPanel('topics')">
         <span class="ico"><i class="fas fa-tags"></i></span> বিষয়সমূহ (Topics)
       </div>
@@ -445,25 +443,13 @@ textarea{resize:vertical;min-height:90px}
         </div>
         <div class="card" style="padding:0">
           <div class="tbl-wrap"><table id="courses-table">
-            <thead><tr><th>ছবি</th><th>শিরোনাম</th><th>ধরন</th><th>মূল্য</th><th>শিক্ষক</th><th>অবস্থা</th><th>কার্য</th></tr></thead>
+            <thead><tr><th>ছবি</th><th>শিরোনাম</th><th>মূল্য</th><th>শিক্ষক</th><th>সার্টিফিকেট</th><th>অবস্থা</th><th>কার্য</th></tr></thead>
             <tbody id="courses-tbody"><tr><td colspan="7"><div class="loading-state"><div class="loader"></div></div></td></tr></tbody>
           </table></div>
         </div>
       </div>
 
-      <!-- ===== LIVE COURSES ===== -->
-      <div class="panel" id="panel-live-courses">
-        <div class="section-head">
-          <h2><i class="fas fa-video"></i> লাইভ কোর্স</h2>
-          <button class="btn btn-primary" onclick="openCourseModal('live')"><i class="fas fa-plus"></i> নতুন লাইভ কোর্স</button>
-        </div>
-        <div class="card" style="padding:0">
-          <div class="tbl-wrap"><table id="live-courses-table">
-            <thead><tr><th>ছবি</th><th>শিরোনাম</th><th>সময়সূচি</th><th>মূল্য</th><th>অবস্থা</th><th>কার্য</th></tr></thead>
-            <tbody id="live-courses-tbody"><tr><td colspan="6"><div class="loading-state"><div class="loader"></div></div></td></tr></tbody>
-          </table></div>
-        </div>
-      </div>
+
 
       <!-- ===== TOPICS ===== -->
       <div class="panel" id="panel-topics">
@@ -934,7 +920,7 @@ async function initApp(){
 // SIDEBAR / NAV
 // ============================================================
 const PANEL_TITLES={
-  'dashboard':'ড্যাশবোর্ড','courses':'কোর্সসমূহ','live-courses':'লাইভ কোর্স',
+  'dashboard':'ড্যাশবোর্ড','courses':'কোর্সসমূহ',
   'topics':'বিষয়সমূহ','instructors':'শিক্ষকবৃন্দ','faqs':'FAQ',
   'blog':'ব্লগ পোস্ট','testimonials':'প্রশংসাপত্র','users':'ব্যবহারকারী',
   'access-requests':'কোর্স রিকোয়েস্ট','enrollments':'এনরোলমেন্ট',
@@ -943,7 +929,7 @@ const PANEL_TITLES={
   'contact-settings':'যোগাযোগ ও সোশ্যাল',
 };
 const PANEL_LOADERS={
-  'courses':loadCourses,'live-courses':loadLiveCourses,'topics':loadTopics,
+  'courses':loadCourses,'topics':loadTopics,
   'instructors':loadInstructors,'faqs':loadFaqs,'blog':loadBlog,
   'testimonials':loadTestimonials,'users':loadUsers,
   'access-requests':()=>loadRequests('pending'),
@@ -1029,27 +1015,21 @@ async function loadCourses(){
   try{
     const list=await adminApi('/api/courses');
     ALL_COURSES_DATA=list||[];
-    const recorded=(list||[]).filter(c=>c.type!=='live');
-    $('#courses-tbody').innerHTML=recorded.length?recorded.map(courseRow).join(''):`<tr><td colspan="7"><div class="empty"><i class="fas fa-box-open"></i>কোনো কোর্স নেই</div></td></tr>`;
+    $('#courses-tbody').innerHTML=list&&list.length?list.map(courseRow).join(''):`<tr><td colspan="7"><div class="empty"><i class="fas fa-box-open"></i>কোনো কোর্স নেই</div></td></tr>`;
   }catch(e){$('#courses-tbody').innerHTML=`<tr><td colspan="7"><div class="empty">${esc(e.message)}</div></td></tr>`;}
 }
 
-async function loadLiveCourses(){
-  try{
-    const list=await adminApi('/api/courses');
-    const live=(list||[]).filter(c=>c.type==='live');
-    $('#live-courses-tbody').innerHTML=live.length?live.map(liveCourseRow).join(''):`<tr><td colspan="6"><div class="empty"><i class="fas fa-video"></i>কোনো লাইভ কোর্স নেই</div></td></tr>`;
-  }catch(e){$('#live-courses-tbody').innerHTML=`<tr><td colspan="6"><div class="empty">${esc(e.message)}</div></td></tr>`;}
-}
+// stub – no longer used but kept to avoid reference errors
+async function loadLiveCourses(){ }
 
 function courseRow(c){
   return `<tr>
     <td><img src="${esc(c.thumbnail||'')}" style="width:54px;height:38px;object-fit:cover;border-radius:6px;background:#e2e8f0" onerror="this.style.background='#e2e8f0'"/></td>
     <td style="max-width:200px;font-weight:600">${esc(c.title||'—')}<div style="font-size:11px;color:var(--text-soft)">${esc((c.shortDescription||'').slice(0,60))}</div></td>
-    <td><span class="badge badge-info">${esc(c.type||'recorded')}</span></td>
     <td>${c.price?`৳${fmt(c.price)}`:'<span class="badge badge-success">ফ্রি</span>'}</td>
     <td>${esc(c.instructor||'—')}</td>
-    <td>${c.published===false?'<span class="badge badge-warn">ড্রাফট</span>':'<span class="badge badge-success">প্রকাশিত</span>'}</td>
+    <td>${c.certificateImage?'<span class="badge badge-success"><i class="fas fa-certificate"></i> আছে</span>':'<span class="badge badge-warn">নেই</span>'}</td>
+    <td>${c.isActive===false?'<span class="badge badge-warn">নিষ্ক্রিয়</span>':'<span class="badge badge-success">সক্রিয়</span>'}</td>
     <td><div class="tbl-actions">
       <button class="btn btn-outline btn-sm" onclick="openCourseModal(null,'${esc(c._id)}')"><i class="fas fa-edit"></i></button>
       <button class="btn btn-danger btn-sm" onclick="deleteCourse('${esc(c._id)}','${esc(c.title)}')"><i class="fas fa-trash"></i></button>
@@ -1128,8 +1108,7 @@ function openCourseModal(type='recorded', editId=null){
         <div class="form-row">
           <div class="form-group"><label class="label">কোর্স ধরন</label>
             <select name="type">
-              <option value="recorded" ${!isLive?'selected':''}>রেকর্ডেড</option>
-              <option value="live" ${isLive?'selected':''}>লাইভ কোর্স</option>
+              <option value="recorded" selected>রেকর্ডেড</option>
             </select>
           </div>
           <div class="form-group"><label class="label">স্তর (Level)</label>
@@ -1193,6 +1172,14 @@ function openCourseModal(type='recorded', editId=null){
         <div class="form-group">
           <label class="label">ভিডিও পাঠের মোট সময়</label>
           <input name="videoLessonsTime" value="${esc(v.videoLessonsTime||'')}" placeholder="০৪ : ৩২ : ১০" style="direction:ltr;max-width:200px"/>
+        </div>
+
+        <div class="form-group" style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:14px">
+          <label class="label" style="color:#15803d"><i class="fas fa-certificate" style="color:#15803d"></i> সার্টিফিকেট টেমপ্লেট ছবি</label>
+          <p style="font-size:12px;color:#4b7c61;margin-bottom:8px">কোর্স সম্পন্ন করার পর শিক্ষার্থীরা এই সার্টিফিকেটটি ডাউনলোড করতে পারবেন। ছবির URL দিন (প্রস্তাবিত সাইজ: ১১২০×৭৯২ px, PNG/JPG)।</p>
+          <input name="certificateImage" value="${esc(v.certificateImage||'')}" placeholder="https://... (সার্টিফিকেট ছবির URL)" style="direction:ltr"/>
+          ${v.certificateImage?`<img src="${esc(v.certificateImage)}" style="height:80px;border-radius:6px;margin-top:8px;border:2px solid #86efac" onerror="this.style.display='none'"/>`:``}
+          <div style="font-size:12px;color:#4b7c61;margin-top:6px"><i class="fas fa-info-circle"></i> Cloudinary বা যেকোনো ইমেজ হোস্টিং সাইটে আপলোড করে URL দিন।</div>
         </div>
 
         <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:9px;padding:12px;font-size:13px;color:#856404">
@@ -1451,6 +1438,7 @@ async function saveCourse(e){
     thumbnail:fd.get('thumbnailUrl')||undefined,
     previewVideoId,
     previewVideo:previewVideoId,
+    certificateImage:fd.get('certificateImage')||undefined,
     category:fd.get('category'),
     subCategory:fd.get('subCategory'),
     level:fd.get('level')||'beginner',
