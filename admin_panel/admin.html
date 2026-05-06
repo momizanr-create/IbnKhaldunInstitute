@@ -441,6 +441,15 @@ tr:hover td{background:#faf8ff}
 
     <!-- SETTINGS -->
     <div class="section" id="sec-settings">
+      <div class="card" style="background:linear-gradient(135deg,#1e1b4b,#5b21b6);color:#fff;margin-bottom:14px;padding:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+          <div>
+            <h3 style="color:#fff;font-size:16px;margin-bottom:4px"><i class="fas fa-link"></i> সেটিংস → index.html সংযোগ</h3>
+            <p style="font-size:12px;opacity:.8">এখান থেকে পরিবর্তন করলে index.html-এ স্বয়ংক্রিয়ভাবে আপডেট হবে।</p>
+          </div>
+          <button class="btn" style="background:#a3e635;color:#1e1b4b;font-weight:700" onclick="showSettingsGuide()"><i class="fas fa-map"></i> আইডি ম্যাপিং দেখুন</button>
+        </div>
+      </div>
       <div class="card">
         <div class="tab-row" id="settingsTabs">
           <button class="active" data-set="contact">যোগাযোগ</button>
@@ -467,6 +476,7 @@ tr:hover td{background:#faf8ff}
           <button data-set="contactHeader">যোগাযোগ হেডার</button>
           <button data-set="faqHeader">FAQ হেডার</button>
           <button data-set="aboutPage">পরিচিতি পেজ (বিস্তারিত)</button>
+          <button data-set="downloadFiles" style="background:#a3e635;color:#1e1b4b;font-weight:700;border-radius:8px;border:none">⬇ ফাইল ডাউনলোড</button>
         </div>
         <div id="setPane"></div>
       </div>
@@ -1700,6 +1710,7 @@ const SETTINGS_FIELDS = {
 };
 
 async function switchSetTab(key){
+  if (key === 'downloadFiles') return renderDownloadFilesTab();
   if (key === 'whyJoin') return renderWhyJoinTab();
   const cfg = SETTINGS_FIELDS[key];
   if (!cfg){ $('#setPane').innerHTML=''; return; }
@@ -2286,6 +2297,191 @@ function qnaAdd(){ __qna.push({question:'',answer:''}); qnaSync(); }
 function qnaRemove(i){ __qna.splice(i,1); qnaSync(); }
 function qnaInit(arr){ __qna = Array.isArray(arr) ? JSON.parse(JSON.stringify(arr)) : []; qnaSync(); }
 window.qnaAdd=qnaAdd; window.qnaRemove=qnaRemove;
+
+
+// ============================================================
+// SETTINGS GUIDE — Shows which index.html elements each setting controls
+// ============================================================
+
+// ============================================================
+// DOWNLOAD FILES TAB
+// ============================================================
+function renderDownloadFilesTab(){
+  const pane = document.getElementById('setPane');
+  if (!pane) return;
+  pane.innerHTML = `
+    <div class="settings-section">
+      <h4 style="color:var(--primary)"><i class="fas fa-download"></i> ফাইল ডাউনলোড</h4>
+      <p class="text-soft" style="margin-bottom:20px">বর্তমান কনফিগারেশন অনুযায়ী আপডেটেড ফাইলগুলো ডাউনলোড করুন।</p>
+      
+      <div style="display:grid;gap:14px">
+        <div class="card" style="background:#f0fdf4;border:1.5px solid #86efac">
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+            <div style="flex:1">
+              <h4 style="color:#166534;margin-bottom:4px"><i class="fas fa-home"></i> index.html</h4>
+              <p style="font-size:13px;color:#4b7c5a">সাইটের মূল ফ্রন্টএন্ড ফাইল। সমস্ত নতুন IDs (ikx_ prefix) সহ আপডেটেড।</p>
+              <div style="margin-top:8px;font-size:12px;color:#6b7280">
+                <i class="fas fa-info-circle"></i> সমস্ত settings API থেকে লোড হয় — এই ফাইল deploy করলেই হবে।
+              </div>
+            </div>
+            <button class="btn btn-success" onclick="downloadIndexHtml()" style="flex-shrink:0">
+              <i class="fas fa-download"></i> index.html ডাউনলোড
+            </button>
+          </div>
+        </div>
+        
+        <div class="card" style="background:#f5f3ff;border:1.5px solid #c4b5fd">
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+            <div style="flex:1">
+              <h4 style="color:#5b21b6;margin-bottom:4px"><i class="fas fa-tools"></i> admin.html</h4>
+              <p style="font-size:13px;color:#7c3aed">এই অ্যাডমিন প্যানেল ফাইল। সমস্ত সেটিংস, আইডি ম্যাপিং গাইড সহ।</p>
+            </div>
+            <button class="btn btn-primary" onclick="downloadAdminHtml()" style="flex-shrink:0">
+              <i class="fas fa-download"></i> admin.html ডাউনলোড
+            </button>
+          </div>
+        </div>
+
+        <div class="card" style="background:#fff7ed;border:1.5px solid #fed7aa">
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+            <div style="flex:1">
+              <h4 style="color:#c2410c;margin-bottom:4px"><i class="fas fa-box"></i> উভয় ফাইল একসাথে</h4>
+              <p style="font-size:13px;color:#9a3412">index.html ও admin.html — দুটোই একসাথে ডাউনলোড করুন।</p>
+            </div>
+            <button class="btn btn-warn" onclick="downloadBothFiles()" style="flex-shrink:0">
+              <i class="fas fa-file-archive"></i> উভয় ডাউনলোড
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:18px;background:#f8fafc">
+        <h4 style="font-size:14px;color:var(--primary);margin-bottom:10px"><i class="fas fa-list-ol"></i> ডিপ্লয় করার ধাপসমূহ</h4>
+        <ol style="padding-left:18px;font-size:13px;line-height:2;color:var(--text)">
+          <li>উপরের বাটন থেকে <strong>index.html</strong> ও <strong>admin.html</strong> ডাউনলোড করুন</li>
+          <li>পুরনো ফাইলগুলো আপনার হোস্টিং সার্ভারে রিপ্লেস করুন</li>
+          <li>server.js ও .env ফাইল আগের মতোই থাকবে — পরিবর্তন নেই</li>
+          <li>সাইট রিফ্রেশ করুন — সব পরিবর্তন কার্যকর হবে</li>
+        </ol>
+      </div>
+    </div>
+  `;
+}
+
+// ── Download current index.html content from server or use cached ──
+async function downloadIndexHtml(){
+  try{
+    // Fetch the current index from same origin or API's frontend URL
+    let htmlContent = null;
+    
+    // Try fetching from same origin
+    try {
+      const r = await fetch(location.origin + '/index.html', {cache:'no-cache'});
+      if (r.ok) htmlContent = await r.text();
+    } catch(e){}
+    
+    if (!htmlContent){
+      toast('index.html সার্ভার থেকে লোড করা যায়নি। সরাসরি সার্ভার ফাইল থেকে ডাউনলোড করুন।', 'error');
+      return;
+    }
+    
+    const blob = new Blob([htmlContent], {type:'text/html;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'index.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+    toast('index.html ডাউনলোড শুরু হয়েছে', 'success');
+  }catch(e){ toast(e.message,'error'); }
+}
+
+async function downloadAdminHtml(){
+  try{
+    let htmlContent = null;
+    try {
+      const r = await fetch(location.origin + '/admin.html', {cache:'no-cache'});
+      if (r.ok) htmlContent = await r.text();
+    } catch(e){}
+    
+    if (!htmlContent){
+      // Try fetching admin page itself
+      htmlContent = document.documentElement.outerHTML;
+    }
+    
+    const blob = new Blob([htmlContent], {type:'text/html;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'admin.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+    toast('admin.html ডাউনলোড শুরু হয়েছে', 'success');
+  }catch(e){ toast(e.message,'error'); }
+}
+
+async function downloadBothFiles(){
+  await downloadIndexHtml();
+  await new Promise(r=>setTimeout(r,500));
+  await downloadAdminHtml();
+}
+
+function showSettingsGuide(){
+  openModal(`
+    <h2><i class="fas fa-map"></i> Settings → index.html সংযোগ মানচিত্র</h2>
+    <div style="font-size:13px;line-height:2">
+      <table style="width:100%;border-collapse:collapse;min-width:300px">
+        <tr style="background:var(--primary);color:#fff"><th style="padding:8px 12px;text-align:left">সেটিংস ট্যাব → ফিল্ড</th><th style="padding:8px 12px;text-align:left">index.html এলিমেন্ট ID</th></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>হিরো সেকশন</b></td><td></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">pill</td><td><code>#ikx_hero_pill_text</code></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">title + highlight</td><td><code>#ikx_hero_title_h</code></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">subtitle</td><td><code>#ikx_hero_subtitle</code></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">primaryButtonText</td><td><code>#ikx_hero_btn_primary_txt</code></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">secondaryButtonText</td><td><code>#ikx_hero_btn_secondary_txt</code></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">stat1Num / stat1Lbl</td><td><code>#ikx_hero_stat1_num / #ikx_hero_stat1_lbl</code></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">stat2Num / stat2Lbl</td><td><code>#ikx_hero_stat2_num / #ikx_hero_stat2_lbl</code></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">stat3Num / stat3Lbl</td><td><code>#ikx_hero_stat3_num / #ikx_hero_stat3_lbl</code></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">stat4Num / stat4Lbl</td><td><code>#ikx_hero_stat4_num / #ikx_hero_stat4_lbl</code></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">card1Title / card1Desc</td><td><code>#ikx_hero_card1_title / #ikx_hero_card1_desc</code></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">card2Title / card2Desc</td><td><code>#ikx_hero_card2_title / #ikx_hero_card2_desc</code></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">card3Title / card3Desc</td><td><code>#ikx_hero_card3_title / #ikx_hero_card3_desc</code></td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>টপ নোটিশ</b></td><td></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">notice.text</td><td><code>#ikx_notice_bar</code></td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>সাইট তথ্য</b></td><td></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">siteName</td><td><code>#ikx_logo_name, #ikx_footer_site_name, &lt;title&gt;</code></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">logo</td><td><code>#ikx_logo_img</code></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">favicon</td><td><code>#ikx_favicon (link rel)</code></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">footerAbout</td><td><code>#ikx_footer_about</code></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">copyright</td><td><code>#ikx_footer_copyright</code></td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>যোগাযোগ তথ্য</b></td><td></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">email</td><td><code>#ikx_footer_email, যোগাযোগ পেজ</code></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">phone</td><td><code>#ikx_footer_phone, যোগাযোগ পেজ</code></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">address</td><td><code>#ikx_footer_address, যোগাযোগ পেজ</code></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">mapUrl</td><td><code>#ikx_contact_map_iframe</code></td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>সোশ্যাল মিডিয়া</b></td><td></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">social.facebook/youtube/etc</td><td><code>#ikx_footer_social (আইকন)</code></td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>WhatsApp উইজেট</b></td><td></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">enabled + number</td><td><code>#ikx_wa_float (ফ্লোটিং বাটন)</code></td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>পরিচিতি পেজ</b></td><td></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">title, tagline</td><td><code>#ikx_about_title, #ikx_about_tagline</code></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">stat1-4 Num/Lbl</td><td><code>#ikx_about_stat1-4_num/lbl</code></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">paragraphs + mission</td><td><code>#ikx_about_content</code></td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>FAQ ছবি</b></td><td></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">faqSection.image</td><td><code>#ikx_faq_image_wrap</code></td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>কেন যুক্ত হবেন</b></td><td></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">title, subtitle, items</td><td><code>#ikx_why_join_title, #ikx_why_join_subtitle, #ikx_why_join_grid</code></td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>নেভিগেশন</b></td><td></td></tr>
+        <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">homeLabel, coursesLabel, etc</td><td><code>#ikx_nav_links a[data-nav] টেক্সট</code></td></tr>
+        <tr><td style="padding:8px;"><b>ক্যাটাগরি ও কোর্স</b></td><td></td></tr>
+        <tr><td style="padding:6px 8px;">category filter dropdown</td><td><code>#ikx_category_filter, #ikx_sub_category_filter</code></td></tr>
+        <tr><td style="padding:6px 8px;">all courses grid</td><td><code>#ikx_all_courses, #ikx_recorded_courses</code></td></tr>
+      </table>
+    </div>
+    <div style="margin-top:14px;text-align:right"><button class="btn btn-outline" onclick="closeModal()">বন্ধ করুন</button></div>
+  `);
+}
 
 </script>
 </body>
