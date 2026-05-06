@@ -102,9 +102,11 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--primary)
 /* ===== HEADER / NAVBAR — matches hero gradient ===== */
 header{
   background:linear-gradient(135deg,#022b1d 0%,#066144 55%,#0f9d58 100%);
-  position:sticky;top:0;z-index:100;
+  position:fixed;top:0;left:0;right:0;z-index:100;
   box-shadow:0 2px 20px rgba(2,43,29,.35);
 }
+/* body padding so content doesn't hide under fixed header */
+body{padding-top:80px}
 .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0;gap:16px}
 .logo{display:flex;align-items:center;gap:10px;line-height:1;flex-shrink:0;cursor:pointer}
 .logo img{height:52px;width:auto;display:block;object-fit:contain;border-radius:7px}
@@ -181,6 +183,7 @@ header{
 
 /* ── MOBILE BREAKPOINT ── */
 @media(max-width:900px){
+  body{padding-top:64px}
   /* Navbar row: logo left, hamburger right, nothing in between */
   .nav{
     padding:0;
@@ -1494,7 +1497,7 @@ header .logo span#logo-line1,header .logo span#logo-line2,header .logo #logo-div
 /* ---- Footer responsive grid ---- */
 @media(max-width:600px){
   footer{padding:36px 0 18px;margin-top:40px}
-  .footer-grid{grid-template-columns:1fr;gap:22px;text-align:left}
+  .footer-grid{grid-template-columns:1fr;gap:22px;text-align:right}
 }
 
 /* ---- Hero overflow guard on tiny screens ---- */
@@ -1880,21 +1883,21 @@ header .logo span#logo-line1,header .logo span#logo-line2,header .logo #logo-div
         <h4 style="display:none"><span id="footer-site-name">ইবনে খালদুন ইনস্টিটিউট</span></h4>
         <p style="font-size:14px;color:#94a3b8" id="footer-about">ইসলামি জ্ঞান অর্জনের অনলাইন প্ল্যাটফর্ম।</p>
       </div>
-      <div style="text-align:left">
+      <div>
         <h4>কুইক লিংক</h4>
         <a data-nav="courses">কোর্সসমূহ</a>
         <a data-nav="instructors">শিক্ষকবৃন্দ</a>
         <a data-nav="blog">ব্লগ</a>
         <a data-nav="about">পরিচিতি</a>
       </div>
-      <div style="text-align:left">
+      <div>
         <h4>যোগাযোগ</h4>
         <a data-nav="contact">যোগাযোগ ফর্ম</a>
         <p id="footer-email" style="font-size:14px;color:#94a3b8"></p>
         <p id="footer-phone" style="font-size:14px;color:#94a3b8"></p>
         <p id="footer-address" style="font-size:14px;color:#94a3b8"></p>
       </div>
-      <div style="text-align:left">
+      <div>
         <h4>সোশ্যাল</h4>
         <div id="footer-social" style="display:flex;gap:10px;font-size:22px"></div>
       </div>
@@ -5048,8 +5051,6 @@ window.addEventListener('focus', ()=>{
 body, p, li, dd, dt, blockquote, figcaption, label, .card, .tab-pane, .container, footer, .footer-col, .about-text, .notice-bar, td, th{text-align:left !important}
 .hero, .hero *, .section-title, .page-title, h1.center, .text-center, [style*="text-align:center"]{text-align:left !important}
 .footer-bottom{text-align:left !important}
-.footer-grid, .footer-grid *{text-align:left !important}
-@media(max-width:600px){.footer-grid{text-align:left !important}}
 ul, ol{padding-left:1.25em !important;padding-right:0 !important}
 </style>
 
