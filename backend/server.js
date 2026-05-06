@@ -1,7 +1,7 @@
 // ============================================================
-// Ibn Khaldun Institute — Backend Server
-// Node.js + Express + MongoDB + Cloudinary
-// Deploy on: Render.com  →  https://ibnkhalduninstitute.onrender.com
+// মারকাযুদ দিরাসাতিল ইলমিয়্যাহ — Backend Server
+// Node.js + Express + MongoDB + Cloudinary + Google Apps Script (Email)
+// Deploy on Render.com
 // ============================================================
 
 require('dotenv').config();
@@ -15,226 +15,209 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const jwt        = require('jsonwebtoken');
 const bcrypt     = require('bcryptjs');
 const path       = require('path');
-const fs         = require('fs');
-// ✅ nodemailer / Gmail App Password সম্পূর্ণ বাদ — Google Apps Script দিয়ে email পাঠানো হচ্ছে
+// ✅ nodemailer সম্পূর্ণ বাদ — Google Apps Script দিয়ে email পাঠানো হচ্ছে
 
-// ── In-memory OTP store (email → { otp, expiresAt }) ──
-const otpStore = new Map();
+const SITE_NAME = 'মারকাযুদ দিরাসাতিল ইলমিয়্যাহ';
+const otpStore  = new Map(); // email → { otp, expiresAt }
 
 const app        = express();
 const PORT       = process.env.PORT || 5000;
-const JWT_SECRET = process.env.JWT_SECRET || 'ibn_khaldun_secret_2024';
+const JWT_SECRET = process.env.JWT_SECRET || 'markazuddirasah_secret_2024';
 
-// ── Cloudinary Config ──
+// ── Cloudinary ──
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key:    process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 📧 Google Apps Script — Email Service
-// Gmail App Password / nodemailer সম্পূর্ণ বাদ ✅
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// Render Dashboard → Environment Variables-এ সেট করুন:
-//   GOOGLE_SCRIPT_URL    = https://script.google.com/macros/s/XXXX/exec
-//   GOOGLE_SCRIPT_SECRET = ibnkhaldun_gas_secret_2024
+// ── Google Apps Script Email Service ──
+// Gmail App Password বাদ — Google Apps Script দিয়ে ইমেইল পাঠানো হয়
+// .env এ GOOGLE_SCRIPT_URL ও GOOGLE_SCRIPT_SECRET সেট করুন
 const GOOGLE_SCRIPT_URL    = process.env.GOOGLE_SCRIPT_URL || '';
-const GOOGLE_SCRIPT_SECRET = process.env.GOOGLE_SCRIPT_SECRET || 'ibnkhaldun_gas_secret_2024';
-
-if (GOOGLE_SCRIPT_URL) {
-  console.log('✅ Google Apps Script Email Service চালু');
-} else {
-  console.warn('⚠️  GOOGLE_SCRIPT_URL সেট নেই — OTP মেইল পাঠানো হবে না');
-  console.warn('    Render Dashboard → Environment Variables-এ GOOGLE_SCRIPT_URL যোগ করুন');
-}
-
-// ── Google Apps Script দিয়ে email পাঠানোর helper ──
-async function sendViaGAS(to, subject, html, type = 'general') {
-  if (!GOOGLE_SCRIPT_URL) {
-    console.warn('⚠️  GOOGLE_SCRIPT_URL নেই — email skip করা হলো');
-    return false;
-  }
-  try {
-    const res = await fetch(GOOGLE_SCRIPT_URL, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ secret: GOOGLE_SCRIPT_SECRET, to, subject, html, type }),
-      signal:  AbortSignal.timeout(20000),
-    });
-    const data = await res.json();
-    if (data.ok) {
-      console.log(`📧 Email sent via GAS | type:${type} | to:${to}`);
-      return true;
-    }
-    console.error(`❌ GAS email error: ${data.error}`);
-    return false;
-  } catch (err) {
-    console.error('❌ GAS fetch error:', err.message);
-    return false;
-  }
-}
+const GOOGLE_SCRIPT_SECRET = process.env.GOOGLE_SCRIPT_SECRET || 'markazud_gas_secret_2024';
+// Admin notification email (notification পাওয়ার জন্য)
+const ADMIN_NOTIFY_EMAIL_ENV = process.env.ADMIN_NOTIFY_EMAIL || '';
 
 // ============================================================
-// CORS — সব origin allow (open API; admin auth JWT দিয়ে protected)
+// CORS
 // ============================================================
-const corsOptions = {
-  origin: true,                 // request origin reflect — সব allow
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (origin.endsWith('.vercel.app')) return callback(null, true);
+    if (origin.endsWith('.onrender.com')) return callback(null, true);
+    if (origin.includes('localhost') || origin.includes('127.0.0.1')) return callback(null, true);
+    const allowed = [
+      process.env.FRONTEND_URL,
+      process.env.ADMIN_URL,
+      process.env.RENDER_URL,
+    ].filter(Boolean);
+    if (allowed.includes(origin)) return callback(null, true);
+    callback(null, true); // permissive — tighten if you want
+  },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
-  exposedHeaders: ['Content-Disposition'],
-  maxAge: 86400,
-};
-app.use(cors(corsOptions));
-// Preflight সব route এ handle
-app.options('*', cors(corsOptions));
-
-// Safety net: যদি কোথাও error হয়, response-এ CORS headers থাকবে
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (origin) res.header('Access-Control-Allow-Origin', origin);
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Vary', 'Origin');
-  next();
-});
+}));
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// ── Cloudinary Multer Storage ──
-const imageStorage = new CloudinaryStorage({
+// ============================================================
+// MongoDB
+// ============================================================
+mongoose.connect(process.env.MONGODB_URI)
+  .then(async () => {
+    console.log('✅ MongoDB connected');
+    if (typeof seedDatabase === 'function') await seedDatabase();
+  })
+  .catch(err => console.error('❌ MongoDB error:', err));
+
+// ============================================================
+// Cloudinary upload (multer)
+// ============================================================
+const storage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: 'ibn-khaldun',
-    allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'],
+    folder: 'markazuddirasah',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'pdf', 'mp4'],
+    resource_type: 'auto',
   },
 });
-const upload = multer({ storage: imageStorage });
+const upload = multer({ storage, limits: { fileSize: 50 * 1024 * 1024 } });
 
 // ============================================================
-// SCHEMAS
+// Schemas
 // ============================================================
-const adminSchema = new mongoose.Schema({
-  username:  { type: String, unique: true },
-  password:  String,
-  createdAt: { type: Date, default: Date.now },
-});
-const Admin = mongoose.model('Admin', adminSchema);
 
+// --- Lesson (sub)
+const lessonSchema = new mongoose.Schema({
+  title:    { type: String, required: true },
+  duration: String,           // "12:30"
+  videoId:  String,           // YouTube video id (e.g. "LXb3EKWsInQ")
+  isFree:   { type: Boolean, default: false },
+}, { _id: false });
+
+// --- Curriculum section
+const curriculumSectionSchema = new mongoose.Schema({
+  sectionTitle: String,
+  lessons:      [lessonSchema],
+}, { _id: false });
+
+// --- Course
 const courseSchema = new mongoose.Schema({
-  title: String, slug: { type: String, unique: true },
-  category: String, subCategory: String, instructor: String,
-  price: Number, originalPrice: Number, discount: Number,
-  description: String, shortDesc: String,
-  thumbnail: String, previewVideo: String,
-  duration: String, lessons: Number,
-  students:  { type: Number, default: 0 },
-  rating:    { type: Number, default: 4.5 },
-  level:     { type: String, default: 'সকলের জন্য' },
-  language:  { type: String, default: 'বাংলা' },
-  tags: [String],
-  curriculum: [{
-    sectionTitle: String,
-    lessons: [{ title: String, duration: String, videoId: String, isFree: Boolean, pdfUrl: String }],
-  }],
-  featured:  { type: Boolean, default: false },
-  published: { type: Boolean, default: true },
-  tabKey:    { type: String, default: '' },   // কোন ট্যাবে দেখাবে
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
-});
+  title:        { type: String, required: true },
+  slug:         { type: String, required: true, unique: true },
+  description:  String,
+  shortDescription: String,
+  thumbnail:    String,
+  price:        { type: Number, default: 0 },
+  oldPrice:     { type: Number, default: 0 },
+  category:     String,
+  subCategory:  String,
+  instructor:   String,
+  instructorId: { type: mongoose.Schema.Types.ObjectId, ref: 'Instructor' }, // NEW
+  instructorBio:String,
+  instructorPhoto: String,
+  duration:     String,                  // মেয়াদকাল — "১ মাস"
+  videoLessonsTime: String,              // মোট ভিডিও সময় — "০৪ : ৩২ : ১০"
+  totalLessons: { type: Number, default: 0 },
+  level:        { type: String, default: 'beginner' },
+  language:     { type: String, default: 'bangla' },
+  type:         { type: String, enum: ['recorded', 'live'], default: 'recorded' },
+  // ── Live course specific
+  liveSchedule:    String,
+  liveStartDate:   String,
+  liveEndDate:     String,
+  liveTutorialUrl: String,
+  liveSeats:       { type: Number, default: 0 },
+  liveDetailImage: String,               // লাইভ কোর্স বিস্তারিত পেজের ছবি
+  liveDetailText:  String,               // লাইভ কোর্স বিস্তারিত পেজের টেক্সট
+  // ── Recorded course detail (course-detail page এ ব্যবহৃত)
+  previewVideoId:  String,               // YouTube video id (course preview)
+  students:        { type: Number, default: 0 },
+  rating:          { type: Number, default: 0 },   // 0..5
+  reviewsCount:    { type: Number, default: 0 },
+  includes:        [String],             // sidebar ই অন্তর্ভুক্ত list
+  features:        [String],             // "এই কোর্সে যা শিখবেন"
+  modules:         [{ title: String, lessons: [String] }],   // legacy
+  curriculum:      [curriculumSectionSchema],                // নতুন rich curriculum
+  isFeatured:   { type: Boolean, default: false },
+  isActive:     { type: Boolean, default: true },
+  // ── SEO fields (for "Auto-SEO" button in admin)
+  seoTitle:       String,
+  seoDescription: String,
+  seoKeywords:    String,
+  ogImage:        String,
+  canonicalUrl:   String,
+  // ── Analytics counters
+  views:        { type: Number, default: 0 },
+  viewsToday:   { type: Number, default: 0 },
+  viewsTodayDate: String, // YYYY-MM-DD
+}, { timestamps: true });
 const Course = mongoose.model('Course', courseSchema);
 
+// --- Course detail (rich content)
+const courseDetailSchema = new mongoose.Schema({
+  courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', unique: true },
+  content:  mongoose.Schema.Types.Mixed,
+}, { timestamps: true });
+const CourseDetail = mongoose.model('CourseDetail', courseDetailSchema);
+
+// --- Instructor
 const instructorSchema = new mongoose.Schema({
-  name: String, slug: String, title: String, bio: String, photo: String,
-  specializations: [String],
-  students: { type: Number, default: 0 },
-  courses:  { type: Number, default: 0 },
-  rating:   { type: Number, default: 4.8 },
-  social: { facebook: String, twitter: String, linkedin: String, youtube: String },
-  featured:  { type: Boolean, default: false },
-  published: { type: Boolean, default: true },
-  createdAt: { type: Date, default: Date.now },
-});
+  name:        { type: String, required: true },
+  designation: String,
+  bio:         String,
+  photo:       String,
+  expertise:   [String],
+  social:      { facebook: String, youtube: String, website: String },
+}, { timestamps: true });
 const Instructor = mongoose.model('Instructor', instructorSchema);
 
+// --- Testimonial
 const testimonialSchema = new mongoose.Schema({
-  name: String, role: String, text: String,
-  rating:    { type: Number, default: 5 },
-  avatar:    String,
-  published: { type: Boolean, default: true },
-  createdAt: { type: Date, default: Date.now },
-});
+  name:        String,
+  designation: String,
+  message:     String,
+  avatar:      String,
+  rating:      { type: Number, default: 5 },
+}, { timestamps: true });
 const Testimonial = mongoose.model('Testimonial', testimonialSchema);
 
+// --- Notice
 const noticeSchema = new mongoose.Schema({
-  title: String, body: String, imageUrl: String, ctaText: String, ctaLink: String,
-  active:    { type: Boolean, default: true },
-  startDate: Date, endDate: Date,
-  createdAt: { type: Date, default: Date.now },
-});
+  title:    String,
+  content:  String,
+  image:    String,
+  isActive: { type: Boolean, default: true },
+}, { timestamps: true });
 const Notice = mongoose.model('Notice', noticeSchema);
 
-// ── Feature (বিশেষত্ব) Model ──
-const featureSchema = new mongoose.Schema({
-  icon: { type: String, default: '✨' },
-  title: { type: String, required: true },
-  desc: String,
-  order: { type: Number, default: 0 },
-  active: { type: Boolean, default: true },
-  createdAt: { type: Date, default: Date.now },
-});
-const Feature = mongoose.model('Feature', featureSchema);
+// --- Blog
+const blogSchema = new mongoose.Schema({
+  title:    String,
+  slug:     { type: String, unique: true },
+  content:  String,
+  excerpt:  String,
+  image:    String,
+  author:   String,
+  tags:     [String],
+  isPublished: { type: Boolean, default: true },
+}, { timestamps: true });
+const Blog = mongoose.model('Blog', blogSchema);
 
-// ── Comment Schema (only enrolled users can comment) ──
-const commentSchema = new mongoose.Schema({
-  courseId:   { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },
-  userId:    { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  userName:  String,
-  text:      { type: String, required: true },
-  createdAt: { type: Date, default: Date.now },
-});
-const Comment = mongoose.model('Comment', commentSchema);
-
-// ── Course Q&A Schema (admin-managed) ──
-const courseQASchema = new mongoose.Schema({
-  courseId:   { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },
-  question:  { type: String, required: true },
-  answer:    { type: String, required: true },
-  order:     { type: Number, default: 0 },
-  active:    { type: Boolean, default: true },
-  createdAt: { type: Date, default: Date.now },
-});
-const CourseQA = mongoose.model('CourseQA', courseQASchema);
-
-
-const blogPostSchema = new mongoose.Schema({
-  title:      { type: String, required: true },
-  slug:       { type: String, unique: true },
-  category:   String,
-  excerpt:    String,
-  content:    String,
-  author:     String,
-  image:      String,
-  readTime:   String,
-  featured:   { type: Boolean, default: false },
-  published:  { type: Boolean, default: true },
-  createdAt:  { type: Date, default: Date.now },
-  updatedAt:  { type: Date, default: Date.now },
-});
-const BlogPost = mongoose.model('BlogPost', blogPostSchema);
-
+// --- ContactMessage
 const contactMessageSchema = new mongoose.Schema({
-  name:      String,
-  email:     String,
-  subject:   String,
-  message:   String,
-  status:    { type: String, default: 'new' },
-  createdAt: { type: Date, default: Date.now },
-});
+  name:    String,
+  email:   String,
+  phone:   String,
+  subject: String,
+  message: String,
+  read:    { type: Boolean, default: false },
+}, { timestamps: true });
 const ContactMessage = mongoose.model('ContactMessage', contactMessageSchema);
 
+// --- Settings (key-value)
 const settingsSchema = new mongoose.Schema({
   key:       { type: String, unique: true },
   value:     mongoose.Schema.Types.Mixed,
@@ -242,344 +225,217 @@ const settingsSchema = new mongoose.Schema({
 });
 const Settings = mongoose.model('Settings', settingsSchema);
 
-// ── OTP Store (MongoDB-based — server restart/sleep proof) ──
-// Render.com free tier sleeps → in-memory Map হারিয়ে যায়
-// MongoDB তে রাখলে সেই সমস্যা থাকে না
-const otpStoreSchema = new mongoose.Schema({
-  email:     { type: String, required: true, lowercase: true },
-  otpType:   { type: String, required: true }, // 'register' | 'reset'
-  otp:       { type: String, required: true },
-  expiresAt: { type: Date,   required: true },
-  createdAt: { type: Date,   default: Date.now, expires: 600 }, // TTL: 10min auto-delete
-});
-otpStoreSchema.index({ email: 1, otpType: 1 }, { unique: true });
-const OtpStore = mongoose.model('OtpStore', otpStoreSchema);
-
-const enrollmentSchema = new mongoose.Schema({
-  studentName: String, studentEmail: String, studentPhone: String,
-  courseId:      { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
-  courseTitle:   String, amount: Number,
-  paymentMethod: String, transactionId: String,
-  status:    { type: String, default: 'pending' },
-  createdAt: { type: Date, default: Date.now },
-});
-const Enrollment = mongoose.model('Enrollment', enrollmentSchema);
-
-// ── User Schema (for student accounts) ──
-const userSchema = new mongoose.Schema({
-  name:      { type: String, required: true },
-  email:     { type: String, unique: true, required: true, lowercase: true },
-  password:  { type: String, required: true },
-  avatar:    { type: String, default: '' },
-  resetToken:       { type: String, default: null },
-  resetTokenExpiry: { type: Date,   default: null },
-  // ── OTP (MongoDB-based, server restart-proof) ──
-  otpCode:          { type: String, default: null },
-  otpExpiry:        { type: Date,   default: null },
-  otpType:          { type: String, default: null }, // 'register' | 'reset'
-  enrolledCourses: [{
-    courseId:   { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
-    courseSlug: String,
-    courseTitle: String,
-    thumbnail:  String,
-    enrolledAt: { type: Date, default: Date.now },
-    progress:   { type: Number, default: 0 }, // 0-100 percent
-    completedLessons: [String], // lesson videoIds
-    certificateIssued: { type: Boolean, default: false },
-  }],
-  createdAt: { type: Date, default: Date.now },
-});
-const User = mongoose.model('User', userSchema);
-
-// ── Category Schema ──
-const subCategorySchema = new mongoose.Schema({
-  name:   { type: String, required: true },
-  slug:   { type: String, required: true },
-  icon:   { type: String, default: '' },
-  order:  { type: Number, default: 0 },
-  active: { type: Boolean, default: true },
-});
+// --- Category
 const categorySchema = new mongoose.Schema({
-  name:         { type: String, required: true },
-  slug:         { type: String, unique: true },
-  icon:         { type: String, default: '📚' },
-  order:        { type: Number, default: 0 },
-  active:       { type: Boolean, default: true },
-  subCategories:[ subCategorySchema ],
-  createdAt:    { type: Date, default: Date.now },
-});
+  name:          { type: String, required: true },
+  slug:          String,
+  icon:          String,
+  image:         String,                                                       // NEW: image instead of/with icon
+  subCategories: [{ name: String, slug: String }],
+  appliesTo:     { type: String, enum: ['both','live','recorded'], default: 'both' },
+  order:         { type: Number, default: 0 },
+}, { timestamps: true });
 const Category = mongoose.model('Category', categorySchema);
 
-// ── Course Tab Schema ──
-const courseTabSchema = new mongoose.Schema({
-  label:     { type: String, required: true },
-  key:       { type: String, required: true, unique: true },
-  icon:      { type: String, default: '' },
+// --- Topic (homepage subject blocks)
+const topicSchema = new mongoose.Schema({
+  name:      { type: String, required: true },
+  slug:      String,
+  icon:      { type: String, default: 'fa-book-open' },
+  image:     String,                                                           // NEW: uploaded image
+  courseIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }],
   order:     { type: Number, default: 0 },
-  active:    { type: Boolean, default: true },
-  courseIds: { type: [String], default: [] },
-  createdAt: { type: Date, default: Date.now },
-});
-const CourseTab = mongoose.model('CourseTab', courseTabSchema);
+}, { timestamps: true });
+const Topic = mongoose.model('Topic', topicSchema);
 
-const DEFAULT_COURSE_TABS = [
-  { label: 'সেরা বিক্রেতা', key: 'top', icon: '', order: 1, active: true },
-  { label: 'নতুন কোর্সসমূহ', key: 'new', icon: '', order: 2, active: true },
-  { label: 'ফ্রি কোর্সসমূহ', key: 'free', icon: '🆓', order: 3, active: true },
-  { label: 'জনপ্রিয় কোর্সসমূহ', key: 'popular', icon: '🔥', order: 4, active: true },
-  { label: 'বান্ডেল কোর্সসমূহ', key: 'bundle', icon: '📦', order: 5, active: true },
-];
+// --- FAQ
+const faqSchema = new mongoose.Schema({
+  question: String,
+  answer:   String,
+  order:    { type: Number, default: 0 },
+}, { timestamps: true });
+const Faq = mongoose.model('Faq', faqSchema);
 
-const DEFAULT_FAQS = {
-  home: {
-    items: [
-      { question: 'কোর্সে কীভাবে ভর্তি হব?', answer: 'পছন্দের কোর্স খুলে এনরোল বা অ্যাক্সেস রিকোয়েস্ট পাঠান। অনুমোদনের পর আপনার লার্নিং হাবে কোর্সটি দেখা যাবে।' },
-      { question: 'কোর্সগুলো কি মোবাইল থেকে করা যাবে?', answer: 'হ্যাঁ, মোবাইল, ট্যাব বা কম্পিউটার—যেকোনো ডিভাইস থেকে ক্লাস দেখা যাবে।' },
-      { question: 'কোর্স শেষ করলে সার্টিফিকেট পাব?', answer: 'নির্ধারিত লেসন সম্পন্ন করলে সার্টিফিকেট ডাউনলোড করার সুবিধা থাকবে।' },
-    ],
-  },
-  about: {
-    items: [
-      { question: 'ইবনে খালদুন ইনস্টিটিউটের লক্ষ্য কী?', answer: 'ইসলামিক মূল্যবোধের আলোকে মানসম্পন্ন অনলাইন শিক্ষা সহজলভ্য করা এবং জ্ঞান, আমল ও দক্ষতার সমন্বয়ে শিক্ষার্থী তৈরি করা।' },
-      { question: 'কারা এখানে ক্লাস নেন?', answer: 'বিষয়ভিত্তিক অভিজ্ঞ আলেম, শিক্ষক ও পেশাদার প্রশিক্ষকগণ এখানে কোর্স পরিচালনা করেন।' },
-      { question: 'শিক্ষা পদ্ধতি কেমন?', answer: 'ভিডিও লেসন, ধাপে ধাপে কারিকুলাম, প্র্যাকটিক্যাল নির্দেশনা এবং শেখার অগ্রগতি ট্র্যাক করার সুবিধা রয়েছে।' },
-    ],
-  },
-};
+// --- User
+const userSchema = new mongoose.Schema({
+  name:     { type: String, required: true },
+  email:    { type: String, required: true, unique: true },
+  phone:    String,
+  whatsapp: String,
+  password: { type: String, required: true },
+  enrolledCourses: [{
+    courseId:   { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
+    enrolledAt: { type: Date, default: Date.now },
+    progress:   { type: Number, default: 0 },
+  }],
+  isVerified: { type: Boolean, default: false },
+}, { timestamps: true });
+const User = mongoose.model('User', userSchema);
 
-// ── Course Access Request Schema ──
+// --- Course comment
+const courseCommentSchema = new mongoose.Schema({
+  courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },
+  userId:   { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  userName: String,
+  message:  String,
+  rating:   { type: Number, default: 5 },
+}, { timestamps: true });
+const CourseComment = mongoose.model('CourseComment', courseCommentSchema);
+
+// --- Recorded course access request
 const accessRequestSchema = new mongoose.Schema({
-  userId:          { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  userName:        String,
-  userEmail:       String,
-  userPhone:       String,          // ফোন নম্বর
-  transactionId:   String,          // ট্রানজেকশন আইডি
-  paymentMethod:   String,          // bKash, Nagad, Rocket, Card
-  courseId:        { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
-  courseTitle:     String,
-  courseSlug:      String,
-  thumbnail:       String,
-  price:           Number,
-  status:          { type: String, default: 'pending' }, // pending, approved, rejected
-  message:         String,
-  createdAt:       { type: Date, default: Date.now },
-  processedAt:     Date,
-});
+  userId:       { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  userName:     String,
+  userEmail:    String,
+  userPhone:    String,
+  courseId:     { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
+  courseTitle:  String,
+  paymentMethod: String,
+  trxId:         String,
+  amount:        Number,
+  screenshot:    String,
+  status:        { type: String, enum: ['pending','approved','rejected'], default: 'pending' },
+  adminNote:     String,
+}, { timestamps: true });
 const AccessRequest = mongoose.model('AccessRequest', accessRequestSchema);
 
-// ── HOME SECTION (AI-generated dynamic blocks) ──
-const homeSectionSchema = new mongoose.Schema({
-  type:        { type: String, default: 'custom' },   // hero | course-grid | stats | testimonial | faq | custom
-  title:       String,
-  subtitle:    String,
-  variant:     { type: String, default: 'default' },  // chosen design template id
-  data:        { type: mongoose.Schema.Types.Mixed, default: {} }, // free-form payload
-  html:        String,           // rendered HTML (server-side cached)
-  order:       { type: Number, default: 0 },
-  enabled:     { type: Boolean, default: true },
-  createdAt:   { type: Date, default: Date.now },
-  updatedAt:   { type: Date, default: Date.now },
-});
-const HomeSection = mongoose.model('HomeSection', homeSectionSchema);
-
-
-// ============================================================
-// REALTIME VISITOR TRACKING (In-Memory — GA-independent)
-// প্রতিটি ভিজিটর ৩০ সেকেন্ড পর পর heartbeat পাঠায়।
-// ৯০ সেকেন্ড heartbeat না পেলে visitor অফলাইন ধরা হয়।
-// ============================================================
-const VISITOR_TIMEOUT_MS = 90 * 1000;
-const activeVisitors = new Map(); // visitorId → { page, device, lastSeen, path, enteredAt }
-
-// পুরনো visitor cleanup — প্রতি ৩০ সেকেন্ডে
-setInterval(() => {
-  const now = Date.now();
-  for (const [id, v] of activeVisitors.entries()) {
-    if (now - v.lastSeen > VISITOR_TIMEOUT_MS) activeVisitors.delete(id);
-  }
-}, 30000);
-
-// Page-wise stats (in-memory)
-const pageHits    = {};   // { pageName: count }
-const courseClicks = {};  // { courseId: { title, count } } — কোর্স ক্লিক ট্র্যাকার
-const hourlyHits  = [];   // [{ hour: "HH:00", count: N }] — শেষ ২৪ ঘণ্টা
-const deviceStats = {};   // { mobile: N, desktop: N, tablet: N }
-const dailyVisits = {};   // { "YYYY-MM-DD": count }
-
-function recordPageHit(page, device) {
-  pageHits[page]      = (pageHits[page]      || 0) + 1;
-  deviceStats[device] = (deviceStats[device] || 0) + 1;
-  const hKey   = new Date().toISOString().slice(0, 13) + ':00';
-  const hEntry = hourlyHits.find(h => h.hour === hKey);
-  if (hEntry) hEntry.count++;
-  else { hourlyHits.push({ hour: hKey, count: 1 }); if (hourlyHits.length > 24) hourlyHits.shift(); }
-  const dKey = new Date().toISOString().slice(0, 10);
-  dailyVisits[dKey] = (dailyVisits[dKey] || 0) + 1;
-}
+// --- Live course purchase request
+const liveCoursePurchaseSchema = new mongoose.Schema({
+  userId:        { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  userName:      { type: String, required: true },
+  userEmail:     { type: String, required: true },
+  userPhone:     String,
+  whatsappNumber:{ type: String, required: true },
+  courseId:      { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },
+  courseTitle:   String,
+  paymentMethod: String,
+  trxId:         String,
+  amount:        Number,
+  screenshot:    String,
+  status:        { type: String, enum: ['pending','approved','rejected'], default: 'pending' },
+  adminNote:     String,
+  whatsappGroupLink: String,
+  approvedAt:    Date,
+}, { timestamps: true });
+const LiveCoursePurchase = mongoose.model('LiveCoursePurchase', liveCoursePurchaseSchema);
 
 // ============================================================
-// AUTH MIDDLEWARE
+// Auth middlewares
 // ============================================================
-function authMiddleware(req, res, next) {
-  const token = req.headers['authorization']?.split(' ')[1];
-  if (!token) return res.status(401).json({ error: 'No token provided' });
+const authMiddleware = (req, res, next) => {
+  const token = req.headers.authorization?.replace('Bearer ', '');
+  if (!token) return res.status(401).json({ error: 'No token' });
   try {
     req.admin = jwt.verify(token, JWT_SECRET);
     next();
-  } catch {
-    res.status(401).json({ error: 'Invalid or expired token' });
+  } catch { return res.status(401).json({ error: 'Invalid token' }); }
+};
+
+const userAuthMiddleware = (req, res, next) => {
+  const token = req.headers.authorization?.replace('Bearer ', '');
+  if (!token) return res.status(401).json({ error: 'No token' });
+  try {
+    req.user = jwt.verify(token, JWT_SECRET);
+    next();
+  } catch { return res.status(401).json({ error: 'Invalid token' }); }
+};
+
+// Optional auth — doesn't fail if missing
+const optionalAuthMiddleware = (req, _res, next) => {
+  const token = req.headers.authorization?.replace('Bearer ', '');
+  if (token) {
+    try { req.user = jwt.verify(token, JWT_SECRET); } catch {}
+  }
+  next();
+};
+
+// ============================================================
+// Helpers
+// ============================================================
+
+// ── Google Apps Script দিয়ে ইমেইল পাঠানো ──
+const sendMail = async (to, subject, html, type = 'general') => {
+  if (!GOOGLE_SCRIPT_URL) {
+    console.error('Mail err: GOOGLE_SCRIPT_URL env variable সেট নেই! .env চেক করুন।');
+    return false;
+  }
+  try {
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        secret: GOOGLE_SCRIPT_SECRET,
+        to,
+        subject,
+        html,
+        type,
+      }),
+      signal: AbortSignal.timeout(20000), // 20 সেকেন্ড timeout
+    });
+    const data = await res.json();
+    if (data.ok) {
+      console.log(`✅ Email sent via GAS | to: ${to} | type: ${type}`);
+      return true;
+    } else {
+      console.error(`❌ GAS email error: ${data.error}`);
+      return false;
+    }
+  } catch (err) {
+    console.error('❌ sendMail fetch error:', err.message);
+    return false;
+  }
+};
+
+// ── Hard-coded admin notification ──
+const HARDCODED_NOTIFY_EMAIL = 'ahmadyousuf276@gmail.com';
+function notifyAdmin(subject, html){
+  const list = new Set();
+  list.add(HARDCODED_NOTIFY_EMAIL);
+  if (ADMIN_NOTIFY_EMAIL_ENV) list.add(ADMIN_NOTIFY_EMAIL_ENV);
+  for (const to of list){
+    try { sendMail(to, subject, html, 'admin-notify'); } catch(e){ console.error('notifyAdmin error', e); }
   }
 }
 
-// ============================================================
-// STATIC FILES — screenshot অনুযায়ী folder structure support
-// Project:
-//   admin_panel/admin.html
-//   backend/server.js
-//   frontend/index.html + frontend/images/*
-// ============================================================
-const PROJECT_ROOT = path.resolve(__dirname, '..');
+const slugify = (s) => (s||'').toString().toLowerCase().trim()
+  .replace(/[^\u0980-\u09FFa-z0-9\s-]/g, '')
+  .replace(/\s+/g,'-').replace(/-+/g,'-');
 
-const FRONTEND_DIRS = [
-  path.join(__dirname, 'public'),
-  path.join(__dirname, 'frontend'),
-  path.join(PROJECT_ROOT, 'frontend'),
-  path.join(process.cwd(), 'frontend'),
-  path.join(process.cwd(), 'public'),
-];
-
-const ADMIN_DIRS = [
-  path.join(__dirname, 'public'),
-  path.join(__dirname, 'admin_panel'),
-  path.join(PROJECT_ROOT, 'admin_panel'),
-  path.join(process.cwd(), 'admin_panel'),
-  path.join(process.cwd(), 'public'),
-];
-
-const STATIC_DIRS = [
-  ...FRONTEND_DIRS,
-  ...ADMIN_DIRS,
-  path.join(__dirname, 'images'),
-  path.join(PROJECT_ROOT, 'frontend', 'images'),
-  path.join(process.cwd(), 'frontend', 'images'),
-];
-
-function uniqueExistingDirs(dirs) {
-  return [...new Set(dirs.map(dir => path.resolve(dir)))].filter(dir => fs.existsSync(dir));
-}
-
-function firstExistingFile(paths) {
-  return paths.find(filePath => fs.existsSync(filePath));
-}
-
-function htmlCandidates(fileName, dirs) {
-  return dirs.map(dir => path.join(dir, fileName));
-}
-
-function sendHtmlFile(res, fileName, dirs, fallbackJson) {
-  const checkedPaths = htmlCandidates(fileName, dirs);
-  const htmlFile = firstExistingFile(checkedPaths);
-  if (htmlFile) return res.sendFile(htmlFile);
-  if (fallbackJson) return res.json(fallbackJson);
-  return res.status(404).json({
-    error: `${fileName} ফাইল পাওয়া যায়নি`,
-    checkedPaths,
-  });
-}
-
-uniqueExistingDirs(STATIC_DIRS).forEach(dir => app.use(express.static(dir)));
+// Parse a field that may be JSON-string or already an object/array
+const tryJSON = (v) => {
+  if (v == null) return v;
+  if (typeof v !== 'string') return v;
+  try { return JSON.parse(v); } catch { return v; }
+};
 
 // ============================================================
-// HEALTH
+// ROUTES
 // ============================================================
-app.get('/api/health', (req, res) =>
-  res.json({
-    status: 'ok',
-    time: new Date().toISOString(),
-    structure: {
-      root: PROJECT_ROOT,
-      staticDirs: uniqueExistingDirs(STATIC_DIRS),
-    },
-  })
-);
 
-// ── HTML Routes ──
-app.get('/', (req, res) => {
-  sendHtmlFile(res, 'index.html', FRONTEND_DIRS, {
-    status: 'ok',
-    message: 'Ibn Khaldun Institute API ✅',
-    time: new Date().toISOString(),
-  });
-});
+app.get('/api/health', (_, res) => res.json({ ok: true, site: SITE_NAME }));
 
-app.get('/index.html', (req, res) => {
-  sendHtmlFile(res, 'index.html', FRONTEND_DIRS);
-});
-
-app.get('/admin', (req, res) => {
-  sendHtmlFile(res, 'admin.html', ADMIN_DIRS);
-});
-
-app.get('/admin.html', (req, res) => {
-  sendHtmlFile(res, 'admin.html', ADMIN_DIRS);
-});
-
-// ── /reset-password route সরানো হয়েছে — এখন OTP-based system ব্যবহৃত হচ্ছে ──
+app.get('/', (_, res) => res.send(`<h2>${SITE_NAME} – API server is running.</h2>`));
 
 // ============================================================
-// AUTH ROUTES
+// ADMIN AUTH
 // ============================================================
-app.post('/api/admin/login', async (req, res) => {
+app.post('/api/admin/login', (req, res) => {
   try {
-    const { username, password } = req.body;
-    if (!username || !password)
-      return res.status(400).json({ error: 'username এবং password দিন' });
-    const admin = await Admin.findOne({ username: username.trim() });
-    if (!admin) return res.status(401).json({ error: 'Invalid credentials' });
-    const ok = await bcrypt.compare(password, admin.password);
-    if (!ok) return res.status(401).json({ error: 'Invalid credentials' });
-    const token = jwt.sign({ id: admin._id, username }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, username });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// প্রথমবার setup (admin না থাকলে)
-app.post('/api/admin/setup', async (req, res) => {
-  try {
-    const count = await Admin.countDocuments();
-    if (count > 0) return res.status(400).json({ error: 'Admin already exists' });
-    const hashed = await bcrypt.hash(req.body.password || 'admin123', 10);
-    await Admin.create({ username: req.body.username || 'admin', password: hashed });
-    res.json({ message: 'Admin created successfully' });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// Force reset — secret দিয়ে protect করা
-app.post('/api/admin/force-reset', async (req, res) => {
-  try {
-    const { secret, username, password } = req.body;
-    const RESET_SECRET = process.env.RESET_SECRET || 'ibn_reset_2024';
-    if (secret !== RESET_SECRET)
-      return res.status(403).json({ error: 'Invalid secret key' });
-    const hashed = await bcrypt.hash(password || 'admin123', 10);
-    await Admin.deleteMany({});
-    await Admin.create({ username: username || 'admin', password: hashed });
-    console.log('✅ Admin force reset done');
-    res.json({ message: 'Admin reset সফল হয=��েছে' });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// Password change
-app.post('/api/admin/change-password', authMiddleware, async (req, res) => {
-  try {
-    const { currentPassword, newPassword } = req.body;
-    const admin = await Admin.findById(req.admin.id);
-    if (!admin) return res.status(404).json({ error: 'Admin not found' });
-    const ok = await bcrypt.compare(currentPassword, admin.password);
-    if (!ok) return res.status(401).json({ error: 'Current password incorrect' });
-    admin.password = await bcrypt.hash(newPassword, 10);
-    await admin.save();
-    res.json({ message: 'Password changed successfully' });
+    const { username, password } = req.body || {};
+    const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
+    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+    if (!ADMIN_USERNAME || !ADMIN_PASSWORD) {
+      return res.status(500).json({ error: 'Admin credentials not configured in .env' });
+    }
+    if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
+      return res.status(401).json({ error: 'ভুল ইউজারনেম বা পাসওয়ার্ড' });
+    }
+    const token = jwt.sign(
+      { username: ADMIN_USERNAME, role: 'admin' },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+    res.json({ token, admin: { username: ADMIN_USERNAME, name: 'Admin' } });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -588,2569 +444,995 @@ app.post('/api/admin/change-password', authMiddleware, async (req, res) => {
 // ============================================================
 app.get('/api/courses', async (req, res) => {
   try {
-    const { category, featured, limit } = req.query;
-    let query = { published: true };
-    if (category) query.category = category;
-    if (featured) query.featured = true;
-    let q = Course.find(query).sort({ createdAt: -1 });
-    if (limit) q = q.limit(parseInt(limit));
-    res.json(await q);
+    const filter = { isActive: true };
+    if (req.query.type) filter.type = req.query.type;
+    if (req.query.category) filter.category = req.query.category;
+    if (req.query.subCategory) filter.subCategory = req.query.subCategory;
+    if (req.query.featured === 'true') filter.isFeatured = true;
+    const courses = await Course.find(filter).sort({ createdAt: -1 });
+    res.json(courses);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.get('/api/courses/:slug', async (req, res) => {
+// Public single course (by id OR slug) — for course-detail page
+app.get('/api/courses/:idOrSlug', async (req, res) => {
   try {
-    const course = await Course.findOne({ slug: req.params.slug });
+    const k = req.params.idOrSlug;
+    const isObjId = /^[0-9a-fA-F]{24}$/.test(k);
+    const course = isObjId
+      ? await Course.findById(k)
+      : await Course.findOne({ slug: k });
     if (!course) return res.status(404).json({ error: 'Not found' });
     res.json(course);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.get('/api/admin/courses', authMiddleware, async (req, res) => {
-  try { res.json(await Course.find().sort({ createdAt: -1 })); }
-  catch (e) { res.status(500).json({ error: e.message }); }
+app.get('/api/admin/courses', authMiddleware, async (_, res) => {
+  res.json(await Course.find().sort({ createdAt: -1 }));
 });
 
-app.post('/api/admin/courses', authMiddleware, upload.single('thumbnail'), async (req, res) => {
-  try {
-    const data = { ...req.body };
-    if (req.file) data.thumbnail = req.file.path;
-    if (data.tags && typeof data.tags === 'string')
-      data.tags = data.tags.split(',').map(t => t.trim());
-    if (data.curriculum && typeof data.curriculum === 'string')
-      data.curriculum = JSON.parse(data.curriculum);
-    if (!data.slug)
-      data.slug = data.title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
-    const course = new Course(data);
-    await course.save();
-    res.json(course);
-  } catch (e) { res.status(400).json({ error: e.message }); }
-});
-
-app.put('/api/admin/courses/:id', authMiddleware, upload.single('thumbnail'), async (req, res) => {
-  try {
-    const data = { ...req.body, updatedAt: new Date() };
-    if (req.file) data.thumbnail = req.file.path;
-    if (data.tags && typeof data.tags === 'string')
-      data.tags = data.tags.split(',').map(t => t.trim());
-    if (data.curriculum && typeof data.curriculum === 'string')
-      data.curriculum = JSON.parse(data.curriculum);
-    const course = await Course.findByIdAndUpdate(req.params.id, data, { new: true });
-    res.json(course);
-  } catch (e) { res.status(400).json({ error: e.message }); }
-});
-
-app.delete('/api/admin/courses/:id', authMiddleware, async (req, res) => {
-  try { await Course.findByIdAndDelete(req.params.id); res.json({ message: 'Deleted' }); }
-  catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ============================================================
-// INSTRUCTORS
-// ============================================================
-app.get('/api/instructors', async (req, res) => {
-  try { res.json((await Instructor.find({ published: true }).sort({ createdAt: -1 })).map(i => flattenInstructor(i.toObject()))); }
-  catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.get('/api/admin/instructors', authMiddleware, async (req, res) => {
-  try { res.json((await Instructor.find().sort({ createdAt: -1 })).map(i => flattenInstructor(i.toObject()))); }
-  catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-function flattenInstructor(inst) {
-  if (!inst) return inst;
-  const s = inst.social || {};
-  return { ...inst, facebook: s.facebook || '', twitter: s.twitter || '', youtube: s.youtube || '', linkedin: s.linkedin || '', featured: inst.featured === true };
-}
-
-function normInstructorData(data) {
-  if (data.specializations && typeof data.specializations === 'string')
-    data.specializations = data.specializations.split(',').map(s => s.trim());
-  data.social = {
-    facebook: data.facebook || data['social.facebook'] || '',
-    twitter:  data.twitter  || data['social.twitter']  || '',
-    youtube:  data.youtube  || data['social.youtube']  || '',
-    linkedin: data.linkedin || data['social.linkedin']  || '',
-  };
-  delete data.facebook; delete data.twitter; delete data.youtube; delete data.linkedin;
-  if (data.featured !== undefined) data.featured = data.featured === true || data.featured === 'true';
-  if (data.published !== undefined) data.published = data.published === true || data.published === 'true';
+// Normalize incoming course data (handle JSON-string fields from multipart)
+function normalizeCourseData(body) {
+  const data = { ...body };
+  ['features','modules','curriculum','includes'].forEach(k => {
+    if (data[k] !== undefined) data[k] = tryJSON(data[k]);
+  });
+  // numeric coercions
+  ['price','oldPrice','totalLessons','liveSeats','students','rating','reviewsCount'].forEach(k => {
+    if (data[k] !== undefined && data[k] !== '') data[k] = Number(data[k]);
+  });
+  // boolean coercions
+  ['isFeatured','isActive'].forEach(k => {
+    if (data[k] !== undefined) data[k] = (data[k] === true || data[k] === 'true');
+  });
+  // FIX: ObjectId ফিল্ড খালি string হলে MongoDB-তে পাঠাবো না
+  ['instructorId'].forEach(k => {
+    if (data[k] === '' || data[k] === null || data[k] === undefined) {
+      delete data[k];
+    }
+  });
   return data;
 }
 
-app.post('/api/admin/instructors', authMiddleware, upload.single('photo'), async (req, res) => {
+const courseUpload = upload.fields([
+  { name: 'thumbnail', maxCount: 1 },
+  { name: 'liveDetailImage', maxCount: 1 },
+]);
+
+function applyCourseFiles(req, data) {
+  if (req.files?.thumbnail?.[0]) data.thumbnail = req.files.thumbnail[0].path;
+  if (req.files?.liveDetailImage?.[0]) data.liveDetailImage = req.files.liveDetailImage[0].path;
+  // Allow explicit removal via "__remove_<field>"=1
+  if (req.body.__remove_thumbnail === '1') data.thumbnail = '';
+  if (req.body.__remove_liveDetailImage === '1') data.liveDetailImage = '';
+  delete data.__remove_thumbnail;
+  delete data.__remove_liveDetailImage;
+}
+
+app.post('/api/admin/courses', authMiddleware, courseUpload, async (req, res) => {
   try {
-    const data = normInstructorData({ ...req.body });
-    if (req.file) data.photo = req.file.path;
-    if (!data.slug) data.slug = (data.name || 'instructor').toLowerCase().replace(/\s+/g, '-');
-    const inst = new Instructor(data);
-    await inst.save();
-    res.json(flattenInstructor(inst.toObject()));
-  } catch (e) { res.status(400).json({ error: e.message }); }
+    const data = normalizeCourseData(req.body);
+    applyCourseFiles(req, data);
+    if (!data.slug) data.slug = slugify(data.title) + '-' + Date.now();
+    const course = await Course.create(data);
+    res.json(course);
+  } catch (e) { console.error('course POST:', e); res.status(500).json({ error: e.message }); }
 });
 
-app.put('/api/admin/instructors/:id', authMiddleware, upload.single('photo'), async (req, res) => {
+app.put('/api/admin/courses/:id', authMiddleware, courseUpload, async (req, res) => {
   try {
-    const data = normInstructorData({ ...req.body });
-    if (req.file) data.photo = req.file.path;
-    const inst = await Instructor.findByIdAndUpdate(req.params.id, data, { new: true });
-    res.json(flattenInstructor(inst.toObject()));
-  } catch (e) { res.status(400).json({ error: e.message }); }
+    const data = normalizeCourseData(req.body);
+    applyCourseFiles(req, data);
+    const course = await Course.findByIdAndUpdate(req.params.id, data, { new: true });
+    res.json(course);
+  } catch (e) { console.error('course PUT:', e); res.status(500).json({ error: e.message }); }
 });
 
-app.delete('/api/admin/instructors/:id', authMiddleware, async (req, res) => {
-  try { await Instructor.findByIdAndDelete(req.params.id); res.json({ message: 'Deleted' }); }
+app.delete('/api/admin/courses/:id', authMiddleware, async (req, res) => {
+  try { await Course.findByIdAndDelete(req.params.id); res.json({ ok: true }); }
   catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// Course detail (rich content) — kept for compat
+app.get('/api/course-detail/:id', async (req, res) => {
+  const detail = await CourseDetail.findOne({ courseId: req.params.id });
+  res.json(detail || { content: {} });
+});
+app.post('/api/admin/course-detail/:id', authMiddleware, async (req, res) => {
+  const detail = await CourseDetail.findOneAndUpdate(
+    { courseId: req.params.id },
+    { courseId: req.params.id, content: req.body },
+    { upsert: true, new: true }
+  );
+  res.json(detail);
 });
 
 // ============================================================
-// TESTIMONIALS
+// COURSE COMMENTS
 // ============================================================
-app.get('/api/testimonials', async (req, res) => {
-  try { res.json(await Testimonial.find({ published: true }).sort({ createdAt: -1 })); }
-  catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.get('/api/admin/testimonials', authMiddleware, async (req, res) => {
-  try { res.json(await Testimonial.find().sort({ createdAt: -1 })); }
-  catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.post('/api/admin/testimonials', authMiddleware, upload.single('avatar'), async (req, res) => {
+app.get('/api/courses/:id/comments', async (req, res) => {
   try {
-    const data = { ...req.body };
-    if (req.file) data.avatar = req.file.path;
-    const t = new Testimonial(data);
-    await t.save();
-    res.json(t);
-  } catch (e) { res.status(400).json({ error: e.message }); }
+    const list = await CourseComment.find({ courseId: req.params.id })
+      .sort({ createdAt: -1 }).limit(100);
+    res.json(list);
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.put('/api/admin/testimonials/:id', authMiddleware, upload.single('avatar'), async (req, res) => {
+app.post('/api/courses/:id/comments', userAuthMiddleware, async (req, res) => {
   try {
-    const data = { ...req.body };
-    if (req.file) data.avatar = req.file.path;
-    const t = await Testimonial.findByIdAndUpdate(req.params.id, data, { new: true });
-    res.json(t);
-  } catch (e) { res.status(400).json({ error: e.message }); }
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(401).json({ error: 'User not found' });
+    const c = await CourseComment.create({
+      courseId: req.params.id,
+      userId:   user._id,
+      userName: user.name,
+      message:  String(req.body.message || '').slice(0, 1000),
+      rating:   Number(req.body.rating || 5),
+    });
+    res.json(c);
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.delete('/api/admin/testimonials/:id', authMiddleware, async (req, res) => {
-  try { await Testimonial.findByIdAndDelete(req.params.id); res.json({ message: 'Deleted' }); }
-  catch (e) { res.status(500).json({ error: e.message }); }
+app.delete('/api/admin/courses/comments/:id', authMiddleware, async (req, res) => {
+  await CourseComment.findByIdAndDelete(req.params.id);
+  res.json({ ok: true });
 });
 
 // ============================================================
-// NOTICES
+// INSTRUCTORS / TESTIMONIALS / NOTICES / BLOG / CATEGORIES / FAQs
 // ============================================================
-app.get('/api/notices', async (req, res) => {
-  try { res.json(await Notice.find({ active: true })); }
-  catch (e) { res.status(500).json({ error: e.message }); }
-});
+// JSON-decode any string field that looks like JSON (so multipart forms can carry arrays/objects)
+function decodeFormJson(data, keys) {
+  keys.forEach(k => {
+    const v = data[k];
+    if (typeof v === 'string' && (v.startsWith('[') || v.startsWith('{'))) {
+      try { data[k] = JSON.parse(v); } catch {}
+    }
+  });
+}
+const crud = (Model, name, fileField=null) => {
+  app.get(`/api/${name}`, async (_, res) => res.json(await Model.find().sort({ createdAt: -1 })));
+  app.get(`/api/admin/${name}`, authMiddleware, async (_, res) => res.json(await Model.find().sort({ createdAt: -1 })));
+  const handle = (isUpdate) => async (req, res) => {
+    try {
+      const data = { ...req.body };
+      decodeFormJson(data, ['subCategories', 'tags', 'expertise', 'modules', 'curriculum']);
+      if (req.file && fileField) data[fileField] = req.file.path;
+      if (data[`__remove_${fileField}`] === '1') { data[fileField] = ''; }
+      delete data[`__remove_${fileField}`];
+      if (isUpdate) res.json(await Model.findByIdAndUpdate(req.params.id, data, { new: true }));
+      else res.json(await Model.create(data));
+    } catch (e) { console.error(`${name} ${isUpdate?'PUT':'POST'}:`, e); res.status(500).json({ error: e.message }); }
+  };
+  app.post(`/api/admin/${name}`, authMiddleware, fileField ? upload.single(fileField) : (req,_,n)=>n(), handle(false));
+  app.put(`/api/admin/${name}/:id`, authMiddleware, fileField ? upload.single(fileField) : (req,_,n)=>n(), handle(true));
+  app.delete(`/api/admin/${name}/:id`, authMiddleware, async (req, res) => {
+    await Model.findByIdAndDelete(req.params.id); res.json({ ok: true });
+  });
+};
 
-app.get('/api/admin/notices', authMiddleware, async (req, res) => {
-  try { res.json(await Notice.find().sort({ createdAt: -1 })); }
-  catch (e) { res.status(500).json({ error: e.message }); }
-});
+crud(Instructor, 'instructors', 'photo');
+crud(Testimonial, 'testimonials', 'avatar');
+crud(Notice, 'notices', 'image');
+crud(Faq, 'faqs');
+crud(Category, 'categories', 'image');
 
-app.post('/api/admin/notices', authMiddleware, upload.single('image'), async (req, res) => {
+// Blog (special: slug + publish filter)
+app.get('/api/blog', async (_, res) => res.json(await Blog.find({ isPublished: true }).sort({ createdAt: -1 })));
+app.get('/api/blog/:slug', async (req, res) => {
+  const post = await Blog.findOne({ slug: req.params.slug });
+  if (!post) return res.status(404).json({ error: 'Not found' });
+  res.json(post);
+});
+app.get('/api/admin/blog', authMiddleware, async (_, res) => res.json(await Blog.find().sort({ createdAt: -1 })));
+app.post('/api/admin/blog', authMiddleware, upload.single('image'), async (req, res) => {
   try {
     const data = { ...req.body };
-    if (req.file) data.imageUrl = req.file.path;
-    const n = new Notice(data);
-    await n.save();
-    res.json(n);
-  } catch (e) { res.status(400).json({ error: e.message }); }
+    if (req.file) data.image = req.file.path;
+    if (!data.slug) data.slug = slugify(data.title) + '-' + Date.now();
+    if (data.tags && typeof data.tags === 'string') data.tags = data.tags.split(',').map(t=>t.trim());
+    res.json(await Blog.create(data));
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
-
-app.put('/api/admin/notices/:id', authMiddleware, upload.single('image'), async (req, res) => {
+app.put('/api/admin/blog/:id', authMiddleware, upload.single('image'), async (req, res) => {
   try {
     const data = { ...req.body };
-    if (req.file) data.imageUrl = req.file.path;
-    const n = await Notice.findByIdAndUpdate(req.params.id, data, { new: true });
-    res.json(n);
-  } catch (e) { res.status(400).json({ error: e.message }); }
+    if (req.file) data.image = req.file.path;
+    if (data.tags && typeof data.tags === 'string') data.tags = data.tags.split(',').map(t=>t.trim());
+    res.json(await Blog.findByIdAndUpdate(req.params.id, data, { new: true }));
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
-
-app.delete('/api/admin/notices/:id', authMiddleware, async (req, res) => {
-  try { await Notice.findByIdAndDelete(req.params.id); res.json({ message: 'Deleted' }); }
-  catch (e) { res.status(500).json({ error: e.message }); }
+app.delete('/api/admin/blog/:id', authMiddleware, async (req, res) => {
+  await Blog.findByIdAndDelete(req.params.id); res.json({ ok: true });
 });
 
 // ============================================================
 // SETTINGS
 // ============================================================
-app.get('/api/settings', async (req, res) => {
-  try {
-    const settings = await Settings.find();
-    const obj = {};
-    settings.forEach(s => { obj[s.key] = s.value; });
-    res.json(obj);
-  } catch (e) { res.status(500).json({ error: e.message }); }
+app.get('/api/settings/:key', async (req, res) => {
+  const s = await Settings.findOne({ key: req.params.key });
+  res.json(s?.value || {});
 });
-
-app.post('/api/admin/settings', authMiddleware, async (req, res) => {
-  try {
-    for (const [key, value] of Object.entries(req.body)) {
-      await Settings.findOneAndUpdate({ key }, { key, value, updatedAt: new Date() }, { upsert: true });
-    }
-    res.json({ message: 'Settings saved' });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// Individual key GET (SEO ডেটার জন্য)
 app.get('/api/admin/settings/:key', authMiddleware, async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: req.params.key });
-    res.json(s ? { key: s.key, value: s.value } : { key: req.params.key, value: null });
-  } catch (e) { res.status(500).json({ error: e.message }); }
+  const s = await Settings.findOne({ key: req.params.key });
+  res.json(s?.value || {});
 });
-
-app.post('/api/admin/settings/upload', authMiddleware, upload.single('file'), async (req, res) => {
-  try {
-    if (!req.file) return res.status(400).json({ error: 'No file' });
-    res.json({ url: req.file.path });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// Public API to get WhatsApp number
-app.get('/api/public/settings/whatsapp', async (req, res) => {
-  try {
-    const setting = await Settings.findOne({ key: 'whatsappNumber' });
-    res.json({ number: setting ? setting.value : '+8801700000000' });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-
-// ============================================================
-// ENROLLMENTS
-// ============================================================
-app.post('/api/enrollments', async (req, res) => {
-  try {
-    const e = new Enrollment(req.body);
-    await e.save();
-    res.json({ message: 'Enrollment submitted', id: e._id });
-  } catch (e) { res.status(400).json({ error: e.message }); }
-});
-
-app.get('/api/admin/enrollments', authMiddleware, async (req, res) => {
-  try {
-    const { status } = req.query;
-    const query = status ? { status } : {};
-    res.json(await Enrollment.find(query).sort({ createdAt: -1 }));
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.put('/api/admin/enrollments/:id', authMiddleware, async (req, res) => {
-  try {
-    const e = await Enrollment.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    res.json(e);
-  } catch (e) { res.status(400).json({ error: e.message }); }
-});
-
-app.delete('/api/admin/enrollments/:id', authMiddleware, async (req, res) => {
-  try { await Enrollment.findByIdAndDelete(req.params.id); res.json({ message: 'Deleted' }); }
-  catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ============================================================
-// COURSE DETAIL (curriculum per course stored in Settings)
-// ============================================================
-app.get('/api/admin/course-detail/:id', authMiddleware, async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'course_detail_' + req.params.id });
-    res.json(s ? s.value : {});
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-app.post('/api/admin/course-detail/:id', authMiddleware, async (req, res) => {
-  try {
-    const key = 'course_detail_' + req.params.id;
-    await Settings.findOneAndUpdate(
-      { key },
-      { key, value: req.body, updatedAt: new Date() },
-      { upsert: true }
-    );
-    // Also update curriculum + price in the Course document
-    await Course.findByIdAndUpdate(req.params.id, {
-      description: req.body.description,
-      price: req.body.price,
-      originalPrice: req.body.oldPrice,
-      previewVideo: req.body.youtubeId,
-      curriculum: (req.body.curriculum || []).map(sec => ({
-        sectionTitle: sec.title,
-        lessons: (sec.lessons || []).map(ls => ({
-          title: ls.title,
-          duration: ls.duration,
-          videoId: ls.youtubeId,
-          isFree: ls.free || false,
-          pdfUrl: ls.pdfUrl || '',
-        })),
-      })),
-      updatedAt: new Date(),
-    });
-    res.json({ message: 'Saved' });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// Public course detail (for index.html)
-app.get('/api/course-detail/:id', async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'course_detail_' + req.params.id });
-    res.json(s ? s.value : {});
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ============================================================
-// BLOG POSTS
-// ============================================================
-function makeSlug(text) {
-  return String(text || '').toLowerCase().trim().replace(/s+/g, '-').replace(/[^w-]/g, '').replace(/-+/g, '-') || Date.now().toString(36);
-}
-
-app.get('/api/blog', async (req, res) => {
-  try { res.json(await BlogPost.find({ published: true }).sort({ featured: -1, createdAt: -1 })); }
-  catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.get('/api/blog/:slug', async (req, res) => {
-  try {
-    const post = await BlogPost.findOne({ slug: req.params.slug, published: true });
-    if (!post) return res.status(404).json({ error: 'Not found' });
-    res.json(post);
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.get('/api/admin/blog', authMiddleware, async (req, res) => {
-  try { res.json(await BlogPost.find().sort({ createdAt: -1 })); }
-  catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.post('/api/admin/blog', authMiddleware, async (req, res) => {
-  try {
-    const data = { ...req.body };
-    if (!data.title) return res.status(400).json({ error: 'শিরোনাম দিন' });
-    if (!data.slug) data.slug = makeSlug(data.title);
-    res.json(await BlogPost.create(data));
-  } catch (e) { res.status(400).json({ error: e.message }); }
-});
-
-app.put('/api/admin/blog/:id', authMiddleware, async (req, res) => {
-  try {
-    const data = { ...req.body, updatedAt: new Date() };
-    if (!data.slug && data.title) data.slug = makeSlug(data.title);
-    res.json(await BlogPost.findByIdAndUpdate(req.params.id, data, { new: true }));
-  } catch (e) { res.status(400).json({ error: e.message }); }
-});
-
-app.delete('/api/admin/blog/:id', authMiddleware, async (req, res) => {
-  try { await BlogPost.findByIdAndDelete(req.params.id); res.json({ message: 'Deleted' }); }
-  catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ============================================================
-// CONTACT CONTENT + MESSAGES
-// ============================================================
-app.get('/api/contact-content', async (req, res) => {
-  try { const s = await Settings.findOne({ key: 'contact_content' }); res.json(s ? s.value : {}); }
-  catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.get('/api/admin/contact-content', authMiddleware, async (req, res) => {
-  try { const s = await Settings.findOne({ key: 'contact_content' }); res.json(s ? s.value : {}); }
-  catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.post('/api/admin/contact-content', authMiddleware, async (req, res) => {
-  try {
-    await Settings.findOneAndUpdate({ key: 'contact_content' }, { key: 'contact_content', value: req.body, updatedAt: new Date() }, { upsert: true });
-    res.json({ message: 'Saved' });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.post('/api/contact-messages', async (req, res) => {
-  try {
-    const { name, email, subject, message } = req.body;
-    if (!name || !email || !message) return res.status(400).json({ error: 'নাম, ইমেইল ও বার্তা দিন' });
-    await ContactMessage.create({ name, email, subject, message });
-    res.json({ message: 'Message received' });
-  } catch (e) { res.status(400).json({ error: e.message }); }
-});
-
-app.get('/api/admin/contact-messages', authMiddleware, async (req, res) => {
-  try { res.json(await ContactMessage.find().sort({ createdAt: -1 })); }
-  catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.delete('/api/admin/contact-messages/all', authMiddleware, async (req, res) => {
-  try { await ContactMessage.deleteMany({}); res.json({ message: 'All deleted' }); }
-  catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.delete('/api/admin/contact-messages/:id', authMiddleware, async (req, res) => {
-  try { await ContactMessage.findByIdAndDelete(req.params.id); res.json({ message: 'Deleted' }); }
-  catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ============================================================
-// SITE SETTINGS
-// ============================================================
-app.get('/api/site-settings', async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'site_settings' });
-    res.json(s ? s.value : {});
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-app.get('/api/admin/site-settings', authMiddleware, async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'site_settings' });
-    res.json(s ? s.value : {});
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-app.post('/api/admin/site-settings', authMiddleware, async (req, res) => {
-  try {
-    await Settings.findOneAndUpdate(
-      { key: 'site_settings' },
-      { key: 'site_settings', value: req.body, updatedAt: new Date() },
-      { upsert: true }
-    );
-    // WhatsApp নম্বর আলাদাভাবেও সেভ করি (index.html পড়ার জন্য)
-    if (req.body.whatsappNumber) {
-      await Settings.findOneAndUpdate(
-        { key: 'whatsappNumber' },
-        { key: 'whatsappNumber', value: req.body.whatsappNumber, updatedAt: new Date() },
-        { upsert: true }
-      );
-    }
-    res.json({ message: 'Saved' });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ============================================================
-// HERO SECTION
-// ============================================================
-app.get('/api/hero-section', async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'hero_section' });
-    res.json(s ? s.value : {});
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-app.get('/api/admin/hero-section', authMiddleware, async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'hero_section' });
-    res.json(s ? s.value : {});
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-app.post('/api/admin/hero-section', authMiddleware, async (req, res) => {
-  try {
-    await Settings.findOneAndUpdate(
-      { key: 'hero_section' },
-      { key: 'hero_section', value: req.body, updatedAt: new Date() },
-      { upsert: true }
-    );
-    res.json({ message: 'Saved' });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ============================================================
-// NAVIGATION
-// ============================================================
-app.get('/api/navigation', async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'navigation' });
-    res.json(s ? s.value : {});
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-app.get('/api/admin/navigation', authMiddleware, async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'navigation' });
-    res.json(s ? s.value : {});
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-app.post('/api/admin/navigation', authMiddleware, async (req, res) => {
-  try {
-    await Settings.findOneAndUpdate(
-      { key: 'navigation' },
-      { key: 'navigation', value: req.body, updatedAt: new Date() },
-      { upsert: true }
-    );
-    res.json({ message: 'Saved' });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ============================================================
-// FOOTER
-// ============================================================
-app.get('/api/footer', async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'footer' });
-    res.json(s ? s.value : {});
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-app.get('/api/admin/footer', authMiddleware, async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'footer' });
-    res.json(s ? s.value : {});
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-app.post('/api/admin/footer', authMiddleware, async (req, res) => {
-  try {
-    await Settings.findOneAndUpdate(
-      { key: 'footer' },
-      { key: 'footer', value: req.body, updatedAt: new Date() },
-      { upsert: true }
-    );
-    res.json({ message: 'Saved' });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ============================================================
-// THEME SETTINGS
-// ============================================================
-app.get('/api/theme-settings', async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'theme_settings' });
-    res.json(s ? s.value : {});
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-app.get('/api/admin/theme-settings', authMiddleware, async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'theme_settings' });
-    res.json(s ? s.value : {});
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-app.post('/api/admin/theme-settings', authMiddleware, async (req, res) => {
-  try {
-    await Settings.findOneAndUpdate(
-      { key: 'theme_settings' },
-      { key: 'theme_settings', value: req.body, updatedAt: new Date() },
-      { upsert: true }
-    );
-    res.json({ message: 'Saved' });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ============================================================
-// WELCOME POPUP
-// ============================================================
-app.get('/api/welcome-popup', async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'welcome_popup' });
-    res.json(s ? s.value : {});
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-app.get('/api/admin/welcome-popup', authMiddleware, async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'welcome_popup' });
-    res.json(s ? s.value : {});
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-app.post('/api/admin/welcome-popup', authMiddleware, async (req, res) => {
-  try {
-    await Settings.findOneAndUpdate(
-      { key: 'welcome_popup' },
-      { key: 'welcome_popup', value: req.body, updatedAt: new Date() },
-      { upsert: true }
-    );
-    res.json({ message: 'Saved' });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ============================================================
-// CTA SECTION
-// ============================================================
-app.get('/api/cta-section', async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'cta_section' });
-    res.json(s ? s.value : {});
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-app.get('/api/admin/cta-section', authMiddleware, async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'cta_section' });
-    res.json(s ? s.value : {});
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-app.post('/api/admin/cta-section', authMiddleware, async (req, res) => {
-  try {
-    await Settings.findOneAndUpdate(
-      { key: 'cta_section' },
-      { key: 'cta_section', value: req.body, updatedAt: new Date() },
-      { upsert: true }
-    );
-    res.json({ message: 'Saved' });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ============================================================
-// FEATURED COURSES CONFIG
-// ============================================================
-app.get('/api/featured-courses-config', async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'featured_courses_config' });
-    res.json(s ? s.value : {});
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-app.get('/api/admin/featured-courses-config', authMiddleware, async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'featured_courses_config' });
-    res.json(s ? s.value : {});
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-app.post('/api/admin/featured-courses-config', authMiddleware, async (req, res) => {
-  try {
-    await Settings.findOneAndUpdate(
-      { key: 'featured_courses_config' },
-      { key: 'featured_courses_config', value: req.body, updatedAt: new Date() },
-      { upsert: true }
-    );
-    res.json({ message: 'Saved' });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ============================================================
-// STATS
-// ============================================================
-app.get('/api/admin/stats', authMiddleware, async (req, res) => {
-  try {
-    const [courses, instructors, testimonials, enrollments] = await Promise.all([
-      Course.countDocuments(), Instructor.countDocuments(),
-      Testimonial.countDocuments(), Enrollment.countDocuments(),
-    ]);
-    const pendingEnrollments = await Enrollment.countDocuments({ status: 'pending' });
-    const totalRevenue = await Enrollment.aggregate([
-      { $match: { status: 'approved' } },
-      { $group: { _id: null, total: { $sum: '$amount' } } },
-    ]);
-    res.json({ courses, instructors, testimonials, enrollments,
-      pendingEnrollments, revenue: totalRevenue[0]?.total || 0 });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.post('/api/admin/upload', authMiddleware, upload.single('file'), async (req, res) => {
-  try {
-    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-    res.json({ url: req.file.path, public_id: req.file.filename });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ============================================================
-// USER AUTH (Student Accounts)
-// ============================================================
-// ============================================================
-// PASSWORD RESET — OTP-ভিত্তিক (৪ ডিজিট) সিস্টেম
-// পুরনো link-based system সম্পূর্ণ সরানো হয়েছে
-// নতুন flow: ইমেইল দাও → OTP পাও → OTP যাচাই → নতুন পাসওয়ার্ড সেট
-// ============================================================
-
-// [REMOVED] /api/user/forgot-password   — পুরনো link-based, আর নেই
-// [REMOVED] /api/user/verify-reset-token — পুরনো token verify, আর নেই
-// [REMOVED] /api/user/reset-password     — পুরনো token-based reset, আর নেই
-
-// ── নতুন ডামি route: পুরনো link ক্লিক করলে সুন্দর বার্তা দেখাবে ──
-app.post('/api/user/forgot-password', (req, res) => {
-  res.status(410).json({ error: 'এই পদ্ধতি আর কাজ করে না। অনুগ্রহ করে OTP দিয়ে পাসওয়ার্ড রিসেট করুন।' });
-});
-app.get('/api/user/verify-reset-token', (req, res) => {
-  res.status(410).json({ valid: false, error: 'এই পদ্ধতি আর কাজ করে না। OTP দিয়ে পাসওয়ার্ড রিসেট করুন।' });
-});
-
-// পুরনো token-based reset — এখন শুধু error দেবে
-app.post('/api/user/reset-password', async (req, res) => {
-  // যদি OTP দিয়ে এসেছে (otp field আছে), reset-password-otp এ forward করি
-  const { otp, email, password } = req.body;
-  if (otp && email && password) {
-    // redirect to OTP handler logic inline
-    try {
-      if (password.length < 6)
-        return res.status(400).json({ error: 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে' });
-      const result = await verifyOtp(email, 'reset', otp);
-      if (!result.ok) return res.status(400).json({ error: result.error });
-      const user = await User.findOne({ email: email.toLowerCase() });
-      if (!user) return res.status(400).json({ error: 'অ্যাকাউন্ট পাওয়া যায়নি' });
-      user.password = await bcrypt.hash(password, 10);
-      user.resetToken = null;
-      user.resetTokenExpiry = null;
-      await user.save();
-      await OtpStore.deleteOne({ email: email.toLowerCase(), otpType: 'reset' });
-      const token = jwt.sign({ id: user._id, email: user.email, name: user.name }, JWT_SECRET, { expiresIn: '30d' });
-      return res.json({ message: 'পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে', token, user: { id: user._id, name: user.name, email: user.email, enrolledCourses: user.enrolledCourses } });
-    } catch (e) { return res.status(500).json({ error: e.message }); }
-  }
-  // পুরনো token-based call
-  return res.status(410).json({ error: 'এই পদ্ধতি আর কাজ করে না। OTP দিয়ে পাসওয়ার্ড রিসেট করুন।' });
-
-});
-
-// ============================================================
-// OTP — ইমেইল যাচাই (MongoDB-based — Render cold start proof)
-// ============================================================
-
-// ── Helper: OTP তৈরি ও MongoDB তে save ──
-async function saveOtp(email, type) {
-  const otp = String(Math.floor(1000 + Math.random() * 9000));
-  const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // ১০ মিনিট
-  await OtpStore.findOneAndUpdate(
-    { email: email.toLowerCase(), otpType: type },
-    { otp, expiresAt, createdAt: new Date() },
+app.post('/api/admin/settings/:key', authMiddleware, async (req, res) => {
+  const value = (req.body && typeof req.body === 'object' && 'value' in req.body)
+    ? req.body.value
+    : req.body;
+  const s = await Settings.findOneAndUpdate(
+    { key: req.params.key },
+    { key: req.params.key, value, updatedAt: new Date() },
     { upsert: true, new: true }
   );
-  return otp;
-}
+  res.json(s.value);
+});
 
-// ── Helper: OTP যাচাই ──
-async function verifyOtp(email, type, inputOtp) {
-  const record = await OtpStore.findOne({ email: email.toLowerCase(), otpType: type });
-  if (!record) return { ok: false, error: 'OTP পাওয়া যায়নি। আবার OTP নিন' };
-  if (new Date() > record.expiresAt) {
-    await OtpStore.deleteOne({ email: email.toLowerCase(), otpType: type });
-    return { ok: false, error: 'OTP মেয়াদ শেষ হয়ে গেছে। আবার OTP নিন' };
-  }
-  if (record.otp !== String(inputOtp).trim()) {
-    return { ok: false, error: 'OTP সঠিক নয়। আবার চেষ্টা করুন' };
-  }
-  return { ok: true };
-}
+app.get('/api/public/config', async (_, res) => {
+  try {
+    const keys = ['siteSettings','hero','navigation','footer','theme','welcomePopup','cta','contactContent','aboutPage','featuredCoursesConfig','whatsapp','contact','payment','social','notice','about'];
+    const all = await Settings.find({ key: { $in: keys } });
+    const out = {};
+    keys.forEach(k => { out[k] = all.find(s=>s.key===k)?.value || {}; });
+    out.siteName = SITE_NAME;
+    res.json(out);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
 
-// ── রেজিস্ট্রেশন OTP পাঠানো ──
+// ============================================================
+// CONTACT
+// ============================================================
+app.post('/api/contact-messages', async (req, res) => {
+  try {
+    const msg = await ContactMessage.create(req.body);
+    if (process.env.ADMIN_NOTIFY_EMAIL) {
+      notifyAdmin(`নতুন বার্তা — ${SITE_NAME}`,
+        `<h3>${msg.name} (${msg.email})</h3><p>${msg.message}</p>`);
+    }
+    res.json({ message: 'Sent', id: msg._id });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.get('/api/admin/contact-messages', authMiddleware, async (_, res) =>
+  res.json(await ContactMessage.find().sort({ createdAt: -1 })));
+app.delete('/api/admin/contact-messages/:id', authMiddleware, async (req, res) => {
+  await ContactMessage.findByIdAndDelete(req.params.id); res.json({ ok: true });
+});
+
+// ============================================================
+// USER AUTH (with OTP)
+// ============================================================
 app.post('/api/user/send-otp', async (req, res) => {
   try {
     const { email } = req.body;
-    if (!email || !email.includes('@'))
-      return res.status(400).json({ error: 'সঠিক ইমেইল দিন' });
+    if (!email) return res.status(400).json({ error: 'ইমেইল ঠিকানা দিন' });
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      return res.status(400).json({ error: 'সঠিক ইমেইল ঠিকানা দিন' });
 
-    const exists = await User.findOne({ email: email.toLowerCase() });
-    if (exists)
-      return res.status(400).json({ error: 'এই ইমেইলে ইতিমধ্যে অ্যাকাউন্ট আছে' });
+    // Rate limit: একই email এ ৬০ সেকেন্ডের মধ্যে আবার পাঠানো যাবে না
+    const existing = otpStore.get(email);
+    if (existing && (existing.expiresAt - Date.now()) > 1*60*1000) {
+      return res.status(429).json({ error: '১ মিনিট পর আবার চেষ্টা করুন' });
+    }
 
-    const otp = await saveOtp(email, 'register');
+    const otp = String(Math.floor(1000 + Math.random()*9000));
+    otpStore.set(email, { otp, expiresAt: Date.now() + 2*60*1000, verified: false });
+    console.log(`📧 Sending OTP to ${email}...`);
 
-    await sendViaGAS(
+    const ok = await sendMail(
       email,
-      'আপনার OTP কোড — ইবনে খালদুন ইনস্টিটিউট',
-      `
-        <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:480px;margin:0 auto;background:#fff;border:1px solid #e8e8e8;border-radius:10px;overflow:hidden">
-          <div style="background:#066144;padding:24px 30px">
-            <h2 style="color:#F5C518;margin:0;font-size:20px">ইবনে খালদুন ইনস্টিটিউট</h2>
+      `${SITE_NAME} — আপনার OTP কোড`,
+      `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>
+        <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;background:#f4f7f3;padding:30px;border-radius:12px">
+          <div style="background:#2f7d4f;color:#fff;padding:18px 24px;border-radius:8px 8px 0 0;text-align:center">
+            <h2 style="margin:0;font-size:20px">${SITE_NAME}</h2>
           </div>
-          <div style="padding:30px">
-            <p style="color:#333;font-size:15px;margin-top:0">আসসালামু আলাইকুম,</p>
-            <p style="color:#555;font-size:14px">আপনার নিবন্ধন নিশ্চিত করতে নিচের <strong>৪ সংখ্যার OTP কোড</strong> ব্যবহার করুন:</p>
-            <div style="text-align:center;margin:28px 0">
-              <span style="display:inline-block;background:#F5C518;color:#1a1a1a;font-size:38px;font-weight:900;letter-spacing:12px;padding:16px 32px;border-radius:8px;border:2px solid #d4a90e">${otp}</span>
+          <div style="background:#fff;padding:28px 24px;border-radius:0 0 8px 8px">
+            <p style="color:#374151;font-size:16px;margin-bottom:10px">আপনার নিবন্ধন OTP কোড:</p>
+            <div style="background:#f0fdf4;border:2px dashed #2f7d4f;border-radius:10px;padding:20px;text-align:center;margin:16px 0">
+              <span style="font-size:38px;font-weight:900;letter-spacing:12px;color:#1f5a37;font-family:monospace">${otp}</span>
             </div>
-            <p style="color:#888;font-size:12px;text-align:center">এই কোডটি <strong>১০ মিনিট</strong> পর্যন্ত কার্যকর থাকবে।<br>আপনি যদি এই অনুরোধ না করে থাকেন, তাহলে এই ইমেইলটি উপেক্ষা করুন।</p>
+            <p style="color:#6b7280;font-size:13px;margin-top:12px">⏱️ এই কোড <strong>২ মিনিট</strong> পর্যন্ত valid।</p>
+            <p style="color:#6b7280;font-size:13px">🔒 কোডটি কারো সাথে শেয়ার করবেন না।</p>
           </div>
-          <div style="background:#f5f5f5;padding:14px 30px;text-align:center">
-            <p style="color:#aaa;font-size:11px;margin:0">© ইবনে খালদুন ইনস্টিটিউট — ibnkhalduninstitute.online</p>
-          </div>
+          <p style="text-align:center;color:#9ca3af;font-size:12px;margin-top:14px">মারকাযুদ দিরাসাতিল ইলমিয়্যাহ</p>
         </div>
-      `,
-      'otp-register'
+      </body></html>`,
+      'otp'
     );
 
-    res.json({ message: 'OTP পাঠানো হয়েছে' });
+    if (!ok) return res.status(500).json({ error: 'ইমেইল পাঠানো যায়নি। GOOGLE_SCRIPT_URL সঠিকভাবে Render Dashboard-এ সেট আছে কিনা পরীক্ষা করুন।' });
+    res.json({ message: 'OTP sent', masked: email.replace(/(.{2}).*(@.*)/, '$1***$2') });
   } catch (e) {
-    console.error('[send-otp] error:', e.message);
-    res.status(500).json({ error: 'OTP পাঠাতে সমস্যা হয়েছে: ' + e.message });
-  }
-});
-
-// ── রেজিস্ট্রেশন OTP যাচাই ──
-app.post('/api/user/verify-otp', async (req, res) => {
-  try {
-    const { email, otp } = req.body;
-    if (!email || !otp)
-      return res.status(400).json({ error: 'ইমেইল ও OTP দিন' });
-
-    const result = await verifyOtp(email, 'register', otp);
-    if (!result.ok) return res.status(400).json({ error: result.error });
-
-    // Verified — OTP মুছে দাও
-    await OtpStore.deleteOne({ email: email.toLowerCase(), otpType: 'register' });
-    res.json({ verified: true, message: 'ইমেইল যাচাই সফল' });
-  } catch (e) {
-    console.error('[verify-otp] error:', e.message);
+    console.error('send-otp error:', e);
     res.status(500).json({ error: e.message });
   }
 });
 
-// ── পাসওয়ার্ড রিসেট: শুধু OTP যাচাই (delete করে না — step 3 এ পাসওয়ার্ড দেওয়ার সুযোগ রাখে) ──
-app.post('/api/user/verify-reset-otp', async (req, res) => {
-  try {
-    const { email, otp } = req.body;
-    if (!email || !otp)
-      return res.status(400).json({ error: 'ইমেইল ও OTP দিন' });
-
-    const result = await verifyOtp(email, 'reset', otp);
-    if (!result.ok) return res.status(400).json({ error: result.error });
-
-    // ✅ OTP সঠিক — কিন্তু এখন delete করব না, reset-password-otp তে final check হবে
-    res.json({ verified: true, message: 'OTP যাচাই সফল' });
-  } catch (e) {
-    console.error('[verify-reset-otp] error:', e.message);
-    res.status(500).json({ error: e.message });
-  }
-});
-
-
-app.post('/api/user/send-reset-otp', async (req, res) => {
-  try {
-    const { email } = req.body;
-    if (!email || !email.includes('@'))
-      return res.status(400).json({ error: 'সঠিক ইমেইল দিন' });
-
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user)
-      return res.status(400).json({ error: 'এই ইমেইলে কোনো অ্যাকাউন্ট নেই' });
-
-    const otp = await saveOtp(email, 'reset');
-
-    await sendViaGAS(
-      email,
-      'পাসওয়ার্ড রিসেট OTP — ইবনে খালদুন ইনস্টিটিউট',
-      `
-        <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:480px;margin:0 auto;background:#fff;border:1px solid #e8e8e8;border-radius:10px;overflow:hidden">
-          <div style="background:#066144;padding:24px 30px">
-            <h2 style="color:#F5C518;margin:0;font-size:20px">ইবনে খালদুন ইনস্টিটিউট</h2>
-            <p style="color:rgba(255,255,255,0.8);margin:6px 0 0;font-size:13px">পাসওয়ার্ড রিসেট অনুরোধ</p>
-          </div>
-          <div style="padding:30px">
-            <p style="color:#333;font-size:15px;margin-top:0">আসসালামু আলাইকুম, <strong>${user.name}</strong>!</p>
-            <p style="color:#555;font-size:14px">পাসওয়ার্ড রিসেট করতে নিচের <strong>৪ সংখ্যার OTP কোড</strong> ব্যবহার করুন:</p>
-            <div style="text-align:center;margin:28px 0">
-              <span style="display:inline-block;background:#F5C518;color:#1a1a1a;font-size:38px;font-weight:900;letter-spacing:12px;padding:16px 32px;border-radius:8px;border:2px solid #d4a90e">${otp}</span>
-            </div>
-            <p style="color:#888;font-size:12px;text-align:center">এই কোডটি <strong>১০ মিনিট</strong> পর্যন্ত কার্যকর থাকবে।</p>
-            <p style="color:#888;font-size:12px;text-align:center">আপনি যদি এই অনুরোধ না করে থাকেন, তাহলে এই ইমেইলটি উপেক্ষা করুন।</p>
-          </div>
-          <div style="background:#f5f5f5;padding:14px 30px;text-align:center">
-            <p style="color:#aaa;font-size:11px;margin:0">© ইবনে খালদুন ইনস্টিটিউট — ibnkhalduninstitute.online</p>
-          </div>
-        </div>
-      `,
-      'otp-reset'
-    );
-
-    res.json({ message: 'OTP পাঠানো হয়েছে' });
-  } catch (e) {
-    console.error('[send-reset-otp] error:', e.message);
-    res.status(500).json({ error: 'OTP পাঠাতে সমস্যা হয়েছে: ' + e.message });
-  }
-});
-
-// ── পাসওয়ার্ড রিসেট: OTP যাচাই + নতুন পাসওয়ার্ড সেট ──
-app.post('/api/user/reset-password-otp', async (req, res) => {
-  try {
-    const { email, otp, password } = req.body;
-    if (!email || !otp || !password)
-      return res.status(400).json({ error: 'ইমেইল, OTP ও নতুন পাসওয়ার্ড দিন' });
-    if (password.length < 6)
-      return res.status(400).json({ error: 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে' });
-
-    // MongoDB থেকে OTP যাচাই
-    const result = await verifyOtp(email, 'reset', otp);
-    if (!result.ok) return res.status(400).json({ error: result.error });
-
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user)
-      return res.status(400).json({ error: 'অ্যাকাউন্ট পাওয়া যায়নি' });
-
-    user.password = await bcrypt.hash(password, 10);
-    user.resetToken = null;
-    user.resetTokenExpiry = null;
-    await user.save();
-
-    // OTP মুছে দাও
-    await OtpStore.deleteOne({ email: email.toLowerCase(), otpType: 'reset' });
-
-    const token = jwt.sign(
-      { id: user._id, email: user.email, name: user.name },
-      JWT_SECRET,
-      { expiresIn: '30d' }
-    );
-
-    // Success notification email (background)
-    sendViaGAS(
-      email,
-      '✅ পাসওয়ার্ড পরিবর্তন সফল — ইবনে খালদুন ইনস্টিটিউট',
-      `
-        <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:480px;margin:0 auto;background:#fff;border:1px solid #e8e8e8;border-radius:10px;overflow:hidden">
-          <div style="background:#066144;padding:20px 28px">
-            <h2 style="color:#F5C518;margin:0;font-size:18px">ইবনে খালদুন ইনস্টিটিউট</h2>
-          </div>
-          <div style="padding:28px">
-            <p style="color:#333;font-size:15px;margin-top:0">আসসালামু আলাইকুম, <strong>${user.name}</strong>!</p>
-            <div style="background:#f0faf4;border-left:4px solid #066144;padding:12px 16px;border-radius:0 6px 6px 0;margin:16px 0">
-              <p style="margin:0;color:#066144;font-weight:700">✅ আপনার পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে।</p>
-            </div>
-            <p style="color:#888;font-size:13px">এই পরিবর্তন আপনি করেননি মনে হলে অবিলম্বে আমাদের সাথে যোগাযোগ করুন।</p>
-          </div>
-          <div style="background:#f5f5f5;padding:12px 28px;text-align:center">
-            <p style="color:#aaa;font-size:11px;margin:0">© ইবনে খালদুন ইনস্টিটিউট</p>
-          </div>
-        </div>
-      `,
-      'password-changed'
-    ).catch(err => console.error('[reset-password-otp] email notify error:', err.message));
-
-    res.json({
-      message: 'পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে',
-      token,
-      user: { id: user._id, name: user.name, email: user.email, enrolledCourses: user.enrolledCourses }
-    });
-  } catch (e) {
-    console.error('[reset-password-otp] error:', e.message);
-    res.status(500).json({ error: e.message });
-  }
+app.post('/api/user/verify-otp', (req, res) => {
+  const { email, otp } = req.body;
+  const rec = otpStore.get(email);
+  if (!rec) return res.status(400).json({ error: 'No OTP sent' });
+  if (Date.now() > rec.expiresAt) { otpStore.delete(email); return res.status(400).json({ error: 'OTP expired' }); }
+  if (rec.otp !== otp) return res.status(400).json({ error: 'Invalid OTP' });
+  rec.verified = true;
+  res.json({ ok: true, message: 'Verified' });
 });
 
 app.post('/api/user/register', async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-    if (!name || !email || !password)
-      return res.status(400).json({ error: 'নাম, ইমেইল ও পাসওয়ার্ড দিন' });
-    const exists = await User.findOne({ email: email.toLowerCase() });
-    if (exists) return res.status(400).json({ error: 'এই ইমেইল দিয়ে আগেই অ্যাকাউন্ট আছে' });
-    const hashed = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, email: email.toLowerCase(), password: hashed });
-    const token = jwt.sign({ id: user._id, email: user.email, name: user.name }, JWT_SECRET, { expiresIn: '30d' });
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email, enrolledCourses: [] } });
-  } catch (e) { res.status(500).json({ error: e.message }); }
+    const { name, email, phone, password, otp } = req.body;
+    if (!name || !email || !password) return res.status(400).json({ error: 'নাম, ইমেইল ও পাসওয়ার্ড প্রয়োজন' });
+    if (!otp) return res.status(400).json({ error: 'OTP কোড দিন' });
+
+    // OTP যাচাই (verified হোক বা সরাসরি otp match হোক — দুটোই accept)
+    const rec = otpStore.get(email);
+    if (!rec) return res.status(400).json({ error: 'OTP পাঠানো হয়নি। আগে OTP পাঠান।' });
+    if (Date.now() > rec.expiresAt) {
+      otpStore.delete(email);
+      return res.status(400).json({ error: 'OTP মেয়াদ শেষ। নতুন OTP পাঠান।' });
+    }
+    if (rec.otp !== String(otp)) return res.status(400).json({ error: 'OTP কোড সঠিক নয়' });
+
+    const exist = await User.findOne({ email });
+    if (exist) return res.status(400).json({ error: 'এই ইমেইল ইতিমধ্যে নিবন্ধিত' });
+    const hash = await bcrypt.hash(password, 10);
+    const user = await User.create({ name, email, phone, password: hash, isVerified: true });
+    otpStore.delete(email);
+    const token = jwt.sign({ id: user._id, email }, JWT_SECRET, { expiresIn: '30d' });
+    console.log(`✅ New user registered: ${email}`);
+    res.json({ token, user: { id: user._id, name: user.name, email: user.email, phone: user.phone } });
+  } catch (e) {
+    console.error('register error:', e.message);
+    res.status(500).json({ error: e.message });
+  }
 });
 
 app.post('/api/user/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) return res.status(400).json({ error: 'ইমেইল ও পাসওয়ার্ড দিন' });
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user) return res.status(401).json({ error: 'ইমেইল বা পাসওয়ার্ড ভুল' });
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ error: 'এই ইমেইলে কোনো অ্যাকাউন্ট নেই' });
     const ok = await bcrypt.compare(password, user.password);
-    if (!ok) return res.status(401).json({ error: 'ইমেইল বা পাসওয়ার্ড ভুল' });
-    const token = jwt.sign({ id: user._id, email: user.email, name: user.name }, JWT_SECRET, { expiresIn: '30d' });
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email, enrolledCourses: user.enrolledCourses } });
+    if (!ok) return res.status(401).json({ error: 'Wrong password' });
+    const token = jwt.sign({ id: user._id, email }, JWT_SECRET, { expiresIn: '30d' });
+    res.json({ token, user: { id: user._id, name: user.name, email: user.email, phone: user.phone } });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
-
-// User middleware
-function userAuthMiddleware(req, res, next) {
-  const token = req.headers['authorization']?.split(' ')[1];
-  if (!token) return res.status(401).json({ error: 'লগইন করুন' });
-  try {
-    req.user = jwt.verify(token, JWT_SECRET);
-    next();
-  } catch {
-    res.status(401).json({ error: 'সেশন শেষ, আবার লগইন করুন' });
-  }
-}
 
 app.get('/api/user/me', userAuthMiddleware, async (req, res) => {
+  const user = await User.findById(req.user.id).populate('enrolledCourses.courseId');
+  res.json(user);
+});
+
+app.post('/api/user/reset-password-otp', async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
-    if (!user) return res.status(404).json({ error: 'User not found' });
-    res.json(user);
+    const { email, otp, newPassword } = req.body;
+    const rec = otpStore.get(email);
+    if (!rec || rec.otp !== otp || Date.now() > rec.expiresAt)
+      return res.status(400).json({ error: 'OTP সঠিক নয় বা মেয়াদ শেষ। নতুন OTP পাঠান।' });
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ error: 'এই ইমেইলে কোনো অ্যাকাউন্ট নেই' });
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+    otpStore.delete(email);
+    res.json({ message: 'Password reset' });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// Update lesson progress
+// User: lesson progress (per-lesson completion)
 app.post('/api/user/progress', userAuthMiddleware, async (req, res) => {
   try {
-    const { courseId, lessonId } = req.body;
+    const { courseId, progress } = req.body;
+    const pct = Math.max(0, Math.min(100, Number(progress || 0)));
     const user = await User.findById(req.user.id);
-    const enrollment = user.enrolledCourses.find(e => e.courseId.toString() === courseId);
-    if (!enrollment) return res.status(403).json({ error: 'এই কোর্সে এনরোল নেই' });
-    if (!enrollment.completedLessons.includes(lessonId)) {
-      enrollment.completedLessons.push(lessonId);
-    }
-    // Get total lessons for this course
-    const course = await Course.findById(courseId);
-    let totalLessons = 0;
-    if (course?.curriculum) {
-      course.curriculum.forEach(sec => { totalLessons += (sec.lessons || []).length; });
-    }
-    if (totalLessons > 0) {
-      enrollment.progress = Math.round((enrollment.completedLessons.length / totalLessons) * 100);
-    }
-    if (enrollment.progress >= 100) {
-      enrollment.certificateIssued = true;
-    }
+    if (!user) return res.status(404).json({ error: 'এই ইমেইলে কোনো অ্যাকাউন্ট নেই' });
+    const e = user.enrolledCourses.find(x => String(x.courseId) === String(courseId));
+    if (e) { e.progress = pct; }
     await user.save();
-    res.json({ progress: enrollment.progress, certificate: enrollment.certificateIssued });
+    res.json({ ok: true, progress: pct });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ============================================================
-// CATEGORIES (with sub-categories)
+// RECORDED COURSE — Access Request
 // ============================================================
-app.get('/api/categories', async (req, res) => {
-  try { res.json(await Category.find({ active: true }).sort({ order: 1, createdAt: 1 })); }
-  catch (e) { res.status(500).json({ error: e.message }); }
-});
-app.get('/api/admin/categories', authMiddleware, async (req, res) => {
-  try { res.json(await Category.find().sort({ order: 1, createdAt: 1 })); }
-  catch (e) { res.status(500).json({ error: e.message }); }
-});
-app.post('/api/admin/categories', authMiddleware, async (req, res) => {
+app.post('/api/access-request', userAuthMiddleware, upload.single('screenshot'), async (req, res) => {
   try {
-    const { name, icon, order, subCategories } = req.body;
-    if (!name) return res.status(400).json({ error: 'নাম দিন' });
-    const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
-    const cat = await Category.create({
-      name, slug, icon: icon || '📚', order: order || 0,
-      subCategories: (subCategories || []).map(s => ({
-        name: s.name, icon: s.icon || '',
-        slug: s.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, ''),
-        order: s.order || 0, active: s.active !== false,
-      })),
-    });
-    res.json(cat);
-  } catch (e) { res.status(400).json({ error: e.message }); }
-});
-app.put('/api/admin/categories/:id', authMiddleware, async (req, res) => {
-  try {
-    const update = { ...req.body };
-    if (update.subCategories) {
-      update.subCategories = update.subCategories.map(s => ({
-        ...s,
-        slug: s.slug || s.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, ''),
-      }));
-    }
-    const cat = await Category.findByIdAndUpdate(req.params.id, update, { new: true });
-    res.json(cat);
-  } catch (e) { res.status(400).json({ error: e.message }); }
-});
-app.delete('/api/admin/categories/:id', authMiddleware, async (req, res) => {
-  try { await Category.findByIdAndDelete(req.params.id); res.json({ message: 'Deleted' }); }
-  catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// Subcategory CRUD helpers
-app.post('/api/admin/categories/:id/subcategories', authMiddleware, async (req, res) => {
-  try {
-    const cat = await Category.findById(req.params.id);
-    if (!cat) return res.status(404).json({ error: 'Category not found' });
-    const { name, icon, order } = req.body;
-    const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
-    cat.subCategories.push({ name, slug, icon: icon || '', order: order || 0, active: true });
-    await cat.save();
-    res.json(cat);
-  } catch (e) { res.status(400).json({ error: e.message }); }
-});
-app.put('/api/admin/categories/:id/subcategories/:subId', authMiddleware, async (req, res) => {
-  try {
-    const cat = await Category.findById(req.params.id);
-    if (!cat) return res.status(404).json({ error: 'Category not found' });
-    const sub = cat.subCategories.id(req.params.subId);
-    if (!sub) return res.status(404).json({ error: 'SubCategory not found' });
-    Object.assign(sub, req.body);
-    await cat.save();
-    res.json(cat);
-  } catch (e) { res.status(400).json({ error: e.message }); }
-});
-app.delete('/api/admin/categories/:id/subcategories/:subId', authMiddleware, async (req, res) => {
-  try {
-    const cat = await Category.findById(req.params.id);
-    if (!cat) return res.status(404).json({ error: 'Category not found' });
-    cat.subCategories.pull(req.params.subId);
-    await cat.save();
-    res.json(cat);
-  } catch (e) { res.status(400).json({ error: e.message }); }
-});
-
-// ============================================================
-// COURSE TABS
-// ============================================================
-app.get('/api/course-tabs', async (req, res) => {
-  try {
-    let tabs = await CourseTab.find({ active: true }).sort({ order: 1 });
-    res.json(tabs.length ? tabs : DEFAULT_COURSE_TABS);
-  }
-  catch (e) { res.status(500).json({ error: e.message }); }
-});
-app.get('/api/admin/course-tabs', authMiddleware, async (req, res) => {
-  try {
-    let tabs = await CourseTab.find().sort({ order: 1 });
-    if (!tabs.length) tabs = await CourseTab.insertMany(DEFAULT_COURSE_TABS);
-    res.json(tabs);
-  }
-  catch (e) { res.status(500).json({ error: e.message }); }
-});
-app.post('/api/admin/course-tabs', authMiddleware, async (req, res) => {
-  try {
-    const tab = await CourseTab.create(req.body);
-    res.json(tab);
-  } catch (e) { res.status(400).json({ error: e.message }); }
-});
-app.put('/api/admin/course-tabs/:id', authMiddleware, async (req, res) => {
-  try {
-    const tab = await CourseTab.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    res.json(tab);
-  } catch (e) { res.status(400).json({ error: e.message }); }
-});
-app.delete('/api/admin/course-tabs/:id', authMiddleware, async (req, res) => {
-  try { await CourseTab.findByIdAndDelete(req.params.id); res.json({ message: 'Deleted' }); }
-  catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.get('/api/faqs', async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'faqs' });
-    res.json(s ? s.value : DEFAULT_FAQS);
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-app.get('/api/admin/faqs', authMiddleware, async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'faqs' });
-    res.json(s ? s.value : DEFAULT_FAQS);
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-app.post('/api/admin/faqs', authMiddleware, async (req, res) => {
-  try {
-    const sanitize = section => ({
-      items: Array.isArray(section?.items)
-        ? section.items
-            .map(item => ({ question: String(item.question || '').trim(), answer: String(item.answer || '').trim() }))
-            .filter(item => item.question && item.answer)
-        : [],
-    });
-    const value = { home: sanitize(req.body.home), about: sanitize(req.body.about) };
-    await Settings.findOneAndUpdate(
-      { key: 'faqs' },
-      { key: 'faqs', value, updatedAt: new Date() },
-      { upsert: true }
-    );
-    res.json({ message: 'Saved', value });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ============================================================
-// COURSE ACCESS REQUESTS
-// ============================================================
-app.post('/api/access-request', userAuthMiddleware, async (req, res) => {
-  try {
-    const { courseId, courseTitle, courseSlug, thumbnail, price,
-            userPhone, transactionId, paymentMethod } = req.body;
-    // Check if already enrolled
     const user = await User.findById(req.user.id);
-    const alreadyEnrolled = user.enrolledCourses.some(e => e.courseId.toString() === courseId);
-    if (alreadyEnrolled) return res.status(400).json({ error: 'আপনি ইতিমধ্যে এই কোর্সে এনরোল আছেন' });
-    // Check if pending request already exists
-    const existing = await AccessRequest.findOne({ userId: req.user.id, courseId, status: 'pending' });
-    if (existing) return res.status(400).json({ error: 'আপনার অনুরোধ ইতিমধ্যে পাঠানো হয়েছে, অনুমোদনের অপেক্ষায় আছে' });
-    const req2 = await AccessRequest.create({
-      userId:        req.user.id,
-      userName:      req.user.name,
-      userEmail:     req.user.email,
-      userPhone:     userPhone || '',
-      transactionId: transactionId || '',
-      paymentMethod: paymentMethod || '',
-      courseId, courseTitle, courseSlug, thumbnail,
-      price: price || 0,
-    });
-    res.json({ message: 'অ্যাক্সেস অনুরোধ পাঠানো হয়েছে', requestId: req2._id });
+    const course = await Course.findById(req.body.courseId);
+    if (!course) return res.status(404).json({ error: 'Course not found' });
+    const data = {
+      userId: user._id, userName: user.name, userEmail: user.email, userPhone: user.phone,
+      courseId: course._id, courseTitle: course.title,
+      paymentMethod: req.body.paymentMethod, trxId: req.body.trxId, amount: req.body.amount,
+    };
+    if (req.file) data.screenshot = req.file.path;
+    const r = await AccessRequest.create(data);
+    try {
+      notifyAdmin(
+        `🛒 নতুন রেকর্ডেড কোর্স ক্রয় অনুরোধ — ${SITE_NAME}`,
+        `<div style="font-family:Arial,sans-serif;max-width:600px">
+          <h2 style="color:#7c3aed">নতুন রেকর্ডেড কোর্স ক্রয় অনুরোধ</h2>
+          <table style="width:100%;border-collapse:collapse">
+            <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>কোর্স:</b></td><td style="padding:8px;border-bottom:1px solid #eee">${req.body.courseTitle||'—'}</td></tr>
+            <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>মূল্য:</b></td><td style="padding:8px;border-bottom:1px solid #eee">৳${req.body.amount||'—'}</td></tr>
+            <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>ব্যবহারকারী:</b></td><td style="padding:8px;border-bottom:1px solid #eee">${req.user?.name||''} (${req.user?.email||''})</td></tr>
+            <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>ফোন:</b></td><td style="padding:8px;border-bottom:1px solid #eee">${req.user?.phone||'—'}</td></tr>
+            <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>পেমেন্ট মাধ্যম:</b></td><td style="padding:8px;border-bottom:1px solid #eee">${req.body.paymentMethod||'—'}</td></tr>
+            <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>TrxID:</b></td><td style="padding:8px;border-bottom:1px solid #eee">${req.body.trxId||'—'}</td></tr>
+          </table>
+          <p style="margin-top:14px">অ্যাডমিন প্যানেল থেকে অনুমোদন দিন।</p>
+        </div>`
+      );
+    } catch(e){ console.error('notify err', e); }
+    res.json({ message: 'Request submitted', id: r._id });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.get('/api/admin/access-requests', authMiddleware, async (req, res) => {
-  try {
-    const { status } = req.query;
-    const query = status ? { status } : {};
-    res.json(await AccessRequest.find(query).sort({ createdAt: -1 }));
-  } catch (e) { res.status(500).json({ error: e.message }); }
+app.get('/api/access-request/my', userAuthMiddleware, async (req, res) => {
+  res.json(await AccessRequest.find({ userId: req.user.id }).sort({ createdAt: -1 }));
 });
 
-// Admin approves / rejects access request
+app.get('/api/admin/access-requests', authMiddleware, async (_, res) =>
+  res.json(await AccessRequest.find().sort({ createdAt: -1 })));
+
 app.put('/api/admin/access-requests/:id', authMiddleware, async (req, res) => {
   try {
-    const { status } = req.body; // 'approved' or 'rejected'
-    const request = await AccessRequest.findByIdAndUpdate(
-      req.params.id,
-      { status, processedAt: new Date() },
-      { new: true }
-    );
-    if (!request) return res.status(404).json({ error: 'Request not found' });
-
-    if (status === 'approved') {
-      // Add course to user's enrolled courses
-      await User.findByIdAndUpdate(request.userId, {
-        $push: {
-          enrolledCourses: {
-            courseId: request.courseId,
-            courseSlug: request.courseSlug,
-            courseTitle: request.courseTitle,
-            thumbnail: request.thumbnail,
-            enrolledAt: new Date(),
-            progress: 0,
-          }
-        }
+    const r = await AccessRequest.findById(req.params.id);
+    if (!r) return res.status(404).json({ error: 'Not found' });
+    r.status     = req.body.status     || r.status;
+    r.adminNote  = req.body.adminNote  || r.adminNote;
+    await r.save();
+    if (r.status === 'approved') {
+      await User.findByIdAndUpdate(r.userId, {
+        $addToSet: { enrolledCourses: { courseId: r.courseId, enrolledAt: new Date() } }
       });
-
-      // ✅ অনুমোদন ইমেইল পাঠানো
-      const FRONTEND = process.env.FRONTEND_URL || 'https://ibnkhalduninstitute.online';
-      const courseLink = `${FRONTEND}/#course/${request.courseSlug || request.courseId}`;
-      const thumbnailHtml = request.thumbnail
-        ? `<img src="${request.thumbnail}" alt="${request.courseTitle}" style="width:100%;max-width:420px;border-radius:8px;margin:16px 0;display:block">`
-        : '';
-
-      try {
-        await sendViaGAS(
-          request.userEmail,
-          `✅ কোর্স অ্যাক্সেস অনুমোদিত — ${request.courseTitle}`,
-          `
-            <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:560px;margin:0 auto;background:#fff;border:1px solid #e8e8e8;border-radius:10px;overflow:hidden">
-              <div style="background:#066144;padding:24px 30px">
-                <h2 style="color:#F5C518;margin:0;font-size:20px">ইবনে খালদুন ইনস্টিটিউট</h2>
-                <p style="color:rgba(255,255,255,0.8);margin:6px 0 0;font-size:13px">অনলাইন শিক্ষা প্ল্যাটফর্ম</p>
-              </div>
-              <div style="padding:30px">
-                <p style="color:#333;font-size:16px;margin-top:0">আসসালামু আলাইকুম, <strong>${request.userName}</strong>!</p>
-                <div style="background:#f0faf4;border-left:4px solid #066144;padding:14px 18px;border-radius:0 6px 6px 0;margin:16px 0">
-                  <p style="margin:0;color:#066144;font-size:15px;font-weight:700">🎉 আপনার কোর্স অ্যাক্সেস অনুমোদিত হয়েছে!</p>
-                </div>
-                <p style="color:#555;font-size:14px">আপনি নিচের কোর্সটিতে এনরোল করতে সক্ষম হয়েছেন:</p>
-                <div style="background:#f9f9f9;border:1px solid #e8e8e8;border-radius:8px;padding:20px;margin:16px 0;text-align:center">
-                  ${thumbnailHtml}
-                  <h3 style="color:#1a1a1a;font-size:18px;margin:8px 0">${request.courseTitle}</h3>
-                  ${request.price ? `<p style="color:#888;font-size:13px;margin:4px 0">মূল্য: ৳${request.price}</p>` : ''}
-                </div>
-                <div style="text-align:center;margin:28px 0">
-                  <a href="${courseLink}"
-                    style="display:inline-block;background:#F5C518;color:#1a1a1a;font-size:15px;font-weight:700;padding:14px 36px;border-radius:6px;text-decoration:none;letter-spacing:0.5px">
-                    ▶ এখনই কোর্স শুরু করুন
-                  </a>
-                </div>
-                <p style="color:#888;font-size:12px;text-align:center">উপরের বাটনে ক্লিক করুন অথবা নিচের লিংক কপি করে ব্রাউজারে পেস্ট করুন:</p>
-                <p style="text-align:center;word-break:break-all">
-                  <a href="${courseLink}" style="color:#066144;font-size:12px">${courseLink}</a>
-                </p>
-              </div>
-              <div style="background:#f5f5f5;padding:14px 30px;text-align:center">
-                <p style="color:#aaa;font-size:11px;margin:0">© ইবনে খালদুন ইনস্টিটিউট — ibnkhalduninstitute.online</p>
-              </div>
-            </div>
-          `,
-          'course-approved'
-        );
-        console.log(`✅ Approval email sent to ${request.userEmail}`);
-      } catch (mailErr) {
-        console.error('❌ Approval email error:', mailErr.message);
-        // email failure should NOT block the approval response
-      }
+      sendMail(r.userEmail, `${SITE_NAME} — কোর্স একসেস অনুমোদিত ✅`,
+        `<div style="font-family:sans-serif;padding:20px">
+          <h2>${SITE_NAME}</h2>
+          <p>প্রিয় ${r.userName},</p>
+          <p>আপনার <b>${r.courseTitle}</b> কোর্সের একসেস অনুমোদন করা হয়েছে।</p>
+          <p>এখন আপনি ড্যাশবোর্ড থেকে কোর্সটি দেখতে পারবেন।</p>
+          ${r.adminNote ? `<p><b>Note:</b> ${r.adminNote}</p>` : ''}
+        </div>`);
+    } else if (r.status === 'rejected') {
+      sendMail(r.userEmail, `${SITE_NAME} — কোর্স একসেস রিকোয়েস্ট`,
+        `<p>দুঃখিত, আপনার রিকোয়েস্ট অনুমোদন করা যায়নি।</p>${r.adminNote ? `<p>${r.adminNote}</p>`:''}`);
     }
-
-    if (status === 'rejected') {
-      try {
-        await sendViaGAS(
-          request.userEmail,
-          `কোর্স অ্যাক্সেস সম্পর্কে আপডেট — ${request.courseTitle}`,
-          `
-            <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:560px;margin:0 auto;background:#fff;border:1px solid #e8e8e8;border-radius:10px;overflow:hidden">
-              <div style="background:#066144;padding:24px 30px">
-                <h2 style="color:#F5C518;margin:0;font-size:20px">ইবনে খালদুন ইনস্টিটিউট</h2>
-              </div>
-              <div style="padding:30px">
-                <p style="color:#333;font-size:16px;margin-top:0">আসসালামু আলাইকুম, <strong>${request.userName}</strong>!</p>
-                <p style="color:#555;font-size:14px">দুঃখিত, <strong>${request.courseTitle}</strong> কোর্সের জন্য আপনার অ্যাক্সেস অনুরোধটি এই মুহূর্তে অনুমোদন করা সম্ভব হয়নি।</p>
-                <p style="color:#555;font-size:14px">আরও তথ্যের জন্য আমাদের সাথে যোগাযোগ করুন।</p>
-              </div>
-              <div style="background:#f5f5f5;padding:14px 30px;text-align:center">
-                <p style="color:#aaa;font-size:11px;margin:0">© ইবনে খালদুন ইনস্টিটিউট — ibnkhalduninstitute.online</p>
-              </div>
-            </div>
-          `,
-          'course-rejected'
-        );
-      } catch (mailErr) {
-        console.error('❌ Rejection email error:', mailErr.message);
-      }
-    }
-
-    res.json({ message: status === 'approved' ? '✅ অ্যাক্সেস দেওয়া হয়েছে' : '❌ অনুরোধ প্রত্যাখ্যান করা হয়েছে', request });
+    res.json(r);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// User checks their own access request status for a course
-app.get('/api/access-request/status/:courseId', userAuthMiddleware, async (req, res) => {
+app.delete('/api/admin/access-requests/:id', authMiddleware, async (req, res) => {
+  await AccessRequest.findByIdAndDelete(req.params.id); res.json({ ok: true });
+});
+
+// ============================================================
+// LIVE COURSE — Purchase
+// ============================================================
+app.post('/api/live-course/purchase', userAuthMiddleware, upload.single('screenshot'), async (req, res) => {
   try {
-    const req2 = await AccessRequest.findOne({ userId: req.user.id, courseId: req.params.courseId });
-    res.json(req2 ? { status: req2.status } : { status: 'none' });
+    const user = await User.findById(req.user.id);
+    const course = await Course.findById(req.body.courseId);
+    if (!course) return res.status(404).json({ error: 'Course not found' });
+    if (course.type !== 'live') return res.status(400).json({ error: 'এই কোর্সটি লাইভ কোর্স নয়' });
+    if (!req.body.whatsappNumber) return res.status(400).json({ error: 'WhatsApp নাম্বার প্রয়োজন' });
+
+    const data = {
+      userId: user._id,
+      userName: user.name, userEmail: user.email, userPhone: user.phone,
+      whatsappNumber: req.body.whatsappNumber,
+      courseId: course._id, courseTitle: course.title,
+      paymentMethod: req.body.paymentMethod, trxId: req.body.trxId, amount: req.body.amount,
+    };
+    if (req.file) data.screenshot = req.file.path;
+    const r = await LiveCoursePurchase.create(data);
+    try {
+      notifyAdmin(
+        `📡 নতুন চলমান কোর্স ক্রয় অনুরোধ — ${SITE_NAME}`,
+        `<div style="font-family:Arial,sans-serif;max-width:600px">
+          <h2 style="color:#16a34a">নতুন চলমান (লাইভ) কোর্স ক্রয় অনুরোধ</h2>
+          <table style="width:100%;border-collapse:collapse">
+            <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>কোর্স:</b></td><td style="padding:8px;border-bottom:1px solid #eee">${req.body.courseTitle||'—'}</td></tr>
+            <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>মূল্য:</b></td><td style="padding:8px;border-bottom:1px solid #eee">৳${req.body.amount||'—'}</td></tr>
+            <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>ব্যবহারকারী:</b></td><td style="padding:8px;border-bottom:1px solid #eee">${req.user?.name||''} (${req.user?.email||''})</td></tr>
+            <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>WhatsApp:</b></td><td style="padding:8px;border-bottom:1px solid #eee">${req.body.whatsappNumber||'—'}</td></tr>
+            <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>পেমেন্ট মাধ্যম:</b></td><td style="padding:8px;border-bottom:1px solid #eee">${req.body.paymentMethod||'—'}</td></tr>
+            <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>TrxID:</b></td><td style="padding:8px;border-bottom:1px solid #eee">${req.body.trxId||'—'}</td></tr>
+          </table>
+          <p style="margin-top:14px">অ্যাডমিন প্যানেল থেকে অনুমোদন দিন।</p>
+        </div>`
+      );
+    } catch(e){ console.error('notify err', e); }
+
+    if (!user.whatsapp) { user.whatsapp = req.body.whatsappNumber; await user.save(); }
+
+    if (process.env.ADMIN_NOTIFY_EMAIL) {
+      notifyAdmin(`নতুন লাইভ কোর্স পার্সেস — ${course.title}`,
+        `<h3>${user.name} (${user.email})</h3>
+         <p><b>WhatsApp:</b> ${req.body.whatsappNumber}</p>
+         <p><b>Course:</b> ${course.title}</p>
+         <p><b>TrxID:</b> ${req.body.trxId}</p>
+         <p><b>Amount:</b> ${req.body.amount}</p>`);
+    }
+
+    sendMail(user.email, `${SITE_NAME} — লাইভ কোর্স পার্সেস রিকোয়েস্ট প্রাপ্ত`,
+      `<div style="font-family:sans-serif;padding:20px">
+        <h2>${SITE_NAME}</h2>
+        <p>প্রিয় ${user.name},</p>
+        <p>আপনার <b>${course.title}</b> কোর্সের পার্সেস রিকোয়েস্ট আমরা পেয়েছি।</p>
+        <p>পেমেন্ট ভেরিফাই হলে আপনাকে WhatsApp গ্রুপের লিংক ইমেইলে পাঠানো হবে — সাধারণত ২৪ ঘণ্টার মধ্যে।</p>
+        <p>আপনার দেওয়া WhatsApp নাম্বার: <b>${req.body.whatsappNumber}</b></p>
+       </div>`);
+
+    res.json({ message: 'রিকোয়েস্ট জমা হয়েছে', id: r._id });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// Admin — list all users
-app.get('/api/admin/users', authMiddleware, async (req, res) => {
-  try { res.json(await User.find().select('-password').sort({ createdAt: -1 })); }
+app.get('/api/live-course/my-purchases', userAuthMiddleware, async (req, res) => {
+  res.json(await LiveCoursePurchase.find({ userId: req.user.id }).sort({ createdAt: -1 }));
+});
+
+app.get('/api/admin/live-purchases', authMiddleware, async (_, res) => {
+  res.json(await LiveCoursePurchase.find().sort({ createdAt: -1 }));
+});
+
+app.put('/api/admin/live-purchases/:id', authMiddleware, async (req, res) => {
+  try {
+    const r = await LiveCoursePurchase.findById(req.params.id);
+    if (!r) return res.status(404).json({ error: 'Not found' });
+    r.status            = req.body.status            || r.status;
+    r.adminNote         = req.body.adminNote         || r.adminNote;
+    r.whatsappGroupLink = req.body.whatsappGroupLink || r.whatsappGroupLink;
+    if (r.status === 'approved') r.approvedAt = new Date();
+    await r.save();
+
+    if (r.status === 'approved') {
+      await User.findByIdAndUpdate(r.userId, {
+        $addToSet: { enrolledCourses: { courseId: r.courseId, enrolledAt: new Date() } }
+      });
+      sendMail(r.userEmail, `${SITE_NAME} — লাইভ কোর্স অনুমোদিত ✅ WhatsApp গ্রুপে যোগ দিন`,
+        `<div style="font-family:sans-serif;padding:20px;background:#f4f4f4">
+          <div style="background:#fff;padding:24px;border-radius:12px;max-width:600px;margin:auto">
+            <h2 style="color:#16a34a">পেমেন্ট ভেরিফাই হয়েছে ✅</h2>
+            <p>প্রিয় ${r.userName},</p>
+            <p>আপনার <b>${r.courseTitle}</b> লাইভ কোর্সের পেমেন্ট ভেরিফাই করা হয়েছে।</p>
+            <p>নিচের বাটনে ক্লিক করে WhatsApp গ্রুপে যোগ দিন — এখান থেকেই ক্লাস পরিচালিত হবে:</p>
+            <div style="text-align:center;margin:24px 0">
+              <a href="${r.whatsappGroupLink || '#'}" style="background:#25D366;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">
+                📱 WhatsApp গ্রুপে যোগ দিন
+              </a>
+            </div>
+            ${r.whatsappGroupLink ? `<p style="word-break:break-all;font-size:12px;color:#666">লিংক কাজ না করলে copy করুন: ${r.whatsappGroupLink}</p>` : ''}
+            ${r.adminNote ? `<p><b>Note:</b> ${r.adminNote}</p>`:''}
+            <hr/>
+            <p style="font-size:12px;color:#888">— ${SITE_NAME}</p>
+          </div>
+         </div>`);
+    } else if (r.status === 'rejected') {
+      sendMail(r.userEmail, `${SITE_NAME} — লাইভ কোর্স রিকোয়েস্ট`,
+        `<p>দুঃখিত, আপনার পেমেন্ট ভেরিফাই করা যায়নি।</p>${r.adminNote ? `<p>${r.adminNote}</p>`:''}`);
+    }
+    res.json(r);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.delete('/api/admin/live-purchases/:id', authMiddleware, async (req, res) => {
+  await LiveCoursePurchase.findByIdAndDelete(req.params.id); res.json({ ok: true });
+});
+
+// ============================================================
+// USERS (admin)
+// ============================================================
+app.get('/api/admin/users', authMiddleware, async (_, res) => {
+  res.json(await User.find().select('-password').sort({ createdAt: -1 }));
+});
+
+// ============================================================
+// STATS
+// ============================================================
+app.get('/api/admin/stats', authMiddleware, async (_, res) => {
+  try {
+    const [totalCourses, totalUsers, totalLivePurchases, totalAccessRequests, pendingLive, pendingAccess, totalBlogs, totalMessages] = await Promise.all([
+      Course.countDocuments(),
+      User.countDocuments(),
+      LiveCoursePurchase.countDocuments(),
+      AccessRequest.countDocuments(),
+      LiveCoursePurchase.countDocuments({ status: 'pending' }),
+      AccessRequest.countDocuments({ status: 'pending' }),
+      Blog.countDocuments(),
+      ContactMessage.countDocuments(),
+    ]);
+    res.json({
+      totalCourses, totalUsers, totalLivePurchases, totalAccessRequests,
+      pendingLive, pendingAccess, totalBlogs, totalMessages,
+    });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ============================================================
+// Generic file upload (admin)
+// ============================================================
+app.post('/api/admin/upload', authMiddleware, upload.single('file'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file' });
+  res.json({ url: req.file.path });
+});
+
+// ============================================================
+// TOPICS — public + admin
+// ============================================================
+app.get('/api/topics', async (req, res) => {
+  try { const list = await Topic.find().populate('courseIds').sort({ order: 1, createdAt: -1 }); res.json(list); }
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+app.get('/api/admin/topics', authMiddleware, async (req, res) => {
+  try { const list = await Topic.find().sort({ order: 1, createdAt: -1 }); res.json(list); }
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+function normalizeTopicData(req) {
+  const data = { ...req.body };
+  // courseIds may come as JSON string, comma-separated string, or repeated form fields
+  if (typeof data.courseIds === 'string') {
+    try { data.courseIds = JSON.parse(data.courseIds); }
+    catch { data.courseIds = data.courseIds.split(',').map(s => s.trim()).filter(Boolean); }
+  }
+  if (!Array.isArray(data.courseIds)) data.courseIds = data.courseIds ? [data.courseIds] : [];
+  if (req.file) data.image = req.file.path;
+  if (data.__remove_image === '1') { data.image = ''; delete data.__remove_image; }
+  if (!data.slug) data.slug = String(data.name||'').toLowerCase().trim().replace(/\s+/g,'-');
+  return data;
+}
+app.post('/api/admin/topics', authMiddleware, upload.single('image'), async (req, res) => {
+  try { const t = await Topic.create(normalizeTopicData(req)); res.json(t); }
+  catch (e) { console.error('topic POST:', e); res.status(500).json({ error: e.message }); }
+});
+app.put('/api/admin/topics/:id', authMiddleware, upload.single('image'), async (req, res) => {
+  try { const t = await Topic.findByIdAndUpdate(req.params.id, normalizeTopicData(req), { new: true }); res.json(t); }
+  catch (e) { console.error('topic PUT:', e); res.status(500).json({ error: e.message }); }
+});
+app.delete('/api/admin/topics/:id', authMiddleware, async (req, res) => {
+  try { await Topic.findByIdAndDelete(req.params.id); res.json({ ok: true }); }
   catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 
 // ============================================================
-// ABOUT PAGE — /api/admin/about-page  &  /api/public/about-page
+// ANALYTICS — page views, course views, live visitors
 // ============================================================
-const DEFAULT_ABOUT_PAGE = {
-  heroTitle: 'আমাদের সম্পর্কে',
-  heroSubtitle: 'আমাদের উদ্দেশ্য, কাজ ও শিক্ষা দর্শন',
-  sectionLabel: 'আমাদের পরিচয়',
-  sectionTitle: 'Ibn Khaldun Institute সম্পর্কে',
-  sectionSub: 'ইসলামিক শিক্ষা ও আধুনিক জ্ঞানের সমন্বয়ে একটি পূর্ণাঙ্গ শিক্ষা প্রতিষ্ঠান।',
-  goalIcon: '🎯',
-  goalTitle: 'আমাদের লক্ষ্য',
-  goalDesc: 'বিশ্বের প্রতিটি মুসলিম পরিবারের কাছে মানসম্পন্ন ইসলামিক শিক্ষা পৌঁছে দেওয়া।',
-  visionIcon: '🌟',
-  visionTitle: 'আমাদের দৃষ্টিভঙ্গি',
-  visionDesc: 'ইসলামিক মূল্যবোধের আলোকে আধুনিক জ্ঞান ও দক্ষতা অর্জনের সুযোগ তৈরি করা।',
-  ibnTitle: 'ইবনে খালদুন ইনস্টিটিউট কেন?',
-  ibnPara1: 'ইবনে খালদুন (১৩৩২–১৪০৬) ছিলেন মধ্যযুগের শ্রেষ্ঠ মুসলিম পণ্ডিত।',
-  ibnPara2: 'তাঁর নামে এই ইনস্টিটিউট প্রতিষ্ঠিত হয়েছে জ্ঞান ও গবেষণার আলো ছড়িয়ে দেওয়ার লক্ষ্যে।',
-  stat1Num: '50K+', stat1Label: 'শিক্ষার্থী',
-  stat2Num: '120+', stat2Label: 'কোর্স',
-  stat3Num: '30+',  stat3Label: 'বিশেষজ্ঞ শিক্ষক',
-  faqLabel: 'FAQ',
-  faqTitle: 'ইনস্টিটিউট সম্পর্কিত প্রশ্নোত্তর',
-  faqSub: 'ইবনে খালদুন ইনস্টিটিউটের উদ্দেশ্য, শিক্ষা পদ্ধতি ও সার্টিফিকেট সম্পর্কে জানতে পড়ুন।',
-};
-
-// Public — index.html uses this
-app.get('/api/public/about-page', async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'aboutPage' });
-    const data = (s && s.value && Object.keys(s.value).length) ? s.value : DEFAULT_ABOUT_PAGE;
-    res.json(data);
-  } catch (e) { res.status(500).json({ error: e.message }); }
+const pageViewSchema = new mongoose.Schema({
+  path:      String,
+  ref:       String,
+  ua:        String,
+  ip:        String,
+  sessionId: String,
+  date:      { type: String, index: true },   // YYYY-MM-DD (UTC)
+  createdAt: { type: Date, default: Date.now, index: true },
 });
+const PageView = mongoose.model('PageView', pageViewSchema);
 
-// Admin GET
-app.get('/api/admin/about-page', authMiddleware, async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'aboutPage' });
-    const data = (s && s.value && Object.keys(s.value).length) ? s.value : DEFAULT_ABOUT_PAGE;
-    res.json(data);
-  } catch (e) { res.status(500).json({ error: e.message }); }
+const courseViewSchema = new mongoose.Schema({
+  courseId:    { type: mongoose.Schema.Types.ObjectId, ref: 'Course', index: true },
+  courseTitle: String,
+  sessionId:   String,
+  date:        { type: String, index: true },
+  createdAt:   { type: Date, default: Date.now, index: true },
 });
+const CourseView = mongoose.model('CourseView', courseViewSchema);
 
-// Admin POST (save)
-app.post('/api/admin/about-page', authMiddleware, async (req, res) => {
+// In-memory live visitor tracker (last heartbeat within 60 seconds)
+const LIVE_VISITORS = new Map(); // sessionId -> { lastSeen, path }
+const LIVE_TIMEOUT_MS = 60 * 1000;
+
+function pruneLive() {
+  const now = Date.now();
+  for (const [k, v] of LIVE_VISITORS.entries()) {
+    if (now - v.lastSeen > LIVE_TIMEOUT_MS) LIVE_VISITORS.delete(k);
+  }
+}
+setInterval(pruneLive, 30 * 1000);
+
+function todayUTC() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+// Public: record a page view + heartbeat (called from index.html)
+app.post('/api/analytics/track', async (req, res) => {
   try {
-    await Settings.findOneAndUpdate(
-      { key: 'aboutPage' },
-      { key: 'aboutPage', value: req.body || {}, updatedAt: new Date() },
-      { upsert: true, new: true }
-    );
-    res.json({ message: '✅ আমাদের সম্পর্কে পেজ সংরক্ষিত হয়েছে' });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-const DEFAULT_CONTENT_BUNDLE = {heroSections:{home:{title:'ইবনে খালদুন ইনস্টিটিউট',subtitle:'অনলাইনে নতুন দক্ষতা অর্জন করুন',backgroundImage:''},courses:{title:'সকল কোর্সসমূহ',subtitle:'এক অক্ষর লিখলেই কোর্স রিকমেন্ডেশন দেখুন',backgroundImage:''},about:{title:'আমাদের সম্পর্কে',subtitle:'আমাদের উদ্দেশ্য, কাজ ও শিক্ষা দর্শন',backgroundImage:''},contact:{title:'যোগাযোগ করুন',subtitle:'আমরা আপনার পাশে আছি',backgroundImage:''}},about:{content:'<p>ইবনে খালদুন ইনস্টিটিউট অনলাইন শিক্ষার একটি নির্ভরযোগ্য প্ল্যাটফর্ম।</p>'},contact:{email:'info@ibnkhaldun.edu.bd',phone:'+880 1700-000000',address:'ঢাকা, বাংলাদেশ',content:'যে কোনো প্রশ্নে আমাদের সাথে যোগাযোগ করুন।'},faqs:[{question:'কোর্স কীভাবে শুরু করব?',answer:'পছন্দের কোর্স নির্বাচন করে এনরোল করুন।'}],promo:{title:'জনপ্রিয় কোর্স',subtitle:'সেরা কোর্সগুলো এক জায়গায়',buttonText:'কোর্স দেখুন',buttonLink:'#courses'},navLinks:[{name:'হোম',link:'#home'},{name:'কোর্সসমূহ',link:'#courses'},{name:'আমাদের সম্পর্কে',link:'#about'},{name:'যোগাযোগ',link:'#contact'}],categories:[{name:'কুরআন শিক্ষা',slug:'quran-education',link:'quran-education'},{name:'প্রোডাক্টিভিটি এবং লাইফ হ্যাকস',slug:'productivity-life-hacks',link:'productivity-life-hacks'},{name:'পারিবারিক জীবন',slug:'family-life',link:'family-life'},{name:'সীরাহ এবং ইতিহাস',slug:'seerah-and-history',link:'seerah-and-history'},{name:'সুন্নাহ এবং লাইফস্টাইল',slug:'sunnah-and-lifestyle',link:'sunnah-and-lifestyle'},{name:'ফিকাহ',slug:'fiqh',link:'fiqh'},{name:'হাদীস',slug:'hadith',link:'hadith'},{name:'হোমস্কুলিং এবং প্যারেন্টিং',slug:'homeschooling-and-parenting',link:'homeschooling-and-parenting'},{name:'ইসলামী বিশ্বাস ও মতবাদ',slug:'islamic-belief-and-ideology',link:'islamic-belief-and-ideology'}],sidebarBody:[{title:'কোর্স সহায়তা',body:'প্রয়োজনে অ্যাডমিনের সাথে যোগাযোগ করুন।'}]};
-async function getContentBundle(){const s=await Settings.findOne({key:'contentBundle'});return Object.assign({},DEFAULT_CONTENT_BUNDLE,s&&s.value?s.value:{})}
-app.get('/api/public-content-bundle',async(req,res)=>{try{res.json(await getContentBundle())}catch(e){res.status(500).json({error:e.message})}});
-app.get('/api/admin/content-bundle',authMiddleware,async(req,res)=>{try{res.json(await getContentBundle())}catch(e){res.status(500).json({error:e.message})}});
-app.post('/api/admin/content-bundle',authMiddleware,async(req,res)=>{try{await Settings.findOneAndUpdate({key:'contentBundle'},{key:'contentBundle',value:req.body||{},updatedAt:new Date()},{upsert:true});res.json({message:'Content bundle saved'})}catch(e){res.status(500).json({error:e.message})}});
-
-// ============================================================
-// ANALYTICS & TRACKING CONFIG
-// ─────────────────────────────────────────────────────────────
-// index.html এ Google Analytics (gtag) ও Facebook Pixel কোড
-// dynamic ভাবে inject করার জন্য এই endpoint ব্যবহার হয়।
-// Admin panel থেকে ID বসালেই index.html এ কাজ শুরু হয়।
-// ============================================================
-// Public endpoint — index.html পড়ে এখান থেকে
-app.get('/api/public/analytics-config', async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'analyticsConfig' });
-    const data = (s && s.value) ? s.value : { gaId: '', fbPixelId: '', enabled: false };
-    // শুধু safe fields return করি
-    res.json({
-      gaId:       data.gaId       || '',
-      fbPixelId:  data.fbPixelId  || '',
-      enabled:    data.enabled    !== false,
+    const { path: p = '/', sessionId, ref = '' } = req.body || {};
+    const sid = String(sessionId || req.ip || Math.random()).slice(0, 64);
+    LIVE_VISITORS.set(sid, { lastSeen: Date.now(), path: p });
+    await PageView.create({
+      path: String(p).slice(0, 200),
+      ref:  String(ref).slice(0, 200),
+      ua:   String(req.get('user-agent') || '').slice(0, 200),
+      ip:   req.ip,
+      sessionId: sid,
+      date: todayUTC(),
     });
-  } catch (e) { res.status(500).json({ error: e.message }); }
+    pruneLive();
+    res.json({ ok: true, live: LIVE_VISITORS.size });
+  } catch (e) { res.status(200).json({ ok: false }); }
 });
 
-
-// ── Visitor Heartbeat — index.html থেকে প্রতি ৩০ সেকেন্ডে call হয় ──
-app.post('/api/public/visitor-heartbeat', (req, res) => {
+// Public: heartbeat only (no DB write) — keeps live count fresh
+app.post('/api/analytics/heartbeat', (req, res) => {
   try {
-    const { visitorId, page, device, path: urlPath, isNew } = req.body;
-    if (!visitorId) return res.json({ ok: false });
+    const { sessionId, path: p = '/' } = req.body || {};
+    const sid = String(sessionId || req.ip).slice(0, 64);
+    LIVE_VISITORS.set(sid, { lastSeen: Date.now(), path: p });
+    pruneLive();
+    res.json({ ok: true, live: LIVE_VISITORS.size });
+  } catch { res.json({ ok: false, live: 0 }); }
+});
 
-    const now = Date.now();
-    const existing = activeVisitors.get(visitorId);
-
-    if (!existing) {
-      // নতুন visitor
-      activeVisitors.set(visitorId, {
-        page:      page     || 'home',
-        device:    device   || 'desktop',
-        path:      urlPath  || '/',
-        lastSeen:  now,
-        enteredAt: now,
-      });
-      recordPageHit(page || 'home', device || 'desktop');
-    } else {
-      // existing visitor — শুধু lastSeen আপডেট, নতুন page হলে page আপডেট
-      const oldPage = existing.page;
-      existing.lastSeen = now;
-      existing.page     = page   || existing.page;
-      existing.device   = device || existing.device;
-      existing.path     = urlPath || existing.path;
-      // page change হলে নতুন hit record করি
-      if (isNew || (page && page !== oldPage)) {
-        recordPageHit(page || 'home', device || existing.device);
+// Public: record a course view (also increments per-course counter)
+app.post('/api/analytics/course-view', async (req, res) => {
+  try {
+    const { courseId, sessionId } = req.body || {};
+    if (!courseId) return res.status(400).json({ error: 'courseId required' });
+    const sid = String(sessionId || req.ip).slice(0, 64);
+    const today = todayUTC();
+    await CourseView.create({ courseId, sessionId: sid, date: today });
+    // Update course counters
+    const c = await Course.findById(courseId);
+    if (c) {
+      c.views = (c.views || 0) + 1;
+      if (c.viewsTodayDate !== today) {
+        c.viewsTodayDate = today;
+        c.viewsToday = 1;
+      } else {
+        c.viewsToday = (c.viewsToday || 0) + 1;
       }
+      if (c.title) await CourseView.updateOne({ _id: (await CourseView.findOne({ courseId, sessionId: sid, date: today }).sort('-createdAt'))._id }, { courseTitle: c.title });
+      await c.save();
     }
-    res.json({ ok: true, activeCount: activeVisitors.size });
-  } catch(e) { res.json({ ok: false }); }
+    res.json({ ok: true });
+  } catch (e) { res.status(200).json({ ok: false }); }
 });
 
-// ── কোর্স ক্লিক ট্র্যাকার — index.html থেকে call হয় ──
-app.post('/api/track/course-click', (req, res) => {
+// Admin: live + today summary
+app.get('/api/admin/analytics/summary', authMiddleware, async (req, res) => {
   try {
-    const { courseId, title } = req.body;
-    if (!courseId) return res.json({ ok: false });
-    if (!courseClicks[courseId]) courseClicks[courseId] = { title: title || courseId, count: 0 };
-    else if (title) courseClicks[courseId].title = title;
-    courseClicks[courseId].count++;
-    res.json({ ok: true, count: courseClicks[courseId].count });
-  } catch(e) { res.status(500).json({ error: e.message }); }
-});
-
-// ── Realtime Visitors — Admin Panel থেকে call হয় ──
-app.get('/api/admin/realtime-visitors', authMiddleware, (req, res) => {
-  try {
-    const now = Date.now();
-
-    // সক্রিয় visitors list
-    const visitors = [];
-    for (const [id, v] of activeVisitors.entries()) {
-      visitors.push({
-        page:       v.page,
-        device:     v.device,
-        path:       v.path,
-        secondsAgo: Math.floor((now - v.lastSeen) / 1000),
-        duration:   Math.floor((now - v.enteredAt) / 1000),
-      });
-    }
-
-    // Device breakdown
-    const devBreakdown = {};
-    for (const v of visitors) {
-      devBreakdown[v.device] = (devBreakdown[v.device] || 0) + 1;
-    }
-
-    // Page breakdown (current active)
-    const pageBreakdown = {};
-    for (const v of visitors) {
-      pageBreakdown[v.page] = (pageBreakdown[v.page] || 0) + 1;
-    }
-
-    // শেষ ৭ দিনের daily visits
-    const dailyRows = [];
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date(); d.setDate(d.getDate() - i);
-      const key = d.toISOString().slice(0, 10);
-      dailyRows.push({ date: key, count: dailyVisits[key] || 0 });
-    }
-
-    // শেষ ২৪ ঘণ্টার hourly
-    const hourlyRows = hourlyHits.slice(-24);
-
-    // Page hit totals
-    const pageHitRows = Object.entries(pageHits)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 8)
-      .map(([page, count]) => ({ page, count }));
-
-    // কোর্স ক্লিক — সর্বাধিক ক্লিক পাওয়া কোর্স আগে
-    const courseClickRows = Object.entries(courseClicks)
-      .map(([id, v]) => ({ id, title: v.title || id, count: v.count || 0 }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 20);
-
-    res.json({
-      activeCount:    visitors.length,
-      visitors:       visitors.slice(0, 50),
-      deviceBreakdown: devBreakdown,
-      pageBreakdown,
-      pageHits:       pageHitRows,
-      hourlyHits:     hourlyRows,
-      dailyVisits:    dailyRows,
-      totalHits:      Object.values(pageHits).reduce((s, n) => s + n, 0),
-      courseClicks:   courseClickRows,
-    });
-  } catch(e) { res.status(500).json({ error: e.message }); }
-});
-
-// Admin GET
-app.get('/api/admin/analytics-config', authMiddleware, async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'analyticsConfig' });
-    res.json(s ? s.value : { gaId: '', fbPixelId: '', enabled: false });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// Admin POST (save)
-app.post('/api/admin/analytics-config', authMiddleware, async (req, res) => {
-  try {
-    const { gaId, fbPixelId, enabled, propertyId, serviceAccountEmail, serviceAccountKey } = req.body;
-    const value = {
-      gaId:                (gaId                || 'G-JPJ5Y9Z1T0').trim(),
-      fbPixelId:           (fbPixelId           || '').trim(),
-      propertyId:          (propertyId          || '').trim(),
-      serviceAccountEmail: (serviceAccountEmail || '').trim(),
-      serviceAccountKey:   (serviceAccountKey   || '').trim(),
-      enabled:             enabled !== false,
-      updatedAt:           new Date().toISOString(),
-    };
-    await Settings.findOneAndUpdate(
-      { key: 'analyticsConfig' },
-      { key: 'analyticsConfig', value, updatedAt: new Date() },
-      { upsert: true }
-    );
-    res.json({ message: '✅ Analytics config সংরক্ষিত হয়েছে' });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ============================================================
-// GA REPORT PROXY — Google Analytics Data API v1
-// Admin panel থেকে সরাসরি লাইভ ডেটা দেখার জন্য।
-// Service Account JSON দিলে real data, না হলে demo ডেটা।
-// ============================================================
-app.post('/api/admin/ga-report', authMiddleware, async (req, res) => {
-  try {
-    const cfg = await Settings.findOne({ key: 'analyticsConfig' });
-    const config = cfg ? cfg.value : {};
-    const propertyId = config.propertyId || '';
-    const saEmail    = config.serviceAccountEmail || '';
-    const saKey      = config.serviceAccountKey   || '';
-
-    const { type, days = 28, eventName } = req.body;
-
-    // ── Service Account না থাকলে demo ডেটা ──
-    if (!propertyId || !saEmail || !saKey) {
-      return res.json(makeDemoData(type, parseInt(days)));
-    }
-
-    // ── Google Analytics Data API v1 JWT Auth ──
-    const jwt = require('jsonwebtoken');
-    const https = require('https');
-    const now = Math.floor(Date.now() / 1000);
-    const jwtPayload = {
-      iss: saEmail,
-      scope: 'https://www.googleapis.com/auth/analytics.readonly',
-      aud: 'https://oauth2.googleapis.com/token',
-      exp: now + 3600,
-      iat: now,
-    };
-    const cleanKey = saKey.replace(/\\n/g, '\n');
-    const jwtToken = jwt.sign(jwtPayload, cleanKey, { algorithm: 'RS256' });
-
-    // Token পাওয়া
-    const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=${jwtToken}`,
-    });
-    if (!tokenRes.ok) throw new Error('OAuth token failed: ' + tokenRes.status);
-    const tokenData = await tokenRes.json();
-    const accessToken = tokenData.access_token;
-    const propId = 'properties/' + propertyId.replace('properties/', '');
-    const daysN = parseInt(days) || 28;
-
-    // ── Type অনুযায়ী ভিন্ন report ──
-    if (type === 'realtime') {
-      const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/${propId}:runRealtimeReport`, {
-        method: 'POST',
-        headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ metrics: [{ name: 'activeUsers' }] }),
-      });
-      const d = await r.json();
-      const val = d.rows?.[0]?.metricValues?.[0]?.value || 0;
-      return res.json({ activeUsers: parseInt(val) });
-    }
-
-    if (type === 'summary') {
-      const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/${propId}:runReport`, {
-        method: 'POST',
-        headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          dateRanges: [{ startDate: daysN + 'daysAgo', endDate: 'today' }],
-          metrics: [
-            { name: 'totalUsers' }, { name: 'screenPageViews' },
-            { name: 'userEngagementDuration' }, { name: 'newUsers' },
-          ],
-        }),
-      });
-      const d = await r.json();
-      const mv = d.rows?.[0]?.metricValues || [];
-      return res.json({
-        totalUsers:             parseInt(mv[0]?.value || 0),
-        screenPageViews:        parseInt(mv[1]?.value || 0),
-        userEngagementDuration: parseFloat(mv[2]?.value || 0),
-        newUsers:               parseInt(mv[3]?.value || 0),
-      });
-    }
-
-    if (type === 'daily') {
-      const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/${propId}:runReport`, {
-        method: 'POST',
-        headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          dateRanges: [{ startDate: daysN + 'daysAgo', endDate: 'today' }],
-          dimensions: [{ name: 'date' }],
-          metrics: [{ name: 'screenPageViews' }],
-          orderBys: [{ dimension: { dimensionName: 'date' } }],
-        }),
-      });
-      const d = await r.json();
-      const rows = (d.rows || []).map(row => ({
-        date:  row.dimensionValues?.[0]?.value || '',
-        value: parseInt(row.metricValues?.[0]?.value || 0),
-      }));
-      return res.json({ rows });
-    }
-
-    if (type === 'pages') {
-      const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/${propId}:runReport`, {
-        method: 'POST',
-        headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          dateRanges: [{ startDate: daysN + 'daysAgo', endDate: 'today' }],
-          dimensions: [{ name: 'pageTitle' }],
-          metrics: [{ name: 'screenPageViews' }],
-          orderBys: [{ metric: { metricName: 'screenPageViews' }, desc: true }],
-          limit: 10,
-        }),
-      });
-      const d = await r.json();
-      const rows = (d.rows || []).map(row => ({
-        page:  row.dimensionValues?.[0]?.value || '',
-        value: parseInt(row.metricValues?.[0]?.value || 0),
-      }));
-      return res.json({ rows });
-    }
-
-    if (type === 'events') {
-      const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/${propId}:runReport`, {
-        method: 'POST',
-        headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          dateRanges: [{ startDate: daysN + 'daysAgo', endDate: 'today' }],
-          dimensions: [{ name: 'eventName' }, { name: 'customEvent:event_label' }],
-          metrics: [{ name: 'eventCount' }],
-          dimensionFilter: {
-            filter: { fieldName: 'eventName', stringFilter: { value: eventName || 'course_click' } },
-          },
-          orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
-          limit: 10,
-        }),
-      });
-      const d = await r.json();
-      const rows = (d.rows || []).map(row => ({
-        label: row.dimensionValues?.[1]?.value || row.dimensionValues?.[0]?.value || '',
-        value: parseInt(row.metricValues?.[0]?.value || 0),
-      }));
-      return res.json({ rows });
-    }
-
-    if (type === 'devices') {
-      const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/${propId}:runReport`, {
-        method: 'POST',
-        headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          dateRanges: [{ startDate: daysN + 'daysAgo', endDate: 'today' }],
-          dimensions: [{ name: 'deviceCategory' }],
-          metrics: [{ name: 'sessions' }],
-          orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
-        }),
-      });
-      const d = await r.json();
-      const rows = (d.rows || []).map(row => ({
-        device: row.dimensionValues?.[0]?.value || '',
-        value:  parseInt(row.metricValues?.[0]?.value || 0),
-      }));
-      return res.json({ rows });
-    }
-
-    if (type === 'countries') {
-      const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/${propId}:runReport`, {
-        method: 'POST',
-        headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          dateRanges: [{ startDate: daysN + 'daysAgo', endDate: 'today' }],
-          dimensions: [{ name: 'country' }],
-          metrics: [{ name: 'sessions' }],
-          orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
-          limit: 5,
-        }),
-      });
-      const d = await r.json();
-      const rows = (d.rows || []).map(row => ({
-        country: row.dimensionValues?.[0]?.value || '',
-        value:   parseInt(row.metricValues?.[0]?.value || 0),
-      }));
-      return res.json({ rows });
-    }
-
-    res.json({ error: 'unknown type' });
-  } catch (e) {
-    console.error('GA report error:', e.message);
-    // Error হলে demo ডেটা পাঠাই যাতে UI ভেঙে না যায়
-    res.json(makeDemoData(req.body.type, parseInt(req.body.days) || 28));
-  }
-});
-
-// ── Demo ডেটা (Service Account না থাকলে) ──
-function makeDemoData(type, days) {
-  if (type === 'realtime') return { activeUsers: 0, _demo: true };
-  if (type === 'summary') return { totalUsers: null, screenPageViews: null, userEngagementDuration: null, newUsers: null, _demo: true };
-  if (type === 'daily') {
-    const rows = [];
-    for (let i = days; i >= 0; i--) {
-      const d = new Date(); d.setDate(d.getDate() - i);
-      rows.push({ date: d.toISOString().slice(0,10).replace(/-/g,''), value: 0 });
-    }
-    return { rows, _demo: true };
-  }
-  return { rows: [], _demo: true };
-}
-
-// ============================================================
-// AUTO-CREATE ADMIN
-// ============================================================
-async function ensureAdminExists() {
-  try {
-    const count = await Admin.countDocuments();
-    if (count === 0) {
-      const username = process.env.ADMIN_USERNAME || 'admin';
-      const password = process.env.ADMIN_PASSWORD || 'admin123';
-      const hashed   = await bcrypt.hash(password, 10);
-      await Admin.create({ username, password: hashed });
-      console.log(`✅ Admin তৈরি হয়েছে — username: "${username}"`);
-    } else {
-      console.log(`ℹ️  Admin আছে (count: ${count})`);
-    }
-  } catch (err) {
-    console.error('❌ Admin তৈরিতে সমস্যা:', err.message);
-  }
-}
-
-// ── Create Default Courses and Instructors ──
-async function ensureDefaultContent() {
-  try {
-    // Check if we already have content
-    const courseCount = await Course.countDocuments();
-    const instructorCount = await Instructor.countDocuments();
-    const categoryCount = await Category.countDocuments();
-
-    if (categoryCount === 0) {
-      console.log('🏷️ Creating default categories...');
-      const defaultCategories = [
-        {
-          name: 'কুরআন শিক্ষা', slug: 'quran-education', icon: '📖', order: 1, active: true,
-          subCategories: [
-            { name: 'জার্নি টু কুরআন (৪ মাসে কুরআন শরীফ)', slug: 'journey-to-quran', icon: '🕌', order: 1, active: true },
-            { name: 'মহিলাদের কুরআন যাত্রা', slug: 'womens-quran-journey', icon: '👩', order: 2, active: true },
-            { name: 'আল কোরআন ও বিজ্ঞান', slug: 'quran-and-science', icon: '🔬', order: 3, active: true },
-          ],
-        },
-        {
-          name: 'প্রোডাক্টিভিটি এবং লাইফ হ্যাকস', slug: 'productivity-life-hacks', icon: '⚡', order: 2, active: true,
-          subCategories: [
-            { name: 'এআই (AI) ব্যবহার', slug: 'ai-usage', icon: '🤖', order: 1, active: true },
-            { name: 'গবেষণা ও রিসার্চ কোর্স', slug: 'research-course', icon: '🔍', order: 2, active: true },
-          ],
-        },
-        {
-          name: 'পারিবারিক জীবন', slug: 'family-life', icon: '👨‍👩‍👧‍👦', order: 3, active: true,
-          subCategories: [
-            { name: 'বিবাহ ও দাম্পত্য জীবন', slug: 'marriage-and-conjugal-life', icon: '💍', order: 1, active: true },
-            { name: 'পরিবার ব্যবস্থা', slug: 'family-system', icon: '🏠', order: 2, active: true },
-          ],
-        },
-        {
-          name: 'সীরাহ এবং ইতিহাস', slug: 'seerah-and-history', icon: '📜', order: 4, active: true,
-          subCategories: [
-            { name: 'সিরাহ ও আপত্তির খণ্ডন', slug: 'seerah-refutation', icon: '🛡️', order: 1, active: true },
-            { name: 'ইসলামী ভূগোল ব্যবস্থা', slug: 'islamic-geography', icon: '🗺️', order: 2, active: true },
-            { name: 'সহজে ইসলামী ইতিহাস', slug: 'easy-islamic-history', icon: '🏛️', order: 3, active: true },
-          ],
-        },
-        {
-          name: 'সুন্নাহ এবং লাইফস্টাইল', slug: 'sunnah-and-lifestyle', icon: '🌙', order: 5, active: true,
-          subCategories: [
-            { name: 'হজ ও ওমরা প্রস্তুতি', slug: 'hajj-umrah-preparation', icon: '🕋', order: 1, active: true },
-            { name: 'মহিলাদের তাহারাত', slug: 'womens-taharah', icon: '💧', order: 2, active: true },
-          ],
-        },
-        {
-          name: 'ফিকাহ', slug: 'fiqh', icon: '⚖️', order: 6, active: true,
-          subCategories: [
-            { name: 'মাকাসিদে শরিয়াহ', slug: 'maqasid-al-shariah', icon: '📋', order: 1, active: true },
-            { name: 'আধুনিক রাষ্ট্র ব্যবস্থা', slug: 'modern-state-system', icon: '🏛️', order: 2, active: true },
-          ],
-        },
-        {
-          name: 'হাদীস', slug: 'hadith', icon: '📚', order: 7, active: true,
-          subCategories: [
-            { name: 'হাদিস অস্বীকারে ফেতনা (রিফিউটেশন)', slug: 'hadith-rejection-refutation', icon: '🛡️', order: 1, active: true },
-            { name: 'প্রাচ্যবাদ ও ইসলাম', slug: 'orientalism-and-islam', icon: '🌍', order: 2, active: true },
-          ],
-        },
-        {
-          name: 'হোমস্কুলিং এবং প্যারেন্টিং', slug: 'homeschooling-and-parenting', icon: '🏫', order: 8, active: true,
-          subCategories: [
-            { name: 'প্যারেন্টিং', slug: 'parenting', icon: '👶', order: 1, active: true },
-            { name: 'বিদেশে উচ্চ শিক্ষা', slug: 'higher-education-abroad', icon: '✈️', order: 2, active: true },
-          ],
-        },
-        {
-          name: 'ইসলামী বিশ্বাস ও মতবাদ', slug: 'islamic-belief-and-ideology', icon: '🌟', order: 9, active: true,
-          subCategories: [
-            { name: 'কাদিয়ানীয়াত', slug: 'qadianiyyat', icon: '❌', order: 1, active: true },
-            { name: 'আধুনিক মতবাদ', slug: 'modern-ideology', icon: '⚠️', order: 2, active: true },
-          ],
-        },
-      ];
-      await Category.insertMany(defaultCategories);
-      console.log('✅ Default categories created');
-    }
-
-    if (courseCount === 0) {
-      console.log('📚 Creating default courses...');
-      
-      const defaultCourses = [
-        // ১. কুরআন শিক্ষা
-        {
-          title: 'জার্নি টু কুরআন — ৪ মাসে কুরআন শরীফ', slug: 'journey-to-quran', category: 'কুরআন শিক্ষা',
-          subCategory: 'জার্নি টু কুরআন (৪ মাসে কুরআন শরীফ)',
-          instructor: 'মাওলানা আব্দুর রহমান', price: 1800, originalPrice: 2500, discount: 28,
-          description: '৪ মাসের সুপরিকল্পিত প্রোগ্রামে শূন্য থেকে শুরু করে কুরআন শরীফ সঠিকভাবে পড়তে শিখুন। প্রতিটি ক্লাসে তাজবীদ, মাখরাজ ও বাস্তব অনুশীলন অন্তর্ভুক্ত। কোর্স শেষে শিক্ষার্থী আত্মবিশ্বাসের সাথে কুরআন তেলাওয়াত করতে পারবেন।',
-          shortDesc: '৪ মাসের প্রোগ্রামে শূন্য থেকে কুরআন পড়া সম্পন্ন করুন',
-          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৪ মাস', lessons: 32,
-          students: 1240, rating: 4.9, level: 'শুরুর স্তর', featured: true,
-          tags: ['কুরআন', 'তেলাওয়াত', 'তাজবীদ', 'শুরুর স্তর'],
-          curriculum: [
-            { sectionTitle: 'মাস ১ — হরফ ও হরকত', lessons: [
-              { title: 'কোর্স পরিচিতি ও লক্ষ্যমাত্রা', duration: '৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'আরবি হরফ পরিচয় (আলিফ থেকে ইয়া)', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'ফাতহা, কাসরা ও দাম্মা', duration: '১৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'সুকুন, শাদ্দা ও তানবীন', duration: '২২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-            ]},
-            { sectionTitle: 'মাস ২ — মাখরাজ ও সিফাত', lessons: [
-              { title: 'মাখরাজ — উচ্চারণস্থান পরিচিতি', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'সিফাতুল হুরুফ — হরফের বৈশিষ্ট্য', duration: '২৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-            ]},
-            { sectionTitle: 'মাস ৩ ও ৪ — তাজবীদ ও তেলাওয়াত', lessons: [
-              { title: 'নুন সাকিন ও তানবীনের বিধান', duration: '৩০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'মাদ্দ ও কসরের বিধান', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'ওয়াকফ ও ইবতিদা', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'চূড়ান্ত তেলাওয়াত মূল্যায়ন', duration: '১৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-            ]},
-          ],
-        },
-        // ২. প্রোডাক্টিভিটি এবং লাইফ হ্যাকস
-        {
-          title: 'এআই দিয়ে উৎপাদনশীল জীবন গড়ুন', slug: 'ai-productive-life', category: 'প্রোডাক্টিভিটি এবং লাইফ হ্যাকস',
-          subCategory: 'এআই (AI) ব্যবহার',
-          instructor: 'উস্তাদ ফারুক আহমেদ', price: 2200, originalPrice: 3000, discount: 27,
-          description: 'ChatGPT, Claude, Gemini সহ আধুনিক AI টুলস ব্যবহার করে দৈনন্দিন কাজকে সহজ ও দ্রুত করুন। ইসলামী দৃষ্টিকোণ থেকে AI এর সীমা ও সম্ভাবনা নিয়ে আলোচনা। গবেষণা, লেখালেখি ও শিক্ষায় AI প্রয়োগের ব্যবহারিক গাইড।',
-          shortDesc: 'AI টুলস ব্যবহার করে স্মার্টভাবে পড়াশোনা, গবেষণা ও কাজ করুন',
-          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '২ মাস', lessons: 20,
-          students: 876, rating: 4.8, level: 'সকলের জন্য', featured: true,
-          tags: ['AI', 'প্রোডাক্টিভিটি', 'ChatGPT', 'টেকনোলজি'],
-          curriculum: [
-            { sectionTitle: 'AI পরিচিতি ও ইসলামী দৃষ্টিভঙ্গি', lessons: [
-              { title: 'AI কী ও কীভাবে কাজ করে', duration: '১৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'ইসলামী দৃষ্টিকোণে AI — হালাল ও হারাম ব্যবহার', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-            ]},
-            { sectionTitle: 'ব্যবহারিক AI টুলস', lessons: [
-              { title: 'ChatGPT দিয়ে গবেষণা ও লেখালেখি', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'কুরআন-হাদিস গবেষণায় AI', duration: '২২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'প্রতিদিনের কাজে AI দিয়ে সময় বাঁচান', duration: '১৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-            ]},
-          ],
-        },
-        // ৩. পারিবারিক জীবন
-        {
-          title: 'ইসলামী বিবাহ ও সুখী দাম্পত্য জীবন', slug: 'islamic-marriage-life', category: 'পারিবারিক জীবন',
-          subCategory: 'বিবাহ ও দাম্পত্য জীবন',
-          instructor: 'মুফতি তাহের আলী', price: 1500, originalPrice: 2000, discount: 25,
-          description: 'ইসলামী শরিয়তের আলোকে বিবাহের প্রস্তুতি, বিয়ের বিধান, দাম্পত্য অধিকার ও দায়িত্ব এবং পারিবারিক শান্তি বজায় রাখার উপায় শিখুন। কুরআন ও হাদিসের নির্দেশনায় সুখী পারিবারিক জীবন গড়ুন।',
-          shortDesc: 'ইসলামী বিবাহ বিধান, দাম্পত্য অধিকার ও সুখী পরিবার গঠনের গাইড',
-          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৩ মাস', lessons: 24,
-          students: 945, rating: 4.8, level: 'সকলের জন্য', featured: true,
-          tags: ['বিবাহ', 'পারিবারিক জীবন', 'দাম্পত্য', 'ইসলাম'],
-          curriculum: [
-            { sectionTitle: 'বিবাহের প্রস্তুতি ও বিধান', lessons: [
-              { title: 'বিবাহের গুরুত্ব ও উদ্দেশ্য', duration: '১৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'বর-কনে নির্বাচনের ইসলামী মানদণ্ড', duration: '২২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'মোহর, ওলিমা ও বিয়ের অনুষ্ঠান', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-            ]},
-            { sectionTitle: 'দাম্পত্য জীবনের বিধান', lessons: [
-              { title: 'স্বামী-স্ত্রীর পারস্পরিক অধিকার', duration: '৩০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'পারিবারিক সমস্যা সমাধানের ইসলামী পথ', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-            ]},
-          ],
-        },
-        // ৪. সীরাহ এবং ইতিহাস
-        {
-          title: 'সীরাতুন নবী ﷺ ও আপত্তির খণ্ডন', slug: 'seerah-refutation-course', category: 'সীরাহ এবং ইতিহাস',
-          subCategory: 'সিরাহ ও আপত্তির খণ্ডন',
-          instructor: 'মাওলানা আব্দুর রহমান', price: 2000, originalPrice: 2600, discount: 23,
-          description: 'রাসুলুল্লাহ ﷺ এর পূর্ণাঙ্গ জীবনী এবং ইসলাম-বিরোধীদের উত্থাপিত আপত্তির দলিলভিত্তিক খণ্ডন। মক্কি ও মদনি জীবন, যুদ্ধাভিযান এবং নবীজীর চরিত্র নিয়ে করা মিথ্যাচারের পর্দাফাঁস।',
-          shortDesc: 'নবীজীর জীবনী ও ইসলামবিরোধী আপত্তির দলিলভিত্তিক জবাব',
-          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৫ মাস', lessons: 40,
-          students: 712, rating: 4.9, level: 'সকলের জন্য', featured: true,
-          tags: ['সীরাহ', 'নবী জীবনী', 'খণ্ডন', 'ইতিহাস'],
-          curriculum: [
-            { sectionTitle: 'মক্কি জীবন', lessons: [
-              { title: 'প্রাক-ইসলামী আরবের অবস্থা', duration: '১৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'নবুওয়াত লাভ ও প্রথম ওহী', duration: '২৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'মক্কার নির্যাতন ও সাহাবীদের ধৈর্য', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-            ]},
-            { sectionTitle: 'আপত্তির জবাব', lessons: [
-              { title: 'নবীজীর বিবাহ নিয়ে আপত্তির জবাব', duration: '৩৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'যুদ্ধাভিযান নিয়ে প্রশ্নের জবাব', duration: '৩২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-            ]},
-          ],
-        },
-        // ৫. সুন্নাহ এবং লাইফস্টাইল
-        {
-          title: 'হজ ও ওমরা সম্পূর্ণ প্রস্তুতি কোর্স', slug: 'hajj-umrah-complete', category: 'সুন্নাহ এবং লাইফস্টাইল',
-          subCategory: 'হজ ও ওমরা প্রস্তুতি',
-          instructor: 'মুফতি তাহের আলী', price: 1600, originalPrice: 2200, discount: 27,
-          description: 'হজ ও ওমরার সম্পূর্ণ বিধান, মানাসিক, দুআ ও আমলসহ ব্যবহারিক প্রস্তুতি গাইড। ইহরাম থেকে শুরু করে তাওয়াফ, সায়ী, মিনা, আরাফাত সবকিছু ধাপে ধাপে শিখুন। বাংলাদেশি হাজিদের জন্য বিশেষভাবে তৈরি।',
-          shortDesc: 'হজ ও ওমরার বিধান, মানাসিক ও দুআসহ সম্পূর্ণ প্রস্তুতি গাইড',
-          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '২ মাস', lessons: 22,
-          students: 1560, rating: 4.9, level: 'সকলের জন্য', featured: true,
-          tags: ['হজ', 'ওমরা', 'মক্কা', 'ইবাদত'],
-          curriculum: [
-            { sectionTitle: 'হজের বুনিয়াদি জ্ঞান', lessons: [
-              { title: 'হজের ফরজিয়াত ও ওয়াজিব', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'ইহরামের বিধান ও নিষিদ্ধ কাজ', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-            ]},
-            { sectionTitle: 'হজের মানাসিক', lessons: [
-              { title: 'তাওয়াফ ও সায়ীর পদ্ধতি', duration: '৩০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'আরাফাত, মুযদালিফা ও মিনার আমল', duration: '৩৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'ওমরার সম্পূর্ণ পদ্ধতি', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-            ]},
-          ],
-        },
-        // ৬. ফিকাহ
-        {
-          title: 'মাকাসিদে শরিয়াহ — ইসলামী আইনের উদ্দেশ্য', slug: 'maqasid-al-shariah-course', category: 'ফিকাহ',
-          subCategory: 'মাকাসিদে শরিয়াহ',
-          instructor: 'মুফতি তাহের আলী', price: 2400, originalPrice: 3000, discount: 20,
-          description: 'ইসলামী শরিয়তের পাঁচটি মূল উদ্দেশ্য — দীন, জীবন, বুদ্ধি, বংশ ও সম্পদ রক্ষা — বিস্তারিতভাবে শিখুন। আধুনিক সমস্যায় ফিকাহর প্রয়োগ এবং ইজতিহাদের মূলনীতি। ইমাম শাতিবীর আল-মুওয়াফাকাত থেকে গ্রহণ করা বিষয়বস্তু।',
-          shortDesc: 'শরিয়তের পাঁচ মাকাসিদ ও আধুনিক সমস্যায় ফিকাহর প্রয়োগ',
-          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৪ মাস', lessons: 30,
-          students: 456, rating: 4.8, level: 'উচ্চ স্তর', featured: false,
-          tags: ['ফিকাহ', 'মাকাসিদ', 'শরিয়াহ', 'উসুল'],
-          curriculum: [
-            { sectionTitle: 'মাকাসিদের পরিচয়', lessons: [
-              { title: 'মাকাসিদে শরিয়াহ — ভূমিকা ও ইতিহাস', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'দারুরিয়াত, হাজিয়াত ও তাহসিনিয়াত', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-            ]},
-            { sectionTitle: 'পাঁচ মাকাসিদের বিস্তারিত', lessons: [
-              { title: 'দীনের সংরক্ষণ', duration: '২৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'জীবন ও বুদ্ধির সংরক্ষণ', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'আধুনিক বিষয়ে মাকাসিদের প্রয়োগ', duration: '৩০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-            ]},
-          ],
-        },
-        // ৭. হাদীস
-        {
-          title: 'হাদিস অস্বীকারকারীদের ফেতনা ও খণ্ডন', slug: 'hadith-rejection-refutation-course', category: 'হাদীস',
-          subCategory: 'হাদিস অস্বীকারে ফেতনা (রিফিউটেশন)',
-          instructor: 'শায়খ মুহাম্মদ ইসমাইল', price: 1800, originalPrice: 2400, discount: 25,
-          description: 'কুরআনমাত্রবাদী (Quranist) ও হাদিস অস্বীকারকারীদের যুক্তি খণ্ডন করুন দলিলের আলোকে। হাদিসের সংকলন ইতিহাস, সনদ পরীক্ষার পদ্ধতি এবং হাদিসের বিশুদ্ধতার প্রমাণ। মুসলিম তরুণদের জন্য বিশেষভাবে প্রয়োজনীয় কোর্স।',
-          shortDesc: 'হাদিস অস্বীকারকারীদের আপত্তির দলিলভিত্তিক জবাব ও সনদ বিজ্ঞান',
-          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৩ মাস', lessons: 26,
-          students: 634, rating: 4.9, level: 'মধ্যম স্তর', featured: true,
-          tags: ['হাদিস', 'রিফিউটেশন', 'সনদ', 'উসুলুল হাদিস'],
-          curriculum: [
-            { sectionTitle: 'হাদিসের মর্যাদা ও সংরক্ষণ', lessons: [
-              { title: 'হাদিস কেন মানতে হবে — কুরআনের দলিল', duration: '২২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'হাদিস সংকলনের ইতিহাস', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-            ]},
-            { sectionTitle: 'আপত্তির খণ্ডন', lessons: [
-              { title: '"হাদিস মানুষের লেখা" — এই দাবির জবাব', duration: '৩০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'সনদ পরীক্ষার বৈজ্ঞানিক পদ্ধতি', duration: '২৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'বিখ্যাত হাদিস অস্বীকারকারীদের যুক্তি খণ্ডন', duration: '৩৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-            ]},
-          ],
-        },
-        // ৮. হোমস্কুলিং এবং প্যারেন্টিং
-        {
-          title: 'ইসলামী প্যারেন্টিং — সন্তান গড়ার গাইড', slug: 'islamic-parenting-guide', category: 'হোমস্কুলিং এবং প্যারেন্টিং',
-          subCategory: 'প্যারেন্টিং',
-          instructor: 'ড. আয়েশা বেগম', price: 1600, originalPrice: 2200, discount: 27,
-          description: 'কুরআন ও সুন্নাহর আলোকে সন্তান লালন-পালন, মূল্যবোধ শিক্ষা এবং আধুনিক চ্যালেঞ্জ মোকাবেলার পথ। সন্তানের মানসিক বিকাশ, স্ক্রিন টাইম ম্যানেজমেন্ট এবং ইসলামী পরিবেশ তৈরির কৌশল। হোমস্কুলিং পদ্ধতি ও ইসলামী শিক্ষার সমন্বয়।',
-          shortDesc: 'কুরআন-সুন্নাহর আলোকে সন্তান গড়ার সম্পূর্ণ ইসলামী গাইড',
-          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '৩ মাস', lessons: 24,
-          students: 892, rating: 4.8, level: 'সকলের জন্য', featured: true,
-          tags: ['প্যারেন্টিং', 'হোমস্কুলিং', 'শিশু শিক্ষা', 'পরিবার'],
-          curriculum: [
-            { sectionTitle: 'ইসলামী শিশু লালন-পালন', lessons: [
-              { title: 'সন্তান লালনে নবীজীর আদর্শ', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'শিশুর মানসিক বিকাশ ও ইসলামী দৃষ্টিভঙ্গি', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-            ]},
-            { sectionTitle: 'হোমস্কুলিং পদ্ধতি', lessons: [
-              { title: 'ঘরে কুরআন ও দীনী শিক্ষার পরিবেশ তৈরি', duration: '২২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'ডিজিটাল যুগে সন্তানকে রক্ষার উপায়', duration: '২৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'পুরস্কার ও শাস্তি — ইসলামী দৃষ্টিকোণ', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-            ]},
-          ],
-        },
-        // ৯. ইসলামী বিশ্বাস ও মতবাদ
-        {
-          title: 'কাদিয়ানীয়াত — পরিচয় ও খণ্ডন', slug: 'qadianiyyat-refutation', category: 'ইসলামী বিশ্বাস ও মতবাদ',
-          subCategory: 'কাদিয়ানীয়াত',
-          instructor: 'শায়খ মুহাম্মদ ইসমাইল', price: 1400, originalPrice: 2000, discount: 30,
-          description: 'কাদিয়ানী (আহমাদিয়া) মতবাদের উৎপত্তি, বিশ্বাস ও ইসলামের সাথে তার মৌলিক পার্থক্য। খতমে নবুওয়াতের দলিল এবং কাদিয়ানীদের দাবির কুরআন-হাদিস ভিত্তিক খণ্ডন। মুসলিম তরুণদের ঈমান রক্ষায় অপরিহার্য কোর্স।',
-          shortDesc: 'কাদিয়ানী মতবাদের পরিচয় ও কুরআন-হাদিস দিয়ে খণ্ডন',
-          thumbnail: '', previewVideo: 'dQw4w9WgXcQ', duration: '২ মাস', lessons: 18,
-          students: 523, rating: 4.9, level: 'সকলের জন্য', featured: false,
-          tags: ['কাদিয়ানী', 'খতমে নবুওয়াত', 'রিফিউটেশন', 'আকিদা'],
-          curriculum: [
-            { sectionTitle: 'কাদিয়ানীয়াতের পরিচয়', lessons: [
-              { title: 'মির্জা গোলাম আহমদ — ইতিহাস ও দাবি', duration: '২২ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-              { title: 'কাদিয়ানীদের মূল বিশ্বাস ও ইসলামের পার্থক্য', duration: '২৫ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: true },
-            ]},
-            { sectionTitle: 'খতমে নবুওয়াতের দলিল', lessons: [
-              { title: 'কুরআন থেকে খতমে নবুওয়াতের প্রমাণ', duration: '৩০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'হাদিস থেকে খতমে নবুওয়াতের প্রমাণ', duration: '২৮ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-              { title: 'কাদিয়ানীদের সাথে কথা বলার পদ্ধতি', duration: '২০ মিনিট', videoId: 'dQw4w9WgXcQ', isFree: false },
-            ]},
-          ],
-        },
-      ];
-      
-      await Course.insertMany(defaultCourses);
-      console.log('✅ Default courses created');
-    }
-    
-    if (instructorCount === 0) {
-      console.log('👨‍🏫 Creating default instructors...');
-      
-      const defaultInstructors = [
-        { 
-          name: 'মাওলানা আব্দুর রহমান', 
-          slug: 'mawlana-abdur-rahman', 
-          title: 'কুরআন, তাজবীদ ও সীরাহ বিশেষজ্ঞ', 
-          bio: 'আল-আযহার বিশ্ববিদ্যালয় থেকে ইসলামিক স্টাডিজে মাস্টার্স। ২০+ বছরের শিক্ষকতার অভিজ্ঞতা। কুরআন তাজবীদ ও সীরাতুন নবী বিষয়ে বিশেষজ্ঞ।', 
-          photo: '', 
-          specializations: ['কুরআন', 'তাজবীদ', 'সীরাহ', 'হিফজ'], 
-          students: 2250, 
-          courses: 10, 
-          rating: 4.9,
-          social: { facebook: '', youtube: '', twitter: '', linkedin: '' },
-          featured: true 
-        },
-        { 
-          name: 'শায়খ মুহাম্মদ ইসমাইল', 
-          slug: 'shaykh-muhammad-ismail', 
-          title: 'হাদিস, আকিদা ও দুআ বিশেষজ্ঞ', 
-          bio: 'মদীনা ইসলামিক বিশ্ববিদ্যালয় থেকে হাদিস বিভাগে পিএইচডি। ১৫ বছরের গবেষণা ও শিক্ষকতার অভিজ্ঞতা। আহলে সুন্নাহ আকিদার উপর বিশেষ কোর্স।', 
-          photo: '', 
-          specializations: ['হাদিস', 'আকিদা', 'দুআ ও যিকর', 'উসুল'], 
-          students: 1980, 
-          courses: 8, 
-          rating: 4.8,
-          social: { facebook: '', youtube: '', twitter: '', linkedin: '' },
-          featured: true 
-        },
-        { 
-          name: 'উস্তাদ ফারুক আহমেদ', 
-          slug: 'ustad-faruq-ahmed', 
-          title: 'আরবি ভাষা ও নাহু বিশেষজ্ঞ', 
-          bio: 'কায়রো বিশ্ববিদ্যালয় থেকে আরবি সাহিত্যে মাস্টার্স। ১২ বছরের আরবি শিক্ষকতার অভিজ্ঞতা। নাহু, সরফ ও আরবি কথোপকথনে বিশেষজ্ঞ।', 
-          photo: '', 
-          specializations: ['আরবি ভাষা', 'নাহু', 'সরফ', 'কথোপকথন'], 
-          students: 1840, 
-          courses: 12, 
-          rating: 4.9,
-          social: { facebook: '', youtube: '', twitter: '', linkedin: '' },
-          featured: true 
-        },
-        { 
-          name: 'মুফতি তাহের আলী', 
-          slug: 'mufti-taher-ali', 
-          title: 'ফিকাহ ও তাফসীর বিশেষজ্ঞ', 
-          bio: 'দেওবন্দ থেকে দাওরায়ে হাদিস সম্পন্ন। ফিকাহ ও তাফসীরে বিশেষজ্ঞ। ১৮ বছরের মাদরাসা ও অনলাইন শিক্ষকতার অভিজ্ঞতা।', 
-          photo: '', 
-          specializations: ['ফিকাহ', 'তাফসীর', 'হালাল-হারাম', 'পারিবারিক বিধান'], 
-          students: 1560, 
-          courses: 9, 
-          rating: 4.8,
-          social: { facebook: '', youtube: '', twitter: '', linkedin: '' },
-          featured: true 
-        },
-        { 
-          name: 'ড. আয়েশা বেগম', 
-          slug: 'dr-ayesha-begum', 
-          title: 'মহিলাদের ফিকাহ ও ইসলামিক শিক্ষা বিশেষজ্ঞ', 
-          bio: 'ইসলামিক বিশ্ববিদ্যালয় থেকে পিএইচডি। মহিলাদের জন্য বিশেষ ইসলামিক শিক্ষা কোর্স পরিচালনায় অগ্রণী। ১০ বছরের অভিজ্ঞতা।', 
-          photo: '', 
-          specializations: ['মহিলা ফিকাহ', 'পারিবারিক বিধান', 'কুরআন শিক্ষা'], 
-          students: 980, 
-          courses: 6, 
-          rating: 4.7,
-          social: { facebook: '', youtube: '', twitter: '', linkedin: '' },
-          featured: false 
-        },
-      ];
-      
-      await Instructor.insertMany(defaultInstructors);
-      console.log('✅ Default instructors created');
-    }
-  } catch (err) {
-    console.error('❌ Default content creation error:', err.message);
-  }
-}
-
-
-// ============================================================
-// START
-// ============================================================
-mongoose.connect(process.env.MONGODB_URI)
-  .then(async () => {
-    console.log('✅ MongoDB connected');
-    await ensureAdminExists();
-    await ensureDefaultContent();
-    
-// ============================================================
-// FEATURES (বিশেষত্ব) — Public + Admin
-// ============================================================
-app.get('/api/features', async (req, res) => {
-  try {
-    const list = await Feature.find({ active: true }).sort({ order: 1, createdAt: 1 });
-    res.json(list);
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.get('/api/admin/features', authMiddleware, async (req, res) => {
-  try {
-    const list = await Feature.find().sort({ order: 1, createdAt: 1 });
-    res.json(list);
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.post('/api/admin/features', authMiddleware, async (req, res) => {
-  try {
-    const data = req.body || {};
-    if (!data.title) return res.status(400).json({ error: 'Title is required' });
-    const item = await Feature.create({
-      icon: data.icon || '✨',
-      title: data.title,
-      desc: data.desc || '',
-      order: Number(data.order || 0),
-      active: data.active !== false,
-    });
-    res.json(item);
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.put('/api/admin/features/:id', authMiddleware, async (req, res) => {
-  try {
-    const data = req.body || {};
-    const item = await Feature.findByIdAndUpdate(req.params.id, {
-      $set: {
-        ...(data.icon !== undefined ? { icon: data.icon } : {}),
-        ...(data.title !== undefined ? { title: data.title } : {}),
-        ...(data.desc !== undefined ? { desc: data.desc } : {}),
-        ...(data.order !== undefined ? { order: Number(data.order) } : {}),
-        ...(data.active !== undefined ? { active: data.active === true || data.active === 'true' } : {}),
-      }
-    }, { new: true });
-    if (!item) return res.status(404).json({ error: 'Not found' });
-    res.json(item);
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.delete('/api/admin/features/:id', authMiddleware, async (req, res) => {
-  try {
-    await Feature.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Deleted' });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-
-
-// ============================================================
-// 🎬 YouTube URL → Video ID extractor (server-side helper)
-// POST /api/utils/youtube-id  { url: "..." }  →  { id: "...", valid: true|false }
-// ============================================================
-function extractYoutubeId(value) {
-  const text = String(value || '').trim();
-  if (!text) return '';
-  if (/^[a-zA-Z0-9_-]{11}$/.test(text)) return text;
-  try {
-    const url = new URL(text);
-    const host = url.hostname.replace(/^www\./, '');
-    if (host === 'youtu.be') {
-      const p = url.pathname.split('/').filter(Boolean)[0];
-      if (p && /^[a-zA-Z0-9_-]{11}$/.test(p)) return p;
-    }
-    if (host.includes('youtube.com')) {
-      const v = url.searchParams.get('v');
-      if (v && /^[a-zA-Z0-9_-]{11}$/.test(v)) return v;
-      const parts = url.pathname.split('/').filter(Boolean);
-      for (let i = 0; i < parts.length; i++) {
-        if (['embed','shorts','live','v'].includes(parts[i]) && parts[i+1]) {
-          const pid = parts[i+1].split('?')[0].split('&')[0];
-          if (/^[a-zA-Z0-9_-]{11}$/.test(pid)) return pid;
-        }
-      }
-    }
-  } catch(e) {}
-  const m = text.match(/(?:v=|youtu\.be\/|embed\/|shorts\/|live\/|\/v\/)([a-zA-Z0-9_-]{11})/);
-  return m ? m[1] : '';
-}
-
-app.post('/api/utils/youtube-id', (req, res) => {
-  const { url } = req.body || {};
-  const id = extractYoutubeId(url);
-  res.json({ id, valid: !!id });
-});
-
-
-// ============================================================
-// 📦 SNAPSHOT SYSTEM — admin panel থেকে static data build
-// ─────────────────────────────────────────────────────────────
-// সব public data এক JSON-এ একত্রিত করে রাখা হয় Settings('dataSnapshot')-এ।
-// index.html এই snapshot থেকে দ্রুত data পড়তে পারে (offline / static deploy)।
-// admin save করলে auto-rebuild হয়।
-// ============================================================
-async function buildDataSnapshot() {
-  const safe = async (fn, fallback) => { try { return await fn(); } catch(e) { return fallback; } };
-
-  const [
-    courses, instructors, testimonials, notices, blog, categories,
-    features, faqs, courseTabs, contactContent, siteSettings,
-    heroSection, navigation, footer, themeSettings, welcomePopup,
-    ctaSection, featuredConfig, contentBundle, aboutPage,
-  ] = await Promise.all([
-    safe(() => Course.find({ active: { $ne: false } }).sort({ createdAt: -1 }).lean(), []),
-    safe(() => Instructor.find({ active: { $ne: false } }).sort({ order: 1 }).lean(), []),
-    safe(() => Testimonial.find({ active: { $ne: false } }).sort({ order: 1 }).lean(), []),
-    safe(() => Notice.find({ active: { $ne: false } }).sort({ createdAt: -1 }).lean(), []),
-    safe(() => BlogPost.find({ published: { $ne: false } }).sort({ createdAt: -1 }).lean(), []),
-    safe(() => Category.find({ active: { $ne: false } }).sort({ order: 1 }).lean(), []),
-    safe(() => Feature.find({ active: { $ne: false } }).sort({ order: 1 }).lean(), []),
-    safe(async () => { const s = await Settings.findOne({ key: 'faqs' }); return (s && s.value) ? s.value : DEFAULT_FAQS; }, DEFAULT_FAQS),
-    safe(() => CourseTab.find({ active: { $ne: false } }).sort({ order: 1 }).lean(), []),
-    safe(async () => { const s = await Settings.findOne({ key: 'contactContent' }); return s ? s.value : {}; }, {}),
-    safe(async () => { const s = await Settings.findOne({ key: 'siteSettings' }); return s ? s.value : {}; }, {}),
-    safe(async () => { const s = await Settings.findOne({ key: 'heroSection' }); return s ? s.value : {}; }, {}),
-    safe(async () => { const s = await Settings.findOne({ key: 'navigation' }); return s ? s.value : {}; }, {}),
-    safe(async () => { const s = await Settings.findOne({ key: 'footer' }); return s ? s.value : {}; }, {}),
-    safe(async () => { const s = await Settings.findOne({ key: 'themeSettings' }); return s ? s.value : {}; }, {}),
-    safe(async () => { const s = await Settings.findOne({ key: 'welcomePopup' }); return s ? s.value : {}; }, {}),
-    safe(async () => { const s = await Settings.findOne({ key: 'ctaSection' }); return s ? s.value : {}; }, {}),
-    safe(async () => { const s = await Settings.findOne({ key: 'featuredCoursesConfig' }); return s ? s.value : {}; }, {}),
-    safe(() => getContentBundle(), {}),
-    safe(async () => { const s = await Settings.findOne({ key: 'aboutPage' }); return s ? s.value : {}; }, {}),
-  ]);
-
-  // course-detail bundle (shallow, for offline detail-page browsing)
-  const courseDetails = {};
-  for (const c of courses) {
-    const id = String(c._id);
-    const det = await safe(async () => { const s = await Settings.findOne({ key: 'courseDetail_' + id }); return s ? s.value : null; }, null);
-    if (det) courseDetails[id] = det;
-  }
-
-  const snapshot = {
-    builtAt: new Date().toISOString(),
-    version: 1,
-    data: {
-      courses, instructors, testimonials, notices, blog, categories,
-      features, faqs, courseTabs, contactContent, siteSettings,
-      heroSection, navigation, footer, themeSettings, welcomePopup,
-      ctaSection, featuredConfig, contentBundle, aboutPage, courseDetails,
-    },
-  };
-
-  await Settings.findOneAndUpdate(
-    { key: 'dataSnapshot' },
-    { key: 'dataSnapshot', value: snapshot, updatedAt: new Date() },
-    { upsert: true }
-  );
-
-  const itemCount =
-    courses.length + instructors.length + testimonials.length +
-    notices.length + blog.length + categories.length + features.length;
-  const size = Buffer.byteLength(JSON.stringify(snapshot), 'utf8');
-  return { builtAt: snapshot.builtAt, size, itemCount };
-}
-
-// ── Public: snapshot serve (index.html এই endpoint থেকে data পড়ে) ──
-app.get('/api/public/data-snapshot', async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'dataSnapshot' });
-    if (!s || !s.value) return res.status(404).json({ error: 'Snapshot এখনো তৈরি হয়নি' });
-    res.set('Cache-Control', 'public, max-age=60');
-    res.json(s.value);
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ── Admin: snapshot তথ্য ──
-app.get('/api/admin/snapshot-info', authMiddleware, async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'dataSnapshot' });
-    if (!s || !s.value) return res.json({ builtAt: null, size: 0, itemCount: 0 });
-    const value = s.value;
-    const size = Buffer.byteLength(JSON.stringify(value), 'utf8');
-    const d = value.data || {};
-    const itemCount =
-      (d.courses?.length || 0) + (d.instructors?.length || 0) +
-      (d.testimonials?.length || 0) + (d.notices?.length || 0) +
-      (d.blog?.length || 0) + (d.categories?.length || 0) + (d.features?.length || 0);
-    res.json({ builtAt: value.builtAt, size, itemCount });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ── Admin: snapshot build trigger ──
-app.post('/api/admin/build-snapshot', authMiddleware, async (req, res) => {
-  try {
-    const info = await buildDataSnapshot();
-    res.json({ message: '✅ Snapshot তৈরি হয়েছে', ...info });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ── Admin: পূর্ণ index.html (snapshot embed করে) ডাউনলোড ──
-app.get('/api/admin/download-index', authMiddleware, async (req, res) => {
-  try {
-    const checkedPaths = htmlCandidates('index.html', FRONTEND_DIRS);
-    const indexPath = firstExistingFile(checkedPaths);
-    if (!indexPath) {
-      return res.status(404).json({ error: 'index.html ফাইল পাওয়া যায়নি', checkedPaths });
-    }
-
-    let html = fs.readFileSync(indexPath, 'utf8');
-
-    // snapshot embed
-    const s = await Settings.findOne({ key: 'dataSnapshot' });
-    const snapshot = (s && s.value)
-      ? s.value
-      : await buildDataSnapshot()
-          .then(() => Settings.findOne({ key: 'dataSnapshot' }))
-          .then(x => x.value);
-
-    const embed = `<script id="__SNAPSHOT__" type="application/json">${JSON.stringify(snapshot).replace(/</g, '\\u003c')}</script>`;
-    if (html.includes('id="__SNAPSHOT__"')) {
-      html = html.replace(/<script id="__SNAPSHOT__"[\s\S]*?<\/script>/, embed);
-    } else if (html.includes('</head>')) {
-      html = html.replace('</head>', embed + '\n</head>');
-    } else {
-      html = embed + '\n' + html;
-    }
-
-    res.set('Content-Type', 'text/html; charset=utf-8');
-    res.set('Content-Disposition', 'attachment; filename="index.html"');
-    res.send(html);
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ── Admin: admin.html ডাউনলোড ──
-app.get('/api/admin/download-admin', authMiddleware, async (req, res) => {
-  try {
-    const checkedPaths = htmlCandidates('admin.html', ADMIN_DIRS);
-    const adminPath = firstExistingFile(checkedPaths);
-    if (!adminPath) {
-      return res.status(404).json({ error: 'admin.html ফাইল পাওয়া যায়নি', checkedPaths });
-    }
-
-    res.set('Content-Type', 'text/html; charset=utf-8');
-    res.set('Content-Disposition', 'attachment; filename="admin.html"');
-    res.send(fs.readFileSync(adminPath, 'utf8'));
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ── Admin: JSON snapshot ডাউনলোড ──
-app.get('/api/admin/download-snapshot', authMiddleware, async (req, res) => {
-  try {
-    const s = await Settings.findOne({ key: 'dataSnapshot' });
-    const snapshot = (s && s.value)
-      ? s.value
-      : await buildDataSnapshot()
-          .then(() => Settings.findOne({ key: 'dataSnapshot' }))
-          .then(x => x.value);
-
-    res.set('Content-Type', 'application/json; charset=utf-8');
-    res.set('Content-Disposition', 'attachment; filename="data-snapshot.json"');
-    res.send(JSON.stringify(snapshot, null, 2));
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ============================================================
-// 🔔 NOTIFICATIONS — sidebar badges
-// নতুন enrollment / access-request / contact-message — সব এক জায়গায়
-// ============================================================
-app.get('/api/admin/notifications', authMiddleware, async (req, res) => {
-  try {
-    const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000); // last 7 days
-    const [enrolls, accessReqs, msgs] = await Promise.all([
-      Enrollment.find({ status: 'pending' }).sort({ createdAt: -1 }).limit(20).lean().catch(() => []),
-      AccessRequest.find({ status: 'pending' }).sort({ createdAt: -1 }).limit(20).lean().catch(() => []),
-      ContactMessage.find({ status: { $ne: 'read' }, createdAt: { $gte: since } }).sort({ createdAt: -1 }).limit(20).lean().catch(() => []),
+    pruneLive();
+    const today = todayUTC();
+    const [todayViews, todayCourseViews, totalViews] = await Promise.all([
+      PageView.countDocuments({ date: today }),
+      CourseView.countDocuments({ date: today }),
+      PageView.estimatedDocumentCount(),
     ]);
-    const notifications = [
-      ...enrolls.map(e => ({ type: 'enrollment', read: false, title: e.studentName || 'নতুন এনরোলমেন্ট', desc: e.courseTitle || '', at: e.createdAt, id: String(e._id) })),
-      ...accessReqs.map(a => ({ type: 'access_request', read: false, title: a.userName || 'অ্যাক্সেস রিকোয়েস্ট', desc: a.courseTitle || '', at: a.createdAt, id: String(a._id) })),
-      ...msgs.map(m => ({ type: 'contact', read: false, title: m.name || 'নতুন মেসেজ', desc: m.subject || '', at: m.createdAt, id: String(m._id) })),
-    ].sort((a, b) => new Date(b.at) - new Date(a.at));
-
+    // unique today by sessionId
+    const uniqueToday = (await PageView.distinct('sessionId', { date: today })).length;
     res.json({
-      unread: notifications.filter(n => !n.read).length,
-      notifications,
+      live: LIVE_VISITORS.size,
+      todayViews,
+      uniqueToday,
+      todayCourseViews,
+      totalViews,
     });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// ============================================================
-// HOME SECTIONS — CRUD (admin) + public read
-// ============================================================
-app.get('/api/home-sections', async (req, res) => {
+// Admin: last N days page-view trend
+app.get('/api/admin/analytics/trend', authMiddleware, async (req, res) => {
   try {
-    const list = await HomeSection.find({ enabled: true }).sort({ order: 1, createdAt: 1 });
-    res.json(list);
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.get('/api/admin/home-sections', authMiddleware, async (req, res) => {
-  try {
-    const list = await HomeSection.find().sort({ order: 1, createdAt: 1 });
-    res.json(list);
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.post('/api/admin/home-sections', authMiddleware, async (req, res) => {
-  try {
-    const body = req.body || {};
-    body.updatedAt = new Date();
-    const sec = await HomeSection.create(body);
-    res.json(sec);
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.put('/api/admin/home-sections/:id', authMiddleware, async (req, res) => {
-  try {
-    const body = req.body || {};
-    body.updatedAt = new Date();
-    const sec = await HomeSection.findByIdAndUpdate(req.params.id, body, { new: true });
-    res.json(sec);
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.delete('/api/admin/home-sections/:id', authMiddleware, async (req, res) => {
-  try {
-    await HomeSection.findByIdAndDelete(req.params.id);
-    res.json({ ok: true });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.post('/api/admin/home-sections/reorder', authMiddleware, async (req, res) => {
-  try {
-    const { items = [] } = req.body || {};
-    await Promise.all(items.map((it, i) =>
-      HomeSection.findByIdAndUpdate(it.id, { order: it.order ?? i })
-    ));
-    res.json({ ok: true });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ============================================================
-// AI Section Generator — Lovable AI Gateway
-// Body: { prompt: string, kind?: 'course-grid'|'hero'|'stats'|'testimonial'|'faq'|'custom' }
-// Returns: { variants: [ { id, name, html, data } ] }  (3 design recommendations)
-// ============================================================
-app.post('/api/admin/ai-section-generate', authMiddleware, async (req, res) => {
-  try {
-    const { prompt = '', kind = 'custom' } = req.body || {};
-    if (!prompt.trim()) return res.status(400).json({ error: 'prompt required' });
-
-    const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
-    if (!LOVABLE_API_KEY) {
-      return res.status(500).json({ error: 'LOVABLE_API_KEY not configured on server. Add it to environment variables.' });
+    const days = Math.min(parseInt(req.query.days) || 7, 60);
+    const out = [];
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(); d.setUTCDate(d.getUTCDate() - i);
+      const ds = d.toISOString().slice(0, 10);
+      const [views, unique] = await Promise.all([
+        PageView.countDocuments({ date: ds }),
+        PageView.distinct('sessionId', { date: ds }).then(a => a.length),
+      ]);
+      out.push({ date: ds, views, unique });
     }
+    res.json(out);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
 
-    const sys = `তুমি একজন expert web designer। ইবনে খালদুন ইনস্টিটিউট-এর হোম পেজের জন্য একটি কোর্স-সম্পর্কিত section design করবে। 
-Brand colors: primary #066144 (deep green), accent #F5C518 (gold), white background, rounded cards, soft shadows, Hind Siliguri font.
-তুমি ৩টি ভিন্ন design variant (desktop + mobile responsive) generate করবে — প্রতিটি একটি self-contained HTML block যেটি index.html-এ সরাসরি বসানো যাবে।
-Section type: ${kind}. সব styles inline বা <style scoped> এর মধ্যে রাখবে যাতে existing CSS-এর সাথে conflict না হয়। সব class names "ihs-" prefix দিয়ে শুরু করবে।
-প্রতিটি variant অবশ্যই mobile-first responsive হবে এবং একটি সুন্দর Bengali label থাকবে।`;
-
-    const tool = {
-      type: 'function',
-      function: {
-        name: 'design_variants',
-        description: 'Return 3 design variants for the section',
-        parameters: {
-          type: 'object',
-          properties: {
-            variants: {
-              type: 'array',
-              minItems: 3, maxItems: 3,
-              items: {
-                type: 'object',
-                properties: {
-                  id:       { type: 'string', description: 'short slug e.g. v1-card-grid' },
-                  name:     { type: 'string', description: 'Bengali friendly name' },
-                  preview:  { type: 'string', description: 'short Bengali description of the design' },
-                  html:     { type: 'string', description: 'self-contained HTML+CSS block, no <html>/<body>' },
-                  data:     { type: 'object', description: 'editable text fields used in the html', additionalProperties: true },
-                },
-                required: ['id','name','html'],
-              }
-            }
-          },
-          required: ['variants'],
-        }
-      }
-    };
-
-    const r = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + LOVABLE_API_KEY,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          { role: 'system', content: sys },
-          { role: 'user',   content: prompt },
-        ],
-        tools: [tool],
-        tool_choice: { type: 'function', function: { name: 'design_variants' } },
-      }),
+// Admin: top viewed courses
+app.get('/api/admin/analytics/top-courses', authMiddleware, async (req, res) => {
+  try {
+    const today = todayUTC();
+    const limit = Math.min(parseInt(req.query.limit) || 10, 50);
+    const todayAgg = await CourseView.aggregate([
+      { $match: { date: today } },
+      { $group: { _id: '$courseId', views: { $sum: 1 } } },
+      { $sort: { views: -1 } },
+      { $limit: limit },
+    ]);
+    const ids = todayAgg.map(x => x._id).filter(Boolean);
+    const courses = await Course.find({ _id: { $in: ids } }).select('title thumbnail views');
+    const map = new Map(courses.map(c => [String(c._id), c]));
+    const result = todayAgg.map(x => {
+      const c = map.get(String(x._id));
+      return {
+        _id: x._id,
+        title: c?.title || '—',
+        thumbnail: c?.thumbnail || '',
+        viewsToday: x.views,
+        viewsTotal: c?.views || 0,
+      };
     });
+    res.json(result);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
 
-    if (!r.ok) {
-      const txt = await r.text();
-      if (r.status === 429) return res.status(429).json({ error: 'AI rate limit, একটু পরে চেষ্টা করুন।' });
-      if (r.status === 402) return res.status(402).json({ error: 'AI credits শেষ — Lovable workspace-এ credit যোগ করুন।' });
-      return res.status(500).json({ error: 'AI gateway error: ' + txt.slice(0, 300) });
+// ============================================================
+// PUBLIC SEO — sitemap + robots
+// ============================================================
+app.get('/sitemap.xml', async (req, res) => {
+  try {
+    const base = process.env.FRONTEND_URL || ('https://' + req.get('host'));
+    const courses = await Course.find({ isActive: true }).select('slug updatedAt').lean();
+    const urls = [
+      { loc: base + '/', priority: '1.0' },
+      { loc: base + '/#/courses', priority: '0.9' },
+      { loc: base + '/#/instructors', priority: '0.7' },
+      { loc: base + '/#/blog', priority: '0.7' },
+      { loc: base + '/#/about', priority: '0.6' },
+      { loc: base + '/#/contact', priority: '0.5' },
+      ...courses.map(c => ({
+        loc: `${base}/#/course/${encodeURIComponent(c.slug)}`,
+        lastmod: c.updatedAt?.toISOString().slice(0, 10),
+        priority: '0.8',
+      })),
+    ];
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.map(u => `<url><loc>${u.loc}</loc>${u.lastmod?`<lastmod>${u.lastmod}</lastmod>`:''}<priority>${u.priority}</priority></url>`).join('\n')}
+</urlset>`;
+    res.set('Content-Type', 'application/xml').send(xml);
+  } catch (e) { res.status(500).send(e.message); }
+});
+
+app.get('/robots.txt', (req, res) => {
+  const base = process.env.FRONTEND_URL || ('https://' + req.get('host'));
+  res.type('text/plain').send(`User-agent: *
+Allow: /
+Sitemap: ${base}/sitemap.xml
+`);
+});
+
+
+// ============================================================
+// SEED — auto-insert default content if collections are empty
+// ============================================================
+async function seedDatabase() {
+  try {
+    const courseCount = await Course.countDocuments();
+    if (courseCount === 0) {
+      await Course.insertMany([
+    { title: 'হিফজুল কুরআন (লাইভ)', slug: 'hifz-live', type: 'live', shortDescription: 'অভিজ্ঞ ক্বারীদের সাথে লাইভ ক্লাসে কুরআন মুখস্থ করার পূর্ণাঙ্গ কোর্স।', price: 1500, oldPrice: 2500, instructor: 'মুফতি আব্দুল্লাহ', duration: '৬ মাস', thumbnail: 'https://picsum.photos/seed/live1/640/400', isPublished: true },
+    { title: 'তাজবীদ মাসিক কোর্স', slug: 'tajweed-monthly', type: 'live', shortDescription: 'সহীহ উচ্চারণে কুরআন তিলাওয়াতের নিয়মকানুন।', price: 800, oldPrice: 1200, instructor: 'ক্বারী রফিক', duration: '৩০ দিন', thumbnail: 'https://picsum.photos/seed/live2/640/400', isPublished: true },
+    { title: 'আরবি ভাষা — বেসিক টু এডভান্সড', slug: 'arabic-basic-advanced', type: 'live', shortDescription: 'কথা বলা, পড়া ও কুরআন বোঝার আরবি।', price: 1800, oldPrice: 2500, instructor: 'উস্তাদ ইউসুফ', duration: '৪ মাস', thumbnail: 'https://picsum.photos/seed/live3/640/400', isPublished: true },
+    { title: 'ফিকহুস সলাত (লাইভ)', slug: 'fiqh-salat', type: 'live', shortDescription: 'সালাতের সঠিক নিয়ম ও মাসআলা মাসায়েল।', price: 600, oldPrice: 1000, instructor: 'মুফতি ইব্রাহিম', duration: '২ মাস', thumbnail: 'https://picsum.photos/seed/live4/640/400', isPublished: true },
+    { title: 'হাদিস অধ্যয়ন কোর্স', slug: 'hadith-study', type: 'live', shortDescription: 'রিয়াদুস সালেহীন ভিত্তিক বিশ্লেষণমূলক ক্লাস।', price: 1200, oldPrice: 1800, instructor: 'মাওলানা সাইফুল্লাহ', duration: '৩ মাস', thumbnail: 'https://picsum.photos/seed/live5/640/400', isPublished: true },
+    { title: 'সিরাতুন্নবী ﷺ', slug: 'seerah', type: 'live', shortDescription: 'নবীজি ﷺ-এর জীবনীর বিস্তৃত পাঠ।', price: 0, oldPrice: 0, instructor: 'মাওলানা জুনায়েদ', duration: '৬ সপ্তাহ', thumbnail: 'https://picsum.photos/seed/live6/640/400', isPublished: true },
+    { title: 'কুরআন তরজমা ও তাফসীর', slug: 'quran-tafsir', type: 'live', shortDescription: 'প্রতিটি আয়াতের অর্থ ও ব্যাখ্যা সহ লাইভ ক্লাস।', price: 2000, oldPrice: 3000, instructor: 'মুফতি জাকির', duration: '৮ মাস', thumbnail: 'https://picsum.photos/seed/live7/640/400', isPublished: true },
+    { title: 'আকীদা ও বিশ্বাস', slug: 'aqeedah', type: 'live', shortDescription: 'আহলুস সুন্নাহর সঠিক আকীদার পাঠ।', price: 500, oldPrice: 800, instructor: 'উস্তাদ আব্দুর রহমান', duration: '১ মাস', thumbnail: 'https://picsum.photos/seed/live8/640/400', isPublished: true },
+    { title: 'নূরানী কুরআন শিক্ষা', slug: 'noorani-quran', type: 'recorded', shortDescription: 'একদম শুরু থেকে কুরআন পড়া শেখার ভিডিও কোর্স।', price: 500, oldPrice: 1000, instructor: 'ক্বারী হামিদ', duration: '৩০ ভিডিও', thumbnail: 'https://picsum.photos/seed/rec1/640/400', isPublished: true },
+    { title: 'নামাজ শিক্ষা — সম্পূর্ণ গাইড', slug: 'namaz-shikkha', type: 'recorded', shortDescription: 'অজু, নামাজ ও দুআ — ভিডিওসহ ধাপে ধাপে।', price: 300, oldPrice: 600, instructor: 'মুফতি সাদিক', duration: '২৫ ভিডিও', thumbnail: 'https://picsum.photos/seed/rec2/640/400', isPublished: true },
+    { title: 'রমজান প্রস্তুতি কোর্স', slug: 'ramadan-prep', type: 'recorded', shortDescription: 'রমজানকে সর্বোচ্চ কাজে লাগানোর গাইড।', price: 0, oldPrice: 0, instructor: 'উস্তাদ ফারুক', duration: '১৫ ভিডিও', thumbnail: 'https://picsum.photos/seed/rec3/640/400', isPublished: true },
+    { title: 'যাকাত ও সদকা', slug: 'zakat-sadaqah', type: 'recorded', shortDescription: 'সম্পদের যাকাত হিসাব ও বিতরণ পদ্ধতি।', price: 400, oldPrice: 700, instructor: 'মুফতি কামাল', duration: '১২ ভিডিও', thumbnail: 'https://picsum.photos/seed/rec4/640/400', isPublished: true },
+    { title: 'আদর্শ মুসলিম পরিবার', slug: 'muslim-family', type: 'recorded', shortDescription: 'ইসলাম অনুযায়ী সুখী সংসার গঠনের পাঠ।', price: 600, oldPrice: 900, instructor: 'উস্তাদা ফাতেমা', duration: '১৮ ভিডিও', thumbnail: 'https://picsum.photos/seed/rec5/640/400', isPublished: true },
+    { title: '৪০ হাদিস — ইমাম নববী', slug: '40-hadith-nawawi', type: 'recorded', shortDescription: 'বিখ্যাত ৪০ হাদিসের ব্যাখ্যা।', price: 350, oldPrice: 600, instructor: 'মাওলানা ইউনুস', duration: '৪০ পর্ব', thumbnail: 'https://picsum.photos/seed/rec6/640/400', isPublished: true },
+    { title: 'হজ্জ ও উমরাহ গাইড', slug: 'hajj-umrah', type: 'recorded', shortDescription: 'হজ্জের প্রতিটি ধাপের সচিত্র ভিডিও পাঠ।', price: 800, oldPrice: 1300, instructor: 'মুফতি হারুন', duration: '২২ ভিডিও', thumbnail: 'https://picsum.photos/seed/rec7/640/400', isPublished: true },
+    { title: 'কুরআনের আলোকে দুআ', slug: 'quran-dua', type: 'recorded', shortDescription: 'প্রতিদিনের জীবনে গুরুত্বপূর্ণ দুআসমূহ।', price: 0, oldPrice: 0, instructor: 'ক্বারী আনাস', duration: '২০ ভিডিও', thumbnail: 'https://picsum.photos/seed/rec8/640/400', isPublished: true }
+      ]);
+      console.log('🌱 Seeded courses');
     }
-    const j = await r.json();
-    const call = j.choices?.[0]?.message?.tool_calls?.[0];
-    let variants = [];
-    if (call?.function?.arguments) {
-      try { variants = JSON.parse(call.function.arguments).variants || []; } catch(_) {}
+
+    if (await Faq.countDocuments() === 0) {
+      await Faq.insertMany([
+    { question: 'কোর্সে ভর্তি হতে কী কী লাগবে?', answer: 'একটি স্মার্টফোন বা কম্পিউটার, ইন্টারনেট সংযোগ এবং কোর্স ফি (ফ্রি কোর্সের ক্ষেত্রে শুধু রেজিস্ট্রেশন)। এর বেশি কিছু লাগবে না।' },
+    { question: 'লাইভ ক্লাস কোথায় হবে?', answer: 'লাইভ ক্লাসগুলো Zoom বা Google Meet-এ হয়। প্রবেশের লিংক WhatsApp গ্রুপে শেয়ার করা হয়।' },
+    { question: 'রেকর্ডেড কোর্স কতদিন দেখা যাবে?', answer: 'একবার এনরোল করলে আজীবন অ্যাক্সেস — যেকোনো সময়, যেকোনো ডিভাইস থেকে।' },
+    { question: 'কোর্স শেষে সার্টিফিকেট পাব কি?', answer: 'হ্যাঁ, প্রতিটি কোর্স সফলভাবে সম্পন্ন করার পর প্রতিষ্ঠান-স্বীকৃত ডিজিটাল সার্টিফিকেট দেওয়া হয়।' },
+    { question: 'পেমেন্ট কীভাবে করব?', answer: 'বিকাশ, নগদ, রকেট, ব্যাংক ট্রান্সফার ও কার্ড পেমেন্ট সাপোর্টেড। চেকআউটে সব অপশন পাবেন।' },
+    { question: 'ক্লাস বুঝতে না পারলে কী করব?', answer: 'প্রতিটি কোর্সের আলাদা WhatsApp সাপোর্ট গ্রুপ থাকে — শিক্ষকের কাছে সরাসরি প্রশ্ন করতে পারবেন।' },
+    { question: 'মেয়েদের জন্য আলাদা ব্যবস্থা আছে?', answer: 'হ্যাঁ, পর্দা মেইনটেইন করে অডিও/ভিডিও ব্যবস্থা ও মহিলা শিক্ষিকার অধীনে পৃথক ক্লাস আয়োজন করা হয়।' },
+    { question: 'রিফান্ড পলিসি কী?', answer: 'কোর্স শুরুর প্রথম ৭ দিনের মধ্যে যেকোনো কারণে অসন্তুষ্ট হলে ১০০% মানি-ব্যাক গ্যারান্টি।' }
+      ]);
+      console.log('🌱 Seeded FAQs');
     }
-    if (!variants.length) {
-      return res.status(500).json({ error: 'AI কোনো valid design ফেরত দেয়নি, আবার চেষ্টা করুন।' });
+
+    if (await Testimonial.countDocuments() === 0) {
+      await Testimonial.insertMany([
+    { name: 'আব্দুল্লাহ আল মামুন', designation: 'ছাত্র, ঢাকা', rating: 5, message: 'অসাধারণ কোর্স! শিক্ষকদের পড়ানোর ধরন অসম্ভব সুন্দর। আলহামদুলিল্লাহ্‌ অনেক উপকৃত হয়েছি।', avatar: 'https://i.pravatar.cc/240?u=t1' },
+    { name: 'ফাতেমা খাতুন', designation: 'গৃহিণী, চট্টগ্রাম', rating: 5, message: 'ঘরে বসেই কুরআন শিখতে পারছি — এটা আমার জন্য বিশাল নিয়ামত। জাযাকাল্লাহ্‌ খাইরান।', avatar: 'https://i.pravatar.cc/240?u=t2' },
+    { name: 'মুহাম্মাদ ইউসুফ', designation: 'প্রবাসী, সৌদি আরব', rating: 5, message: 'প্রবাসে থেকেও দীনি শিক্ষা চালিয়ে যেতে পারছি। মারকাযুদ দিরাসাতিল ইলমিয়্যাহ অনন্য।', avatar: 'https://i.pravatar.cc/240?u=t3' },
+    { name: 'আয়েশা সিদ্দিকা', designation: 'ছাত্রী, রাজশাহী', rating: 5, message: 'তাজবীদ কোর্সে ভর্তি হয়ে আমার তিলাওয়াতে অনেক উন্নতি হয়েছে — মাশাআল্লাহ্‌।', avatar: 'https://i.pravatar.cc/240?u=t4' },
+    { name: 'আবু বকর', designation: 'ব্যবসায়ী, সিলেট', rating: 5, message: 'সাশ্রয়ী মূল্যে এত মানসম্পন্ন কোর্স আর কোথাও পাইনি। সকলকে রিকমেন্ড করছি।', avatar: 'https://i.pravatar.cc/240?u=t5' },
+    { name: 'উমর ফারুক', designation: 'শিক্ষক, খুলনা', rating: 5, message: 'শিক্ষকদের আন্তরিকতা ও পাঠদান পদ্ধতি অসাধারণ। আল্লাহ্‌ এই প্রতিষ্ঠানের কল্যাণ করুন।', avatar: 'https://i.pravatar.cc/240?u=t6' },
+    { name: 'খাদিজা রহমান', designation: 'ডাক্তার, ঢাকা', rating: 5, message: 'ব্যস্ত জীবনের মাঝেও দীন শেখার সুযোগ — সত্যি অমূল্য। জাযাকাল্লাহু খাইরা।', avatar: 'https://i.pravatar.cc/240?u=t7' },
+    { name: 'হাসান মাহমুদ', designation: 'শিক্ষার্থী, বরিশাল', rating: 5, message: 'আকীদা কোর্সটা আমার ঈমানি দৃষ্টিভঙ্গি বদলে দিয়েছে। আলহামদুলিল্লাহ্‌।', avatar: 'https://i.pravatar.cc/240?u=t8' }
+      ]);
+      console.log('🌱 Seeded testimonials');
     }
-    res.json({ variants });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
+
+    if (await Blog.countDocuments() === 0) {
+      await Blog.insertMany([
+    { slug: 'def-b1', title: 'রমজানের ফজিলত ও প্রস্তুতি', excerpt: 'রমজান মাসের গুরুত্ব এবং এই মাসকে কাজে লাগানোর প্রায়োগিক গাইডলাইন।', author: 'সম্পাদকীয়', image: 'https://picsum.photos/seed/b1/640/400', content: '<p>রমজান মাস মুমিনের জন্য অসামান্য ফজিলতের মাস। এই লেখায় আমরা রমজানের প্রস্তুতি ও ইবাদতের গুরুত্ব আলোচনা করব।</p>', isPublished: true },
+    { slug: 'def-b2', title: 'কুরআন তিলাওয়াতের আদব', excerpt: 'কুরআন তিলাওয়াতের সময় যেসব আদব মেনে চলা প্রয়োজন তার বিস্তারিত আলোচনা।', author: 'মুফতি আব্দুল্লাহ', image: 'https://picsum.photos/seed/b2/640/400', content: '<p>কুরআন তিলাওয়াতের পূর্বে অজু করা, কিবলামুখী হওয়া, ও আউযুবিল্লাহ পড়া — এসব আদব অনুসরণ করা সুন্নত।</p>', isPublished: true },
+    { slug: 'def-b3', title: 'নামাজে মনোযোগ আনার ১০টি উপায়', excerpt: 'খুশু-খুজু সহকারে সালাত আদায়ের ব্যবহারিক টিপস।', author: 'মাওলানা ইউনুস', image: 'https://picsum.photos/seed/b3/640/400', content: '<p>নামাজ আল্লাহর সাথে সরাসরি কথোপকথনের মাধ্যম। এতে মনোযোগ আনার ১০টি কার্যকর উপায়।</p>', isPublished: true },
+    { slug: 'def-b4', title: 'যাকাতের হিসাব কীভাবে করবেন', excerpt: 'নিসাব, সম্পদের ধরন ও যাকাত গণনার সরল পদ্ধতি।', author: 'মুফতি কামাল', image: 'https://picsum.photos/seed/b4/640/400', content: '<p>যাকাত ইসলামের পঞ্চম স্তম্ভ। এই লেখায় নিসাব ও যাকাত গণনার সহজ পদ্ধতি।</p>', isPublished: true },
+    { slug: 'def-b5', title: 'সন্তানকে দীনি শিক্ষায় গড়ে তোলা', excerpt: 'প্রাথমিক বয়স থেকেই সন্তানকে দীনের পথে অভ্যস্ত করার কৌশল।', author: 'উস্তাদা ফাতেমা', image: 'https://picsum.photos/seed/b5/640/400', content: '<p>শিশুকাল থেকেই সন্তানকে কুরআন, দুআ ও আদব শেখানো অত্যন্ত গুরুত্বপূর্ণ।</p>', isPublished: true },
+    { slug: 'def-b6', title: 'হালাল উপার্জনের গুরুত্ব', excerpt: 'রিজিকের বরকত পেতে হালাল পথে অর্জনের অনিবার্যতা।', author: 'মুফতি জাকির', image: 'https://picsum.photos/seed/b6/640/400', content: '<p>হালাল উপার্জন প্রতিটি মুসলিমের উপর ফরজ। হারামের ভয়াবহতা ও হালালের বরকত।</p>', isPublished: true },
+    { slug: 'def-b7', title: 'হজ্জের প্রস্তুতি — A to Z', excerpt: 'হজ্জের সফরের আগে যা যা জানা ও প্রস্তুত করা দরকার।', author: 'মুফতি হারুন', image: 'https://picsum.photos/seed/b7/640/400', content: '<p>হজ্জ জীবনের একটি মহান ইবাদত। প্রস্তুতি, নিয়ম ও আদব নিয়ে বিস্তারিত গাইড।</p>', isPublished: true },
+    { slug: 'def-b8', title: 'দৈনন্দিন জীবনের ১৫টি গুরুত্বপূর্ণ দুআ', excerpt: 'সকাল-সন্ধ্যা ও বিভিন্ন কাজের আগে-পরে পাঠযোগ্য দুআ।', author: 'ক্বারী আনাস', image: 'https://picsum.photos/seed/b8/640/400', content: '<p>প্রতিদিনের জীবনে যেসব দুআ পাঠ করা সুন্নত — তার একটি সংকলন।</p>', isPublished: true }
+      ]);
+      console.log('🌱 Seeded blogs');
+    }
+
+    if (await Topic.countDocuments() === 0) {
+      await Topic.insertMany([
+    { name: 'আরবী ভাষা', icon: 'fa-language', slug: 'আরবী-ভাষা' },
+    { name: 'ফিকহ', icon: 'fa-balance-scale', slug: 'ফিকহ' },
+    { name: 'হাদীস', icon: 'fa-book-quran', slug: 'হাদীস' },
+    { name: 'হোমস্কুলিং এবং প্যারেন্টিং', icon: 'fa-house-user', slug: 'হোমস্কুলিং-এবং-প্যারেন্টিং' },
+    { name: 'ইসলামী বিশ্বাস ও মতবাদ', icon: 'fa-mosque', slug: 'ইসলামী-বিশ্বাস-ও-মতবাদ' },
+    { name: 'আদব-কায়দা', icon: 'fa-hands-praying', slug: 'আদব-কায়দা' },
+    { name: 'পারিবারিক জীবন', icon: 'fa-people-roof', slug: 'পারিবারিক-জীবন' }
+      ]);
+      console.log('🌱 Seeded topics');
+    }
+
+    if (await Instructor.countDocuments() === 0) {
+      await Instructor.insertMany([
+    { name: 'মুফতি আব্দুল্লাহ', bio: 'হিফজ ও কুরআন বিভাগের প্রধান। ১৫+ বছর শিক্ষকতার অভিজ্ঞতা।', photo: 'https://i.pravatar.cc/240?u=i1', expertise: ['হিফজ','তাজবীদ','তাফসীর'] },
+    { name: 'ক্বারী রফিক', bio: 'সহীহ তিলাওয়াত ও তাজবীদ বিশেষজ্ঞ।', photo: 'https://i.pravatar.cc/240?u=i2', expertise: ['তাজবীদ','কিরাআত'] },
+    { name: 'উস্তাদ ইউসুফ', bio: 'আরবি ভাষা ও সাহিত্যে বিশেষজ্ঞ — মদীনা ইউনিভার্সিটি গ্র্যাজুয়েট।', photo: 'https://i.pravatar.cc/240?u=i3', expertise: ['আরবি','সাহিত্য'] },
+    { name: 'মুফতি ইব্রাহিম', bio: 'ফিকহ ও মাসায়েল বিভাগের প্রধান।', photo: 'https://i.pravatar.cc/240?u=i4', expertise: ['ফিকহ','মাসায়েল'] },
+    { name: 'মাওলানা সাইফুল্লাহ', bio: 'হাদিস শাস্ত্রে বিশেষজ্ঞ।', photo: 'https://i.pravatar.cc/240?u=i5', expertise: ['হাদিস','উলুমুল হাদিস'] },
+    { name: 'মাওলানা জুনায়েদ', bio: 'সিরাত ও ইসলামি ইতিহাসের শিক্ষক।', photo: 'https://i.pravatar.cc/240?u=i6', expertise: ['সিরাত','ইতিহাস'] },
+    { name: 'উস্তাদা ফাতেমা', bio: 'পারিবারিক জীবন ও মহিলা শিক্ষার্থীদের কোর্স পরিচালনা করেন।', photo: 'https://i.pravatar.cc/240?u=i7', expertise: ['পরিবার','তরবিয়াত'] },
+    { name: 'মুফতি জাকির', bio: 'তাফসীর ও কুরআন অধ্যয়নের বিশেষজ্ঞ।', photo: 'https://i.pravatar.cc/240?u=i8', expertise: ['তাফসীর','কুরআন'] }
+      ]);
+      console.log('🌱 Seeded instructors');
+    }
+
+    // Settings: whyJoin section + about + contact
+    const whyExists = await Settings.findOne({ key: 'whyJoin' });
+    if (!whyExists) {
+      await Settings.create({ key: 'whyJoin', value: JSON.parse('{"title": "কেন মারকাযুদ দিরাসাতিল ইলমিয়্যাহতে যুক্ত হবেন?", "subtitle": "অভিজ্ঞ আলেমদের তত্ত্বাবধানে অথেনটিক ইসলামি শিক্ষার সম্পূর্ণ অনলাইন প্ল্যাটফর্ম।", "items": [{"icon": "fa-user-graduate", "title": "অভিজ্ঞ আলেম", "desc": "দেশ-বিদেশের প্রসিদ্ধ আলেমদের কাছ থেকে সরাসরি শিক্ষা।"}, {"icon": "fa-laptop", "title": "যেকোনো ডিভাইস", "desc": "মোবাইল, ট্যাবলেট বা কম্পিউটার — যেকোনো স্থান থেকে।"}, {"icon": "fa-clock", "title": "সুবিধাজনক সময়", "desc": "নিজের সুবিধামতো সময়ে রেকর্ডেড ক্লাস দেখুন।"}, {"icon": "fa-certificate", "title": "সার্টিফিকেট", "desc": "কোর্স শেষে প্রতিষ্ঠান-স্বীকৃত সার্টিফিকেট।"}, {"icon": "fa-users", "title": "সাপোর্ট গ্রুপ", "desc": "প্রতিটি কোর্সের নিজস্ব WhatsApp সাপোর্ট।"}, {"icon": "fa-shield-halved", "title": "মানি-ব্যাক গ্যারান্টি", "desc": "৭ দিনের মধ্যে অসন্তুষ্ট হলে ১০০% রিফান্ড।"}]}') });
+      console.log('🌱 Seeded whyJoin');
+    }
+
+    const aboutExists = await Settings.findOne({ key: 'about' });
+    if (!aboutExists) {
+      await Settings.create({ key: 'about', value: {
+        title: 'মারকাযুদ দিরাসাতিল ইলমিয়্যাহ সম্পর্কে',
+        body: '<p>মারকাযুদ দিরাসাতিল ইলমিয়্যাহ একটি অনলাইন ইসলামি শিক্ষা প্রতিষ্ঠান, যেখানে অভিজ্ঞ আলেমদের তত্ত্বাবধানে কুরআন, হাদিস, ফিকহ, আকীদা ও আরবি ভাষার অথেনটিক কোর্স পরিচালিত হয়।</p><p>আমাদের লক্ষ্য — ঘরে বসেই প্রতিটি মুসলিমের জন্য মানসম্পন্ন দীনি শিক্ষা পৌঁছে দেওয়া।</p>'
+      } });
+      console.log('🌱 Seeded about');
+    }
+
+    const contactExists = await Settings.findOne({ key: 'contact' });
+    if (!contactExists) {
+      await Settings.create({ key: 'contact', value: {
+        email: 'ahmadyousuf276@gmail.com',
+        phone: '+880 1XXX-XXXXXX',
+        whatsapp: '+880 1XXX-XXXXXX',
+        address: 'বাংলাদেশ',
+        facebook: 'https://facebook.com/markazuddirasah',
+        youtube: 'https://youtube.com/@markazuddirasah'
+      } });
+      console.log('🌱 Seeded contact');
+    }
+
+    console.log('✅ Seed check complete');
+  } catch (err) {
+    console.error('❌ Seed error:', err.message);
   }
+}
+
+// ============================================================
+// 404
+// ============================================================
+app.use((req, res) => res.status(404).json({ error: 'Not found', path: req.path }));
+
+app.listen(PORT, () => {
+  console.log(`🚀 ${SITE_NAME} server on port ${PORT}`);
 });
-
-
-app.listen(PORT, () => console.log(`🚀 Server: http://localhost:${PORT}`));
-  })
-  .catch(err => console.error('❌ MongoDB error:', err));
