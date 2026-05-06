@@ -4,400 +4,567 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>অ্যাডমিন প্যানেল — ইবনে খালদুন ইনস্টিটিউট</title>
-<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 <style>
 :root{
-  --primary:#066144;--primary-dark:#04412e;--primary-light:#e6f3ed;
-  --primary-glow:#a7d8c1;--primary-deep:#022b1d;
-  --secondary:#F5C518;--accent:#F5C518;
-  --bg:#f0f4f2;--card:#fff;
-  --text:#0f1f1a;--text-soft:#5b6b66;--border:#e3e9e6;
-  --danger:#dc2626;--success:#0f9d58;--warn:#d97706;
-  --sidebar-bg:#1a2e25;--sidebar-text:rgba(255,255,255,.82);
-  --sidebar-active:#fff;--sidebar-hover:rgba(255,255,255,.08);
-  --radius:12px;--radius-lg:18px;
-  --shadow:0 2px 8px rgba(6,97,68,.07);
-  --shadow-md:0 6px 20px rgba(6,97,68,.12);
+  --primary:#4f6ef7;--primary-dark:#3a56d4;--primary-light:#eef1fe;
+  --primary-glow:#a5b4fc;--primary-deep:#1e3a8a;
+  --sidebar-bg:#ffffff;--sidebar-border:#f0f2f8;
+  --sidebar-text:#6b7280;--sidebar-active:#4f6ef7;
+  --sidebar-active-bg:#eef1fe;--sidebar-hover:#f8f9ff;
+  --accent:#f59e0b;--success:#10b981;--danger:#ef4444;--warn:#f59e0b;
+  --info:#06b6d4;
+  --bg:#f5f6fa;--card:#ffffff;
+  --text:#1a1d2e;--text-soft:#6b7280;--text-muted:#9ca3af;
+  --border:#e8ecf4;--border-light:#f0f2f8;
+  --radius:14px;--radius-sm:10px;--radius-lg:20px;--radius-xl:24px;
+  --shadow:0 2px 12px rgba(79,110,247,.06);
+  --shadow-md:0 8px 24px rgba(79,110,247,.12);
+  --shadow-lg:0 20px 48px rgba(79,110,247,.16);
   --transition:.2s cubic-bezier(.4,0,.2,1);
+  --sidebar-w:240px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Hind Siliguri','Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+html{scroll-behavior:smooth}
+body{font-family:'Hind Siliguri','Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
 img{max-width:100%;display:block}
-input,textarea,select{font-family:inherit;font-size:14px;padding:9px 13px;border:1.5px solid var(--border);border-radius:9px;width:100%;background:#fff;color:var(--text);transition:border-color .15s}
-input:focus,textarea:focus,select:focus{outline:none;border-color:var(--primary)}
-.label{display:block;font-weight:600;margin-bottom:5px;font-size:13px;color:var(--text)}
-.form-group{margin-bottom:13px}
-.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:9px;border:none;cursor:pointer;font-family:inherit;font-weight:600;font-size:14px;transition:var(--transition);white-space:nowrap}
+input,textarea,select{font-family:inherit;font-size:14px;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;width:100%;background:#fff;color:var(--text);transition:border-color .15s,box-shadow .15s}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,110,247,.1)}
+.label{display:block;font-weight:600;margin-bottom:6px;font-size:13px;color:var(--text)}
+.form-group{margin-bottom:14px}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:10px;border:none;cursor:pointer;font-family:inherit;font-weight:600;font-size:13.5px;transition:var(--transition);white-space:nowrap;line-height:1}
 .btn:active{transform:translateY(1px)}
-.btn-primary{background:var(--primary);color:#fff;box-shadow:0 3px 12px rgba(6,97,68,.25)}
-.btn-primary:hover{background:var(--primary-dark)}
-.btn-danger{background:var(--danger);color:#fff}
-.btn-danger:hover{background:#b91c1c}
-.btn-outline{background:#fff;color:var(--primary);border:1.5px solid var(--primary)}
-.btn-outline:hover{background:var(--primary-light)}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 4px 14px rgba(79,110,247,.3)}
+.btn-primary:hover{background:var(--primary-dark);box-shadow:0 6px 20px rgba(79,110,247,.4)}
+.btn-danger{background:var(--danger);color:#fff;box-shadow:0 4px 12px rgba(239,68,68,.25)}
+.btn-danger:hover{background:#dc2626}
+.btn-outline{background:#fff;color:var(--primary);border:1.5px solid var(--border);box-shadow:var(--shadow)}
+.btn-outline:hover{border-color:var(--primary);background:var(--primary-light)}
 .btn-warn{background:var(--warn);color:#fff}
-.btn-sm{padding:6px 13px;font-size:13px;border-radius:7px}
+.btn-success{background:var(--success);color:#fff}
+.btn-sm{padding:6px 14px;font-size:12.5px;border-radius:8px}
+.btn-xs{padding:4px 10px;font-size:11.5px;border-radius:6px}
 .btn-block{width:100%;justify-content:center}
-.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.btn-icon{width:36px;height:36px;padding:0;justify-content:center;border-radius:9px}
 
 /* ======= LOGIN SCREEN ======= */
-#login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#022b1d 0%,#066144 55%,#0f9d58 100%);display:flex;align-items:center;justify-content:center;z-index:9999;transition:.35s}
+#login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#1e3a8a 0%,#4f6ef7 50%,#818cf8 100%);display:flex;align-items:center;justify-content:center;z-index:9999;transition:.35s}
 #login-screen.hidden{opacity:0;pointer-events:none}
-.login-box{background:#fff;border-radius:22px;padding:40px 36px;width:100%;max-width:400px;box-shadow:0 30px 80px rgba(0,0,0,.3);animation:loginIn .5s ease-out}
-@keyframes loginIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.login-brand{text-align:center;margin-bottom:28px}
-.login-brand .logo-mark{width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,#022b1d,#066144);color:#F5C518;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px}
-.login-brand h1{font-size:20px;font-weight:800;color:var(--text)}
-.login-brand p{font-size:13px;color:var(--text-soft);margin-top:4px}
-.login-err{background:#fee2e2;color:#dc2626;padding:10px 14px;border-radius:9px;font-size:13px;margin-bottom:12px;display:none}
-.login-err.show{display:block}
+.login-wrap{display:flex;width:100%;max-width:960px;min-height:540px;border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-lg);animation:loginIn .5s ease-out}
+@keyframes loginIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.login-left{flex:1;background:linear-gradient(160deg,#1e3a8a,#4f6ef7);padding:48px 40px;display:flex;flex-direction:column;justify-content:space-between;color:#fff}
+.login-left-brand{display:flex;align-items:center;gap:12px}
+.login-left-brand .brand-icon{width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,.15);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff}
+.login-left-brand .brand-text{font-size:16px;font-weight:700}
+.login-left h2{font-size:32px;font-weight:800;line-height:1.3;margin-bottom:12px}
+.login-left p{font-size:15px;opacity:.8;line-height:1.6}
+.login-left-stats{display:flex;gap:24px;flex-wrap:wrap}
+.login-stat{text-align:center}
+.login-stat .n{font-size:26px;font-weight:800}
+.login-stat .l{font-size:12px;opacity:.7}
+.login-right{width:380px;background:#fff;padding:48px 40px;display:flex;flex-direction:column;justify-content:center}
+.login-right h3{font-size:24px;font-weight:800;margin-bottom:6px}
+.login-right .sub{font-size:14px;color:var(--text-soft);margin-bottom:32px}
+.login-err{background:#fef2f2;color:var(--danger);padding:10px 14px;border-radius:9px;font-size:13px;margin-bottom:14px;display:none;border:1px solid #fecaca}
+.login-err.show{display:flex;align-items:center;gap:8px}
+.login-input-wrap{position:relative}
+.login-input-wrap .input-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:14px}
+.login-input-wrap input{padding-left:40px}
+@media(max-width:700px){
+  .login-wrap{flex-direction:column;max-width:95%;min-height:auto}
+  .login-left{padding:28px 24px;min-height:180px}
+  .login-left h2{font-size:22px}
+  .login-right{width:100%;padding:28px 24px}
+  .login-left-stats{display:none}
+}
 
 /* ======= LAYOUT ======= */
 #app{display:flex;min-height:100vh;opacity:0;transition:opacity .3s}
 #app.ready{opacity:1}
 
 /* SIDEBAR */
-.sidebar{width:252px;background:var(--sidebar-bg);flex-shrink:0;display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;z-index:200;transition:transform .3s;overflow-y:auto;overflow-x:hidden}
-.sidebar-header{padding:20px 20px 16px;border-bottom:1px solid rgba(255,255,255,.07)}
-.sidebar-brand{display:flex;align-items:center;gap:10px}
-.sidebar-brand .bmark{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#066144,#0f9d58);color:#F5C518;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.sidebar-brand .btxt{color:#fff;font-weight:700;font-size:14px;line-height:1.25}
-.sidebar-brand .btxt span{display:block;font-size:10px;color:rgba(255,255,255,.5);font-weight:400}
-.sidebar-nav{padding:10px 10px;flex:1}
-.nav-group{margin-bottom:4px}
-.nav-group-label{font-size:10px;font-weight:700;color:rgba(255,255,255,.35);padding:10px 10px 4px;text-transform:uppercase;letter-spacing:.08em}
-.nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;cursor:pointer;color:var(--sidebar-text);font-size:14px;font-weight:500;transition:all .15s;margin-bottom:2px}
-.nav-item:hover{background:var(--sidebar-hover);color:#fff}
-.nav-item.active{background:rgba(6,97,68,.8);color:#fff;font-weight:600}
-.nav-item .ico{width:20px;text-align:center;font-size:15px;flex-shrink:0}
-.nav-item .badge-count{margin-left:auto;background:var(--danger);color:#fff;border-radius:99px;font-size:10px;padding:2px 6px;font-weight:700}
-.sidebar-footer{padding:14px 16px;border-top:1px solid rgba(255,255,255,.07)}
-.sidebar-user{display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,.7)}
-.sidebar-user .av{width:34px;height:34px;border-radius:50%;background:#066144;color:#F5C518;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
-.sidebar-logout{display:flex;align-items:center;gap:7px;margin-top:10px;padding:8px 12px;border-radius:8px;color:rgba(255,255,255,.6);cursor:pointer;font-size:13px;transition:.15s}
-.sidebar-logout:hover{background:rgba(220,38,38,.2);color:#f87171}
+.sidebar{width:var(--sidebar-w);background:var(--sidebar-bg);flex-shrink:0;display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;z-index:200;transition:transform .25s cubic-bezier(.4,0,.2,1);overflow-y:auto;overflow-x:hidden;border-right:1px solid var(--sidebar-border);scrollbar-width:thin}
+.sidebar-header{padding:22px 18px 14px;display:flex;align-items:center;justify-content:space-between}
+.sidebar-brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.sidebar-brand .bmark{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--primary-glow));color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.sidebar-brand .btxt{font-weight:800;font-size:13.5px;color:var(--text);line-height:1.25}
+.sidebar-brand .btxt span{display:block;font-size:10.5px;color:var(--text-soft);font-weight:400}
+.sidebar-close{display:none;background:none;border:1.5px solid var(--border);border-radius:8px;width:32px;height:32px;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--text-soft)}
+.sidebar-nav{padding:6px 12px;flex:1}
+.nav-group-label{font-size:10px;font-weight:700;color:var(--text-muted);padding:12px 8px 5px;text-transform:uppercase;letter-spacing:.1em}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;color:var(--sidebar-text);font-size:14px;font-weight:500;transition:all .15s;margin-bottom:2px;position:relative}
+.nav-item:hover{background:var(--sidebar-hover);color:var(--text)}
+.nav-item.active{background:var(--sidebar-active-bg);color:var(--sidebar-active);font-weight:600}
+.nav-item.active .nav-ico{color:var(--sidebar-active)}
+.nav-ico{width:20px;text-align:center;font-size:14px;flex-shrink:0;color:var(--text-muted)}
+.nav-item.active::before{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:var(--primary);border-radius:3px 0 0 3px}
+.nav-badge{margin-left:auto;background:var(--danger);color:#fff;border-radius:99px;font-size:10px;padding:2px 6px;font-weight:700}
+.sidebar-footer{padding:14px 16px;border-top:1px solid var(--border)}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:var(--bg)}
+.sidebar-user .av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-glow));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.sidebar-user .u-name{font-weight:700;font-size:13px;color:var(--text)}
+.sidebar-user .u-role{font-size:11px;color:var(--text-soft)}
+.sidebar-logout{display:flex;align-items:center;gap:7px;margin-top:8px;padding:8px 10px;border-radius:9px;color:var(--text-soft);cursor:pointer;font-size:13px;transition:.15s}
+.sidebar-logout:hover{background:#fef2f2;color:var(--danger)}
 
 /* TOPBAR */
-.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 8px rgba(0,0,0,.04)}
 .topbar-left{display:flex;align-items:center;gap:14px}
-.topbar-title{font-size:18px;font-weight:700;color:var(--text)}
-.topbar-subtitle{font-size:12px;color:var(--text-soft)}
-.hamburger{display:none;background:transparent;border:1.5px solid var(--border);border-radius:8px;width:38px;height:38px;align-items:center;justify-content:center;cursor:pointer;font-size:17px;color:var(--text)}
+.hamburger{display:none;background:transparent;border:1.5px solid var(--border);border-radius:9px;width:38px;height:38px;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--text);transition:.15s}
+.hamburger:hover{border-color:var(--primary);color:var(--primary)}
+.topbar-title{font-size:17px;font-weight:800;color:var(--text)}
+.topbar-subtitle{font-size:12px;color:var(--text-soft);margin-top:1px}
 .topbar-actions{display:flex;align-items:center;gap:10px}
-.notif-btn{width:38px;height:38px;background:var(--primary-light);border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--primary);position:relative;border:none}
-.notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--danger);border:2px solid #fff}
+.notif-btn{width:40px;height:40px;background:var(--bg);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-soft);position:relative;border:1.5px solid var(--border);transition:.15s}
+.notif-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
+.notif-dot{position:absolute;top:7px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--danger);border:2px solid #fff}
+.topbar-search{position:relative;display:flex;align-items:center}
+.topbar-search input{width:220px;height:40px;border-radius:10px;padding-left:38px;background:var(--bg);border:1.5px solid var(--border);font-size:13.5px}
+.topbar-search input:focus{background:#fff;width:260px}
+.topbar-search i{position:absolute;left:12px;color:var(--text-muted);font-size:13px}
 
 /* MAIN */
-.main-wrap{margin-left:252px;min-height:100vh;display:flex;flex-direction:column}
+.main-wrap{margin-left:var(--sidebar-w);min-height:100vh;display:flex;flex-direction:column}
 .page-content{flex:1;padding:24px}
 
 /* PANELS */
 .panel{display:none}
-.panel.active{display:block;animation:fadeIn .25s}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.panel.active{display:block;animation:fadeIn .22s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 /* CARDS */
 .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);padding:20px}
 .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
-.card-title{font-size:16px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
+.card-title{font-size:15px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
 .card-title i{color:var(--primary)}
 
-/* STAT CARDS */
-.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:24px}
-.stat-card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border:1px solid var(--border);display:flex;align-items:flex-start;gap:14px;transition:var(--transition)}
-.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
-.stat-icon{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.stat-body .num{font-size:26px;font-weight:800;line-height:1;margin-bottom:4px}
-.stat-body .lbl{font-size:13px;color:var(--text-soft)}
-.stat-body .delta{font-size:11px;margin-top:3px}
+/* ===== STAT CARDS (MyStudy Style) ===== */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);border:1px solid var(--border);display:flex;align-items:flex-start;gap:16px;transition:var(--transition);position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;opacity:.06}
+.stat-card:nth-child(1)::after{background:var(--success)}
+.stat-card:nth-child(2)::after{background:var(--primary)}
+.stat-card:nth-child(3)::after{background:var(--warn)}
+.stat-card:nth-child(4)::after{background:#ec4899}
+.stat-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.stat-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.stat-body{flex:1}
+.stat-body .num{font-size:28px;font-weight:800;line-height:1;margin-bottom:4px;color:var(--text)}
+.stat-body .lbl{font-size:12.5px;color:var(--text-soft);font-weight:500}
+.stat-body .delta{font-size:11.5px;margin-top:4px;display:flex;align-items:center;gap:3px}
 .delta.up{color:var(--success)}.delta.dn{color:var(--danger)}
+
+/* ===== DASHBOARD GRID ===== */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.dash-quick{margin-top:18px}
+
+/* ===== PROGRESS RING (Dashboard) ===== */
+.progress-ring-wrap{display:flex;flex-direction:column;align-items:center;position:relative}
+.progress-ring-wrap svg{transform:rotate(-90deg)}
+.progress-ring-wrap .ring-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
+.ring-text .pct{font-size:22px;font-weight:800;color:var(--text)}
+.ring-text .rlab{font-size:10px;color:var(--text-soft)}
+.progress-stats{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;justify-content:center}
+.progress-stat{text-align:center;font-size:12px}
+.progress-stat .ps-num{font-size:14px;font-weight:700}
+.progress-stat .ps-lbl{color:var(--text-muted);font-size:11px}
 
 /* TABLE */
 .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--radius);border:1px solid var(--border)}
 table{width:100%;border-collapse:collapse;background:#fff;font-size:14px}
-th,td{padding:11px 14px;text-align:right;border-bottom:1px solid var(--border)}
-th{background:#f8faf9;font-weight:600;font-size:13px;color:var(--text-soft);white-space:nowrap}
-tbody tr:hover{background:#f5f8f6}
+th,td{padding:12px 16px;text-align:right;border-bottom:1px solid var(--border)}
+th{background:#fafbff;font-weight:600;font-size:12.5px;color:var(--text-soft);white-space:nowrap}
+tbody tr:hover{background:#fafbff}
 tbody tr:last-child td{border-bottom:none}
-td .tbl-actions{display:flex;gap:6px;justify-content:flex-end}
+td .tbl-actions{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
 
 /* BADGE */
-.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600}
-.badge-success{background:#dcfce7;color:#15803d}
-.badge-warn{background:#fef3c7;color:#a16207}
-.badge-danger{background:#fee2e2;color:#dc2626}
-.badge-info{background:#dbeafe;color:#1e40af}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:11.5px;font-weight:600}
+.badge-success{background:#d1fae5;color:#065f46}
+.badge-warn{background:#fef3c7;color:#92400e}
+.badge-danger{background:#fee2e2;color:#991b1b}
+.badge-info{background:#e0f2fe;color:#075985}
 .badge-primary{background:var(--primary-light);color:var(--primary-dark)}
+.badge::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.7}
 
 /* MODAL */
-.modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:1000;display:flex;align-items:flex-start;justify-content:center;padding:20px 12px;opacity:0;visibility:hidden;transition:.2s;overflow-y:auto}
+.modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:1000;display:flex;align-items:flex-start;justify-content:center;padding:16px 12px;opacity:0;visibility:hidden;transition:.2s;overflow-y:auto;backdrop-filter:blur(4px)}
 .modal-bg.open{opacity:1;visibility:visible}
-.modal{background:#fff;border-radius:16px;max-width:560px;width:100%;padding:24px;position:relative;margin:auto;max-height:90vh;overflow-y:auto}
+.modal{background:#fff;border-radius:var(--radius-lg);max-width:560px;width:100%;padding:26px;position:relative;margin:auto;max-height:92vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
 .modal-lg{max-width:820px}
 .modal-xl{max-width:1000px}
+.modal-close{position:absolute;top:14px;right:14px;background:var(--bg);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;color:var(--text-soft);display:flex;align-items:center;justify-content:center;transition:.15s;z-index:2}
+.modal-close:hover{background:var(--danger);color:#fff;transform:rotate(90deg)}
+.modal h3{margin-bottom:20px;font-size:18px;font-weight:800;padding-right:36px;display:flex;align-items:center;gap:8px}
 
 /* Course form tabs */
-.cf-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:18px;overflow-x:auto}
-.cf-tab{padding:10px 16px;border:none;background:transparent;cursor:pointer;font-family:inherit;font-weight:600;font-size:13.5px;color:var(--text-soft);border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:.15s;display:flex;align-items:center;gap:6px}
+.cf-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:18px;overflow-x:auto;scrollbar-width:none}
+.cf-tabs::-webkit-scrollbar{display:none}
+.cf-tab{padding:10px 16px;border:none;background:transparent;cursor:pointer;font-family:inherit;font-weight:600;font-size:13px;color:var(--text-soft);border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:.15s;display:flex;align-items:center;gap:6px}
 .cf-tab.active{color:var(--primary);border-bottom-color:var(--primary)}
 .cf-tab:hover{color:var(--primary)}
 .cf-panel{display:none}.cf-panel.active{display:block}
 
 /* Curriculum builder */
-.curr-section{background:#f8faf9;border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden}
-.curr-section-head{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0f4f2;border-bottom:1px solid var(--border)}
+.curr-section{background:#fafbff;border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.curr-section-head{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg);border-bottom:1px solid var(--border)}
 .curr-section-head input{flex:1;background:transparent;border:none;font-weight:700;font-size:14px;padding:2px 4px;color:var(--text)}
 .curr-section-head input:focus{outline:none;border-bottom:1px solid var(--primary)}
 .curr-lessons{padding:10px 14px}
-.lesson-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:8px 10px}
+.lesson-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;background:#fff;border:1px solid var(--border);border-radius:9px;padding:8px 10px}
 .lesson-row input{flex:1;border:none;padding:2px 4px;background:transparent;font-size:13px}
 .lesson-row input:focus{outline:none;border-bottom:1px solid var(--primary)}
-.lesson-dur{width:70px;border:1px solid var(--border)!important;border-radius:6px!important;padding:4px 6px!important;font-size:12px!important;text-align:center}
-.lesson-vid{width:130px;border:1px solid var(--border)!important;border-radius:6px!important;padding:4px 6px!important;font-size:12px!important;direction:ltr}
-.lesson-free{width:18px;height:18px;cursor:pointer;flex-shrink:0}
+.lesson-dur{width:70px;border:1px solid var(--border)!important;border-radius:7px!important;padding:4px 6px!important;font-size:12px!important;text-align:center}
+.lesson-vid{width:130px;border:1px solid var(--border)!important;border-radius:7px!important;padding:4px 6px!important;font-size:12px!important;direction:ltr}
+.lesson-free{width:16px;height:16px;cursor:pointer;flex-shrink:0;accent-color:var(--primary)}
 .free-lbl{font-size:11px;color:var(--text-soft);white-space:nowrap}
 
 /* QnA */
-.qna-item{background:#f8faf9;border:1px solid var(--border);border-radius:9px;padding:12px;margin-bottom:10px}
+.qna-item{background:#fafbff;border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
 .qna-item textarea{margin-bottom:6px}
 
-/* YouTube ID input with auto extract */
-.yt-input-wrap{position:relative}
-.yt-badge{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#ff0000;font-size:14px;pointer-events:none}
-.yt-id-display{font-size:11px;color:var(--success);margin-top:3px;font-weight:600}
+.yt-id-display{font-size:11.5px;color:var(--success);margin-top:4px;font-weight:600}
 
-/* Includes / Features list */
-.list-builder{border:1.5px solid var(--border);border-radius:9px;padding:10px;background:#fff}
-.list-builder-item{display:flex;align-items:center;gap:6px;margin-bottom:6px}
-.list-builder-item input{flex:1;border:none;border-bottom:1px solid var(--border);border-radius:0;padding:4px 4px;font-size:13px;background:transparent}
+/* List builder */
+.list-builder{border:1.5px solid var(--border);border-radius:10px;padding:10px;background:#fff}
+.list-builder-item{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.list-builder-item input{flex:1;border:none;border-bottom:1px solid var(--border);border-radius:0;padding:5px 4px;font-size:13px;background:transparent}
 .list-builder-item input:focus{outline:none;border-bottom-color:var(--primary)}
 
-/* Mobile modal fix */
-@media(max-width:600px){
-  .modal-xl,.modal-lg{max-width:100%}
-  .cf-tab{padding:8px 10px;font-size:12px}
-  .lesson-row{flex-wrap:wrap}
-}
-.modal-close{position:absolute;top:12px;right:12px;background:#f1f5f9;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:17px;color:var(--text-soft);display:flex;align-items:center;justify-content:center;transition:.15s}
-.modal-close:hover{background:var(--danger);color:#fff;transform:rotate(90deg)}
-.modal h3{margin-bottom:18px;font-size:19px;padding-right:36px}
-
 /* TOAST */
-.toast{position:fixed;bottom:20px;right:24px;background:var(--text);color:#fff;padding:13px 20px;border-radius:10px;z-index:2000;opacity:0;transform:translateY(20px);transition:.25s;font-size:14px;max-width:360px;pointer-events:none}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:14px 20px;border-radius:12px;z-index:2000;opacity:0;transform:translateY(16px);transition:.25s;font-size:14px;max-width:360px;pointer-events:none;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-lg)}
 .toast.show{opacity:1;transform:translateY(0)}
 .toast.success{background:var(--success)}.toast.error{background:var(--danger)}.toast.warn{background:var(--warn)}
 
 /* LOADER */
-.loader{display:inline-block;width:22px;height:22px;border:3px solid #e2e8f0;border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite}
+.loader{display:inline-block;width:22px;height:22px;border:3px solid rgba(79,110,247,.15);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loading-state{padding:50px;text-align:center;color:var(--text-soft)}
+.loading-state{padding:48px;text-align:center;color:var(--text-soft)}
+.loading-state .loader{width:32px;height:32px;margin:0 auto 12px;display:block}
 
 /* EMPTY */
-.empty{text-align:center;padding:44px 20px;color:var(--text-soft)}
-.empty i{font-size:42px;color:#cbd5e1;margin-bottom:12px;display:block}
+.empty{text-align:center;padding:48px 20px;color:var(--text-soft)}
+.empty i{font-size:44px;color:var(--border);margin-bottom:14px;display:block}
+.empty p{font-size:14px;margin-bottom:14px}
 
 /* SECTION HEAD */
-.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
-.section-head h2{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.section-head h2{font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px}
 .section-head h2 i{color:var(--primary)}
 
 /* GRID */
 .grid-2{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
 
 /* TABS */
-.tab-row{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:18px;background:#f1f5f9;padding:4px;border-radius:10px;width:fit-content}
-.tab-btn{padding:8px 16px;border-radius:7px;border:none;background:transparent;cursor:pointer;font-family:inherit;font-weight:600;font-size:13.5px;color:var(--text-soft);transition:.15s}
-.tab-btn.active{background:#fff;color:var(--primary);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.tab-row{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:18px;background:var(--bg);padding:4px;border-radius:12px;width:fit-content}
+.tab-btn{padding:8px 16px;border-radius:9px;border:none;background:transparent;cursor:pointer;font-family:inherit;font-weight:600;font-size:13px;color:var(--text-soft);transition:.15s}
+.tab-btn.active{background:#fff;color:var(--primary);box-shadow:0 2px 8px rgba(0,0,0,.08)}
 
 /* SEARCH BAR */
-.search-bar{position:relative;max-width:280px}
-.search-bar input{padding-right:38px;border-radius:9px}
-.search-bar i{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-soft);pointer-events:none}
+.search-bar{position:relative}
+.search-bar input{padding-right:12px;padding-left:38px;border-radius:10px;height:40px}
+.search-bar i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;font-size:13px}
 
 /* QUICK ACTIONS */
-.quick-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.quick-actions{display:flex;gap:10px;flex-wrap:wrap}
+.quick-action-card{display:flex;align-items:center;gap:12px;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:14px 18px;cursor:pointer;transition:var(--transition);flex:1;min-width:160px}
+.quick-action-card:hover{border-color:var(--primary);background:var(--primary-light);transform:translateY(-2px)}
+.qa-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.qa-text{font-size:13.5px;font-weight:600;color:var(--text)}
+.qa-sub{font-size:11.5px;color:var(--text-soft);margin-top:2px}
 
 /* DROPZONE */
-.dropzone{border:2px dashed var(--border);border-radius:10px;padding:22px 14px;text-align:center;cursor:pointer;background:#fafafa;transition:.2s;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;position:relative}
+.dropzone{border:2px dashed var(--border);border-radius:12px;padding:24px 14px;text-align:center;cursor:pointer;background:#fafbff;transition:.2s;min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;position:relative}
 .dropzone:hover,.dropzone.drag{border-color:var(--primary);background:var(--primary-light)}
-.dropzone i{font-size:30px;color:var(--primary-glow)}
+.dropzone i{font-size:28px;color:var(--primary-glow)}
 .dropzone .dz-text{font-size:13px;color:var(--text-soft);font-weight:600}
 .dropzone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.dz-preview img{max-height:160px;border-radius:8px;margin:6px auto 0}
+.dz-preview img{max-height:160px;border-radius:9px;margin:6px auto 0}
 
-/* NOTICE BAR PREVIEW */
-.notice-preview{background:linear-gradient(90deg,var(--accent),var(--secondary));color:var(--primary-deep);padding:8px 16px;border-radius:8px;text-align:center;font-weight:600;font-size:14px;margin-top:10px}
+/* NOTICE PREVIEW */
+.notice-preview{background:linear-gradient(90deg,var(--primary),var(--primary-glow));color:#fff;padding:9px 18px;border-radius:9px;text-align:center;font-weight:600;font-size:14px;margin-top:10px}
 
-/* SIDEBAR OVERLAY (mobile) */
-.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199}
+/* SIDEBAR OVERLAY */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:199;backdrop-filter:blur(2px)}
 
-/* RESPONSIVE */
-@media(max-width:900px){
-  .sidebar{transform:translateX(-100%)}
-  .sidebar.open{transform:translateX(0)}
-  .sidebar-overlay{display:none}
-  .sidebar-overlay.show{display:block}
-  .main-wrap{margin-left:0}
-  .hamburger{display:inline-flex}
-  .stat-grid{grid-template-columns:repeat(2,1fr)}
-}
-@media(max-width:520px){
-  .stat-grid{grid-template-columns:1fr}
-  .page-content{padding:14px}
-  .modal{padding:18px 14px}
-}
-
-/* FORM SECTIONS (for settings) */
+/* FORM SECTIONS */
 .form-section{background:var(--card);border-radius:var(--radius);padding:20px;margin-bottom:16px;border:1px solid var(--border)}
-.form-section h4{font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:7px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.form-section h4{font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px;padding-bottom:12px;border-bottom:1px solid var(--border)}
 .form-section h4 i{color:var(--primary)}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:600px){.form-row{grid-template-columns:1fr}}
 
-/* IMAGE PREVIEW */
-.img-preview{width:80px;height:80px;border-radius:9px;object-fit:cover;border:2px solid var(--border)}
-
-/* Why join item row */
-.wj-item{background:#f8faf9;border-radius:9px;padding:12px 14px;border:1px solid var(--border);margin-bottom:8px}
-.wj-item-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-weight:600;font-size:13px}
-
-/* Rich text / textarea */
-textarea{resize:vertical;min-height:90px}
-
-/* Access request details */
-.ar-detail{font-size:13px;line-height:1.8}
-.ar-detail strong{color:var(--text);margin-left:6px}
-
-/* Inline icon-select for why-join */
-.icon-select{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:6px}
-.icon-opt{width:36px;height:36px;border-radius:8px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;transition:.15s;color:var(--text-soft)}
-.icon-opt:hover,.icon-opt.selected{border-color:var(--primary);background:var(--primary-light);color:var(--primary)}
-/* ======= IMAGE UPLOAD ZONE ======= */
-.img-upload-zone{border:2.5px dashed var(--border);border-radius:10px;padding:18px 14px;text-align:center;cursor:pointer;transition:.2s;background:#fafcfb;position:relative;margin-top:6px}
+/* IMAGE UPLOAD ZONE */
+.img-upload-zone{border:2px dashed var(--border);border-radius:10px;padding:16px 14px;text-align:center;cursor:pointer;transition:.2s;background:#fafbff;position:relative;margin-top:6px}
 .img-upload-zone:hover,.img-upload-zone.dragover{border-color:var(--primary);background:var(--primary-light)}
-.img-upload-zone .upload-icon{font-size:26px;color:var(--primary);margin-bottom:6px}
-.img-upload-zone .upload-text{font-size:13px;color:var(--text-soft)}
+.img-upload-zone .upload-icon{font-size:24px;color:var(--primary);margin-bottom:5px}
+.img-upload-zone .upload-text{font-size:12.5px;color:var(--text-soft)}
 .img-upload-zone .upload-text strong{color:var(--primary)}
 .img-upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .img-upload-zone .upload-progress{display:none;margin-top:8px}
 .img-upload-zone .upload-progress.show{display:block}
 .img-preview-strip{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap}
-.img-preview-strip img{height:70px;border-radius:8px;border:2px solid var(--border);object-fit:cover;max-width:120px}
+.img-preview-strip img{height:70px;border-radius:9px;border:2px solid var(--border);object-fit:cover;max-width:120px}
 .img-preview-strip .remove-img{background:var(--danger);color:#fff;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;margin-left:-6px;margin-top:-28px;flex-shrink:0;z-index:1;position:relative}
-.url-or-upload{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--text-soft);margin:6px 0}
+.url-or-upload{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--text-muted);margin:7px 0}
 .url-or-upload::before,.url-or-upload::after{content:'';flex:1;height:1px;background:var(--border)}
-/* Course selection checklist */
-.course-checklist{max-height:260px;overflow-y:auto;border:1.5px solid var(--border);border-radius:9px;padding:8px}
-.course-check-item{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:7px;cursor:pointer;transition:.1s}
+
+/* Course checklist */
+.course-checklist{max-height:260px;overflow-y:auto;border:1.5px solid var(--border);border-radius:10px;padding:8px}
+.course-check-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:.1s}
 .course-check-item:hover{background:var(--primary-light)}
 .course-check-item input[type=checkbox]{width:16px;height:16px;accent-color:var(--primary);flex-shrink:0}
 .course-check-item .ci-title{font-size:13px;font-weight:600;line-height:1.2}
 .course-check-item .ci-cat{font-size:11px;color:var(--text-soft)}
-/* Category/SubCategory pills */
-.subcat-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+
+/* Subcat pills */
+.subcat-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .subcat-pill{display:inline-flex;align-items:center;gap:5px;background:var(--primary-light);color:var(--primary-dark);border-radius:20px;padding:4px 10px;font-size:12px;font-weight:600}
 .subcat-pill button{background:none;border:none;color:var(--primary-dark);cursor:pointer;font-size:12px;padding:0;line-height:1}
 .subcat-pill button:hover{color:var(--danger)}
-.cat-section{background:#f8faf9;border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px}
-.cat-section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.cat-section-head strong{font-size:14px;font-weight:700}
+.cat-section{background:#fafbff;border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px}
+
+/* Why join items */
+.wj-item{background:#fafbff;border-radius:10px;padding:14px;border:1px solid var(--border);margin-bottom:10px}
+.wj-item-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-weight:700;font-size:13.5px}
+
+/* Access request detail */
+.ar-detail{font-size:14px;line-height:1.9}
+.ar-detail strong{color:var(--text);margin-left:6px;font-weight:600}
+.ar-detail p{padding:6px 0;border-bottom:1px solid var(--border)}
+.ar-detail p:last-child{border:none}
+
+/* Recent lists */
+.recent-list{list-style:none}
+.recent-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.recent-item:last-child{border:none}
+.recent-item .ri-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.recent-item .ri-body{flex:1;min-width:0}
+.recent-item .ri-title{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.recent-item .ri-sub{font-size:12px;color:var(--text-soft);margin-top:1px}
+.recent-item .ri-right{flex-shrink:0}
+
+/* Mobile modal fix */
+@media(max-width:600px){
+  .modal-xl,.modal-lg{max-width:100%}
+  .cf-tab{padding:8px 10px;font-size:12px}
+  .lesson-row{flex-wrap:wrap}
+  .form-row{grid-template-columns:1fr}
+}
+
+/* RESPONSIVE BREAKPOINTS */
+@media(max-width:1100px){
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%);box-shadow:var(--shadow-lg)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-close{display:inline-flex}
+  .sidebar-overlay{display:none}
+  .sidebar-overlay.show{display:block}
+  .main-wrap{margin-left:0}
+  .hamburger{display:inline-flex}
+  .dash-grid{grid-template-columns:1fr}
+  .topbar-search{display:none}
+}
+@media(max-width:600px){
+  :root{--sidebar-w:260px}
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .page-content{padding:14px}
+  .modal{padding:18px 14px;border-radius:16px}
+  .topbar{padding:0 14px;height:58px}
+  .quick-action-card{min-width:140px}
+}
+@media(max-width:380px){
+  .stat-grid{grid-template-columns:1fr}
+}
+
+/* Scrollbar styling */
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-track{background:transparent}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+/* Hover cards for dashboard */
+.info-card{background:linear-gradient(135deg,var(--primary),var(--primary-glow));color:#fff;border-radius:var(--radius);padding:20px;box-shadow:0 8px 24px rgba(79,110,247,.3)}
+.info-card h4{font-size:14px;opacity:.85;margin-bottom:8px}
+.info-card .big{font-size:32px;font-weight:800}
+
+/* ===== CHART BAR (Learning Statistic) ===== */
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:100px;padding-top:10px}
+.chart-bar-group{display:flex;gap:3px;align-items:flex-end;flex:1}
+.chart-bar{flex:1;border-radius:4px 4px 0 0;transition:height .4s ease;min-width:6px;cursor:pointer}
+.chart-bar:hover{opacity:.8;transform:scaleY(1.05);transform-origin:bottom}
+.chart-label{font-size:10px;color:var(--text-muted);text-align:center;margin-top:4px}
+.chart-x{display:flex;gap:6px;margin-top:2px}
+.chart-x span{flex:1;text-align:center;font-size:9.5px;color:var(--text-muted)}
+
+/* ===== TASK LIST ===== */
+.task-item{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border)}
+.task-item:last-child{border:none}
+.task-left{display:flex;align-items:center;gap:12px}
+.task-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.task-title{font-size:13.5px;font-weight:600}
+.task-due{font-size:12px;color:var(--text-soft);margin-top:1px}
+.task-arrow{color:var(--text-muted);font-size:13px}
+
+/* ===== COURSE CARD (grid view) ===== */
+.course-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.course-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:var(--transition)}
+.course-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.course-card-thumb{width:100%;height:130px;object-fit:cover;background:var(--bg)}
+.course-card-body{padding:14px}
+.course-card-title{font-size:14px;font-weight:700;margin-bottom:6px;line-height:1.3}
+.course-card-meta{font-size:12px;color:var(--text-soft);display:flex;justify-content:space-between;align-items:center}
+.course-card-price{font-size:14px;font-weight:700;color:var(--primary)}
+
+/* Mobile bottom nav */
+.mobile-bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);padding:8px 0 max(8px,env(safe-area-inset-bottom));z-index:150;box-shadow:0 -4px 20px rgba(0,0,0,.08)}
+.mbn-items{display:flex;justify-content:space-around;align-items:center}
+.mbn-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 12px;border-radius:10px;transition:.15s;min-width:56px;color:var(--text-muted);font-size:10px;font-weight:600}
+.mbn-item.active{color:var(--primary)}
+.mbn-item i{font-size:18px}
+@media(max-width:600px){
+  .mobile-bottom-nav{display:block}
+  .page-content{padding-bottom:80px}
+}
+
+/* Settings Card */
+.settings-section{margin-bottom:24px}
+
+/* Breadcrumb */
+.breadcrumb{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-soft);margin-bottom:16px}
+.breadcrumb .current{color:var(--text);font-weight:600}
+.breadcrumb i{font-size:10px}
+
+/* Progress bar */
+.prog-bar{height:6px;background:var(--bg);border-radius:99px;overflow:hidden;margin-top:8px}
+.prog-fill{height:100%;border-radius:99px;transition:width .6s ease}
 </style>
 </head>
 <body>
 
 <!-- ===== LOGIN SCREEN ===== -->
 <div id="login-screen">
-  <div class="login-box">
-    <div class="login-brand">
-      <div class="logo-mark"><i class="fas fa-mosque"></i></div>
-      <h1>ইবনে খালদুন ইনস্টিটিউট</h1>
-      <p>অ্যাডমিন প্যানেল — নিরাপদ প্রবেশ</p>
+  <div class="login-wrap">
+    <div class="login-left">
+      <div class="login-left-brand">
+        <div class="brand-icon"><i class="fas fa-mosque"></i></div>
+        <div class="brand-text">ইবনে খালদুন ইনস্টিটিউট</div>
+      </div>
+      <div>
+        <h2>শিক্ষা ব্যবস্থাপনায়<br/>স্বাগতম</h2>
+        <p>ইসলামিক শিক্ষার আধুনিক ডিজিটাল প্ল্যাটফর্মে প্রবেশ করুন এবং কোর্স, শিক্ষার্থী ও কন্টেন্ট পরিচালনা করুন।</p>
+      </div>
+      <div class="login-left-stats">
+        <div class="login-stat"><div class="n">১২,০০০+</div><div class="l">শিক্ষার্থী</div></div>
+        <div class="login-stat"><div class="n">৬০+</div><div class="l">কোর্স</div></div>
+        <div class="login-stat"><div class="n">২৫+</div><div class="l">শিক্ষক</div></div>
+      </div>
     </div>
-    <div class="login-err" id="login-err"></div>
-    <div class="form-group">
-      <label class="label">ইউজারনেম</label>
-      <input type="text" id="adm-user" placeholder="admin" autocomplete="username"/>
+    <div class="login-right">
+      <h3>অ্যাডমিন লগইন</h3>
+      <div class="sub">নিরাপদভাবে প্যানেলে প্রবেশ করুন</div>
+      <div class="login-err" id="login-err"><i class="fas fa-exclamation-circle"></i><span id="login-err-text"></span></div>
+      <div class="form-group">
+        <label class="label">ইউজারনেম</label>
+        <div class="login-input-wrap">
+          <i class="fas fa-user input-icon"></i>
+          <input type="text" id="adm-user" placeholder="admin" autocomplete="username"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="label">পাসওয়ার্ড</label>
+        <div class="login-input-wrap">
+          <i class="fas fa-lock input-icon"></i>
+          <input type="password" id="adm-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block" id="login-btn" onclick="doLogin()" style="height:46px;font-size:15px;margin-top:6px">
+        <i class="fas fa-sign-in-alt"></i> প্রবেশ করুন
+      </button>
     </div>
-    <div class="form-group">
-      <label class="label">পাসওয়ার্ড</label>
-      <input type="password" id="adm-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
-    </div>
-    <button class="btn btn-primary btn-block" id="login-btn" onclick="doLogin()">
-      <i class="fas fa-sign-in-alt"></i> প্রবেশ করুন
-    </button>
   </div>
 </div>
 
 <!-- ===== MAIN APP ===== -->
 <div id="app">
-  <!-- SIDEBAR -->
   <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+  <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <div class="sidebar-brand">
         <div class="bmark"><i class="fas fa-mosque"></i></div>
         <div class="btxt">Ibn Khaldun<span>অ্যাডমিন প্যানেল</span></div>
       </div>
+      <button class="sidebar-close" onclick="closeSidebar()"><i class="fas fa-times"></i></button>
     </div>
+
     <nav class="sidebar-nav">
       <div class="nav-group-label">সাধারণ</div>
       <div class="nav-item active" onclick="showPanel('dashboard')">
-        <span class="ico"><i class="fas fa-chart-line"></i></span> ড্যাশবোর্ড
-      </div>
-      <div class="nav-group-label">কন্টেন্ট</div>
-      <div class="nav-item" onclick="showPanel('courses')">
-        <span class="ico"><i class="fas fa-play-circle"></i></span> কোর্সসমূহ
+        <span class="nav-ico"><i class="fas fa-th-large"></i></span> ড্যাশবোর্ড
       </div>
 
+      <div class="nav-group-label">কন্টেন্ট</div>
+      <div class="nav-item" onclick="showPanel('courses')">
+        <span class="nav-ico"><i class="fas fa-play-circle"></i></span> কোর্সসমূহ
+      </div>
       <div class="nav-item" onclick="showPanel('topics')">
-        <span class="ico"><i class="fas fa-tags"></i></span> বিষয়সমূহ (Topics)
+        <span class="nav-ico"><i class="fas fa-tags"></i></span> বিষয়সমূহ
       </div>
       <div class="nav-item" onclick="showPanel('instructors')">
-        <span class="ico"><i class="fas fa-chalkboard-teacher"></i></span> শিক্ষকবৃন্দ
+        <span class="nav-ico"><i class="fas fa-chalkboard-teacher"></i></span> শিক্ষকবৃন্দ
       </div>
       <div class="nav-item" onclick="showPanel('faqs')">
-        <span class="ico"><i class="fas fa-question-circle"></i></span> FAQ
+        <span class="nav-ico"><i class="fas fa-question-circle"></i></span> FAQ
       </div>
       <div class="nav-item" onclick="showPanel('blog')">
-        <span class="ico"><i class="fas fa-blog"></i></span> ব্লগ
+        <span class="nav-ico"><i class="fas fa-blog"></i></span> ব্লগ
       </div>
       <div class="nav-item" onclick="showPanel('testimonials')">
-        <span class="ico"><i class="fas fa-star"></i></span> প্রশংসাপত্র
+        <span class="nav-ico"><i class="fas fa-star"></i></span> প্রশংসাপত্র
       </div>
+
       <div class="nav-group-label">ব্যবহারকারী</div>
       <div class="nav-item" onclick="showPanel('users')">
-        <span class="ico"><i class="fas fa-users"></i></span> ব্যবহারকারী
+        <span class="nav-ico"><i class="fas fa-users"></i></span> ব্যবহারকারী
       </div>
       <div class="nav-item" onclick="showPanel('access-requests')">
-        <span class="ico"><i class="fas fa-file-invoice"></i></span> কোর্স রিকোয়েস্ট
-        <span class="badge-count" id="pending-count" style="display:none">0</span>
+        <span class="nav-ico"><i class="fas fa-file-invoice"></i></span> কোর্স রিকোয়েস্ট
+        <span class="nav-badge" id="pending-count" style="display:none">0</span>
       </div>
       <div class="nav-item" onclick="showPanel('enrollments')">
-        <span class="ico"><i class="fas fa-user-check"></i></span> এনরোলমেন্ট
+        <span class="nav-ico"><i class="fas fa-user-check"></i></span> এনরোলমেন্ট
       </div>
+
       <div class="nav-group-label">সেটিংস</div>
       <div class="nav-item" onclick="showPanel('site-settings')">
-        <span class="ico"><i class="fas fa-cog"></i></span> সাইট সেটিংস
+        <span class="nav-ico"><i class="fas fa-cog"></i></span> সাইট সেটিংস
       </div>
       <div class="nav-item" onclick="showPanel('hero-settings')">
-        <span class="ico"><i class="fas fa-home"></i></span> হোম হিরো
+        <span class="nav-ico"><i class="fas fa-home"></i></span> হোম হিরো
       </div>
       <div class="nav-item" onclick="showPanel('why-join')">
-        <span class="ico"><i class="fas fa-list-check"></i></span> কেন যুক্ত হবেন
+        <span class="nav-ico"><i class="fas fa-list-check"></i></span> কেন যুক্ত হবেন
       </div>
       <div class="nav-item" onclick="showPanel('payment-settings')">
-        <span class="ico"><i class="fas fa-money-bill-wave"></i></span> পেমেন্ট নম্বর
+        <span class="nav-ico"><i class="fas fa-money-bill-wave"></i></span> পেমেন্ট
       </div>
       <div class="nav-item" onclick="showPanel('contact-settings')">
-        <span class="ico"><i class="fas fa-phone-alt"></i></span> যোগাযোগ ও সোশ্যাল
+        <span class="nav-ico"><i class="fas fa-phone-alt"></i></span> যোগাযোগ ও সোশ্যাল
       </div>
     </nav>
+
     <div class="sidebar-footer">
       <div class="sidebar-user">
         <div class="av">A</div>
-        <div><div style="color:#fff;font-weight:600;font-size:13px">Admin</div><div style="font-size:11px">সুপার অ্যাডমিন</div></div>
+        <div>
+          <div class="u-name">Admin</div>
+          <div class="u-role">সুপার অ্যাডমিন</div>
+        </div>
       </div>
       <div class="sidebar-logout" onclick="logoutAdmin()">
         <i class="fas fa-sign-out-alt"></i> লগআউট
@@ -417,12 +584,16 @@ textarea{resize:vertical;min-height:90px}
         </div>
       </div>
       <div class="topbar-actions">
-        <button class="notif-btn" title="পেন্ডিং রিকোয়েস্ট দেখুন" onclick="showPanel('access-requests')">
+        <div class="topbar-search">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="কোর্স, শিক্ষার্থী খুঁজুন..." id="global-search" oninput="handleGlobalSearch(this.value)"/>
+        </div>
+        <button class="notif-btn" title="পেন্ডিং রিকোয়েস্ট" onclick="showPanel('access-requests')">
           <i class="fas fa-bell"></i>
           <span class="notif-dot" id="notif-dot" style="display:none"></span>
         </button>
         <a href="https://ibnkhalduninstitute.online" target="_blank" class="btn btn-outline btn-sm">
-          <i class="fas fa-external-link-alt"></i> সাইট দেখুন
+          <i class="fas fa-external-link-alt"></i> <span class="hide-xs">সাইট দেখুন</span>
         </a>
       </div>
     </div>
@@ -431,32 +602,96 @@ textarea{resize:vertical;min-height:90px}
 
       <!-- ===== DASHBOARD ===== -->
       <div class="panel active" id="panel-dashboard">
+
+        <!-- Greeting -->
+        <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+          <div>
+            <div style="font-size:13px;color:var(--text-soft)" id="dash-greeting">শুভ সকাল!</div>
+            <div style="font-size:22px;font-weight:800;color:var(--text)">স্বাগতম, অ্যাডমিন! 👋</div>
+          </div>
+          <div style="font-size:13px;color:var(--text-soft);text-align:right" id="dash-date"></div>
+        </div>
+
+        <!-- Stat Cards -->
         <div class="stat-grid" id="stat-grid">
-          <div class="stat-card"><div class="stat-icon" style="background:#dcfce7;color:#16a34a"><i class="fas fa-users"></i></div><div class="stat-body"><div class="num" id="st-users">—</div><div class="lbl">মোট ব্যবহারকারী</div></div></div>
-          <div class="stat-card"><div class="stat-icon" style="background:#dbeafe;color:#1d4ed8"><i class="fas fa-play-circle"></i></div><div class="stat-body"><div class="num" id="st-courses">—</div><div class="lbl">মোট কোর্স</div></div></div>
-          <div class="stat-card"><div class="stat-icon" style="background:#fef3c7;color:#d97706"><i class="fas fa-file-invoice"></i></div><div class="stat-body"><div class="num" id="st-pending">—</div><div class="lbl">পেন্ডিং রিকোয়েস্ট</div></div></div>
-          <div class="stat-card"><div class="stat-icon" style="background:#fce7f3;color:#be185d"><i class="fas fa-user-check"></i></div><div class="stat-body"><div class="num" id="st-enrollments">—</div><div class="lbl">মোট এনরোলমেন্ট</div></div></div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#d1fae5;color:#059669"><i class="fas fa-users"></i></div>
+            <div class="stat-body">
+              <div class="num" id="st-users">—</div>
+              <div class="lbl">মোট শিক্ষার্থী</div>
+              <div class="delta up" id="st-users-delta" style="display:none"><i class="fas fa-arrow-up"></i><span></span></div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#dbeafe;color:#2563eb"><i class="fas fa-play-circle"></i></div>
+            <div class="stat-body">
+              <div class="num" id="st-courses">—</div>
+              <div class="lbl">মোট কোর্স</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#fef3c7;color:#d97706"><i class="fas fa-clock"></i></div>
+            <div class="stat-body">
+              <div class="num" id="st-pending">—</div>
+              <div class="lbl">পেন্ডিং রিকোয়েস্ট</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#fce7f3;color:#be185d"><i class="fas fa-user-check"></i></div>
+            <div class="stat-body">
+              <div class="num" id="st-enrollments">—</div>
+              <div class="lbl">মোট এনরোলমেন্ট</div>
+            </div>
+          </div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px">
+        <!-- Dashboard Grid -->
+        <div class="dash-grid">
+          <!-- Recent Requests -->
           <div class="card">
-            <div class="card-header"><span class="card-title"><i class="fas fa-clock"></i> সাম্প্রতিক রিকোয়েস্ট</span><button class="btn btn-outline btn-sm" onclick="showPanel('access-requests')">সব দেখুন</button></div>
-            <div id="recent-requests"><div class="loading-state"><div class="loader"></div></div></div>
+            <div class="card-header">
+              <span class="card-title"><i class="fas fa-clock"></i> সাম্প্রতিক রিকোয়েস্ট</span>
+              <button class="btn btn-outline btn-sm" onclick="showPanel('access-requests')"><i class="fas fa-arrow-left"></i> সব দেখুন</button>
+            </div>
+            <div id="recent-requests"><div class="loading-state"><div class="loader"></div><p>লোড হচ্ছে...</p></div></div>
           </div>
+
+          <!-- Recent Users -->
           <div class="card">
-            <div class="card-header"><span class="card-title"><i class="fas fa-user-plus"></i> নতুন ব্যবহারকারী</span><button class="btn btn-outline btn-sm" onclick="showPanel('users')">সব দেখুন</button></div>
-            <div id="recent-users"><div class="loading-state"><div class="loader"></div></div></div>
+            <div class="card-header">
+              <span class="card-title"><i class="fas fa-user-plus"></i> নতুন শিক্ষার্থী</span>
+              <button class="btn btn-outline btn-sm" onclick="showPanel('users')"><i class="fas fa-arrow-left"></i> সব দেখুন</button>
+            </div>
+            <div id="recent-users"><div class="loading-state"><div class="loader"></div><p>লোড হচ্ছে...</p></div></div>
           </div>
         </div>
 
+        <!-- Quick Actions -->
         <div class="card">
-          <div class="card-header"><span class="card-title"><i class="fas fa-bolt"></i> দ্রুত কার্য</span></div>
+          <div class="card-header">
+            <span class="card-title"><i class="fas fa-bolt"></i> দ্রুত কার্য</span>
+          </div>
           <div class="quick-actions">
-            <button class="btn btn-primary" onclick="showPanel('courses');setTimeout(openCourseModal,100)"><i class="fas fa-plus"></i> নতুন কোর্স</button>
-            <button class="btn btn-primary" onclick="showPanel('instructors');setTimeout(openInstructorModal,100)"><i class="fas fa-user-plus"></i> শিক্ষক যোগ</button>
-            <button class="btn btn-primary" onclick="showPanel('blog');setTimeout(openBlogModal,100)"><i class="fas fa-pen"></i> নতুন ব্লগ</button>
-            <button class="btn btn-warn" onclick="showPanel('access-requests')"><i class="fas fa-file-invoice"></i> রিকোয়েস্ট দেখুন</button>
-            <button class="btn btn-outline" onclick="showPanel('site-settings')"><i class="fas fa-cog"></i> সাইট সেটিংস</button>
+            <div class="quick-action-card" onclick="showPanel('courses');setTimeout(openCourseModal,100)">
+              <div class="qa-icon" style="background:#dbeafe;color:#2563eb"><i class="fas fa-plus"></i></div>
+              <div><div class="qa-text">নতুন কোর্স</div><div class="qa-sub">কোর্স যোগ করুন</div></div>
+            </div>
+            <div class="quick-action-card" onclick="showPanel('instructors');setTimeout(openInstructorModal,100)">
+              <div class="qa-icon" style="background:#d1fae5;color:#059669"><i class="fas fa-user-plus"></i></div>
+              <div><div class="qa-text">শিক্ষক যোগ</div><div class="qa-sub">নতুন শিক্ষক</div></div>
+            </div>
+            <div class="quick-action-card" onclick="showPanel('blog');setTimeout(openBlogModal,100)">
+              <div class="qa-icon" style="background:#fef3c7;color:#d97706"><i class="fas fa-pen"></i></div>
+              <div><div class="qa-text">নতুন ব্লগ</div><div class="qa-sub">পোস্ট লিখুন</div></div>
+            </div>
+            <div class="quick-action-card" onclick="showPanel('access-requests')">
+              <div class="qa-icon" style="background:#fce7f3;color:#be185d"><i class="fas fa-file-invoice"></i></div>
+              <div><div class="qa-text">রিকোয়েস্ট</div><div class="qa-sub">পেন্ডিং দেখুন</div></div>
+            </div>
+            <div class="quick-action-card" onclick="showPanel('site-settings')">
+              <div class="qa-icon" style="background:#e0e7ff;color:#4338ca"><i class="fas fa-cog"></i></div>
+              <div><div class="qa-text">সেটিংস</div><div class="qa-sub">সাইট কনফিগার</div></div>
+            </div>
           </div>
         </div>
       </div>
@@ -465,8 +700,8 @@ textarea{resize:vertical;min-height:90px}
       <div class="panel" id="panel-courses">
         <div class="section-head">
           <h2><i class="fas fa-play-circle"></i> কোর্সসমূহ</h2>
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <div class="search-bar"><input type="text" placeholder="কোর্স খুঁজুন..." oninput="filterTable('courses-table',this.value)"/><i class="fas fa-search"></i></div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+            <div class="search-bar"><i class="fas fa-search"></i><input type="text" placeholder="কোর্স খুঁজুন..." oninput="filterTable('courses-table',this.value)" style="width:200px"/></div>
             <button class="btn btn-primary" onclick="openCourseModal()"><i class="fas fa-plus"></i> নতুন কোর্স</button>
           </div>
         </div>
@@ -477,8 +712,6 @@ textarea{resize:vertical;min-height:90px}
           </table></div>
         </div>
       </div>
-
-
 
       <!-- ===== TOPICS ===== -->
       <div class="panel" id="panel-topics">
@@ -540,7 +773,7 @@ textarea{resize:vertical;min-height:90px}
       <div class="panel" id="panel-testimonials">
         <div class="section-head">
           <h2><i class="fas fa-star"></i> প্রশংসাপত্র</h2>
-          <button class="btn btn-primary" onclick="openTestimonialModal()"><i class="fas fa-plus"></i> নতুন যোগ করুন</button>
+          <button class="btn btn-primary" onclick="openTestimonialModal()"><i class="fas fa-plus"></i> নতুন যোগ</button>
         </div>
         <div class="card" style="padding:0">
           <div class="tbl-wrap"><table>
@@ -554,7 +787,7 @@ textarea{resize:vertical;min-height:90px}
       <div class="panel" id="panel-users">
         <div class="section-head">
           <h2><i class="fas fa-users"></i> ব্যবহারকারী</h2>
-          <div class="search-bar"><input type="text" placeholder="নাম বা ইমেইল..." oninput="filterTable('users-table',this.value)"/><i class="fas fa-search"></i></div>
+          <div class="search-bar"><i class="fas fa-search"></i><input type="text" placeholder="নাম বা ইমেইল..." oninput="filterTable('users-table',this.value)" style="width:220px"/></div>
         </div>
         <div class="card" style="padding:0">
           <div class="tbl-wrap"><table id="users-table">
@@ -570,9 +803,9 @@ textarea{resize:vertical;min-height:90px}
           <h2><i class="fas fa-file-invoice"></i> কোর্স এক্সেস রিকোয়েস্ট</h2>
         </div>
         <div class="tab-row">
-          <button class="tab-btn active" onclick="loadRequests('pending',this)">পেন্ডিং</button>
-          <button class="tab-btn" onclick="loadRequests('approved',this)">অনুমোদিত</button>
-          <button class="tab-btn" onclick="loadRequests('rejected',this)">বাতিল</button>
+          <button class="tab-btn active" onclick="loadRequests('pending',this)">⏳ পেন্ডিং</button>
+          <button class="tab-btn" onclick="loadRequests('approved',this)">✅ অনুমোদিত</button>
+          <button class="tab-btn" onclick="loadRequests('rejected',this)">❌ বাতিল</button>
           <button class="tab-btn" onclick="loadRequests('',this)">সব</button>
         </div>
         <div class="card" style="padding:0">
@@ -608,13 +841,11 @@ textarea{resize:vertical;min-height:90px}
               <div class="form-group"><label class="label">ট্যাগলাইন</label><input name="tagline" placeholder="অনলাইনে নতুন দক্ষতা অর্জন করুন"/></div>
             </div>
             <div class="form-group"><label class="label">ফুটার About টেক্সট</label><textarea name="footerAbout" rows="2"></textarea></div>
-            <div class="form-group"><label class="label">কপিরাইট টেক্সট</label><input name="copyright" placeholder="© {year} ইবনে খালদুন ইনস্টিটিউট। সর্বস্বত্ব সংরক্ষিত।"/></div>
+            <div class="form-group"><label class="label">কপিরাইট টেক্সট</label><input name="copyright" placeholder="© {year} ইবনে খালদুন ইনস্টিটিউট"/></div>
           </div>
           <div class="form-section">
             <h4><i class="fas fa-bullhorn"></i> নোটিশ বার</h4>
-            <div class="form-row">
-              <div class="form-group"><label class="label">নোটিশ টেক্সট (খালি = লুকানো)</label><input name="noticeText" id="notice-text-input" placeholder="বিশেষ অফার: এই মাসে ৩০% ছাড়!" oninput="updateNoticePreview()"/></div>
-            </div>
+            <div class="form-group"><label class="label">নোটিশ টেক্সট (খালি = লুকানো)</label><input name="noticeText" id="notice-text-input" placeholder="বিশেষ অফার: এই মাসে ৩০% ছাড়!" oninput="updateNoticePreview()"/></div>
             <div id="notice-preview-wrap" style="display:none"><div class="notice-preview" id="notice-preview-text"></div></div>
           </div>
           <div class="form-section">
@@ -623,15 +854,13 @@ textarea{resize:vertical;min-height:90px}
               <div class="form-group"><label class="label">নম্বর (8801XXXXXXXXX)</label><input name="waNumber" placeholder="8801700000000"/></div>
               <div class="form-group"><label class="label">বার্তা</label><input name="waMessage" placeholder="আস্সালামু আলাইকুম"/></div>
             </div>
-            <div class="form-group">
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:600;font-size:14px">
-                <input type="checkbox" name="waEnabled" style="width:16px;height:16px"/> WhatsApp বাটন চালু রাখুন
-              </label>
-            </div>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:600;font-size:14px">
+              <input type="checkbox" name="waEnabled" style="width:16px;height:16px;accent-color:var(--primary)"/> WhatsApp বাটন চালু রাখুন
+            </label>
           </div>
           <div class="form-section">
-            <h4><i class="fas fa-image"></i> FAQ সেকশন শিক্ষক ছবি</h4>
-            <div class="form-group"><label class="label"><i class="fas fa-image"></i> FAQ সেকশন ছবি</label>${buildImageUploadWidget({name:'faqImage',currentUrl:'',placeholder:'https://'})}</div>
+            <h4><i class="fas fa-image"></i> FAQ সেকশন ছবি</h4>
+            <div class="form-group" id="faq-image-group"></div>
           </div>
           <button class="btn btn-primary" type="submit"><i class="fas fa-save"></i> সেটিংস সংরক্ষণ</button>
         </form>
@@ -643,50 +872,29 @@ textarea{resize:vertical;min-height:90px}
         <form id="hero-form" onsubmit="saveHeroSettings(event)">
           <div class="form-section">
             <h4><i class="fas fa-heading"></i> মূল টেক্সট</h4>
-            <div class="form-group"><label class="label">পিল টেক্সট (ছোট ব্যাজ)</label><input name="pill" placeholder="বাংলাদেশের নির্ভরযোগ্য ইসলামিক একাডেমি"/></div>
+            <div class="form-group"><label class="label">পিল টেক্সট</label><input name="pill" placeholder="বাংলাদেশের নির্ভরযোগ্য ইসলামিক একাডেমি"/></div>
             <div class="form-row">
               <div class="form-group"><label class="label">হেডলাইন</label><input name="title" placeholder="অনলাইনে নতুন দক্ষতা অর্জন করুন"/></div>
-              <div class="form-group"><label class="label">গোল্ড হাইলাইট (হেডলাইনের যে অংশ)</label><input name="highlight" placeholder="দক্ষতা অর্জন"/></div>
+              <div class="form-group"><label class="label">গোল্ড হাইলাইট</label><input name="highlight" placeholder="দক্ষতা অর্জন"/></div>
             </div>
             <div class="form-group"><label class="label">সাবটাইটেল</label><textarea name="subtitle" rows="2"></textarea></div>
             <div class="form-row">
-              <div class="form-group"><label class="label">প্রাইমারি বাটন টেক্সট</label><input name="primaryButtonText" placeholder="সব কোর্স দেখুন"/></div>
-              <div class="form-group"><label class="label">সেকেন্ডারি বাটন টেক্সট</label><input name="secondaryButtonText" placeholder="আমাদের সম্পর্কে"/></div>
+              <div class="form-group"><label class="label">প্রাইমারি বাটন</label><input name="primaryButtonText" placeholder="সব কোর্স দেখুন"/></div>
+              <div class="form-group"><label class="label">সেকেন্ডারি বাটন</label><input name="secondaryButtonText" placeholder="আমাদের সম্পর্কে"/></div>
             </div>
           </div>
           <div class="form-section">
             <h4><i class="fas fa-chart-bar"></i> পরিসংখ্যান (Stats)</h4>
-            <div class="form-row">
-              <div class="form-group"><label class="label">Stat ১ নম্বর</label><input name="stat1Num" placeholder="১২,০০০+"/></div>
-              <div class="form-group"><label class="label">Stat ১ লেবেল</label><input name="stat1Lbl" placeholder="শিক্ষার্থী"/></div>
-            </div>
-            <div class="form-row">
-              <div class="form-group"><label class="label">Stat ২ নম্বর</label><input name="stat2Num" placeholder="৬০+"/></div>
-              <div class="form-group"><label class="label">Stat ২ লেবেল</label><input name="stat2Lbl" placeholder="কোর্স"/></div>
-            </div>
-            <div class="form-row">
-              <div class="form-group"><label class="label">Stat ৩ নম্বর</label><input name="stat3Num" placeholder="২৫+"/></div>
-              <div class="form-group"><label class="label">Stat ৩ লেবেল</label><input name="stat3Lbl" placeholder="শিক্ষক"/></div>
-            </div>
-            <div class="form-row">
-              <div class="form-group"><label class="label">Stat ৪ নম্বর</label><input name="stat4Num" placeholder="৪.৯★"/></div>
-              <div class="form-group"><label class="label">Stat ৪ লেবেল</label><input name="stat4Lbl" placeholder="রেটিং"/></div>
-            </div>
+            <div class="form-row"><div class="form-group"><label class="label">Stat ১ নম্বর</label><input name="stat1Num" placeholder="১২,০০০+"/></div><div class="form-group"><label class="label">Stat ১ লেবেল</label><input name="stat1Lbl" placeholder="শিক্ষার্থী"/></div></div>
+            <div class="form-row"><div class="form-group"><label class="label">Stat ২ নম্বর</label><input name="stat2Num" placeholder="৬০+"/></div><div class="form-group"><label class="label">Stat ২ লেবেল</label><input name="stat2Lbl" placeholder="কোর্স"/></div></div>
+            <div class="form-row"><div class="form-group"><label class="label">Stat ৩ নম্বর</label><input name="stat3Num" placeholder="২৫+"/></div><div class="form-group"><label class="label">Stat ৩ লেবেল</label><input name="stat3Lbl" placeholder="শিক্ষক"/></div></div>
+            <div class="form-row"><div class="form-group"><label class="label">Stat ৪ নম্বর</label><input name="stat4Num" placeholder="৪.৯★"/></div><div class="form-group"><label class="label">Stat ৪ লেবেল</label><input name="stat4Lbl" placeholder="রেটিং"/></div></div>
           </div>
           <div class="form-section">
             <h4><i class="fas fa-id-card"></i> হিরো কার্ড (৩টি ভাসমান কার্ড)</h4>
-            <div class="form-row">
-              <div class="form-group"><label class="label">কার্ড ১ শিরোনাম</label><input name="card1Title" placeholder="অথেনটিক কোর্স"/></div>
-              <div class="form-group"><label class="label">কার্ড ১ বিবরণ</label><input name="card1Desc" placeholder="..."/></div>
-            </div>
-            <div class="form-row">
-              <div class="form-group"><label class="label">কার্ড ২ শিরোনাম</label><input name="card2Title" placeholder="অভিজ্ঞ আলেম"/></div>
-              <div class="form-group"><label class="label">কার্ড ২ বিবরণ</label><input name="card2Desc" placeholder="..."/></div>
-            </div>
-            <div class="form-row">
-              <div class="form-group"><label class="label">কার্ড ৩ শিরোনাম</label><input name="card3Title" placeholder="সার্টিফিকেট"/></div>
-              <div class="form-group"><label class="label">কার্ড ৩ বিবরণ</label><input name="card3Desc" placeholder="..."/></div>
-            </div>
+            <div class="form-row"><div class="form-group"><label class="label">কার্ড ১ শিরোনাম</label><input name="card1Title" placeholder="অথেনটিক কোর্স"/></div><div class="form-group"><label class="label">কার্ড ১ বিবরণ</label><input name="card1Desc" placeholder="..."/></div></div>
+            <div class="form-row"><div class="form-group"><label class="label">কার্ড ২ শিরোনাম</label><input name="card2Title" placeholder="অভিজ্ঞ আলেম"/></div><div class="form-group"><label class="label">কার্ড ২ বিবরণ</label><input name="card2Desc" placeholder="..."/></div></div>
+            <div class="form-row"><div class="form-group"><label class="label">কার্ড ৩ শিরোনাম</label><input name="card3Title" placeholder="সার্টিফিকেট"/></div><div class="form-group"><label class="label">কার্ড ৩ বিবরণ</label><input name="card3Desc" placeholder="..."/></div></div>
           </div>
           <button class="btn btn-primary" type="submit"><i class="fas fa-save"></i> হিরো সংরক্ষণ</button>
         </form>
@@ -715,12 +923,12 @@ textarea{resize:vertical;min-height:90px}
           <div class="form-section">
             <h4><i class="fas fa-mobile-alt"></i> মোবাইল ব্যাংকিং</h4>
             <div class="form-row">
-              <div class="form-group"><label class="label">bKash নম্বর</label><input name="bkash" placeholder="01XXXXXXXXX"/></div>
-              <div class="form-group"><label class="label">Nagad নম্বর</label><input name="nagad" placeholder="01XXXXXXXXX"/></div>
+              <div class="form-group"><label class="label" style="color:#e91e63"><i class="fas fa-circle" style="color:#e91e63"></i> bKash নম্বর</label><input name="bkash" placeholder="01XXXXXXXXX"/></div>
+              <div class="form-group"><label class="label" style="color:#ff6600"><i class="fas fa-circle" style="color:#ff6600"></i> Nagad নম্বর</label><input name="nagad" placeholder="01XXXXXXXXX"/></div>
             </div>
             <div class="form-row">
-              <div class="form-group"><label class="label">Rocket নম্বর</label><input name="rocket" placeholder="01XXXXXXXXX"/></div>
-              <div class="form-group"><label class="label">ব্যাংক অ্যাকাউন্ট</label><input name="bank" placeholder="ব্যাংক অ্যাকাউন্ট তথ্য"/></div>
+              <div class="form-group"><label class="label" style="color:#7b2d8b"><i class="fas fa-circle" style="color:#7b2d8b"></i> Rocket নম্বর</label><input name="rocket" placeholder="01XXXXXXXXX"/></div>
+              <div class="form-group"><label class="label"><i class="fas fa-university" style="color:var(--primary)"></i> ব্যাংক অ্যাকাউন্ট</label><input name="bank" placeholder="ব্যাংক অ্যাকাউন্ট তথ্য"/></div>
             </div>
           </div>
           <button class="btn btn-primary" type="submit"><i class="fas fa-save"></i> পেমেন্ট সেটিংস সংরক্ষণ</button>
@@ -769,87 +977,52 @@ textarea{resize:vertical;min-height:90px}
   </div><!-- /main-wrap -->
 </div><!-- /app -->
 
+<!-- Mobile Bottom Nav -->
+<nav class="mobile-bottom-nav">
+  <div class="mbn-items">
+    <div class="mbn-item active" onclick="showPanel('dashboard')"><i class="fas fa-th-large"></i>হোম</div>
+    <div class="mbn-item" onclick="showPanel('courses')"><i class="fas fa-play-circle"></i>কোর্স</div>
+    <div class="mbn-item" onclick="showPanel('access-requests')"><i class="fas fa-file-invoice"></i>রিকোয়েস্ট</div>
+    <div class="mbn-item" onclick="showPanel('users')"><i class="fas fa-users"></i>ইউজার</div>
+    <div class="mbn-item" onclick="toggleSidebar()"><i class="fas fa-bars"></i>মেনু</div>
+  </div>
+</nav>
+
 <!-- ===== MODALS ===== -->
-<!-- Course Modal -->
 <div class="modal-bg" id="course-modal">
-  <div class="modal modal-xl">
-    <button class="modal-close" onclick="closeModal('course-modal')">×</button>
-    <div id="course-modal-body"></div>
-  </div>
+  <div class="modal modal-xl"><button class="modal-close" onclick="closeModal('course-modal')">×</button><div id="course-modal-body"></div></div>
 </div>
-
-<!-- Instructor Modal -->
 <div class="modal-bg" id="instructor-modal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('instructor-modal')">×</button>
-    <div id="instructor-modal-body"></div>
-  </div>
+  <div class="modal"><button class="modal-close" onclick="closeModal('instructor-modal')">×</button><div id="instructor-modal-body"></div></div>
 </div>
-
-<!-- Topic Modal -->
 <div class="modal-bg" id="topic-modal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('topic-modal')">×</button>
-    <div id="topic-modal-body"></div>
-  </div>
+  <div class="modal modal-lg"><button class="modal-close" onclick="closeModal('topic-modal')">×</button><div id="topic-modal-body"></div></div>
 </div>
-
-<!-- FAQ Modal -->
 <div class="modal-bg" id="faq-modal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('faq-modal')">×</button>
-    <div id="faq-modal-body"></div>
-  </div>
+  <div class="modal"><button class="modal-close" onclick="closeModal('faq-modal')">×</button><div id="faq-modal-body"></div></div>
 </div>
-
-<!-- Blog Modal -->
 <div class="modal-bg" id="blog-modal">
-  <div class="modal modal-lg">
-    <button class="modal-close" onclick="closeModal('blog-modal')">×</button>
-    <div id="blog-modal-body"></div>
-  </div>
+  <div class="modal modal-lg"><button class="modal-close" onclick="closeModal('blog-modal')">×</button><div id="blog-modal-body"></div></div>
 </div>
-
-<!-- Testimonial Modal -->
 <div class="modal-bg" id="testimonial-modal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('testimonial-modal')">×</button>
-    <div id="testimonial-modal-body"></div>
-  </div>
+  <div class="modal"><button class="modal-close" onclick="closeModal('testimonial-modal')">×</button><div id="testimonial-modal-body"></div></div>
 </div>
-
-<!-- Request Details Modal -->
 <div class="modal-bg" id="request-modal">
-  <div class="modal modal-lg">
-    <button class="modal-close" onclick="closeModal('request-modal')">×</button>
-    <div id="request-modal-body"></div>
-  </div>
+  <div class="modal modal-lg"><button class="modal-close" onclick="closeModal('request-modal')">×</button><div id="request-modal-body"></div></div>
 </div>
-
-<!-- Grant Access Modal -->
 <div class="modal-bg" id="grant-modal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('grant-modal')">×</button>
-    <div id="grant-modal-body"></div>
-  </div>
+  <div class="modal"><button class="modal-close" onclick="closeModal('grant-modal')">×</button><div id="grant-modal-body"></div></div>
 </div>
-
-<!-- User Details Modal -->
 <div class="modal-bg" id="user-modal">
-  <div class="modal modal-lg">
-    <button class="modal-close" onclick="closeModal('user-modal')">×</button>
-    <div id="user-modal-body"></div>
-  </div>
+  <div class="modal modal-lg"><button class="modal-close" onclick="closeModal('user-modal')">×</button><div id="user-modal-body"></div></div>
 </div>
-
-<!-- Confirm Modal -->
 <div class="modal-bg" id="confirm-modal">
-  <div class="modal" style="max-width:400px">
+  <div class="modal" style="max-width:420px">
     <button class="modal-close" onclick="closeModal('confirm-modal')">×</button>
     <div id="confirm-modal-body"></div>
-    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px">
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
       <button class="btn btn-outline" onclick="closeModal('confirm-modal')">বাতিল</button>
-      <button class="btn btn-danger" id="confirm-ok-btn">নিশ্চিত করুন</button>
+      <button class="btn btn-danger" id="confirm-ok-btn"><i class="fas fa-trash"></i> নিশ্চিত করুন</button>
     </div>
   </div>
 </div>
@@ -867,9 +1040,25 @@ const API = window.location.hostname==='localhost'
 let ADMIN_TOKEN = '';
 let ALL_COURSES_DATA = [];
 let ALL_INSTRUCTORS_DATA = [];
+let ALL_TOPICS_DATA = [];
 
 // ============================================================
-// IMAGE UPLOAD HELPER  — drag-drop + click upload
+// DASHBOARD GREETING & DATE
+// ============================================================
+function setDashGreeting(){
+  const h=new Date().getHours();
+  const g=h<12?'শুভ সকাল! 🌅':h<17?'শুভ অপরাহ্ন! ☀️':'শুভ সন্ধ্যা! 🌙';
+  const el=document.getElementById('dash-greeting');
+  if(el) el.textContent=g;
+  const dateEl=document.getElementById('dash-date');
+  if(dateEl){
+    const d=new Date();
+    dateEl.innerHTML=d.toLocaleDateString('bn-BD',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  }
+}
+
+// ============================================================
+// IMAGE UPLOAD HELPER
 // ============================================================
 function buildImageUploadWidget(opts){
   const id='iup_'+Math.random().toString(36).slice(2,8);
@@ -880,17 +1069,17 @@ function buildImageUploadWidget(opts){
     <input type="file" accept="image/*" id="${id}_file" onchange="iupFile(this,'${id}','${opts.name}')"/>
     <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
     <div class="upload-text">ছবি এখানে <strong>ড্র্যাগ করুন</strong> অথবা ক্লিক করুন</div>
-    <div class="upload-text" style="font-size:11px;color:#94a3b8;margin-top:2px">JPG, PNG, WEBP সমর্থিত</div>
+    <div class="upload-text" style="font-size:11px;color:#9ca3af;margin-top:2px">JPG, PNG, WEBP সমর্থিত</div>
     <div id="${id}_prog" class="upload-progress">
-      <div style="background:#e2e8f0;border-radius:4px;height:6px;overflow:hidden;margin-top:6px">
+      <div style="background:#e5e7eb;border-radius:4px;height:5px;overflow:hidden;margin-top:8px">
         <div id="${id}_bar" style="height:100%;background:var(--primary);width:0%;transition:.3s"></div>
       </div>
-      <div id="${id}_msg" style="font-size:11px;color:var(--primary);margin-top:3px">আপলোড হচ্ছে...</div>
+      <div id="${id}_msg" style="font-size:11px;color:var(--primary);margin-top:4px">আপলোড হচ্ছে...</div>
     </div>
   </div>
   <div class="url-or-upload">অথবা URL দিন</div>
   <input type="text" name="${opts.name}" id="${id}_url" value="${safeUrl}" placeholder="${opts.placeholder||'https://...'}" style="direction:ltr" oninput="iupPreviewFromUrl('${id}',this.value)"/>
-  <div class="img-preview-strip" id="${id}_preview">${curUrl?`<img src="${safeUrl}" onerror="this.style.display='none'" style="height:70px;border-radius:8px;border:2px solid var(--border);object-fit:cover;max-width:120px"/><button type="button" class="remove-img" onclick="iupClear('${id}')">×</button>`:''}
+  <div class="img-preview-strip" id="${id}_preview">${curUrl?`<img src="${safeUrl}" onerror="this.style.display='none'" style="height:70px;border-radius:9px;border:2px solid var(--border);object-fit:cover;max-width:120px"/><button type="button" class="remove-img" onclick="iupClear('${id}')">×</button>`:''}
   </div>`;
 }
 function iupDrag(e,id){e.preventDefault();const z=document.getElementById(id+'_zone');if(z)z.classList.add('dragover');}
@@ -917,26 +1106,13 @@ async function iupUpload(file,id){
     setTimeout(()=>{if(prog)prog.classList.remove('show');if(msg)msg.style.color='var(--primary)';},2500);
   }
 }
-function iupSetUrl(id,url){
-  const inp=document.getElementById(id+'_url');
-  if(inp){inp.value=url;}
-  iupPreviewFromUrl(id,url);
-}
+function iupSetUrl(id,url){const inp=document.getElementById(id+'_url');if(inp)inp.value=url;iupPreviewFromUrl(id,url);}
 function iupPreviewFromUrl(id,url){
-  const prev=document.getElementById(id+'_preview');
-  if(!prev)return;
-  if(url&&url.trim()){
-    prev.innerHTML=`<img src="${url}" onerror="this.style.display='none'" style="height:70px;border-radius:8px;border:2px solid var(--border);object-fit:cover;max-width:120px"/><button type="button" class="remove-img" onclick="iupClear('${id}')">×</button>`;
-  } else {
-    prev.innerHTML='';
-  }
+  const prev=document.getElementById(id+'_preview');if(!prev)return;
+  if(url&&url.trim()){prev.innerHTML=`<img src="${url}" onerror="this.style.display='none'" style="height:70px;border-radius:9px;border:2px solid var(--border);object-fit:cover;max-width:120px"/><button type="button" class="remove-img" onclick="iupClear('${id}')">×</button>`;}
+  else{prev.innerHTML='';}
 }
-function iupClear(id){
-  const inp=document.getElementById(id+'_url');
-  if(inp)inp.value='';
-  const prev=document.getElementById(id+'_preview');
-  if(prev)prev.innerHTML='';
-}
+function iupClear(id){const inp=document.getElementById(id+'_url');if(inp)inp.value='';const prev=document.getElementById(id+'_preview');if(prev)prev.innerHTML='';}
 
 const $ = (s,p=document)=>p.querySelector(s);
 const $$ = (s,p=document)=>[...p.querySelectorAll(s)];
@@ -944,20 +1120,23 @@ const esc = s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':
 const fmt = n=>Number(n||0).toLocaleString('bn-BD');
 
 function toast(msg,type=''){
-  const t=$('#toast');t.textContent=msg;t.className='toast show '+type;
-  setTimeout(()=>t.className='toast',3500);
+  const t=$('#toast');
+  const icon=type==='success'?'✅':type==='error'?'❌':type==='warn'?'⚠️':'ℹ️';
+  t.innerHTML=`<span>${icon}</span><span>${msg}</span>`;
+  t.className='toast show '+type;
+  setTimeout(()=>t.className='toast',3800);
 }
 function openModal(id){$('#'+id).classList.add('open');document.body.style.overflow='hidden'}
 function closeModal(id){$('#'+id).classList.remove('open');document.body.style.overflow=''}
 
 function confirmAction(msg, onOk){
-  $('#confirm-modal-body').innerHTML=`<p style="font-size:15px">${esc(msg)}</p>`;
+  $('#confirm-modal-body').innerHTML=`<h3 style="font-size:17px;margin-bottom:10px"><i class="fas fa-exclamation-triangle" style="color:var(--warn)"></i> নিশ্চিতকরণ</h3><p style="font-size:14px;color:var(--text-soft)">${esc(msg)}</p>`;
   $('#confirm-ok-btn').onclick=()=>{closeModal('confirm-modal');onOk();};
   openModal('confirm-modal');
 }
 
 // ============================================================
-// API CALL (admin)
+// API CALL
 // ============================================================
 async function adminApi(path, opts={}){
   const headers={...(opts.headers||{})};
@@ -966,7 +1145,7 @@ async function adminApi(path, opts={}){
     headers['Content-Type']='application/json';
     opts.body=JSON.stringify(opts.body);
   }
-  const r=await fetch(API+path,{...opts,headers}).catch(e=>{throw new Error('সংযোগ ব্যর্থ')});
+  const r=await fetch(API+path,{...opts,headers}).catch(e=>{throw new Error('সংযোগ ব্যর্থ');});
   const data=await r.json().catch(()=>({}));
   if(!r.ok) throw new Error(data.error||'অনুরোধ ব্যর্থ');
   return data;
@@ -978,11 +1157,12 @@ async function adminApi(path, opts={}){
 async function doLogin(){
   const u=$('#adm-user').value.trim();
   const p=$('#adm-pass').value;
-  const err=$('#login-err');
+  const errWrap=$('#login-err');
+  const errText=$('#login-err-text');
   const btn=$('#login-btn');
-  if(!u||!p){err.textContent='ইউজারনেম ও পাসওয়ার্ড দিন';err.classList.add('show');return;}
-  btn.disabled=true;btn.innerHTML='<span class="loader" style="width:16px;height:16px;border-width:2px"></span> লগইন...';
-  err.classList.remove('show');
+  if(!u||!p){errText.textContent='ইউজারনেম ও পাসওয়ার্ড দিন';errWrap.classList.add('show');return;}
+  btn.disabled=true;btn.innerHTML='<span class="loader" style="width:16px;height:16px;border-width:2px;border-color:rgba(255,255,255,.3);border-top-color:#fff"></span> লগইন...';
+  errWrap.classList.remove('show');
   try{
     const d=await adminApi('/api/admin/login',{method:'POST',body:{username:u,password:p}});
     ADMIN_TOKEN=d.token;
@@ -992,8 +1172,8 @@ async function doLogin(){
     $('#app').classList.add('ready');
     initApp();
   }catch(e){
-    err.textContent=e.message||'লগইন ব্যর্থ। তথ্য যাচাই করুন।';
-    err.classList.add('show');
+    errText.textContent=e.message||'লগইন ব্যর্থ। তথ্য যাচাই করুন।';
+    errWrap.classList.add('show');
   }finally{
     btn.disabled=false;btn.innerHTML='<i class="fas fa-sign-in-alt"></i> প্রবেশ করুন';
   }
@@ -1009,11 +1189,15 @@ function logoutAdmin(){
 // APP INIT
 // ============================================================
 async function initApp(){
+  setDashGreeting();
   await loadDashboard();
   await loadCourses();
   await loadInstructors();
   await loadTopics();
   loadCurrentSettings();
+  // Build FAQ image widget
+  const faqGrp=document.getElementById('faq-image-group');
+  if(faqGrp) faqGrp.innerHTML=buildImageUploadWidget({name:'faqImage',currentUrl:'',placeholder:'https://'});
 }
 
 // ============================================================
@@ -1029,24 +1213,26 @@ const PANEL_TITLES={
   'contact-settings':'যোগাযোগ ও সোশ্যাল',
 };
 const PANEL_LOADERS={
-  'courses':loadCourses,'topics':loadTopics,
-  'instructors':loadInstructors,'faqs':loadFaqs,'blog':loadBlog,
-  'testimonials':loadTestimonials,'users':loadUsers,
-  'access-requests':()=>loadRequests('pending'),
-  'enrollments':loadEnrollments,'why-join':loadWhyJoin,
-  'site-settings':loadCurrentSettings,'hero-settings':loadHeroSettings,
-  'payment-settings':loadPaymentSettings,'contact-settings':loadContactSettings,
+  'courses':loadCourses,'topics':loadTopics,'instructors':loadInstructors,
+  'faqs':loadFaqs,'blog':loadBlog,'testimonials':loadTestimonials,'users':loadUsers,
+  'access-requests':()=>loadRequests('pending'),'enrollments':loadEnrollments,
+  'why-join':loadWhyJoin,'site-settings':loadCurrentSettings,
+  'hero-settings':loadHeroSettings,'payment-settings':loadPaymentSettings,
+  'contact-settings':loadContactSettings,
 };
 
 function showPanel(id){
   $$('.panel').forEach(p=>p.classList.remove('active'));
   $$('.nav-item').forEach(n=>n.classList.remove('active'));
+  $$('.mbn-item').forEach(n=>n.classList.remove('active'));
   const panel=$('#panel-'+id);
   if(panel) panel.classList.add('active');
   $$('.nav-item').forEach(n=>{if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+id+"'")) n.classList.add('active');});
+  $$('.mbn-item').forEach(n=>{if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+id+"'")) n.classList.add('active');});
   $('#topbar-title').textContent=PANEL_TITLES[id]||id;
   if(PANEL_LOADERS[id]) PANEL_LOADERS[id]();
   closeSidebar();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function toggleSidebar(){
@@ -1058,10 +1244,22 @@ function closeSidebar(){
   $('#sidebar-overlay').classList.remove('show');
 }
 
+// Global search
+function handleGlobalSearch(q){
+  if(!q.trim()) return;
+  // Search in courses
+  const activePanel=$('.panel.active');
+  if(activePanel){
+    const table=activePanel.querySelector('table');
+    if(table) filterTable(table.id||'',q);
+  }
+}
+
 // ============================================================
 // DASHBOARD
 // ============================================================
 async function loadDashboard(){
+  setDashGreeting();
   try{
     const [users,courses,requests,enroll]=await Promise.allSettled([
       adminApi('/api/admin/users'),
@@ -1074,37 +1272,62 @@ async function loadDashboard(){
     ALL_COURSES_DATA=cList;
     const rList=requests.value||[];
     const eList=enroll.value||[];
-    $('#st-users').textContent=fmt(uList.length);
-    $('#st-courses').textContent=fmt(cList.length);
+
+    // Animate counters
+    animateCounter('st-users', uList.length);
+    animateCounter('st-courses', cList.length);
     const pending=rList.filter(r=>r.status==='pending');
-    $('#st-pending').textContent=fmt(pending.length);
-    $('#st-enrollments').textContent=fmt(eList.length);
+    animateCounter('st-pending', pending.length);
+    animateCounter('st-enrollments', eList.length);
+
     // Notification badge
     if(pending.length>0){
       $('#pending-count').textContent=pending.length;$('#pending-count').style.display='inline';
       $('#notif-dot').style.display='block';
     }
+
     // Recent requests
     const recentR=rList.slice(0,5);
-    $('#recent-requests').innerHTML=recentR.length?`<table style="box-shadow:none">
-      <thead><tr><th>শিক্ষার্থী</th><th>কোর্স</th><th>অবস্থা</th></tr></thead>
-      <tbody>${recentR.map(r=>`<tr>
-        <td>${esc(r.userName||r.userEmail||'—')}</td>
-        <td>${esc(r.courseTitle||'—')}</td>
-        <td>${statusBadge(r.status)}</td>
-      </tr>`).join('')}</tbody>
-    </table>`:`<div class="empty"><i class="fas fa-inbox"></i>কোনো রিকোয়েস্ট নেই</div>`;
+    $('#recent-requests').innerHTML=recentR.length?`<ul class="recent-list">${recentR.map(r=>`
+      <li class="recent-item">
+        <div class="ri-icon" style="background:${r.status==='pending'?'#fef3c7':r.status==='approved'?'#d1fae5':'#fee2e2'};color:${r.status==='pending'?'#d97706':r.status==='approved'?'#059669':'#dc2626'}"><i class="fas fa-file-invoice"></i></div>
+        <div class="ri-body">
+          <div class="ri-title">${esc(r.userName||r.userEmail||'—')}</div>
+          <div class="ri-sub">${esc(r.courseTitle||'—')}</div>
+        </div>
+        <div class="ri-right">${statusBadge(r.status)}</div>
+      </li>`).join('')}</ul>`:`<div class="empty"><i class="fas fa-inbox"></i><p>কোনো রিকোয়েস্ট নেই</p></div>`;
+
     // Recent users
     const recentU=uList.slice(-5).reverse();
-    $('#recent-users').innerHTML=recentU.length?`<table style="box-shadow:none">
-      <thead><tr><th>নাম</th><th>ইমেইল</th></tr></thead>
-      <tbody>${recentU.map(u=>`<tr><td>${esc(u.name||'—')}</td><td style="direction:ltr;text-align:left">${esc(u.email||'—')}</td></tr>`).join('')}</tbody>
-    </table>`:`<div class="empty">কোনো ব্যবহারকারী নেই</div>`;
+    $('#recent-users').innerHTML=recentU.length?`<ul class="recent-list">${recentU.map(u=>`
+      <li class="recent-item">
+        <div class="ri-icon" style="background:var(--primary-light);color:var(--primary)"><i class="fas fa-user"></i></div>
+        <div class="ri-body">
+          <div class="ri-title">${esc(u.name||'—')}</div>
+          <div class="ri-sub" style="direction:ltr;text-align:right">${esc(u.email||'—')}</div>
+        </div>
+        <div class="ri-right" style="font-size:11px;color:var(--text-muted)">${u.createdAt?new Date(u.createdAt).toLocaleDateString('bn-BD'):'—'}</div>
+      </li>`).join('')}</ul>`:`<div class="empty"><p>কোনো ব্যবহারকারী নেই</p></div>`;
   }catch(e){console.warn('Dashboard:',e);}
 }
 
+function animateCounter(id, target){
+  const el=$('#'+id);if(!el)return;
+  let start=0;const step=Math.ceil(target/30);
+  const timer=setInterval(()=>{
+    start=Math.min(start+step,target);
+    el.textContent=start.toLocaleString('bn-BD');
+    if(start>=target)clearInterval(timer);
+  },30);
+}
+
 function statusBadge(s){
-  const map={pending:'<span class="badge badge-warn">পেন্ডিং</span>',approved:'<span class="badge badge-success">অনুমোদিত</span>',rejected:'<span class="badge badge-danger">বাতিল</span>'};
+  const map={
+    pending:'<span class="badge badge-warn"><i class="fas fa-clock" style="font-size:8px"></i> পেন্ডিং</span>',
+    approved:'<span class="badge badge-success"><i class="fas fa-check" style="font-size:8px"></i> অনুমোদিত</span>',
+    rejected:'<span class="badge badge-danger"><i class="fas fa-times" style="font-size:8px"></i> বাতিল</span>'
+  };
   return map[s]||`<span class="badge">${esc(s)}</span>`;
 }
 
@@ -1115,61 +1338,37 @@ async function loadCourses(){
   try{
     const list=await adminApi('/api/courses');
     ALL_COURSES_DATA=list||[];
-    $('#courses-tbody').innerHTML=list&&list.length?list.map(courseRow).join(''):`<tr><td colspan="7"><div class="empty"><i class="fas fa-box-open"></i>কোনো কোর্স নেই</div></td></tr>`;
-  }catch(e){$('#courses-tbody').innerHTML=`<tr><td colspan="7"><div class="empty">${esc(e.message)}</div></td></tr>`;}
+    $('#courses-tbody').innerHTML=list&&list.length?list.map(courseRow).join(''):`<tr><td colspan="7"><div class="empty"><i class="fas fa-box-open"></i><p>কোনো কোর্স নেই</p><button class="btn btn-primary btn-sm" onclick="openCourseModal()"><i class="fas fa-plus"></i> প্রথম কোর্স যোগ করুন</button></div></td></tr>`;
+  }catch(e){$('#courses-tbody').innerHTML=`<tr><td colspan="7"><div class="empty"><i class="fas fa-exclamation-triangle"></i><p>${esc(e.message)}</p></div></td></tr>`;}
 }
 
-// stub – no longer used but kept to avoid reference errors
-async function loadLiveCourses(){ }
+async function loadLiveCourses(){}
 
 function courseRow(c){
   return `<tr>
-    <td><img src="${esc(c.thumbnail||'')}" style="width:54px;height:38px;object-fit:cover;border-radius:6px;background:#e2e8f0" onerror="this.style.background='#e2e8f0'"/></td>
-    <td style="max-width:200px;font-weight:600">${esc(c.title||'—')}<div style="font-size:11px;color:var(--text-soft)">${esc((c.shortDescription||'').slice(0,60))}</div></td>
-    <td>${c.price?`৳${fmt(c.price)}`:'<span class="badge badge-success">ফ্রি</span>'}</td>
-    <td>${esc(c.instructor||'—')}</td>
+    <td><img src="${esc(c.thumbnail||'')}" style="width:56px;height:38px;object-fit:cover;border-radius:8px;background:var(--bg)" onerror="this.src='';this.style.background='var(--bg)'"/></td>
+    <td style="max-width:200px;font-weight:600">${esc(c.title||'—')}<div style="font-size:11px;color:var(--text-soft);margin-top:2px">${esc((c.shortDescription||'').slice(0,55))}${(c.shortDescription||'').length>55?'...':''}</div></td>
+    <td style="font-weight:700">${c.price?`<span style="color:var(--primary)">৳${fmt(c.price)}</span>`:'<span class="badge badge-success">ফ্রি</span>'}</td>
+    <td style="font-size:13px">${esc(c.instructor||'—')}</td>
     <td>${c.certificateImage?'<span class="badge badge-success"><i class="fas fa-certificate"></i> আছে</span>':'<span class="badge badge-warn">নেই</span>'}</td>
     <td>${c.isActive===false?'<span class="badge badge-warn">নিষ্ক্রিয়</span>':'<span class="badge badge-success">সক্রিয়</span>'}</td>
     <td><div class="tbl-actions">
-      <button class="btn btn-outline btn-sm" onclick="openCourseModal(null,'${esc(c._id)}')"><i class="fas fa-edit"></i></button>
-      <button class="btn btn-danger btn-sm" onclick="deleteCourse('${esc(c._id)}','${esc(c.title)}')"><i class="fas fa-trash"></i></button>
+      <button class="btn btn-outline btn-sm" onclick="openCourseModal(null,'${esc(c._id)}')" title="সম্পাদনা"><i class="fas fa-edit"></i></button>
+      <button class="btn btn-danger btn-sm" onclick="deleteCourse('${esc(c._id)}','${esc(c.title)}')" title="মুছুন"><i class="fas fa-trash"></i></button>
     </div></td>
   </tr>`;
 }
 
-function liveCourseRow(c){
-  return `<tr>
-    <td><img src="${esc(c.thumbnail||'')}" style="width:54px;height:38px;object-fit:cover;border-radius:6px;background:#e2e8f0"/></td>
-    <td style="font-weight:600">${esc(c.title||'—')}</td>
-    <td style="font-size:12px">${esc(c.liveSchedule||'—')}</td>
-    <td>${c.price?`৳${fmt(c.price)}`:'ফ্রি'}</td>
-    <td>${c.published===false?'<span class="badge badge-warn">ড্রাফট</span>':'<span class="badge badge-success">প্রকাশিত</span>'}</td>
-    <td><div class="tbl-actions">
-      <button class="btn btn-outline btn-sm" onclick="openCourseModal('live','${esc(c._id)}')"><i class="fas fa-edit"></i></button>
-      <button class="btn btn-danger btn-sm" onclick="deleteCourse('${esc(c._id)}','${esc(c.title)}')"><i class="fas fa-trash"></i></button>
-    </div></td>
-  </tr>`;
-}
-
-// ── YouTube URL → ID helper ──
 function extractYouTubeId(input){
   if(!input) return '';
   input=input.trim();
-  // already an ID (11 chars, no slash/dot)
   if(/^[A-Za-z0-9_-]{11}$/.test(input)) return input;
   const m=input.match(/(?:v=|\/embed\/|\/shorts\/|youtu\.be\/)([A-Za-z0-9_-]{11})/);
   return m?m[1]:'';
 }
 
-// ── Course curriculum & QnA state (for current modal) ──
-let CM_CURRICULUM=[];
-let CM_QNA=[];
-let CM_FEATURES=[];
-let CM_INCLUDES=[];
-let CM_EDIT_ID=null;
-let CM_TYPE='recorded';
+let CM_CURRICULUM=[];let CM_QNA=[];let CM_FEATURES=[];let CM_INCLUDES=[];let CM_EDIT_ID=null;let CM_TYPE='recorded';
 
-// Build subcat options for course modal
 function cmBuildSubcatOptions(catName,selectedSub){
   const topic=(ALL_TOPICS_DATA||[]).find(t=>t.name===catName);
   if(!topic||!(topic.subCategories||[]).length) return `<option value="${selectedSub||''}">${selectedSub||'কোনো সাব-ক্যাটাগরি নেই'}</option>`;
@@ -1182,17 +1381,13 @@ function cmLoadSubcats(catName,selectedSub){
   if(customInp) customInp.style.display=catName==='__custom__'?'block':'none';
 }
 function cmGetCategory(){
-  const sel=document.getElementById('cm-cat-select');
-  if(!sel)return '';
-  if(sel.value==='__custom__'){
-    return (document.getElementById('cm-cat-custom')||{}).value||'';
-  }
+  const sel=document.getElementById('cm-cat-select');if(!sel)return '';
+  if(sel.value==='__custom__') return (document.getElementById('cm-cat-custom')||{}).value||'';
   return sel.value;
 }
 
 function openCourseModal(type='recorded', editId=null){
-  CM_TYPE=type;
-  CM_EDIT_ID=editId;
+  CM_TYPE=type; CM_EDIT_ID=editId;
   const isLive=type==='live';
   const course=editId?ALL_COURSES_DATA.find(c=>c._id===editId):null;
   const v=course||{};
@@ -1203,20 +1398,15 @@ function openCourseModal(type='recorded', editId=null){
   const prevId=extractYouTubeId(v.previewVideoId||v.previewVideo||v.youtubePreview||'');
   $('#course-modal-body').innerHTML=`
     <h3><i class="fas fa-${isLive?'video':'play-circle'}" style="color:var(--primary)"></i> ${editId?'কোর্স সম্পাদনা':'নতুন '+(isLive?'লাইভ ':'')+'কোর্স'}</h3>
-
-    <!-- Tabs -->
     <div class="cf-tabs">
       <button class="cf-tab active" onclick="cfTab(this,'cf-basic')"><i class="fas fa-info-circle"></i> মূল তথ্য</button>
       <button class="cf-tab" onclick="cfTab(this,'cf-media')"><i class="fab fa-youtube"></i> মিডিয়া</button>
       <button class="cf-tab" onclick="cfTab(this,'cf-details')"><i class="fas fa-list-ul"></i> বিবরণ</button>
-      ${!isLive?`<button class="cf-tab" onclick="cfTab(this,'cf-curriculum')"><i class="fas fa-film"></i> ভিডিও কারিকুলাম</button>`:''}
-      <button class="cf-tab" onclick="cfTab(this,'cf-qna')"><i class="fas fa-question-circle"></i> প্রশ্ন-উত্তর</button>
+      ${!isLive?`<button class="cf-tab" onclick="cfTab(this,'cf-curriculum')"><i class="fas fa-film"></i> কারিকুলাম</button>`:''}
+      <button class="cf-tab" onclick="cfTab(this,'cf-qna')"><i class="fas fa-question-circle"></i> Q&A</button>
       <button class="cf-tab" onclick="cfTab(this,'cf-seo')"><i class="fas fa-search"></i> SEO</button>
     </div>
-
     <form id="course-form" onsubmit="saveCourse(event)">
-
-      <!-- ── TAB 1: মূল তথ্য ── -->
       <div class="cf-panel active" id="cf-basic">
         <div class="form-row">
           <div class="form-group"><label class="label">কোর্সের শিরোনাম *</label><input name="title" value="${esc(v.title||'')}" required placeholder="কোর্সের নাম লিখুন"/></div>
@@ -1235,17 +1425,12 @@ function openCourseModal(type='recorded', editId=null){
           <div class="form-group">
             <label class="label">সাব-ক্যাটাগরি</label>
             <select name="subCategory" id="cm-subcat-select">
-              <option value="">— সাব-ক্যাটাগরি বেছে নিন —</option>
+              <option value="">— সাব-ক্যাটাগরি —</option>
               ${cmBuildSubcatOptions(v.category,v.subCategory)}
             </select>
           </div>
         </div>
         <div class="form-row">
-          <div class="form-group"><label class="label">কোর্স ধরন</label>
-            <select name="type">
-              <option value="recorded" selected>রেকর্ডেড</option>
-            </select>
-          </div>
           <div class="form-group"><label class="label">স্তর (Level)</label>
             <select name="level">
               <option value="beginner" ${(v.level||'beginner')==='beginner'?'selected':''}>সহজ (Beginner)</option>
@@ -1253,279 +1438,186 @@ function openCourseModal(type='recorded', editId=null){
               <option value="advanced" ${v.level==='advanced'?'selected':''}>উন্নত (Advanced)</option>
             </select>
           </div>
+          <div class="form-group"><label class="label">মূল্য (৳) — ০ = ফ্রি</label><input name="price" type="number" min="0" value="${v.price||0}"/></div>
         </div>
-        <div class="form-group"><label class="label">সংক্ষিপ্ত বিবরণ (এক লাইন)</label><input name="shortDescription" value="${esc(v.shortDescription||'')}" placeholder="কোর্স সম্পর্কে সংক্ষিপ্ত বর্ণনা..."/></div>
+        <div class="form-group"><label class="label">সংক্ষিপ্ত বিবরণ</label><input name="shortDescription" value="${esc(v.shortDescription||'')}" placeholder="কোর্স সম্পর্কে সংক্ষিপ্ত বর্ণনা..."/></div>
         <div class="form-group"><label class="label">বিস্তারিত বিবরণ</label><textarea name="description" rows="4" placeholder="কোর্স সম্পর্কে বিস্তারিত...">${esc(v.description||'')}</textarea></div>
         <div class="form-row">
-          <div class="form-group"><label class="label">মূল্য (৳) — ০ = ফ্রি</label><input name="price" type="number" min="0" value="${v.price||0}"/></div>
           <div class="form-group"><label class="label">পুরনো মূল্য (কাটা দাম)</label><input name="oldPrice" type="number" min="0" value="${v.oldPrice||0}"/></div>
-        </div>
-        <div class="form-row">
           <div class="form-group"><label class="label">শিক্ষক (নাম)</label><input name="instructor" value="${esc(v.instructor||'')}" placeholder="উস্তাদ / শিক্ষকের নাম..."/></div>
-          <div class="form-group"><label class="label">সময়কাল / মেয়াদ</label><input name="duration" value="${esc(v.duration||'')}" placeholder="৩০ ভিডিও / ১ মাস"/></div>
         </div>
         <div class="form-row">
+          <div class="form-group"><label class="label">সময়কাল / মেয়াদ</label><input name="duration" value="${esc(v.duration||'')}" placeholder="৩০ ভিডিও / ১ মাস"/></div>
           <div class="form-group"><label class="label">মোট পাঠ সংখ্যা</label><input name="totalLessons" type="number" min="0" value="${v.totalLessons||0}"/></div>
-          <div class="form-group"><label class="label">অবস্থা</label>
-            <select name="isActive">
-              <option value="true" ${v.isActive!==false?'selected':''}>সক্রিয়</option>
-              <option value="false" ${v.isActive===false?'selected':''}>নিষ্ক্রিয়</option>
-            </select>
-          </div>
         </div>
-        ${isLive?`
-        <div class="form-group"><label class="label">লাইভ সময়সূচি</label><input name="liveSchedule" value="${esc(v.liveSchedule||'')}" placeholder="প্রতি শুক্র ও শনি, রাত ৯টা"/></div>`:''}
-        <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:4px">
-          <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-weight:600;font-size:13px">
-            <input type="checkbox" name="isFeatured" ${v.isFeatured?'checked':''} style="width:15px;height:15px"/> ফিচার্ড কোর্স
-          </label>
-          <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-weight:600;font-size:13px">
-            <input type="checkbox" name="isActiveChk" ${v.isActive!==false?'checked':''} style="width:15px;height:15px"/> প্রকাশিত (Published)
-          </label>
+        <div class="form-row">
+          <div class="form-group"><label class="label">অবস্থা</label>
+            <select name="isActive"><option value="true" ${v.isActive!==false?'selected':''}>সক্রিয়</option><option value="false" ${v.isActive===false?'selected':''}>নিষ্ক্রিয়</option></select>
+          </div>
+          <div class="form-group" style="display:flex;align-items:flex-end;padding-bottom:2px">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:600;font-size:13.5px">
+              <input type="checkbox" name="isFeatured" ${v.isFeatured?'checked':''} style="width:16px;height:16px;accent-color:var(--primary)"/> ফিচার্ড কোর্স
+            </label>
+          </div>
         </div>
       </div>
 
-      <!-- ── TAB 2: মিডিয়া ── -->
       <div class="cf-panel" id="cf-media">
         <div class="form-group">
           <label class="label"><i class="fab fa-youtube" style="color:#ff0000"></i> প্রিভিউ ভিডিও (YouTube URL বা ID)</label>
-          <div class="yt-input-wrap">
-            <input id="cm-preview-input" name="previewVideoUrl" value="${esc(v.previewVideoId||v.previewVideo||v.youtubePreview||'')}" placeholder="YouTube URL অথবা Video ID (যেকোনো একটি দিন)" oninput="cmYtExtract(this,'cm-preview-id','cm-preview-badge')" style="direction:ltr;padding-left:10px"/>
-          </div>
-          <div id="cm-preview-badge" class="yt-id-display" style="display:${prevId?'block':'none'}">
-            ✅ YouTube ID: <strong id="cm-preview-id">${prevId}</strong>
-          </div>
+          <input id="cm-preview-input" name="previewVideoUrl" value="${esc(v.previewVideoId||v.previewVideo||v.youtubePreview||'')}" placeholder="YouTube URL বা Video ID দিন" oninput="cmYtExtract(this,'cm-preview-id','cm-preview-badge')" style="direction:ltr"/>
+          <div id="cm-preview-badge" class="yt-id-display" style="display:${prevId?'block':'none'}">✅ YouTube ID: <strong id="cm-preview-id">${prevId}</strong></div>
         </div>
         <input type="hidden" name="previewVideoId" id="cm-preview-hidden" value="${prevId}"/>
-
-        <div class="form-group">
-          <label class="label"><i class="fas fa-image"></i> থাম্বনেইল ছবি</label>
-          ${buildImageUploadWidget({name:'thumbnailUrl',currentUrl:v.thumbnail||'',placeholder:'https://...'})}
-        </div>
-
-        <div class="form-group">
-          <label class="label">ভিডিও পাঠের মোট সময়</label>
-          <input name="videoLessonsTime" value="${esc(v.videoLessonsTime||'')}" placeholder="০৪ : ৩২ : ১০" style="direction:ltr;max-width:200px"/>
-        </div>
-
-        <div class="form-group" style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:14px">
-          <label class="label" style="color:#15803d"><i class="fas fa-certificate" style="color:#15803d"></i> সার্টিফিকেট টেমপ্লেট ছবি</label>
-          <p style="font-size:12px;color:#4b7c61;margin-bottom:8px">কোর্স সম্পন্ন করার পর শিক্ষার্থীরা এই সার্টিফিকেটটি ডাউনলোড করতে পারবেন। ছবির URL দিন (প্রস্তাবিত সাইজ: ১১২০×৭৯২ px, PNG/JPG)।</p>
+        <div class="form-group"><label class="label"><i class="fas fa-image"></i> থাম্বনেইল ছবি</label>${buildImageUploadWidget({name:'thumbnailUrl',currentUrl:v.thumbnail||'',placeholder:'https://...'})}</div>
+        <div class="form-group"><label class="label">ভিডিও পাঠের মোট সময়</label><input name="videoLessonsTime" value="${esc(v.videoLessonsTime||'')}" placeholder="০৪ : ৩২ : ১০" style="direction:ltr;max-width:200px"/></div>
+        <div class="form-group" style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;padding:16px">
+          <label class="label" style="color:#059669"><i class="fas fa-certificate"></i> সার্টিফিকেট টেমপ্লেট ছবি</label>
+          <p style="font-size:12px;color:#4b7c61;margin-bottom:10px">কোর্স সম্পন্ন করার পর শিক্ষার্থীরা এই সার্টিফিকেট পাবেন। (প্রস্তাবিত: ১১২০×৭৯২ px)</p>
           ${buildImageUploadWidget({name:'certificateImage',currentUrl:v.certificateImage||'',placeholder:'https://...'})}
-          <div style="font-size:12px;color:#4b7c61;margin-top:6px"><i class="fas fa-info-circle"></i> ছবি ড্র্যাগ করে দিন অথবা URL দিন।</div>
-        </div>
-
-        <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:9px;padding:12px;font-size:13px;color:#856404">
-          <i class="fas fa-info-circle"></i> <strong>টিপস:</strong> YouTube URL দিলে স্বয়ংক্রিয়ভাবে Video ID বের হয়ে যাবে। পুরো URL বা শুধু ID — দুটোই কাজ করবে।
         </div>
       </div>
 
-      <!-- ── TAB 3: বিবরণ (includes, features) ── -->
       <div class="cf-panel" id="cf-details">
         <div class="form-group">
-          <label class="label"><i class="fas fa-check-circle" style="color:var(--primary)"></i> এই কোর্সে যা শিখবেন (Features)</label>
+          <label class="label"><i class="fas fa-check-circle" style="color:var(--primary)"></i> এই কোর্সে যা শিখবেন</label>
           <div class="list-builder" id="cm-features-wrap"></div>
-          <button type="button" class="btn btn-outline btn-sm" style="margin-top:8px" onclick="cmAddItem('features')"><i class="fas fa-plus"></i> আরো যোগ করুন</button>
+          <button type="button" class="btn btn-outline btn-sm" style="margin-top:8px" onclick="cmAddItem('features')"><i class="fas fa-plus"></i> আরো যোগ</button>
         </div>
-
         <div class="form-group">
-          <label class="label"><i class="fas fa-box" style="color:var(--primary)"></i> কোর্সে যা অন্তর্ভুক্ত (Includes / Sidebar List)</label>
+          <label class="label"><i class="fas fa-box" style="color:var(--primary)"></i> কোর্সে যা অন্তর্ভুক্ত</label>
           <div class="list-builder" id="cm-includes-wrap"></div>
-          <button type="button" class="btn btn-outline btn-sm" style="margin-top:8px" onclick="cmAddItem('includes')"><i class="fas fa-plus"></i> আরো যোগ করুন</button>
+          <button type="button" class="btn btn-outline btn-sm" style="margin-top:8px" onclick="cmAddItem('includes')"><i class="fas fa-plus"></i> আরো যোগ</button>
         </div>
-
         <div class="form-row">
           <div class="form-group"><label class="label">শিক্ষার্থী সংখ্যা</label><input name="students" type="number" min="0" value="${v.students||0}"/></div>
           <div class="form-group"><label class="label">রেটিং (০-৫)</label><input name="rating" type="number" min="0" max="5" step="0.1" value="${v.rating||0}"/></div>
         </div>
-        <div class="form-group"><label class="label">শিক্ষকের সংক্ষিপ্ত পরিচয় (Instructor Bio)</label><textarea name="instructorBio" rows="3" placeholder="শিক্ষক সম্পর্কে...">${esc(v.instructorBio||'')}</textarea></div>
+        <div class="form-group"><label class="label">শিক্ষকের সংক্ষিপ্ত পরিচয়</label><textarea name="instructorBio" rows="3" placeholder="শিক্ষক সম্পর্কে...">${esc(v.instructorBio||'')}</textarea></div>
         <div class="form-group"><label class="label"><i class="fas fa-image"></i> শিক্ষকের ছবি</label>${buildImageUploadWidget({name:'instructorPhoto',currentUrl:v.instructorPhoto||'',placeholder:'https://'})}</div>
       </div>
 
-      <!-- ── TAB 4: কারিকুলাম / ভিডিও ── -->
-      ${!isLive?`
-      <div class="cf-panel" id="cf-curriculum">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
-          <div style="font-size:13px;color:var(--text-soft)">সেকশন ও পাঠ যোগ করুন। YouTube URL বা ID দিলে স্বয়ংক্রিয় সংরক্ষিত হবে।</div>
+      ${!isLive?`<div class="cf-panel" id="cf-curriculum">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <div style="font-size:13px;color:var(--text-soft)">সেকশন ও পাঠ যোগ করুন।</div>
           <button type="button" class="btn btn-primary btn-sm" onclick="cmAddSection()"><i class="fas fa-plus"></i> নতুন সেকশন</button>
         </div>
         <div id="cm-curriculum-wrap"></div>
-        <div style="font-size:12px;color:var(--text-soft);margin-top:8px"><i class="fas fa-info-circle"></i> ফ্রি = বিনামূল্যে দেখা যাবে</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:8px"><i class="fas fa-info-circle"></i> ফ্রি = বিনামূল্যে দেখা যাবে</div>
       </div>`:''}
 
-      <!-- ── TAB 5: প্রশ্ন-উত্তর ── -->
       <div class="cf-panel" id="cf-qna">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
-          <div style="font-size:13px;color:var(--text-soft)">কোর্স সম্পর্কে সাধারণ প্রশ্ন ও উত্তর যোগ করুন।</div>
-          <button type="button" class="btn btn-primary btn-sm" onclick="cmAddQna()"><i class="fas fa-plus"></i> নতুন প্রশ্ন যোগ</button>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <div style="font-size:13px;color:var(--text-soft)">কোর্স সম্পর্কে সাধারণ প্রশ্ন ও উত্তর।</div>
+          <button type="button" class="btn btn-primary btn-sm" onclick="cmAddQna()"><i class="fas fa-plus"></i> নতুন প্রশ্ন</button>
         </div>
         <div id="cm-qna-wrap"></div>
       </div>
 
-      <!-- ── TAB 6: SEO ── -->
       <div class="cf-panel" id="cf-seo">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-          <span style="font-size:13px;color:var(--text-soft)"><i class="fas fa-search"></i> SEO অপ্টিমাইজেশন (Google, Bing, Yahoo, DuckDuckGo)</span>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <span style="font-size:13px;color:var(--text-soft)"><i class="fas fa-search"></i> SEO অপ্টিমাইজেশন</span>
           <button type="button" class="btn btn-outline btn-sm" onclick="cmAutoSeo()"><i class="fas fa-magic"></i> অটো SEO</button>
         </div>
         <div class="form-group"><label class="label">SEO শিরোনাম (৫০-৬০ অক্ষর)</label><textarea name="seoTitle" rows="2" placeholder="পেজ টাইটেল...">${esc(v.seoTitle||'')}</textarea></div>
         <div class="form-group"><label class="label">SEO বিবরণ (১৫০-১৬০ অক্ষর)</label><textarea name="seoDescription" rows="3" placeholder="Meta description...">${esc(v.seoDescription||'')}</textarea></div>
         <div class="form-group"><label class="label">SEO কীওয়ার্ড</label><input name="seoKeywords" value="${esc(v.seoKeywords||'')}" placeholder="কুরআন, ইসলাম, অনলাইন কোর্স..."/></div>
-        <div class="form-group"><label class="label"><i class="fas fa-image"></i> OG Image (Social Share ছবি)</label>${buildImageUploadWidget({name:'ogImage',currentUrl:v.ogImage||'',placeholder:'https://'})}</div>
-        <div class="form-group"><label class="label">Canonical URL (ঐচ্ছিক)</label><input name="canonicalUrl" value="${esc(v.canonicalUrl||'')}" placeholder="https://..." style="direction:ltr"/></div>
+        <div class="form-group"><label class="label"><i class="fas fa-image"></i> OG Image</label>${buildImageUploadWidget({name:'ogImage',currentUrl:v.ogImage||'',placeholder:'https://'})}</div>
+        <div class="form-group"><label class="label">Canonical URL</label><input name="canonicalUrl" value="${esc(v.canonicalUrl||'')}" placeholder="https://..." style="direction:ltr"/></div>
       </div>
 
-      <!-- Save bar -->
       <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
         <button type="button" class="btn btn-outline" onclick="closeModal('course-modal')">বাতিল</button>
         <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> সংরক্ষণ করুন</button>
       </div>
-
     </form>`;
 
-  // render dynamic lists
-  cmRenderFeatures();
-  cmRenderIncludes();
+  cmRenderFeatures();cmRenderIncludes();
   if(!isLive) cmRenderCurriculum();
   cmRenderQna();
-
   openModal('course-modal');
 }
 
-// ── Tab switching ──
 function cfTab(btn, panelId){
   document.querySelectorAll('#course-modal-body .cf-tab').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('#course-modal-body .cf-panel').forEach(p=>p.classList.remove('active'));
   btn.classList.add('active');
-  const p=document.getElementById(panelId);
-  if(p) p.classList.add('active');
+  const p=document.getElementById(panelId);if(p)p.classList.add('active');
 }
 
-// ── YouTube ID extract ──
 function cmYtExtract(input, idElem, badgeElem){
   const id=extractYouTubeId(input.value);
-  const badge=document.getElementById(badgeElem);
-  const idEl=document.getElementById(idElem);
-  const hidden=document.getElementById('cm-preview-hidden');
-  if(id){
-    if(badge) badge.style.display='block';
-    if(idEl) idEl.textContent=id;
-    if(hidden) hidden.value=id;
-  } else {
-    if(badge) badge.style.display='none';
-    if(hidden) hidden.value='';
-  }
+  const badge=document.getElementById(badgeElem);const idEl=document.getElementById(idElem);const hidden=document.getElementById('cm-preview-hidden');
+  if(id){if(badge)badge.style.display='block';if(idEl)idEl.textContent=id;if(hidden)hidden.value=id;}
+  else{if(badge)badge.style.display='none';if(hidden)hidden.value='';}
 }
 
-// ── Features list ──
 function cmRenderFeatures(){
-  const wrap=document.getElementById('cm-features-wrap');
-  if(!wrap)return;
-  wrap.innerHTML=CM_FEATURES.map((f,i)=>`
-    <div class="list-builder-item">
-      <i class="fas fa-check-circle" style="color:var(--success);flex-shrink:0"></i>
-      <input value="${esc(f)}" placeholder="কী শিখবেন..." oninput="CM_FEATURES[${i}]=this.value"/>
-      <button type="button" class="btn btn-danger btn-sm" style="padding:4px 8px;border-radius:6px" onclick="CM_FEATURES.splice(${i},1);cmRenderFeatures()"><i class="fas fa-times"></i></button>
-    </div>`).join('')||'<div style="font-size:13px;color:var(--text-soft);padding:6px 4px">এখনো কিছু যোগ করা হয়নি</div>';
+  const wrap=document.getElementById('cm-features-wrap');if(!wrap)return;
+  wrap.innerHTML=CM_FEATURES.map((f,i)=>`<div class="list-builder-item"><i class="fas fa-check-circle" style="color:var(--success);flex-shrink:0"></i><input value="${esc(f)}" placeholder="কী শিখবেন..." oninput="CM_FEATURES[${i}]=this.value"/><button type="button" class="btn btn-danger btn-xs" onclick="CM_FEATURES.splice(${i},1);cmRenderFeatures()"><i class="fas fa-times"></i></button></div>`).join('')||'<div style="font-size:13px;color:var(--text-muted);padding:8px 4px">এখনো কিছু যোগ করা হয়নি</div>';
 }
 function cmAddItem(type){
   if(type==='features'){CM_FEATURES.push('');cmRenderFeatures();}
   else{CM_INCLUDES.push('');cmRenderIncludes();}
 }
 
-// ── Includes list ──
 function cmRenderIncludes(){
-  const wrap=document.getElementById('cm-includes-wrap');
-  if(!wrap)return;
-  wrap.innerHTML=CM_INCLUDES.map((f,i)=>`
-    <div class="list-builder-item">
-      <i class="fas fa-box-open" style="color:var(--primary);flex-shrink:0"></i>
-      <input value="${esc(f)}" placeholder="অন্তর্ভুক্ত বিষয়..." oninput="CM_INCLUDES[${i}]=this.value"/>
-      <button type="button" class="btn btn-danger btn-sm" style="padding:4px 8px;border-radius:6px" onclick="CM_INCLUDES.splice(${i},1);cmRenderIncludes()"><i class="fas fa-times"></i></button>
-    </div>`).join('')||'<div style="font-size:13px;color:var(--text-soft);padding:6px 4px">এখনো কিছু যোগ করা হয়নি</div>';
+  const wrap=document.getElementById('cm-includes-wrap');if(!wrap)return;
+  wrap.innerHTML=CM_INCLUDES.map((f,i)=>`<div class="list-builder-item"><i class="fas fa-box-open" style="color:var(--primary);flex-shrink:0"></i><input value="${esc(f)}" placeholder="অন্তর্ভুক্ত বিষয়..." oninput="CM_INCLUDES[${i}]=this.value"/><button type="button" class="btn btn-danger btn-xs" onclick="CM_INCLUDES.splice(${i},1);cmRenderIncludes()"><i class="fas fa-times"></i></button></div>`).join('')||'<div style="font-size:13px;color:var(--text-muted);padding:8px 4px">এখনো কিছু যোগ করা হয়নি</div>';
 }
 
-// ── Curriculum ──
 function cmRenderCurriculum(){
-  const wrap=document.getElementById('cm-curriculum-wrap');
-  if(!wrap)return;
+  const wrap=document.getElementById('cm-curriculum-wrap');if(!wrap)return;
   if(!CM_CURRICULUM.length){
-    wrap.innerHTML='<div style="font-size:13px;color:var(--text-soft);padding:12px;text-align:center"><i class="fas fa-film" style="font-size:28px;display:block;margin-bottom:6px;opacity:.4"></i> কোনো সেকশন নেই — উপরে "নতুন সেকশন" বাটনে ক্লিক করুন</div>';
-    return;
+    wrap.innerHTML='<div class="empty" style="padding:28px"><i class="fas fa-film"></i><p>কোনো সেকশন নেই — উপরে "নতুন সেকশন" ক্লিক করুন</p></div>';return;
   }
   wrap.innerHTML=CM_CURRICULUM.map((sec,si)=>`
     <div class="curr-section">
       <div class="curr-section-head">
-        <i class="fas fa-grip-vertical" style="color:#94a3b8;cursor:grab"></i>
-        <input value="${esc(sec.sectionTitle||'')}" placeholder="সেকশনের নাম (যেমন: পরিচিতি পর্ব)" oninput="CM_CURRICULUM[${si}].sectionTitle=this.value"/>
+        <i class="fas fa-grip-vertical" style="color:var(--text-muted);cursor:grab"></i>
+        <input value="${esc(sec.sectionTitle||'')}" placeholder="সেকশনের নাম" oninput="CM_CURRICULUM[${si}].sectionTitle=this.value"/>
         <button type="button" class="btn btn-primary btn-sm" onclick="cmAddLesson(${si})"><i class="fas fa-plus"></i> পাঠ</button>
         <button type="button" class="btn btn-danger btn-sm" onclick="CM_CURRICULUM.splice(${si},1);cmRenderCurriculum()"><i class="fas fa-trash"></i></button>
       </div>
       <div class="curr-lessons">
-        ${(sec.lessons||[]).map((ls,li)=>`
-          <div class="lesson-row">
-            <i class="fas fa-play-circle" style="color:var(--primary);flex-shrink:0;font-size:13px"></i>
-            <input value="${esc(ls.title||'')}" placeholder="পাঠের নাম..." oninput="CM_CURRICULUM[${si}].lessons[${li}].title=this.value"/>
-            <input class="lesson-dur" value="${esc(ls.duration||'')}" placeholder="মিনিট" title="সময়কাল (যেমন: 12:30)" oninput="CM_CURRICULUM[${si}].lessons[${li}].duration=this.value"/>
-            <input class="lesson-vid" value="${esc(ls.videoId||'')}" placeholder="YouTube ID/URL" title="YouTube ভিডিও ID বা URL দিন" oninput="cmLessonVideoInput(this,${si},${li})" style="direction:ltr"/>
-            <input type="checkbox" class="lesson-free" title="ফ্রি প্রিভিউ" ${ls.isFree?'checked':''} onchange="CM_CURRICULUM[${si}].lessons[${li}].isFree=this.checked"/>
-            <span class="free-lbl">ফ্রি</span>
-            <button type="button" class="btn btn-danger btn-sm" style="padding:3px 7px;flex-shrink:0" onclick="CM_CURRICULUM[${si}].lessons.splice(${li},1);cmRenderCurriculum()"><i class="fas fa-times"></i></button>
-          </div>`).join('')}
-        ${!(sec.lessons&&sec.lessons.length)?'<div style="font-size:12px;color:#94a3b8;padding:4px">এখনো কোনো পাঠ নেই</div>':''}
+        ${(sec.lessons||[]).map((ls,li)=>`<div class="lesson-row">
+          <i class="fas fa-play-circle" style="color:var(--primary);flex-shrink:0;font-size:13px"></i>
+          <input value="${esc(ls.title||'')}" placeholder="পাঠের নাম..." oninput="CM_CURRICULUM[${si}].lessons[${li}].title=this.value"/>
+          <input class="lesson-dur" value="${esc(ls.duration||'')}" placeholder="সময়" title="সময়কাল" oninput="CM_CURRICULUM[${si}].lessons[${li}].duration=this.value"/>
+          <input class="lesson-vid" value="${esc(ls.videoId||'')}" placeholder="YouTube ID/URL" title="YouTube ভিডিও ID" oninput="cmLessonVideoInput(this,${si},${li})" style="direction:ltr"/>
+          <input type="checkbox" class="lesson-free" title="ফ্রি প্রিভিউ" ${ls.isFree?'checked':''} onchange="CM_CURRICULUM[${si}].lessons[${li}].isFree=this.checked"/>
+          <span class="free-lbl">ফ্রি</span>
+          <button type="button" class="btn btn-danger btn-xs" onclick="CM_CURRICULUM[${si}].lessons.splice(${li},1);cmRenderCurriculum()"><i class="fas fa-times"></i></button>
+        </div>`).join('')}
+        ${!(sec.lessons&&sec.lessons.length)?'<div style="font-size:12px;color:var(--text-muted);padding:6px">এখনো কোনো পাঠ নেই</div>':''}
       </div>
     </div>`).join('');
 }
-function cmAddSection(){
-  CM_CURRICULUM.push({sectionTitle:'',lessons:[]});
-  cmRenderCurriculum();
-}
-function cmAddLesson(si){
-  if(!CM_CURRICULUM[si].lessons) CM_CURRICULUM[si].lessons=[];
-  CM_CURRICULUM[si].lessons.push({title:'',duration:'',videoId:'',isFree:false});
-  cmRenderCurriculum();
-}
-function cmLessonVideoInput(input,si,li){
-  const id=extractYouTubeId(input.value)||input.value;
-  CM_CURRICULUM[si].lessons[li].videoId=id;
-  input.value=id; // replace with extracted ID
-}
+function cmAddSection(){CM_CURRICULUM.push({sectionTitle:'',lessons:[]});cmRenderCurriculum();}
+function cmAddLesson(si){if(!CM_CURRICULUM[si].lessons)CM_CURRICULUM[si].lessons=[];CM_CURRICULUM[si].lessons.push({title:'',duration:'',videoId:'',isFree:false});cmRenderCurriculum();}
+function cmLessonVideoInput(input,si,li){const id=extractYouTubeId(input.value)||input.value;CM_CURRICULUM[si].lessons[li].videoId=id;input.value=id;}
 
-// ── QnA ──
 function cmRenderQna(){
-  const wrap=document.getElementById('cm-qna-wrap');
-  if(!wrap)return;
-  if(!CM_QNA.length){
-    wrap.innerHTML='<div style="font-size:13px;color:var(--text-soft);padding:12px;text-align:center"><i class="fas fa-question-circle" style="font-size:28px;display:block;margin-bottom:6px;opacity:.4"></i> কোনো প্রশ্ন-উত্তর নেই</div>';
-    return;
-  }
-  wrap.innerHTML=CM_QNA.map((q,i)=>`
-    <div class="qna-item">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-        <span style="font-weight:700;font-size:13px;color:var(--primary)">প্রশ্ন ${i+1}</span>
-        <button type="button" class="btn btn-danger btn-sm" style="padding:3px 8px" onclick="CM_QNA.splice(${i},1);cmRenderQna()"><i class="fas fa-trash"></i></button>
-      </div>
-      <textarea placeholder="প্রশ্ন লিখুন..." rows="2" oninput="CM_QNA[${i}].question=this.value">${esc(q.question||'')}</textarea>
-      <textarea placeholder="উত্তর লিখুন..." rows="3" oninput="CM_QNA[${i}].answer=this.value">${esc(q.answer||'')}</textarea>
-    </div>`).join('');
+  const wrap=document.getElementById('cm-qna-wrap');if(!wrap)return;
+  if(!CM_QNA.length){wrap.innerHTML='<div class="empty" style="padding:28px"><i class="fas fa-question-circle"></i><p>কোনো প্রশ্ন-উত্তর নেই</p></div>';return;}
+  wrap.innerHTML=CM_QNA.map((q,i)=>`<div class="qna-item">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <span style="font-weight:700;font-size:13px;color:var(--primary)">প্রশ্ন ${i+1}</span>
+      <button type="button" class="btn btn-danger btn-xs" onclick="CM_QNA.splice(${i},1);cmRenderQna()"><i class="fas fa-trash"></i></button>
+    </div>
+    <textarea placeholder="প্রশ্ন লিখুন..." rows="2" oninput="CM_QNA[${i}].question=this.value">${esc(q.question||'')}</textarea>
+    <textarea placeholder="উত্তর লিখুন..." rows="3" oninput="CM_QNA[${i}].answer=this.value">${esc(q.answer||'')}</textarea>
+  </div>`).join('');
 }
-function cmAddQna(){
-  CM_QNA.push({question:'',answer:''});
-  cmRenderQna();
-}
+function cmAddQna(){CM_QNA.push({question:'',answer:''});cmRenderQna();}
 
-// ── Auto SEO ──
 function cmAutoSeo(){
-  const f=document.getElementById('course-form');
-  if(!f)return;
-  const title=f.elements['title']?.value||'';
-  const desc=f.elements['description']?.value||f.elements['shortDescription']?.value||'';
-  const cat=f.elements['category']?.value||'';
-  if(f.elements['seoTitle']) f.elements['seoTitle'].value=title.slice(0,60);
-  if(f.elements['seoDescription']) f.elements['seoDescription'].value=(desc||title).slice(0,160);
-  if(f.elements['seoKeywords']) f.elements['seoKeywords'].value=[title,cat,'অনলাইন কোর্স','ইসলাম','ইবনে খালদুন'].filter(Boolean).join(', ');
+  const f=document.getElementById('course-form');if(!f)return;
+  const title=f.elements['title']?.value||'';const desc=f.elements['description']?.value||f.elements['shortDescription']?.value||'';const cat=f.elements['category']?.value||'';
+  if(f.elements['seoTitle'])f.elements['seoTitle'].value=title.slice(0,60);
+  if(f.elements['seoDescription'])f.elements['seoDescription'].value=(desc||title).slice(0,160);
+  if(f.elements['seoKeywords'])f.elements['seoKeywords'].value=[title,cat,'অনলাইন কোর্স','ইসলাম','ইবনে খালদুন'].filter(Boolean).join(', ');
   toast('অটো SEO তৈরি হয়েছে ✅','success');
-  // Switch to SEO tab
   document.querySelectorAll('#course-modal-body .cf-tab').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('#course-modal-body .cf-panel').forEach(p=>p.classList.remove('active'));
   const seoBtn=Array.from(document.querySelectorAll('#course-modal-body .cf-tab')).find(b=>b.textContent.includes('SEO'));
@@ -1535,78 +1627,25 @@ function cmAutoSeo(){
 async function saveCourse(e){
   e.preventDefault();
   const fd=new FormData(e.target);
-  // collect features & includes from dynamic state, filter empty
   const features=CM_FEATURES.filter(f=>f.trim());
   const includes=CM_INCLUDES.filter(f=>f.trim());
-  // collect curriculum from state
-  const curriculum=CM_CURRICULUM.map(sec=>({
-    sectionTitle:sec.sectionTitle||'',
-    lessons:(sec.lessons||[]).map(ls=>({
-      title:ls.title||'',
-      duration:ls.duration||'',
-      videoId:extractYouTubeId(ls.videoId||'')||ls.videoId||'',
-      isFree:!!ls.isFree
-    }))
-  }));
-  // collect qna
+  const curriculum=CM_CURRICULUM.map(sec=>({sectionTitle:sec.sectionTitle||'',lessons:(sec.lessons||[]).map(ls=>({title:ls.title||'',duration:ls.duration||'',videoId:extractYouTubeId(ls.videoId||'')||ls.videoId||'',isFree:!!ls.isFree}))}));
   const qna=CM_QNA.filter(q=>q.question||q.answer);
-  // extract previewVideoId
-  const previewVideoId=document.getElementById('cm-preview-hidden')?.value || extractYouTubeId(fd.get('previewVideoUrl')||'');
-
-  const body={
-    title:fd.get('title'),
-    slug:fd.get('slug')||undefined,
-    shortDescription:fd.get('shortDescription'),
-    description:fd.get('description'),
-    price:Number(fd.get('price')||0),
-    oldPrice:Number(fd.get('oldPrice')||0),
-    instructor:fd.get('instructor'),
-    instructorBio:fd.get('instructorBio'),
-    instructorPhoto:fd.get('instructorPhoto'),
-    duration:fd.get('duration'),
-    videoLessonsTime:fd.get('videoLessonsTime'),
-    totalLessons:Number(fd.get('totalLessons')||0),
-    students:Number(fd.get('students')||0),
-    rating:Number(fd.get('rating')||0),
-    thumbnail:fd.get('thumbnailUrl')||undefined,
-    previewVideoId,
-    previewVideo:previewVideoId,
-    certificateImage:fd.get('certificateImage')||undefined,
-    category:cmGetCategory()||fd.get('category')||'',
-    subCategory:fd.get('subCategory')||'',
-    level:fd.get('level')||'beginner',
-    type:fd.get('type')||CM_TYPE,
-    liveSchedule:fd.get('liveSchedule')||undefined,
-    isFeatured:fd.get('isFeatured')==='on',
-    isActive:fd.get('isActiveChk')==='on',
-    features:JSON.stringify(features),
-    includes:JSON.stringify(includes),
-    curriculum:JSON.stringify(curriculum),
-    qna:JSON.stringify(qna),
-    seoTitle:fd.get('seoTitle'),
-    seoDescription:fd.get('seoDescription'),
-    seoKeywords:fd.get('seoKeywords'),
-    ogImage:fd.get('ogImage'),
-    canonicalUrl:fd.get('canonicalUrl'),
-  };
-  // remove undefined keys
+  const previewVideoId=document.getElementById('cm-preview-hidden')?.value||extractYouTubeId(fd.get('previewVideoUrl')||'');
+  const body={title:fd.get('title'),slug:fd.get('slug')||undefined,shortDescription:fd.get('shortDescription'),description:fd.get('description'),price:Number(fd.get('price')||0),oldPrice:Number(fd.get('oldPrice')||0),instructor:fd.get('instructor'),instructorBio:fd.get('instructorBio'),instructorPhoto:fd.get('instructorPhoto'),duration:fd.get('duration'),videoLessonsTime:fd.get('videoLessonsTime'),totalLessons:Number(fd.get('totalLessons')||0),students:Number(fd.get('students')||0),rating:Number(fd.get('rating')||0),thumbnail:fd.get('thumbnailUrl')||undefined,previewVideoId,previewVideo:previewVideoId,certificateImage:fd.get('certificateImage')||undefined,category:cmGetCategory()||fd.get('category')||'',subCategory:fd.get('subCategory')||'',level:fd.get('level')||'beginner',type:fd.get('type')||CM_TYPE,isFeatured:fd.get('isFeatured')==='on',isActive:fd.get('isActive')==='true',features:JSON.stringify(features),includes:JSON.stringify(includes),curriculum:JSON.stringify(curriculum),qna:JSON.stringify(qna),seoTitle:fd.get('seoTitle'),seoDescription:fd.get('seoDescription'),seoKeywords:fd.get('seoKeywords'),ogImage:fd.get('ogImage'),canonicalUrl:fd.get('canonicalUrl')};
   Object.keys(body).forEach(k=>{if(body[k]===undefined||body[k]==='')delete body[k];});
-
-  const btn=e.target.querySelector('[type=submit]');
-  btn.disabled=true;btn.innerHTML='<span class="loader" style="width:14px;height:14px;border-width:2px"></span> সংরক্ষণ...';
+  const btn=e.target.querySelector('[type=submit]');btn.disabled=true;btn.innerHTML='<span class="loader" style="width:14px;height:14px;border-width:2px;border-color:rgba(255,255,255,.3);border-top-color:#fff"></span> সংরক্ষণ...';
   try{
     if(CM_EDIT_ID) await adminApi('/api/admin/courses/'+CM_EDIT_ID,{method:'PUT',body});
     else await adminApi('/api/admin/courses',{method:'POST',body});
-    closeModal('course-modal');
-    toast(CM_EDIT_ID?'কোর্স আপডেট হয়েছে ✅':'কোর্স যোগ হয়েছে ✅','success');
-    loadCourses();loadLiveCourses();
+    closeModal('course-modal');toast(CM_EDIT_ID?'কোর্স আপডেট হয়েছে':'কোর্স যোগ হয়েছে','success');loadCourses();
   }catch(err){toast(err.message,'error');}
   finally{btn.disabled=false;btn.innerHTML='<i class="fas fa-save"></i> সংরক্ষণ করুন';}
 }
 
 async function deleteCourse(id, title){
   confirmAction(`"${title}" কোর্সটি মুছে ফেলবেন?`, async()=>{
-    try{await adminApi('/api/admin/courses/'+id,{method:'DELETE'});toast('কোর্স মুছে গেছে','success');loadCourses();loadLiveCourses();}
+    try{await adminApi('/api/admin/courses/'+id,{method:'DELETE'});toast('কোর্স মুছে গেছে','success');loadCourses();}
     catch(err){toast(err.message,'error');}
   });
 }
@@ -1614,41 +1653,27 @@ async function deleteCourse(id, title){
 // ============================================================
 // TOPICS
 // ============================================================
-// ============================================================
-// TOPICS (বিষয়সমূহ)
-// ============================================================
 async function loadTopics(){
   try{
     const list=await adminApi('/api/topics');
     ALL_TOPICS_DATA=list||[];
     $('#topics-tbody').innerHTML=list&&list.length?list.map(t=>`<tr>
-      <td>${t.image?`<img src="${esc(t.image)}" style="width:44px;height:36px;object-fit:cover;border-radius:6px" onerror="this.style.display='none'"/>`:
-        `<span style="font-size:22px"><i class="fas ${esc(t.icon||'fa-book-open')}"></i></span>`}</td>
+      <td>${t.image?`<img src="${esc(t.image)}" style="width:44px;height:36px;object-fit:cover;border-radius:8px" onerror="this.style.display='none'"/>`:`<div style="width:44px;height:36px;border-radius:8px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;color:var(--primary)"><i class="fas ${esc(t.icon||'fa-book-open')}"></i></div>`}</td>
       <td style="font-weight:600">${esc(t.name||'—')}</td>
-      <td style="font-size:12px;color:var(--text-soft)">${esc(t.slug||'')}</td>
-      <td>${t.courseIds?t.courseIds.length:0}</td>
+      <td style="font-size:12px;color:var(--text-soft);direction:ltr;text-align:right">${esc(t.slug||'')}</td>
+      <td><span class="badge badge-info">${t.courseIds?t.courseIds.length:0} কোর্স</span></td>
       <td><div class="tbl-actions">
         <button class="btn btn-outline btn-sm" onclick="openTopicModal('${esc(t._id)}')"><i class="fas fa-edit"></i></button>
         <button class="btn btn-danger btn-sm" onclick="deleteTopic('${esc(t._id)}','${esc(t.name)}')"><i class="fas fa-trash"></i></button>
       </div></td>
-    </tr>`).join(''):`<tr><td colspan="5"><div class="empty"><i class="fas fa-tags"></i>কোনো বিষয় নেই</div></td></tr>`;
-  }catch(e){$('#topics-tbody').innerHTML=`<tr><td colspan="5"><div class="empty">${esc(e.message)}</div></td></tr>`;}
+    </tr>`).join(''):`<tr><td colspan="5"><div class="empty"><i class="fas fa-tags"></i><p>কোনো বিষয় নেই</p></div></td></tr>`;
+  }catch(e){$('#topics-tbody').innerHTML=`<tr><td colspan="5"><div class="empty"><i class="fas fa-exclamation-triangle"></i><p>${esc(e.message)}</p></div></td></tr>`;}
 }
 
-let ALL_TOPICS_DATA=[];
-let TOPIC_SUBCATS=[];// [{name,slug}] for current edit
-
-function topicRenderSubcats(){
-  const wrap=document.getElementById('topic-subcat-list');if(!wrap)return;
-  wrap.innerHTML=TOPIC_SUBCATS.map((s,i)=>`<span class="subcat-pill">${esc(s.name)}<button type="button" onclick="topicRemoveSubcat(${i})">×</button></span>`).join('');
-}
+let TOPIC_SUBCATS=[];
+function topicRenderSubcats(){const wrap=document.getElementById('topic-subcat-list');if(!wrap)return;wrap.innerHTML=TOPIC_SUBCATS.map((s,i)=>`<span class="subcat-pill">${esc(s.name)}<button type="button" onclick="topicRemoveSubcat(${i})">×</button></span>`).join('');}
 function topicRemoveSubcat(i){TOPIC_SUBCATS.splice(i,1);topicRenderSubcats();}
-function topicAddSubcat(){
-  const inp=document.getElementById('topic-subcat-input');if(!inp)return;
-  const val=inp.value.trim();if(!val)return;
-  TOPIC_SUBCATS.push({name:val,slug:val.toLowerCase().replace(/[^a-z0-9ঀ-৿]/g,'-')});
-  topicRenderSubcats();inp.value='';
-}
+function topicAddSubcat(){const inp=document.getElementById('topic-subcat-input');if(!inp)return;const val=inp.value.trim();if(!val)return;TOPIC_SUBCATS.push({name:val,slug:val.toLowerCase().replace(/[^a-z0-9ঀ-৿]/g,'-')});topicRenderSubcats();inp.value='';}
 
 function openTopicModal(editId=null){
   const doOpen=(t,courses)=>{
@@ -1656,63 +1681,44 @@ function openTopicModal(editId=null){
     TOPIC_SUBCATS=(v.subCategories||[]).map(s=>typeof s==='string'?{name:s,slug:s}:s);
     const checkedIds=new Set((v.courseIds||[]).map(x=>typeof x==='object'?x._id:x));
     const allCourses=courses||ALL_COURSES_DATA||[];
-    const courseListHtml=allCourses.length?allCourses.map(c=>`
-      <label class="course-check-item">
-        <input type="checkbox" name="courseIds" value="${esc(c._id||c.slug)}" ${checkedIds.has(c._id||c.slug)?'checked':''}/>
-        <div><div class="ci-title">${esc(c.title||'—')}</div><div class="ci-cat">${esc(c.category||'')}</div></div>
-      </label>`).join(''):'<div style="padding:12px;color:var(--text-soft);font-size:13px">কোনো কোর্স পাওয়া যায়নি</div>';
-
+    const courseListHtml=allCourses.length?allCourses.map(c=>`<label class="course-check-item"><input type="checkbox" name="courseIds" value="${esc(c._id||c.slug)}" ${checkedIds.has(c._id||c.slug)?'checked':''}/><div><div class="ci-title">${esc(c.title||'—')}</div><div class="ci-cat">${esc(c.category||'')}</div></div></label>`).join(''):'<div style="padding:12px;color:var(--text-soft);font-size:13px">কোনো কোর্স পাওয়া যায়নি</div>';
     $('#topic-modal-body').innerHTML=`
       <h3><i class="fas fa-tags" style="color:var(--primary)"></i> ${editId?'বিষয় সম্পাদনা':'নতুন বিষয়'}</h3>
       <form id="topic-form" onsubmit="saveTopic(event,'${editId||''}')">
-        <div class="form-group"><label class="label">নাম *</label><input name="name" value="${esc(v.name||'')}" required placeholder="কুরআন, হাদীস..."/></div>
-        <div class="form-group"><label class="label">Slug (URL-এ ব্যবহার)</label><input name="slug" value="${esc(v.slug||'')}" placeholder="quran-tilawat" style="direction:ltr"/></div>
-        <div class="form-group"><label class="label">Font Awesome আইকন ক্লাস</label><input name="icon" value="${esc(v.icon||'fa-book-open')}" placeholder="fa-quran" style="direction:ltr"/></div>
-
-        <div class="form-group">
-          <label class="label"><i class="fas fa-image"></i> বিষয়ের ছবি</label>
-          ${buildImageUploadWidget({name:'image',currentUrl:v.image||'',placeholder:'https://...'})}
+        <div class="form-row">
+          <div class="form-group"><label class="label">নাম *</label><input name="name" value="${esc(v.name||'')}" required placeholder="কুরআন, হাদীস..."/></div>
+          <div class="form-group"><label class="label">Slug</label><input name="slug" value="${esc(v.slug||'')}" placeholder="quran-tilawat" style="direction:ltr"/></div>
         </div>
-
+        <div class="form-group"><label class="label">Font Awesome আইকন</label><input name="icon" value="${esc(v.icon||'fa-book-open')}" placeholder="fa-quran" style="direction:ltr"/></div>
+        <div class="form-group"><label class="label"><i class="fas fa-image"></i> বিষয়ের ছবি</label>${buildImageUploadWidget({name:'image',currentUrl:v.image||'',placeholder:'https://...'})}</div>
         <hr style="border:none;border-top:1px solid var(--border);margin:14px 0"/>
         <div class="form-group">
-          <label class="label"><i class="fas fa-layer-group"></i> ক্যাটাগরি / সাব-ক্যাটাগরি</label>
+          <label class="label"><i class="fas fa-layer-group"></i> সাব-ক্যাটাগরি</label>
           <div style="display:flex;gap:8px;align-items:center">
             <input id="topic-subcat-input" placeholder="সাব-ক্যাটাগরির নাম লিখুন" style="flex:1" onkeydown="if(event.key==='Enter'){event.preventDefault();topicAddSubcat();}"/>
             <button type="button" class="btn btn-outline btn-sm" onclick="topicAddSubcat()"><i class="fas fa-plus"></i> যোগ</button>
           </div>
           <div class="subcat-list" id="topic-subcat-list"></div>
         </div>
-
         <hr style="border:none;border-top:1px solid var(--border);margin:14px 0"/>
         <div class="form-group">
           <label class="label"><i class="fas fa-book"></i> এই বিষয়ে দেখানো কোর্সসমূহ</label>
-          <div style="font-size:12px;color:var(--text-soft);margin-bottom:6px">টিক দেওয়া কোর্সগুলো এই বিষয়ের অধীনে দেখানো হবে</div>
           <div class="course-checklist">${courseListHtml}</div>
         </div>
-
         <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px">
           <button type="button" class="btn btn-outline" onclick="closeModal('topic-modal')">বাতিল</button>
           <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> সংরক্ষণ</button>
         </div>
       </form>`;
-    topicRenderSubcats();
-    openModal('topic-modal');
+    topicRenderSubcats();openModal('topic-modal');
   };
-  Promise.all([
-    editId?adminApi('/api/topics').then(l=>l.find(x=>x._id===editId)).catch(()=>null):Promise.resolve(null),
-    adminApi('/api/courses').catch(()=>[])
-  ]).then(([t,courses])=>doOpen(t,courses));
+  Promise.all([editId?adminApi('/api/topics').then(l=>l.find(x=>x._id===editId)).catch(()=>null):Promise.resolve(null),adminApi('/api/courses').catch(()=>[])]).then(([t,courses])=>doOpen(t,courses));
 }
 
 async function saveTopic(e, editId){
-  e.preventDefault();
-  const fd=new FormData(e.target);
+  e.preventDefault();const fd=new FormData(e.target);
   const courseIds=[...e.target.querySelectorAll('input[name=courseIds]:checked')].map(x=>x.value);
-  const body={
-    name:fd.get('name'),slug:fd.get('slug'),icon:fd.get('icon'),image:fd.get('image'),
-    courseIds,subCategories:TOPIC_SUBCATS
-  };
+  const body={name:fd.get('name'),slug:fd.get('slug'),icon:fd.get('icon'),image:fd.get('image'),courseIds,subCategories:TOPIC_SUBCATS};
   const btn=e.target.querySelector('[type=submit]');btn.disabled=true;
   try{
     if(editId) await adminApi('/api/admin/topics/'+editId,{method:'PUT',body});
@@ -1736,7 +1742,7 @@ async function loadInstructors(){
     const list=await adminApi('/api/instructors');
     ALL_INSTRUCTORS_DATA=list||[];
     $('#instructors-tbody').innerHTML=list&&list.length?list.map(i=>`<tr>
-      <td><img src="${esc(i.photo||'')}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;background:#e2e8f0" onerror="this.style.background='#e2e8f0'"/></td>
+      <td>${i.photo?`<img src="${esc(i.photo)}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;background:var(--bg)"/>`:`<div style="width:44px;height:44px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;color:var(--primary);font-weight:700;font-size:18px">${(i.name||'?')[0]}</div>`}</td>
       <td style="font-weight:600">${esc(i.name||'—')}</td>
       <td style="font-size:13px;color:var(--text-soft)">${esc(i.designation||'—')}</td>
       <td style="font-size:13px">${esc(i.specialization||'—')}</td>
@@ -1744,8 +1750,8 @@ async function loadInstructors(){
         <button class="btn btn-outline btn-sm" onclick="openInstructorModal('${esc(i._id)}')"><i class="fas fa-edit"></i></button>
         <button class="btn btn-danger btn-sm" onclick="deleteInstructor('${esc(i._id)}','${esc(i.name)}')"><i class="fas fa-trash"></i></button>
       </div></td>
-    </tr>`).join(''):`<tr><td colspan="5"><div class="empty"><i class="fas fa-chalkboard-teacher"></i>কোনো শিক্ষক নেই</div></td></tr>`;
-  }catch(e){$('#instructors-tbody').innerHTML=`<tr><td colspan="5"><div class="empty">${esc(e.message)}</div></td></tr>`;}
+    </tr>`).join(''):`<tr><td colspan="5"><div class="empty"><i class="fas fa-chalkboard-teacher"></i><p>কোনো শিক্ষক নেই</p></div></td></tr>`;
+  }catch(e){$('#instructors-tbody').innerHTML=`<tr><td colspan="5"><div class="empty"><p>${esc(e.message)}</p></div></td></tr>`;}
 }
 
 function openInstructorModal(editId=null){
@@ -1758,30 +1764,26 @@ function openInstructorModal(editId=null){
           <div class="form-group"><label class="label">নাম *</label><input name="name" value="${esc(v.name||'')}" required placeholder="মাওলানা..."/></div>
           <div class="form-group"><label class="label">পদবি</label><input name="designation" value="${esc(v.designation||'')}" placeholder="সিনিয়র শিক্ষক"/></div>
         </div>
-        <div class="form-row">
-          <div class="form-group"><label class="label">বিশেষত্ব</label><input name="specialization" value="${esc(v.specialization||'')}" placeholder="কুরআন, ফিকাহ"/></div>
-          <div class="form-group"><label class="label"><i class="fas fa-image"></i> শিক্ষকের ছবি</label>${buildImageUploadWidget({name:'photo',currentUrl:v.photo||'',placeholder:'https://'})}</div>
-        </div>
+        <div class="form-group"><label class="label">বিশেষত্ব</label><input name="specialization" value="${esc(v.specialization||'')}" placeholder="কুরআন, ফিকাহ"/></div>
+        <div class="form-group"><label class="label"><i class="fas fa-image"></i> শিক্ষকের ছবি</label>${buildImageUploadWidget({name:'photo',currentUrl:v.photo||'',placeholder:'https://'})}</div>
         <div class="form-group"><label class="label">জীবনী</label><textarea name="bio" rows="4">${esc(v.bio||'')}</textarea></div>
         <div class="form-row">
           <div class="form-group"><label class="label">ইমেইল</label><input name="email" type="email" value="${esc(v.email||'')}" placeholder="name@email.com"/></div>
           <div class="form-group"><label class="label">Facebook URL</label><input name="facebook" value="${esc(v.social&&v.social.facebook||v.facebook||'')}" placeholder="https://facebook.com/..."/></div>
         </div>
-        <div style="display:flex;gap:10px;justify-content:flex-end">
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:4px">
           <button type="button" class="btn btn-outline" onclick="closeModal('instructor-modal')">বাতিল</button>
           <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> সংরক্ষণ</button>
         </div>
       </form>`;
     openModal('instructor-modal');
   };
-  if(editId){
-    adminApi('/api/instructors').then(list=>{const ins=list.find(x=>x._id===editId);doOpen(ins);}).catch(()=>doOpen());
-  } else doOpen();
+  if(editId){adminApi('/api/instructors').then(list=>{const ins=list.find(x=>x._id===editId);doOpen(ins);}).catch(()=>doOpen());}
+  else doOpen();
 }
 
 async function saveInstructor(e, editId){
-  e.preventDefault();
-  const fd=new FormData(e.target);
+  e.preventDefault();const fd=new FormData(e.target);
   const body={name:fd.get('name'),designation:fd.get('designation'),specialization:fd.get('specialization'),photo:fd.get('photo'),bio:fd.get('bio'),email:fd.get('email'),social:{facebook:fd.get('facebook')}};
   const btn=e.target.querySelector('[type=submit]');btn.disabled=true;
   try{
@@ -1805,15 +1807,15 @@ async function loadFaqs(){
   try{
     const list=await adminApi('/api/faqs');
     $('#faqs-tbody').innerHTML=list&&list.length?list.map((f,i)=>`<tr>
-      <td style="color:var(--text-soft);font-weight:600">${i+1}</td>
+      <td style="color:var(--text-muted);font-weight:700;width:40px">${i+1}</td>
       <td style="max-width:220px;font-weight:600">${esc(f.question||'—')}</td>
       <td style="max-width:280px;font-size:13px;color:var(--text-soft)">${esc((f.answer||'').slice(0,80))}${(f.answer||'').length>80?'...':''}</td>
       <td><div class="tbl-actions">
         <button class="btn btn-outline btn-sm" onclick="openFaqModal('${esc(f._id)}')"><i class="fas fa-edit"></i></button>
         <button class="btn btn-danger btn-sm" onclick="deleteFaq('${esc(f._id)}')"><i class="fas fa-trash"></i></button>
       </div></td>
-    </tr>`).join(''):`<tr><td colspan="4"><div class="empty"><i class="fas fa-question-circle"></i>কোনো FAQ নেই</div></td></tr>`;
-  }catch(e){$('#faqs-tbody').innerHTML=`<tr><td colspan="4"><div class="empty">${esc(e.message)}</div></td></tr>`;}
+    </tr>`).join(''):`<tr><td colspan="4"><div class="empty"><i class="fas fa-question-circle"></i><p>কোনো FAQ নেই</p></div></td></tr>`;
+  }catch(e){$('#faqs-tbody').innerHTML=`<tr><td colspan="4"><div class="empty"><p>${esc(e.message)}</p></div></td></tr>`;}
 }
 
 function openFaqModal(editId=null){
@@ -1836,9 +1838,7 @@ function openFaqModal(editId=null){
 }
 
 async function saveFaq(e, editId){
-  e.preventDefault();
-  const fd=new FormData(e.target);
-  const body={question:fd.get('question'),answer:fd.get('answer')};
+  e.preventDefault();const fd=new FormData(e.target);const body={question:fd.get('question'),answer:fd.get('answer')};
   const btn=e.target.querySelector('[type=submit]');btn.disabled=true;
   try{
     if(editId) await adminApi('/api/admin/faqs/'+editId,{method:'PUT',body});
@@ -1861,7 +1861,7 @@ async function loadBlog(){
   try{
     const list=await adminApi('/api/blog');
     $('#blog-tbody').innerHTML=list&&list.length?list.map(b=>`<tr>
-      <td><img src="${esc(b.image||'')}" style="width:54px;height:38px;object-fit:cover;border-radius:6px;background:#e2e8f0" onerror="this.style.background='#e2e8f0'"/></td>
+      <td>${b.image?`<img src="${esc(b.image)}" style="width:54px;height:38px;object-fit:cover;border-radius:8px"/>`:`<div style="width:54px;height:38px;border-radius:8px;background:var(--bg);display:flex;align-items:center;justify-content:center;color:var(--text-muted)"><i class="fas fa-image"></i></div>`}</td>
       <td style="font-weight:600;max-width:200px">${esc(b.title||'—')}</td>
       <td>${esc(b.author||'—')}</td>
       <td style="font-size:12px">${b.createdAt?new Date(b.createdAt).toLocaleDateString('bn-BD'):'—'}</td>
@@ -1869,8 +1869,8 @@ async function loadBlog(){
         <button class="btn btn-outline btn-sm" onclick="openBlogModal('${esc(b._id||b.slug)}')"><i class="fas fa-edit"></i></button>
         <button class="btn btn-danger btn-sm" onclick="deleteBlog('${esc(b._id||b.slug)}','${esc(b.title)}')"><i class="fas fa-trash"></i></button>
       </div></td>
-    </tr>`).join(''):`<tr><td colspan="5"><div class="empty"><i class="fas fa-blog"></i>কোনো ব্লগ পোস্ট নেই</div></td></tr>`;
-  }catch(e){$('#blog-tbody').innerHTML=`<tr><td colspan="5"><div class="empty">${esc(e.message)}</div></td></tr>`;}
+    </tr>`).join(''):`<tr><td colspan="5"><div class="empty"><i class="fas fa-blog"></i><p>কোনো ব্লগ পোস্ট নেই</p></div></td></tr>`;
+  }catch(e){$('#blog-tbody').innerHTML=`<tr><td colspan="5"><div class="empty"><p>${esc(e.message)}</p></div></td></tr>`;}
 }
 
 function openBlogModal(editId=null){
@@ -1882,13 +1882,13 @@ function openBlogModal(editId=null){
         <div class="form-group"><label class="label">শিরোনাম *</label><input name="title" value="${esc(v.title||'')}" required placeholder="পোস্টের শিরোনাম"/></div>
         <div class="form-row">
           <div class="form-group"><label class="label">লেখক</label><input name="author" value="${esc(v.author||'')}" placeholder="মুফতি আব্দুল্লাহ"/></div>
-          <div class="form-group"><label class="label"><i class="fas fa-image"></i> পোস্টের ছবি</label>${buildImageUploadWidget({name:'image',currentUrl:v.image||'',placeholder:'https://'})}</div>
         </div>
+        <div class="form-group"><label class="label"><i class="fas fa-image"></i> পোস্টের ছবি</label>${buildImageUploadWidget({name:'image',currentUrl:v.image||'',placeholder:'https://'})}</div>
         <div class="form-group"><label class="label">সারাংশ (Excerpt)</label><textarea name="excerpt" rows="2">${esc(v.excerpt||'')}</textarea></div>
         <div class="form-group"><label class="label">মূল লেখা (Content)</label><textarea name="content" rows="8">${esc(v.content||'')}</textarea></div>
         <div style="display:flex;gap:10px;justify-content:flex-end">
           <button type="button" class="btn btn-outline" onclick="closeModal('blog-modal')">বাতিল</button>
-          <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> প্রকাশ করুন</button>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> প্রকাশ করুন</button>
         </div>
       </form>`;
     openModal('blog-modal');
@@ -1898,8 +1898,7 @@ function openBlogModal(editId=null){
 }
 
 async function saveBlog(e, editId){
-  e.preventDefault();
-  const fd=new FormData(e.target);
+  e.preventDefault();const fd=new FormData(e.target);
   const body={title:fd.get('title'),author:fd.get('author'),image:fd.get('image'),excerpt:fd.get('excerpt'),content:fd.get('content')};
   const btn=e.target.querySelector('[type=submit]');btn.disabled=true;
   try{
@@ -1922,24 +1921,25 @@ async function deleteBlog(id,title){
 async function loadTestimonials(){
   try{
     const list=await adminApi('/api/testimonials');
+    const stars=n=>'★'.repeat(Math.min(5,n||5));
     $('#testimonials-tbody').innerHTML=list&&list.length?list.map(t=>`<tr>
-      <td><img src="${esc(t.avatar||'')}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#e2e8f0" onerror="this.style.background='#e2e8f0'"/></td>
+      <td>${t.avatar?`<img src="${esc(t.avatar)}" style="width:42px;height:42px;border-radius:50%;object-fit:cover"/>`:`<div style="width:42px;height:42px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;color:var(--primary);font-weight:700">${(t.name||'?')[0]}</div>`}</td>
       <td style="font-weight:600">${esc(t.name||'—')}<div style="font-size:11px;color:var(--text-soft)">${esc(t.designation||'')}</div></td>
-      <td style="max-width:220px;font-size:13px">${esc((t.message||'').slice(0,70))}...</td>
-      <td>${'★'.repeat(Math.min(5,t.rating||5))}</td>
+      <td style="max-width:220px;font-size:13px;color:var(--text-soft)">${esc((t.message||'').slice(0,70))}...</td>
+      <td style="color:var(--accent)">${stars(t.rating)}</td>
       <td><div class="tbl-actions">
         <button class="btn btn-outline btn-sm" onclick="openTestimonialModal('${esc(t._id)}')"><i class="fas fa-edit"></i></button>
         <button class="btn btn-danger btn-sm" onclick="deleteTestimonial('${esc(t._id)}','${esc(t.name)}')"><i class="fas fa-trash"></i></button>
       </div></td>
-    </tr>`).join(''):`<tr><td colspan="5"><div class="empty"><i class="fas fa-star"></i>কোনো প্রশংসাপত্র নেই</div></td></tr>`;
-  }catch(e){$('#testimonials-tbody').innerHTML=`<tr><td colspan="5"><div class="empty">${esc(e.message)}</div></td></tr>`;}
+    </tr>`).join(''):`<tr><td colspan="5"><div class="empty"><i class="fas fa-star"></i><p>কোনো প্রশংসাপত্র নেই</p></div></td></tr>`;
+  }catch(e){$('#testimonials-tbody').innerHTML=`<tr><td colspan="5"><div class="empty"><p>${esc(e.message)}</p></div></td></tr>`;}
 }
 
 function openTestimonialModal(editId=null){
   const doOpen=(t)=>{
     const v=t||{};
     $('#testimonial-modal-body').innerHTML=`
-      <h3><i class="fas fa-star" style="color:var(--secondary)"></i> ${editId?'প্রশংসাপত্র সম্পাদনা':'নতুন প্রশংসাপত্র'}</h3>
+      <h3><i class="fas fa-star" style="color:var(--accent)"></i> ${editId?'প্রশংসাপত্র সম্পাদনা':'নতুন প্রশংসাপত্র'}</h3>
       <form id="testimonial-form" onsubmit="saveTestimonial(event,'${editId||''}')">
         <div class="form-row">
           <div class="form-group"><label class="label">নাম *</label><input name="name" value="${esc(v.name||'')}" required placeholder="আব্দুল্লাহ আল মামুন"/></div>
@@ -1962,8 +1962,7 @@ function openTestimonialModal(editId=null){
 }
 
 async function saveTestimonial(e, editId){
-  e.preventDefault();
-  const fd=new FormData(e.target);
+  e.preventDefault();const fd=new FormData(e.target);
   const body={name:fd.get('name'),designation:fd.get('designation'),avatar:fd.get('avatar'),rating:Number(fd.get('rating')),message:fd.get('message')};
   const btn=e.target.querySelector('[type=submit]');btn.disabled=true;
   try{
@@ -1987,35 +1986,36 @@ async function loadUsers(){
   try{
     const list=await adminApi('/api/admin/users');
     $('#users-tbody').innerHTML=list&&list.length?list.map(u=>`<tr>
-      <td style="font-weight:600">${esc(u.name||'—')}</td>
+      <td><div style="display:flex;align-items:center;gap:8px"><div style="width:32px;height:32px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;color:var(--primary);font-weight:700;font-size:13px;flex-shrink:0">${(u.name||'?')[0]}</div><span style="font-weight:600">${esc(u.name||'—')}</span></div></td>
       <td style="direction:ltr;text-align:left;font-size:13px">${esc(u.email||'—')}</td>
       <td>${esc(u.phone||'—')}</td>
       <td style="font-size:12px">${u.createdAt?new Date(u.createdAt).toLocaleDateString('bn-BD'):'—'}</td>
-      <td>${(u.enrolledCourses||[]).length}</td>
+      <td><span class="badge badge-info">${(u.enrolledCourses||[]).length}</span></td>
       <td><div class="tbl-actions">
         <button class="btn btn-outline btn-sm" onclick="viewUser('${esc(u._id)}')"><i class="fas fa-eye"></i></button>
         <button class="btn btn-danger btn-sm" onclick="deleteUser('${esc(u._id)}','${esc(u.name)}')"><i class="fas fa-trash"></i></button>
       </div></td>
-    </tr>`).join(''):`<tr><td colspan="6"><div class="empty"><i class="fas fa-users"></i>কোনো ব্যবহারকারী নেই</div></td></tr>`;
-  }catch(e){$('#users-tbody').innerHTML=`<tr><td colspan="6"><div class="empty">${esc(e.message)}</div></td></tr>`;}
+    </tr>`).join(''):`<tr><td colspan="6"><div class="empty"><i class="fas fa-users"></i><p>কোনো ব্যবহারকারী নেই</p></div></td></tr>`;
+  }catch(e){$('#users-tbody').innerHTML=`<tr><td colspan="6"><div class="empty"><p>${esc(e.message)}</p></div></td></tr>`;}
 }
 
 async function viewUser(id){
   try{
-    const list=await adminApi('/api/admin/users');
-    const u=list.find(x=>x._id===id)||{};
+    const list=await adminApi('/api/admin/users');const u=list.find(x=>x._id===id)||{};
     const courses=ALL_COURSES_DATA.filter(c=>(u.enrolledCourses||[]).includes(c._id));
     $('#user-modal-body').innerHTML=`
       <h3><i class="fas fa-user" style="color:var(--primary)"></i> ব্যবহারকারী বিবরণ</h3>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;padding:16px;background:var(--bg);border-radius:12px">
+        <div style="width:56px;height:56px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;color:var(--primary);font-weight:800;font-size:22px">${(u.name||'?')[0]}</div>
+        <div><div style="font-size:16px;font-weight:700">${esc(u.name||'—')}</div><div style="font-size:13px;color:var(--text-soft)">${esc(u.email||'—')}</div></div>
+      </div>
       <div class="ar-detail">
-        <p><strong>নাম:</strong> ${esc(u.name||'—')}</p>
-        <p><strong>ইমেইল:</strong> ${esc(u.email||'—')}</p>
         <p><strong>ফোন:</strong> ${esc(u.phone||'—')}</p>
         <p><strong>যোগদান:</strong> ${u.createdAt?new Date(u.createdAt).toLocaleDateString('bn-BD'):'—'}</p>
-        <p style="margin-top:12px"><strong>এনরোলকৃত কোর্স (${courses.length}টি):</strong></p>
-        ${courses.length?`<ul style="padding-right:16px;margin-top:6px">${courses.map(c=>`<li style="font-size:13px;margin-bottom:4px">${esc(c.title)}</li>`).join('')}</ul>`:'<p style="font-size:13px;color:var(--text-soft)">কোনো কোর্স নেই</p>'}
+        <p><strong>এনরোলকৃত কোর্স (${courses.length}টি):</strong></p>
+        ${courses.length?`<ul style="padding-right:16px;margin-top:8px;list-style:disc">${courses.map(c=>`<li style="font-size:13.5px;margin-bottom:4px;font-weight:500">${esc(c.title)}</li>`).join('')}</ul>`:'<p style="font-size:13px;color:var(--text-soft)">কোনো কোর্স নেই</p>'}
       </div>
-      <div style="margin-top:16px">
+      <div style="margin-top:18px;display:flex;gap:10px">
         <button class="btn btn-primary btn-sm" onclick="openGrantForUser('${esc(u._id)}','${esc(u.name)}')"><i class="fas fa-plus"></i> কোর্স দিন</button>
       </div>`;
     openModal('user-modal');
@@ -2035,50 +2035,50 @@ async function deleteUser(id,name){
 let currentRequestStatus='pending';
 async function loadRequests(status, tabBtn=null){
   currentRequestStatus=status||'';
-  if(tabBtn){ $$('#panel-access-requests .tab-btn').forEach(b=>b.classList.remove('active'));tabBtn.classList.add('active'); }
+  if(tabBtn){$$('#panel-access-requests .tab-btn').forEach(b=>b.classList.remove('active'));tabBtn.classList.add('active');}
   try{
-    let url='/api/admin/access-requests';
-    if(status) url+='?status='+status;
+    let url='/api/admin/access-requests';if(status) url+='?status='+status;
     const list=await adminApi(url);
     $('#requests-tbody').innerHTML=list&&list.length?list.map(r=>`<tr>
       <td><div style="font-weight:600">${esc(r.userName||'—')}</div><div style="font-size:11px;color:var(--text-soft)">${esc(r.userEmail||'')}</div></td>
       <td style="max-width:160px;font-size:13px">${esc(r.courseTitle||'—')}</td>
-      <td>${esc(r.paymentMethod||'—')}</td>
-      <td>${r.amount?`৳${fmt(r.amount)}`:'—'}</td>
+      <td><span class="badge badge-info">${esc(r.paymentMethod||'—')}</span></td>
+      <td style="font-weight:600;color:var(--primary)">${r.amount?`৳${fmt(r.amount)}`:'—'}</td>
       <td style="font-size:12px">${r.createdAt?new Date(r.createdAt).toLocaleDateString('bn-BD'):'—'}</td>
       <td>${statusBadge(r.status||'pending')}</td>
       <td><div class="tbl-actions">
-        <button class="btn btn-outline btn-sm" onclick="viewRequest('${esc(r._id)}')"><i class="fas fa-eye"></i> দেখুন</button>
+        <button class="btn btn-outline btn-sm" onclick="viewRequest('${esc(r._id)}')"><i class="fas fa-eye"></i></button>
         ${r.status==='pending'?`
-        <button class="btn btn-primary btn-sm" style="background:var(--success)" onclick="updateRequest('${esc(r._id)}','approved')"><i class="fas fa-check"></i></button>
-        <button class="btn btn-danger btn-sm" onclick="updateRequest('${esc(r._id)}','rejected')"><i class="fas fa-times"></i></button>`:''}
+        <button class="btn btn-success btn-sm" onclick="updateRequest('${esc(r._id)}','approved')" title="অনুমোদন"><i class="fas fa-check"></i></button>
+        <button class="btn btn-danger btn-sm" onclick="updateRequest('${esc(r._id)}','rejected')" title="বাতিল"><i class="fas fa-times"></i></button>`:''}
       </div></td>
-    </tr>`).join(''):`<tr><td colspan="7"><div class="empty"><i class="fas fa-inbox"></i>কোনো রিকোয়েস্ট নেই</div></td></tr>`;
-  }catch(e){$('#requests-tbody').innerHTML=`<tr><td colspan="7"><div class="empty">${esc(e.message)}</div></td></tr>`;}
+    </tr>`).join(''):`<tr><td colspan="7"><div class="empty"><i class="fas fa-inbox"></i><p>কোনো রিকোয়েস্ট নেই</p></div></td></tr>`;
+  }catch(e){$('#requests-tbody').innerHTML=`<tr><td colspan="7"><div class="empty"><p>${esc(e.message)}</p></div></td></tr>`;}
 }
 
 async function viewRequest(id){
   try{
-    const list=await adminApi('/api/admin/access-requests');
-    const r=list.find(x=>x._id===id)||{};
+    const list=await adminApi('/api/admin/access-requests');const r=list.find(x=>x._id===id)||{};
     $('#request-modal-body').innerHTML=`
       <h3><i class="fas fa-file-invoice" style="color:var(--primary)"></i> রিকোয়েস্ট বিবরণ</h3>
+      <div style="background:var(--bg);border-radius:12px;padding:16px;margin-bottom:16px;display:flex;align-items:center;gap:14px">
+        <div style="width:48px;height:48px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;color:var(--primary);font-weight:700;font-size:18px">${(r.userName||'?')[0]}</div>
+        <div><div style="font-weight:700;font-size:15px">${esc(r.userName||'—')}</div><div style="color:var(--text-soft);font-size:13px">${esc(r.userEmail||'')}</div></div>
+        <div style="margin-left:auto">${statusBadge(r.status||'pending')}</div>
+      </div>
       <div class="ar-detail">
-        <p><strong>শিক্ষার্থী:</strong> ${esc(r.userName||'—')}</p>
-        <p><strong>ইমেইল:</strong> ${esc(r.userEmail||'—')}</p>
         <p><strong>ফোন:</strong> ${esc(r.userPhone||'—')}</p>
         <p><strong>WhatsApp:</strong> ${esc(r.whatsappNumber||'—')}</p>
         <p><strong>কোর্স:</strong> ${esc(r.courseTitle||'—')}</p>
         <p><strong>পেমেন্ট মাধ্যম:</strong> ${esc(r.paymentMethod||'—')}</p>
         <p><strong>পরিমাণ:</strong> ${r.amount?`৳${fmt(r.amount)}`:'—'}</p>
-        <p><strong>TrxID:</strong> ${esc(r.trxId||'—')}</p>
-        <p><strong>অবস্থা:</strong> ${statusBadge(r.status||'pending')}</p>
+        <p><strong>TrxID:</strong> <span style="direction:ltr;font-family:monospace">${esc(r.trxId||'—')}</span></p>
         <p><strong>তারিখ:</strong> ${r.createdAt?new Date(r.createdAt).toLocaleString('bn-BD'):'—'}</p>
-        ${r.screenshotUrl?`<p><strong>স্ক্রিনশট:</strong><br/><img src="${esc(r.screenshotUrl)}" style="max-width:100%;border-radius:8px;margin-top:8px"/></p>`:''}
       </div>
-      ${r.status==='pending'?`<div style="display:flex;gap:10px;margin-top:18px">
-        <button class="btn btn-primary" style="background:var(--success)" onclick="updateRequest('${esc(r._id)}','approved');closeModal('request-modal')"><i class="fas fa-check"></i> অনুমোদন দিন</button>
-        <button class="btn btn-danger" onclick="updateRequest('${esc(r._id)}','rejected');closeModal('request-modal')"><i class="fas fa-times"></i> বাতিল করুন</button>
+      ${r.screenshotUrl?`<div style="margin-top:14px"><div style="font-weight:600;font-size:13px;margin-bottom:8px">পেমেন্ট স্ক্রিনশট:</div><img src="${esc(r.screenshotUrl)}" style="max-width:100%;border-radius:10px;border:2px solid var(--border)"/></div>`:''}
+      ${r.status==='pending'?`<div style="display:flex;gap:10px;margin-top:20px">
+        <button class="btn btn-success" style="flex:1" onclick="updateRequest('${esc(r._id)}','approved');closeModal('request-modal')"><i class="fas fa-check"></i> অনুমোদন দিন</button>
+        <button class="btn btn-danger" style="flex:1" onclick="updateRequest('${esc(r._id)}','rejected');closeModal('request-modal')"><i class="fas fa-times"></i> বাতিল করুন</button>
       </div>`:''}`;
     openModal('request-modal');
   }catch(e){toast(e.message,'error');}
@@ -2105,17 +2105,12 @@ async function loadEnrollments(){
       <td><div class="tbl-actions">
         <button class="btn btn-danger btn-sm" onclick="revokeAccess('${esc(e.userId||'')}','${esc(e.courseId||'')}')"><i class="fas fa-user-minus"></i> বাতিল</button>
       </div></td>
-    </tr>`).join(''):`<tr><td colspan="4"><div class="empty"><i class="fas fa-user-check"></i>কোনো এনরোলমেন্ট নেই</div></td></tr>`;
-  }catch(e){$('#enrollments-tbody').innerHTML=`<tr><td colspan="4"><div class="empty">${esc(e.message)}</div></td></tr>`;}
+    </tr>`).join(''):`<tr><td colspan="4"><div class="empty"><i class="fas fa-user-check"></i><p>কোনো এনরোলমেন্ট নেই</p></div></td></tr>`;
+  }catch(e){$('#enrollments-tbody').innerHTML=`<tr><td colspan="4"><div class="empty"><p>${esc(e.message)}</p></div></td></tr>`;}
 }
 
-function openGrantModal(){
-  buildGrantModal();
-}
-
-function openGrantForUser(userId,userName){
-  buildGrantModal(userId,userName);
-}
+function openGrantModal(){buildGrantModal();}
+function openGrantForUser(userId,userName){buildGrantModal(userId,userName);}
 
 function buildGrantModal(preUserId='',preUserName=''){
   $('#grant-modal-body').innerHTML=`
@@ -2137,9 +2132,7 @@ function buildGrantModal(preUserId='',preUserName=''){
 }
 
 async function grantAccess(e){
-  e.preventDefault();
-  const fd=new FormData(e.target);
-  const btn=e.target.querySelector('[type=submit]');btn.disabled=true;
+  e.preventDefault();const fd=new FormData(e.target);const btn=e.target.querySelector('[type=submit]');btn.disabled=true;
   try{
     await adminApi('/api/admin/grant-access',{method:'POST',body:{userId:fd.get('userId'),courseId:fd.get('courseId')}});
     closeModal('grant-modal');toast('কোর্স এক্সেস দেওয়া হয়েছে ✅','success');loadEnrollments();
@@ -2158,46 +2151,33 @@ async function revokeAccess(userId,courseId){
 // ============================================================
 async function loadCurrentSettings(){
   try{
-    const cfg=await adminApi('/api/public/config');
-    const ss=cfg.siteSettings||{};
-    const f=document.getElementById('site-settings-form');
-    if(!f)return;
+    const cfg=await adminApi('/api/public/config');const ss=cfg.siteSettings||{};
+    const f=document.getElementById('site-settings-form');if(!f)return;
     const set=(n,v)=>{const el=f.elements[n];if(el&&v!==undefined)el.value=v;};
     set('siteName',ss.siteName);set('tagline',ss.tagline);
     set('footerAbout',ss.footerAbout||ss['footer-about']);
-    set('copyright',ss.copyright);
-    set('noticeText',cfg.notice&&cfg.notice.text);
-    const wa=cfg.whatsapp||{};
-    set('waNumber',wa.number);set('waMessage',wa.message);
+    set('copyright',ss.copyright);set('noticeText',cfg.notice&&cfg.notice.text);
+    const wa=cfg.whatsapp||{};set('waNumber',wa.number);set('waMessage',wa.message);
     if(wa.enabled==='true'||wa.enabled===true){const cb=f.elements['waEnabled'];if(cb)cb.checked=true;}
     const faqImg=cfg.faqImage||cfg.faqSection&&cfg.faqSection.image||'';
-    set('faqImage',faqImg);
+    // Update faq image URL if widget exists
+    const faqUrlEl=document.querySelector('[name="faqImage"]');if(faqUrlEl&&faqImg)faqUrlEl.value=faqImg;
     updateNoticePreview();
   }catch(e){console.warn('settings:',e);}
 }
 
 function updateNoticePreview(){
   const txt=$('#notice-text-input')?.value||'';
-  const wrap=$('#notice-preview-wrap');
-  if(wrap) wrap.style.display=txt?'block':'none';
-  const prev=$('#notice-preview-text');
-  if(prev) prev.textContent=txt;
+  const wrap=$('#notice-preview-wrap');if(wrap) wrap.style.display=txt?'block':'none';
+  const prev=$('#notice-preview-text');if(prev) prev.textContent=txt;
 }
 
 async function saveSiteSettings(e){
-  e.preventDefault();
-  const fd=new FormData(e.target);
-  const body={
-    siteSettings:{siteName:fd.get('siteName'),tagline:fd.get('tagline'),'footer-about':fd.get('footerAbout'),footerAbout:fd.get('footerAbout'),copyright:fd.get('copyright')},
-    notice:{text:fd.get('noticeText')||''},
-    whatsapp:{number:fd.get('waNumber'),message:fd.get('waMessage'),enabled:fd.get('waEnabled')==='on'?'true':'false'},
-    faqImage:fd.get('faqImage'),faqSection:{image:fd.get('faqImage')},
-  };
+  e.preventDefault();const fd=new FormData(e.target);
+  const body={siteSettings:{siteName:fd.get('siteName'),tagline:fd.get('tagline'),'footer-about':fd.get('footerAbout'),footerAbout:fd.get('footerAbout'),copyright:fd.get('copyright')},notice:{text:fd.get('noticeText')||''},whatsapp:{number:fd.get('waNumber'),message:fd.get('waMessage'),enabled:fd.get('waEnabled')==='on'?'true':'false'},faqImage:fd.get('faqImage'),faqSection:{image:fd.get('faqImage')}};
   const btn=e.target.querySelector('[type=submit]');btn.disabled=true;
-  try{
-    await adminApi('/api/admin/config',{method:'PUT',body});
-    toast('সাইট সেটিংস সংরক্ষিত ✅','success');
-  }catch(err){toast(err.message,'error');}finally{btn.disabled=false;}
+  try{await adminApi('/api/admin/config',{method:'PUT',body});toast('সাইট সেটিংস সংরক্ষিত ✅','success');}
+  catch(err){toast(err.message,'error');}finally{btn.disabled=false;}
 }
 
 // ============================================================
@@ -2205,8 +2185,7 @@ async function saveSiteSettings(e){
 // ============================================================
 async function loadHeroSettings(){
   try{
-    const cfg=await adminApi('/api/public/config');
-    const h=cfg.hero||{};
+    const cfg=await adminApi('/api/public/config');const h=cfg.hero||{};
     const f=document.getElementById('hero-form');if(!f)return;
     const set=(n,v)=>{const el=f.elements[n];if(el&&v!==undefined)el.value=v;};
     set('pill',h.pill);set('title',h.title);set('highlight',h.highlight);set('subtitle',h.subtitle);
@@ -2217,19 +2196,13 @@ async function loadHeroSettings(){
 }
 
 async function saveHeroSettings(e){
-  e.preventDefault();
-  const fd=new FormData(e.target);
-  const hero={
-    pill:fd.get('pill'),title:fd.get('title'),highlight:fd.get('highlight'),subtitle:fd.get('subtitle'),
-    primaryButtonText:fd.get('primaryButtonText'),secondaryButtonText:fd.get('secondaryButtonText'),
-  };
+  e.preventDefault();const fd=new FormData(e.target);
+  const hero={pill:fd.get('pill'),title:fd.get('title'),highlight:fd.get('highlight'),subtitle:fd.get('subtitle'),primaryButtonText:fd.get('primaryButtonText'),secondaryButtonText:fd.get('secondaryButtonText')};
   for(let k=1;k<=4;k++){hero['stat'+k+'Num']=fd.get('stat'+k+'Num');hero['stat'+k+'Lbl']=fd.get('stat'+k+'Lbl');}
   for(let k=1;k<=3;k++){hero['card'+k+'Title']=fd.get('card'+k+'Title');hero['card'+k+'Desc']=fd.get('card'+k+'Desc');}
   const btn=e.target.querySelector('[type=submit]');btn.disabled=true;
-  try{
-    await adminApi('/api/admin/config',{method:'PUT',body:{hero}});
-    toast('হিরো সেটিংস সংরক্ষিত ✅','success');
-  }catch(err){toast(err.message,'error');}finally{btn.disabled=false;}
+  try{await adminApi('/api/admin/config',{method:'PUT',body:{hero}});toast('হিরো সেটিংস সংরক্ষিত ✅','success');}
+  catch(err){toast(err.message,'error');}finally{btn.disabled=false;}
 }
 
 // ============================================================
@@ -2239,20 +2212,16 @@ let WJ_ITEMS=[];
 async function loadWhyJoin(){
   try{
     const d=await adminApi('/api/settings/whyJoin');
-    $('#wj-title').value=d.title||'';
-    $('#wj-subtitle').value=d.subtitle||'';
-    let items=d.items;
-    if(typeof items==='string'){try{items=JSON.parse(items);}catch{items=[];}}
-    WJ_ITEMS=Array.isArray(items)?items:[];
-    renderWjItems();
+    $('#wj-title').value=d.title||'';$('#wj-subtitle').value=d.subtitle||'';
+    let items=d.items;if(typeof items==='string'){try{items=JSON.parse(items);}catch{items=[];}}
+    WJ_ITEMS=Array.isArray(items)?items:[];renderWjItems();
   }catch(e){WJ_ITEMS=[];renderWjItems();}
 }
 
 function renderWjItems(){
   $('#wj-items-wrap').innerHTML=WJ_ITEMS.map((it,i)=>`
     <div class="wj-item">
-      <div class="wj-item-head">
-        <span>আইটেম ${i+1}</span>
+      <div class="wj-item-head"><span><i class="fas ${esc(it.icon||'fa-star')}" style="color:var(--primary);margin-left:6px"></i> আইটেম ${i+1}</span>
         <button type="button" class="btn btn-danger btn-sm" onclick="WJ_ITEMS.splice(${i},1);renderWjItems()"><i class="fas fa-trash"></i></button>
       </div>
       <div class="form-row">
@@ -2263,17 +2232,12 @@ function renderWjItems(){
     </div>`).join('');
 }
 
-function addWjItem(){
-  WJ_ITEMS.push({title:'',icon:'fa-star',description:''});
-  renderWjItems();
-}
+function addWjItem(){WJ_ITEMS.push({title:'',icon:'fa-star',description:''});renderWjItems();}
 
 async function saveWhyJoin(){
   const body={title:$('#wj-title').value,subtitle:$('#wj-subtitle').value,items:JSON.stringify(WJ_ITEMS)};
-  try{
-    await adminApi('/api/admin/settings/whyJoin',{method:'PUT',body});
-    toast('"কেন যুক্ত হবেন" আপডেট হয়েছে ✅','success');
-  }catch(err){toast(err.message,'error');}
+  try{await adminApi('/api/admin/settings/whyJoin',{method:'PUT',body});toast('"কেন যুক্ত হবেন" আপডেট হয়েছে ✅','success');}
+  catch(err){toast(err.message,'error');}
 }
 
 // ============================================================
@@ -2281,22 +2245,18 @@ async function saveWhyJoin(){
 // ============================================================
 async function loadPaymentSettings(){
   try{
-    const cfg=await adminApi('/api/public/config');
-    const pay=cfg.payment||{};
+    const cfg=await adminApi('/api/public/config');const pay=cfg.payment||{};
     const f=document.getElementById('payment-form');if(!f)return;
     ['bkash','nagad','rocket','bank'].forEach(k=>{const el=f.elements[k];if(el)el.value=pay[k]||'';});
   }catch(e){}
 }
 
 async function savePaymentSettings(e){
-  e.preventDefault();
-  const fd=new FormData(e.target);
+  e.preventDefault();const fd=new FormData(e.target);
   const payment={bkash:fd.get('bkash'),nagad:fd.get('nagad'),rocket:fd.get('rocket'),bank:fd.get('bank')};
   const btn=e.target.querySelector('[type=submit]');btn.disabled=true;
-  try{
-    await adminApi('/api/admin/config',{method:'PUT',body:{payment}});
-    toast('পেমেন্ট সেটিংস সংরক্ষিত ✅','success');
-  }catch(err){toast(err.message,'error');}finally{btn.disabled=false;}
+  try{await adminApi('/api/admin/config',{method:'PUT',body:{payment}});toast('পেমেন্ট সেটিংস সংরক্ষিত ✅','success');}
+  catch(err){toast(err.message,'error');}finally{btn.disabled=false;}
 }
 
 // ============================================================
@@ -2304,43 +2264,42 @@ async function savePaymentSettings(e){
 // ============================================================
 async function loadContactSettings(){
   try{
-    const cfg=await adminApi('/api/public/config');
-    const ct=cfg.contact||{};const sc=cfg.social||{};const ab=cfg.aboutPage||cfg.about||{};
+    const cfg=await adminApi('/api/public/config');const ct=cfg.contact||{};const sc=cfg.social||{};const ab=cfg.aboutPage||cfg.about||{};
     const f=document.getElementById('contact-form');if(!f)return;
     const set=(n,v)=>{const el=f.elements[n];if(el&&v!==undefined)el.value=v;};
     set('email',ct.email);set('phone',ct.phone);set('address',ct.address);set('mapUrl',ct.mapUrl);
     set('facebook',sc.facebook);set('youtube',sc.youtube);set('instagram',sc.instagram);set('whatsapp',sc.whatsapp);
-    set('aboutTitle',ab.title);set('aboutTagline',ab.tagline);
-    set('aboutP1',ab.paragraph1||ab.text);set('aboutP2',ab.paragraph2);set('aboutMission',ab.mission);
+    set('aboutTitle',ab.title);set('aboutTagline',ab.tagline);set('aboutP1',ab.paragraph1||ab.text);set('aboutP2',ab.paragraph2);set('aboutMission',ab.mission);
   }catch(e){}
 }
 
 async function saveContactSettings(e){
-  e.preventDefault();
-  const fd=new FormData(e.target);
-  const body={
-    contact:{email:fd.get('email'),phone:fd.get('phone'),address:fd.get('address'),mapUrl:fd.get('mapUrl')},
-    social:{facebook:fd.get('facebook'),youtube:fd.get('youtube'),instagram:fd.get('instagram'),whatsapp:fd.get('whatsapp')},
-    aboutPage:{title:fd.get('aboutTitle'),tagline:fd.get('aboutTagline'),paragraph1:fd.get('aboutP1'),paragraph2:fd.get('aboutP2'),mission:fd.get('aboutMission')},
-  };
+  e.preventDefault();const fd=new FormData(e.target);
+  const body={contact:{email:fd.get('email'),phone:fd.get('phone'),address:fd.get('address'),mapUrl:fd.get('mapUrl')},social:{facebook:fd.get('facebook'),youtube:fd.get('youtube'),instagram:fd.get('instagram'),whatsapp:fd.get('whatsapp')},aboutPage:{title:fd.get('aboutTitle'),tagline:fd.get('aboutTagline'),paragraph1:fd.get('aboutP1'),paragraph2:fd.get('aboutP2'),mission:fd.get('aboutMission')}};
   const btn=e.target.querySelector('[type=submit]');btn.disabled=true;
-  try{
-    await adminApi('/api/admin/config',{method:'PUT',body});
-    toast('সংরক্ষিত হয়েছে ✅','success');
-  }catch(err){toast(err.message,'error');}finally{btn.disabled=false;}
+  try{await adminApi('/api/admin/config',{method:'PUT',body});toast('সংরক্ষিত হয়েছে ✅','success');}
+  catch(err){toast(err.message,'error');}finally{btn.disabled=false;}
 }
 
 // ============================================================
 // TABLE FILTER
 // ============================================================
 function filterTable(tableId, q){
+  if(!tableId) return;
   const tbl=$('#'+tableId);if(!tbl)return;
-  const rows=$$('tbody tr',tbl);
-  q=(q||'').toLowerCase();
-  rows.forEach(row=>{
-    row.style.display=q?row.textContent.toLowerCase().includes(q)?'':'none':'';
-  });
+  const rows=$$('tbody tr',tbl);q=(q||'').toLowerCase();
+  rows.forEach(row=>{row.style.display=q?row.textContent.toLowerCase().includes(q)?'':'none':'';});
 }
+
+// ============================================================
+// KEYBOARD SHORTCUTS
+// ============================================================
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    document.querySelectorAll('.modal-bg.open').forEach(m=>{m.classList.remove('open');document.body.style.overflow='';});
+    closeSidebar();
+  }
+});
 
 // ============================================================
 // AUTO-LOGIN from session
