@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#0f766e" />
-<title>অ্যাডমিন প্যানেল — মারকাযুদ দিরাসাতিল ইলমিয়্যাহ</title>
+<title>অ্যাডমিন প্যানেল — ইবনে খালদুন ইনস্টিটিউট</title>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 <!-- ApexCharts for dashboard data visualization -->
@@ -282,13 +282,13 @@ tr:hover td{background:#faf8ff}
 <div id="loginPage">
   <div class="login-card">
     <h1><i class="fas fa-mosque"></i> অ্যাডমিন প্যানেল</h1>
-    <p style="text-align:center;color:var(--text-soft);font-size:13px;margin-bottom:18px">মারকাযুদ দিরাসাতিল ইলমিয়্যাহ</p>
+    <p style="text-align:center;color:var(--text-soft);font-size:13px;margin-bottom:18px">ইবনে খালদুন ইনস্টিটিউট</p>
     <form onsubmit="login(event)">
       <div class="form-group"><label class="label">ইউজারনেম</label><input type="text" id="username" autocomplete="username" required /></div>
       <div class="form-group"><label class="label">পাসওয়ার্ড</label><input type="password" id="password" autocomplete="current-password" required /></div>
       <button class="btn btn-primary btn-block" style="padding:11px">লগইন</button>
       <p style="text-align:center;margin-top:12px;font-size:12px;color:var(--text-soft)">ইউজারনেম ও পাসওয়ার্ড সার্ভারের <code>.env</code> ফাইলে সেট করা।</p>
-      <p style="text-align:center;margin-top:6px;font-size:11px;color:#94a3b8">🔗 Server: <code style="font-size:10px">markazuddirasah.onrender.com</code></p>
+      <p style="text-align:center;margin-top:6px;font-size:11px;color:#94a3b8">🔗 Server: <code style="font-size:10px">ibnkhalduninstitute.onrender.com</code></p>
     </form>
   </div>
 </div>
@@ -298,11 +298,10 @@ tr:hover td{background:#faf8ff}
 <div class="layout">
   <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar(false)"></div>
   <aside class="sidebar" id="sidebar">
-    <h2><i class="fas fa-graduation-cap"></i> মারকাযুদ দিরাসাতিল</h2>
+    <h2><i class="fas fa-graduation-cap"></i> ইবনে খালদুন</h2>
     <div class="sidebar-section-label">মূল মেনু</div>
     <div class="sidebar-link active" data-section="dashboard"><i class="fas fa-th-large"></i> ড্যাশবোর্ড</div>
     <div class="sidebar-link" data-section="courses"><i class="fas fa-book-open"></i> কোর্স</div>
-    <div class="sidebar-link" data-section="liveRequests"><i class="fab fa-whatsapp"></i> লাইভ কোর্স অনুরোধ</div>
     <div class="sidebar-link" data-section="accessRequests"><i class="fas fa-key"></i> রেকর্ডেড অ্যাক্সেস</div>
     <div class="sidebar-link" data-section="users"><i class="fas fa-user-graduate"></i> ছাত্রছাত্রী</div>
     <div class="sidebar-link" data-section="instructors"><i class="fas fa-chalkboard-teacher"></i> শিক্ষক</div>
@@ -387,15 +386,6 @@ tr:hover td{background:#faf8ff}
         <button class="btn btn-outline btn-sm" onclick="document.getElementById('courseAdminSearch').value='';filterAdminCourses('')"><i class="fas fa-times"></i> ক্লিয়ার</button>
       </div>
       <div class="table-wrap"><table id="coursesTable"></table></div>
-    </div>
-
-    <!-- LIVE REQUESTS -->
-    <div class="section" id="sec-liveRequests">
-      <div class="card">
-        <h3 style="margin-bottom:8px;font-size:16px"><i class="fab fa-whatsapp" style="color:#25d366"></i> লাইভ কোর্স ক্রয় অনুরোধ</h3>
-        <p class="text-soft">পেমেন্ট ভেরিফাই করার পর Approve করলে ছাত্রকে WhatsApp গ্রুপ লিংক ইমেইলে পাঠানো হবে।</p>
-      </div>
-      <div class="table-wrap"><table id="liveTable"></table></div>
     </div>
 
     <!-- ACCESS REQUESTS -->
@@ -499,7 +489,7 @@ const fmt = n => Number(n||0).toLocaleString('en-US');
 const fmtDate = d => d ? new Date(d).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'2-digit' }) : '—';
 const fmtDateTime = d => d ? new Date(d).toLocaleString('en-US', { year:'numeric', month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit' }) : '—';
 
-const DEFAULT_API = 'https://markazuddirasah.onrender.com';
+const DEFAULT_API = 'https://ibnkhalduninstitute.onrender.com';
 let API = localStorage.getItem('adminApiUrl') || DEFAULT_API;
 
 // ── Admin SWR cache (silent background refresh, no spinner on refresh) ──
@@ -693,7 +683,6 @@ function loadSection(s){
   ({
     dashboard: loadDashboard,
     courses: loadCourses,
-    liveRequests: loadLiveRequests,
     accessRequests: loadAccessRequests,
     users: loadUsers,
     instructors: ()=>loadCrud('instructors'),
@@ -717,25 +706,12 @@ async function loadDashboard(){
     $('#statGrid').innerHTML = [
       ['কোর্স',s.totalCourses,'fa-book'],
       ['ছাত্র',s.totalUsers,'fa-users'],
-      ['লাইভ অনুরোধ',s.totalLivePurchases,'fab fa-whatsapp'],
-      ['রেকর্ডেড অনুরোধ',s.totalAccessRequests,'fa-key'],
-      ['পেন্ডিং (লাইভ)',s.pendingLive||0,'fa-clock'],
-      ['পেন্ডিং (রেকর্ডেড)',s.pendingAccess||0,'fa-clock'],
+      ['কোর্স অ্যাক্সেস অনুরোধ',s.totalAccessRequests,'fa-key'],
+      ['পেন্ডিং অনুরোধ',s.pendingAccess||0,'fa-clock'],
       ['ব্লগ',s.totalBlogs||0,'fa-newspaper'],
       ['বার্তা',s.totalMessages||0,'fa-envelope'],
     ].map(([l,n,ic])=>`<div class="stat"><div class="stat-icon"><i class="${ic.startsWith('fab')?ic:'fas '+ic}"></i></div><div style="min-width:0"><div class="stat-num">${fmt(n)}</div><div class="stat-label">${l}</div></div></div>`).join('');
-
-    const live = await api('/api/admin/live-purchases');
-    $('#recentLive').innerHTML = live.length ? `<table>
-      <tr><th>ছাত্র</th><th>কোর্স</th><th>স্ট্যাটাস</th><th>তারিখ</th></tr>
-      ${live.slice(0,5).map(p=>`<tr>
-        <td>${escapeHtml(p.userName||'')}</td><td>${escapeHtml(p.courseTitle||'')}</td>
-        <td>${statusBadge(p.status)}</td>
-        <td>${fmtDate(p.createdAt)}</td>
-      </tr>`).join('')}</table>` : '<p class="empty">কোনো অনুরোধ নেই</p>';
-
-    // Live analytics + charts
-    loadAnalyticsWidgets(live);
+    loadAnalyticsWidgets([]);
   }catch(e){ $('#statGrid').innerHTML=`<div class="empty">${escapeHtml(e.message)}</div>` }
 }
 
@@ -839,12 +815,11 @@ async function loadCourses(){
   try{
     const list = await api('/api/admin/courses');
     ALL_COURSES_ADMIN = list;
-    $('#coursesTable').innerHTML = `<tr><th>থাম্বনেইল</th><th>শিরোনাম</th><th>ক্যাটাগরি</th><th>ধরন</th><th>মূল্য</th><th>সক্রিয়</th><th>অ্যাকশন</th></tr>
+    $('#coursesTable').innerHTML = `<tr><th>থাম্বনেইল</th><th>শিরোনাম</th><th>ক্যাটাগরি</th><th>মূল্য</th><th>সক্রিয়</th><th>অ্যাকশন</th></tr>
       ${list.map(c=>`<tr>
         <td><img src="${c.thumbnail||'https://via.placeholder.com/60'}" class="thumb"/></td>
         <td><strong>${escapeHtml(c.title)}</strong><br/><small style="color:var(--text-soft)">${escapeHtml(c.slug||'')}</small></td>
         <td>${c.category?`<span class="badge badge-info">${escapeHtml(c.category)}</span>`:'<span class="text-soft">—</span>'}${c.subCategory?`<br/><small class="text-soft">${escapeHtml(c.subCategory)}</small>`:''}</td>
-        <td><span class="badge ${c.type==='live'?'badge-danger':'badge-info'}">${c.type==='live'?'লাইভ':'রেকর্ডেড'}</span></td>
         <td>৳${fmt(c.price)}</td>
         <td>${c.isActive?'✅':'❌'}</td>
         <td class="actions">
@@ -852,12 +827,13 @@ async function loadCourses(){
           <button class="btn btn-outline btn-sm" onclick="openCourseComments('${c._id}','${escapeHtml(c.title||'').replace(/'/g,"&#39;")}')" title="মন্তব্য মডারেশন"><i class="fas fa-comments"></i></button>
           <button class="btn btn-danger btn-sm" onclick="delItem('courses','${c._id}',loadCourses)" title="মুছুন"><i class="fas fa-trash"></i></button>
         </td>
-      </tr>`).join('')||'<tr><td colspan="7" class="empty">কোর্স নেই</td></tr>'}`;
+      </tr>`).join('')||'<tr><td colspan="6" class="empty">কোর্স নেই</td></tr>'}`;
   }catch(e){ toast(e.message,'error') }
 }
 
 function openCourseModal(c={}){
-  const isLive = c.type==='live';
+  const isLive = false;
+  setTimeout(()=>{ try{ qnaInit(c.qna||[]); }catch(e){} }, 30);
   openModal(`
     <h2>${c._id?'কোর্স সম্পাদনা':'নতুন কোর্স'}</h2>
     <form onsubmit="saveCourse(event,'${c._id||''}')" enctype="multipart/form-data">
@@ -866,12 +842,7 @@ function openCourseModal(c={}){
         <div class="form-group"><label class="label">Slug *</label><input name="slug" value="${escapeHtml(c.slug||'')}" required /></div>
       </div>
       <div class="row">
-        <div class="form-group"><label class="label">ধরন</label>
-          <select name="type" id="typeSel" onchange="toggleCourseTypeFields(this.value)">
-            <option value="recorded" ${c.type==='recorded'?'selected':''}>রেকর্ডেড</option>
-            <option value="live" ${isLive?'selected':''}>লাইভ</option>
-          </select>
-        </div>
+        <div class="form-group"><label class="label">ধরন</label><input type="hidden" name="type" value="recorded" /><input value="রেকর্ডেড কোর্স" disabled /></div>
         <div class="form-group">
           <label class="label">ক্যাটাগরি</label>
           <select name="category" id="courseCategorySel" onchange="onCourseCategoryChange(this.value)">
@@ -916,7 +887,7 @@ function openCourseModal(c={}){
       </div>
 
       <!-- ── Recorded course rich detail (no certificate) ── -->
-      <div id="recordedFields" style="display:${isLive?'none':'block'};border:2px solid #d1fae5;border-radius:10px;padding:14px;margin:12px 0;background:#ecfdf5">
+      <div id="recordedFields" style="display:block;border:2px solid #d1fae5;border-radius:10px;padding:14px;margin:12px 0;background:#ecfdf5">
         <h4 style="color:var(--primary);margin-bottom:10px"><i class="fas fa-play-circle"></i> কোর্স বিস্তারিত পেজের তথ্য</h4>
         <div class="row">
           <div class="form-group"><label class="label">প্রিভিউ ভিডিও (YouTube ID)</label><input name="previewVideoId" value="${escapeHtml(c.previewVideoId||'')}" placeholder="YouTube URL বা ID (যেমন: LXb3EKWsInQ)" onblur="const _v=extractYouTubeId(this.value);if(_v!==this.value)this.value=_v;" onpaste="setTimeout(()=>{const _v=extractYouTubeId(this.value);if(_v!==this.value)this.value=_v;},0)" /></div>
@@ -941,17 +912,10 @@ function openCourseModal(c={}){
           <small style="color:var(--text-soft);font-size:11px">প্রতিটি সেকশনের ভিতরে ভিডিও লেসন যোগ করুন। ভিডিও ID = YouTube URL এর শেষ অংশ (যেমন: <code>LXb3EKWsInQ</code>)। "ফ্রি" চেক করলে লেসনটি ছাত্ররা কেনার আগেই দেখতে পাবে।</small>
         </div>
       </div>
-      <div id="liveFields" style="display:${isLive?'block':'none'};border:2px solid #fee2e2;border-radius:10px;padding:14px;margin:12px 0;background:#fef2f2">
-        <h4 style="color:var(--danger);margin-bottom:10px"><i class="fab fa-whatsapp"></i> লাইভ কোর্স তথ্য</h4>
-        <div class="form-group"><label class="label">ক্লাসের সময়সূচি</label><input name="liveSchedule" value="${escapeHtml(c.liveSchedule||'')}" placeholder="যেমন: প্রতিদিন রাত ৮টা–৯টা" /></div>
-        <div class="row">
-          <div class="form-group"><label class="label">শুরুর তারিখ</label><input name="liveStartDate" value="${escapeHtml(c.liveStartDate||'')}" /></div>
-          <div class="form-group"><label class="label">শেষ তারিখ</label><input name="liveEndDate" value="${escapeHtml(c.liveEndDate||'')}" /></div>
-        </div>
         <div class="form-group"><label class="label">সিট সংখ্যা</label><input type="number" name="liveSeats" value="${c.liveSeats||0}" /></div>
         <div class="form-group">
           <label class="label">📷 "কীভাবে কিনতে হয়" বিস্তারিত ছবি</label>
-          ${dropzoneHTML('liveDetailImage', c.liveDetailImage||'')}
+          ''
           <small style="color:var(--text-soft);font-size:11px">এই ছবিটি কোর্স বিস্তারিত পেজে "কীভাবে এই লাইভ কোর্সটি কিনবেন?" সেকশনে দেখানো হবে</small>
         </div>
         <div class="form-group">
@@ -959,6 +923,17 @@ function openCourseModal(c={}){
           <textarea name="liveDetailText" rows="5" placeholder="ধাপে ধাপে নির্দেশনা লিখুন...">${escapeHtml(c.liveDetailText||'')}</textarea>
           <small style="color:var(--text-soft);font-size:11px">এই টেক্সট ছবির নিচে দেখানো হবে। প্রতিটি ধাপ আলাদা লাইনে লিখুন।</small>
         </div>
+      </div>
+
+            <!-- ── COURSE Q&A ── -->
+      <div style="border:2px solid #c4e8d6;border-radius:10px;padding:14px;margin:12px 0;background:#ecfdf5">
+        <h4 style="color:var(--primary);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+          <span><i class="fas fa-question-circle"></i> কোর্স সম্পর্কিত প্রশ্নোত্তর (Q&A)</span>
+          <button type="button" class="btn btn-primary btn-sm" onclick="qnaAdd()"><i class="fas fa-plus"></i> নতুন প্রশ্ন</button>
+        </h4>
+        <div id="qnaList" style="display:flex;flex-direction:column;gap:8px"></div>
+        <input type="hidden" name="qna" id="qnaHidden" />
+        <small class="text-soft" style="font-size:11px">কোর্স বিস্তারিত পেজে এই প্রশ্নোত্তরসমূহ "প্রশ্নোত্তর" ট্যাবে দেখানো হবে।</small>
       </div>
 
       <div class="form-group"><label class="label">থাম্বনেইল</label>${dropzoneHTML('thumbnail', c.thumbnail||'')}</div>
@@ -1193,12 +1168,7 @@ function curriculumSetLesson(si, li, key, val){
   __curriculum[si].lessons[li][key] = val; curriculumSync();
 }
 
-function toggleCourseTypeFields(type){
-  const live = document.getElementById('liveFields');
-  const rec  = document.getElementById('recordedFields');
-  if (live) live.style.display = type === 'live' ? 'block' : 'none';
-  if (rec)  rec.style.display  = type === 'live' ? 'none'  : 'block';
-}
+function toggleCourseTypeFields(){}
 
 async function saveCourse(e, id){
   e.preventDefault();
@@ -1212,70 +1182,16 @@ async function saveCourse(e, id){
     const itext = fd.get('includes_text')||''; fd.delete('includes_text');
     fd.set('includes', JSON.stringify(itext.toString().split('\n').map(s=>s.trim()).filter(Boolean)));
     if (!fd.get('curriculum')) fd.set('curriculum', JSON.stringify(__curriculum||[]));
+    fd.set('qna', JSON.stringify(__qna||[]));
     // CRITICAL: drop empty file inputs (otherwise multer.fields gets an empty file
     // and live-image upload silently fails or returns "অনুরোধ ব্যর্থ")
-    cleanFormDataFiles(fd, ['thumbnail', 'liveDetailImage']);
+    cleanFormDataFiles(fd, ['thumbnail']);
     try{
       if (id) await api('/api/admin/courses/'+id,{method:'PUT',body:fd});
       else await api('/api/admin/courses',{method:'POST',body:fd});
       closeModal(); toast('সংরক্ষিত','success'); loadCourses();
     }catch(err){ toast(err.message||'অনুরোধ ব্যর্থ','error') }
   });
-}
-
-// ============================================================
-// LIVE REQUESTS
-// ============================================================
-async function loadLiveRequests(){
-  try{
-    const list = await api('/api/admin/live-purchases');
-    $('#liveTable').innerHTML = `<tr>
-      <th>ছাত্র</th><th>কোর্স</th><th>WhatsApp</th><th>পেমেন্ট</th><th>স্ক্রিনশট</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th>
-    </tr>${list.map(p=>`<tr>
-      <td><strong>${escapeHtml(p.userName||'')}</strong><br/><small style="color:var(--text-soft)">${escapeHtml(p.userEmail||'')}</small></td>
-      <td>${escapeHtml(p.courseTitle||'')}</td>
-      <td><a href="https://wa.me/${(p.whatsappNumber||'').replace(/\D/g,'')}" target="_blank" style="color:#25d366;text-decoration:none"><i class="fab fa-whatsapp"></i> ${escapeHtml(p.whatsappNumber||'')}</a></td>
-      <td>${escapeHtml(p.paymentMethod||'')}<br/><small>${escapeHtml(p.trxId||'')}</small><br/><strong>৳${fmt(p.amount)}</strong></td>
-      <td>${p.screenshot?`<a href="${escapeHtml(p.screenshot)}" target="_blank"><img src="${escapeHtml(p.screenshot)}" class="thumb"/></a>`:'—'}</td>
-      <td>${statusBadge(p.status)}</td>
-      <td class="actions">
-        ${p.status==='pending'?`
-          <button class="btn btn-success btn-sm" onclick="approveLive('${p._id}','${escapeHtml((p.courseTitle||'').replace(/'/g,'&#39;'))}')"><i class="fas fa-check"></i></button>
-          <button class="btn btn-danger btn-sm" onclick="rejectLive('${p._id}')"><i class="fas fa-times"></i></button>`
-        :`<button class="btn btn-outline btn-sm" onclick='showInfo(${JSON.stringify(p).replace(/'/g,"&#39;")})'><i class="fas fa-eye"></i></button>`}
-      </td>
-    </tr>`).join('')||'<tr><td colspan="7" class="empty">কোনো অনুরোধ নেই</td></tr>'}`;
-  }catch(e){ toast(e.message,'error') }
-}
-
-function showInfo(p){
-  openModal(`<h2>অনুরোধের বিস্তারিত</h2>
-    <p><strong>ছাত্র:</strong> ${escapeHtml(p.userName||'')}</p>
-    <p><strong>ইমেইল:</strong> ${escapeHtml(p.userEmail||'')}</p>
-    <p><strong>WhatsApp:</strong> ${escapeHtml(p.whatsappNumber||'—')}</p>
-    <p><strong>কোর্স:</strong> ${escapeHtml(p.courseTitle||'')}</p>
-    <p><strong>পেমেন্ট:</strong> ${escapeHtml(p.paymentMethod||'')} — ${escapeHtml(p.trxId||'')} — ৳${fmt(p.amount)}</p>
-    <p><strong>স্ট্যাটাস:</strong> ${statusBadge(p.status)}</p>
-    ${p.whatsappGroupLink?`<p><strong>WA Group:</strong> <a href="${escapeHtml(p.whatsappGroupLink)}" target="_blank">${escapeHtml(p.whatsappGroupLink)}</a></p>`:''}
-    ${p.adminNote?`<p><strong>Note:</strong> ${escapeHtml(p.adminNote)}</p>`:''}
-  `);
-}
-
-async function approveLive(id, title){
-  const link = prompt(`"${title}" কোর্সের WhatsApp গ্রুপ লিংক:\n(এই লিংক ছাত্রকে ইমেইলে পাঠানো হবে)`,'https://chat.whatsapp.com/...');
-  if (!link) return;
-  try{
-    await api('/api/admin/live-purchases/'+id,{method:'PUT',body:{status:'approved',whatsappGroupLink:link}});
-    toast('অনুমোদিত — ছাত্রকে ইমেইল পাঠানো হয়েছে','success'); loadLiveRequests();
-  }catch(err){ toast(err.message,'error') }
-}
-
-async function rejectLive(id){
-  const note = prompt('প্রত্যাখ্যানের কারণ:'); if (note===null) return;
-  try{
-    await api('/api/admin/live-purchases/'+id,{method:'PUT',body:{status:'rejected',adminNote:note}});
-    toast('প্রত্যাখ্যান করা হয়েছে'); loadLiveRequests();
-  }catch(err){ toast(err.message,'error') }
 }
 
 // ============================================================
@@ -1738,7 +1654,7 @@ async function renderWhyJoinTab(){
     {icon:'fa-certificate',          title:'সার্টিফিকেট',           description:'কোর্স সম্পন্ন করার পর প্রতিষ্ঠান-স্বীকৃত সার্টিফিকেট।'},
     {icon:'fa-tag',                  title:'সাশ্রয়ী মূল্য',         description:'সকলের সাধ্যের মধ্যে — কম খরচে উন্নত মানের ইসলামি শিক্ষা।'},
   ];
-  if (!val.title)    val.title    = 'কেন মারকাযুদ দিরাসাতিল ইলমিয়্যাহতে যুক্ত হবেন?';
+  if (!val.title)    val.title    = 'কেন ইবনে খালদুন ইনস্টিটিউটতে যুক্ত হবেন?';
   if (!val.subtitle) val.subtitle = 'আমাদের বিশেষত্ব যা আপনার দীনি যাত্রাকে সহজ করবে';
   window.__wj = { title: val.title||'', subtitle: val.subtitle||'', items };
   drawWhyJoinUI();
@@ -1750,7 +1666,7 @@ function drawWhyJoinUI(){
       <h4>"কেন যুক্ত হবেন?" সেকশন</h4>
       <p class="text-soft" style="margin-bottom:14px">হোম পেজের ফিচার কার্ডগুলো এখান থেকে পরিবর্তন করুন।</p>
       <form onsubmit="saveWhyJoin(event)">
-        <div class="form-group"><label class="label">সেকশন শিরোনাম</label><input name="title" value="${escapeHtml(w.title)}" placeholder="কেন মারকাযুদ দিরাসাতিল ইলমিয়্যাহতে যুক্ত হবেন?"/></div>
+        <div class="form-group"><label class="label">সেকশন শিরোনাম</label><input name="title" value="${escapeHtml(w.title)}" placeholder="কেন ইবনে খালদুন ইনস্টিটিউটতে যুক্ত হবেন?"/></div>
         <div class="form-group"><label class="label">উপ-শিরোনাম</label><input name="subtitle" value="${escapeHtml(w.subtitle)}"/></div>
         <h4 style="margin-top:18px">কার্ডসমূহ</h4>
         <div id="wjItems">
@@ -2199,6 +2115,30 @@ window.filterAdminCourses = function(q){
   `;
   document.head.appendChild(style);
 })();
+
+
+// ====== COURSE Q&A EDITOR ======
+let __qna = [];
+function qnaSync(){
+  const el = document.getElementById('qnaList');
+  if (!el) return;
+  el.innerHTML = __qna.map((q,i)=>`
+    <div style="border:1px solid var(--border);border-radius:8px;padding:10px;background:#fff">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+        <strong style="color:var(--primary)">প্রশ্ন ${i+1}</strong>
+        <span style="flex:1"></span>
+        <button type="button" class="btn btn-danger btn-sm" onclick="qnaRemove(${i})"><i class="fas fa-trash"></i></button>
+      </div>
+      <input placeholder="প্রশ্ন লিখুন" value="${escapeHtml(q.question||'')}" oninput="__qna[${i}].question=this.value" style="margin-bottom:6px"/>
+      <textarea rows="2" placeholder="উত্তর লিখুন" oninput="__qna[${i}].answer=this.value">${escapeHtml(q.answer||'')}</textarea>
+    </div>`).join('') || '<p class="text-soft" style="font-size:12px">কোনো প্রশ্নোত্তর যোগ করা হয়নি।</p>';
+  const hid = document.getElementById('qnaHidden');
+  if (hid) hid.value = JSON.stringify(__qna);
+}
+function qnaAdd(){ __qna.push({question:'',answer:''}); qnaSync(); }
+function qnaRemove(i){ __qna.splice(i,1); qnaSync(); }
+function qnaInit(arr){ __qna = Array.isArray(arr) ? JSON.parse(JSON.stringify(arr)) : []; qnaSync(); }
+window.qnaAdd=qnaAdd; window.qnaRemove=qnaRemove;
 
 </script>
 </body>

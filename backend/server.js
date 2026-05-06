@@ -1,5 +1,5 @@
 // ============================================================
-// মারকাযুদ দিরাসাতিল ইলমিয়্যাহ — Backend Server
+// ইবনে খালদুন ইনস্টিটিউট — Backend Server
 // Node.js + Express + MongoDB + Cloudinary + Google Apps Script (Email)
 // Deploy on Render.com
 // ============================================================
@@ -17,7 +17,7 @@ const bcrypt     = require('bcryptjs');
 const path       = require('path');
 // ✅ nodemailer সম্পূর্ণ বাদ — Google Apps Script দিয়ে email পাঠানো হচ্ছে
 
-const SITE_NAME = 'মারকাযুদ দিরাসাতিল ইলমিয়্যাহ';
+const SITE_NAME = 'ইবনে খালদুন ইনস্টিটিউট';
 const otpStore  = new Map(); // email → { otp, expiresAt }
 
 const app        = express();
@@ -123,15 +123,7 @@ const courseSchema = new mongoose.Schema({
   totalLessons: { type: Number, default: 0 },
   level:        { type: String, default: 'beginner' },
   language:     { type: String, default: 'bangla' },
-  type:         { type: String, enum: ['recorded', 'live'], default: 'recorded' },
-  // ── Live course specific
-  liveSchedule:    String,
-  liveStartDate:   String,
-  liveEndDate:     String,
-  liveTutorialUrl: String,
-  liveSeats:       { type: Number, default: 0 },
-  liveDetailImage: String,               // লাইভ কোর্স বিস্তারিত পেজের ছবি
-  liveDetailText:  String,               // লাইভ কোর্স বিস্তারিত পেজের টেক্সট
+  type:         { type: String, enum: ['recorded'], default: 'recorded' },
   // ── Recorded course detail (course-detail page এ ব্যবহৃত)
   previewVideoId:  String,               // YouTube video id (course preview)
   students:        { type: Number, default: 0 },
@@ -141,6 +133,7 @@ const courseSchema = new mongoose.Schema({
   features:        [String],             // "এই কোর্সে যা শিখবেন"
   modules:         [{ title: String, lessons: [String] }],   // legacy
   curriculum:      [curriculumSectionSchema],                // নতুন rich curriculum
+  qna:             [{ question: String, answer: String }],   // কোর্স সম্পর্কিত প্রশ্নোত্তর
   isFeatured:   { type: Boolean, default: false },
   isActive:     { type: Boolean, default: true },
   // ── SEO fields (for "Auto-SEO" button in admin)
@@ -474,11 +467,11 @@ app.get('/api/admin/courses', authMiddleware, async (_, res) => {
 // Normalize incoming course data (handle JSON-string fields from multipart)
 function normalizeCourseData(body) {
   const data = { ...body };
-  ['features','modules','curriculum','includes'].forEach(k => {
+  ['features','modules','curriculum','includes','qna'].forEach(k => {
     if (data[k] !== undefined) data[k] = tryJSON(data[k]);
   });
   // numeric coercions
-  ['price','oldPrice','totalLessons','liveSeats','students','rating','reviewsCount'].forEach(k => {
+  ['price','oldPrice','totalLessons','students','rating','reviewsCount'].forEach(k => {
     if (data[k] !== undefined && data[k] !== '') data[k] = Number(data[k]);
   });
   // boolean coercions
@@ -496,17 +489,12 @@ function normalizeCourseData(body) {
 
 const courseUpload = upload.fields([
   { name: 'thumbnail', maxCount: 1 },
-  { name: 'liveDetailImage', maxCount: 1 },
 ]);
 
 function applyCourseFiles(req, data) {
   if (req.files?.thumbnail?.[0]) data.thumbnail = req.files.thumbnail[0].path;
-  if (req.files?.liveDetailImage?.[0]) data.liveDetailImage = req.files.liveDetailImage[0].path;
-  // Allow explicit removal via "__remove_<field>"=1
   if (req.body.__remove_thumbnail === '1') data.thumbnail = '';
-  if (req.body.__remove_liveDetailImage === '1') data.liveDetailImage = '';
   delete data.__remove_thumbnail;
-  delete data.__remove_liveDetailImage;
 }
 
 app.post('/api/admin/courses', authMiddleware, courseUpload, async (req, res) => {
@@ -724,18 +712,18 @@ app.post('/api/user/send-otp', async (req, res) => {
       `${SITE_NAME} — আপনার OTP কোড`,
       `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>
         <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;background:#f4f7f3;padding:30px;border-radius:12px">
-          <div style="background:#2f7d4f;color:#fff;padding:18px 24px;border-radius:8px 8px 0 0;text-align:center">
+          <div style="background:#066144;color:#fff;padding:18px 24px;border-radius:8px 8px 0 0;text-align:center">
             <h2 style="margin:0;font-size:20px">${SITE_NAME}</h2>
           </div>
           <div style="background:#fff;padding:28px 24px;border-radius:0 0 8px 8px">
             <p style="color:#374151;font-size:16px;margin-bottom:10px">আপনার নিবন্ধন OTP কোড:</p>
-            <div style="background:#f0fdf4;border:2px dashed #2f7d4f;border-radius:10px;padding:20px;text-align:center;margin:16px 0">
-              <span style="font-size:38px;font-weight:900;letter-spacing:12px;color:#1f5a37;font-family:monospace">${otp}</span>
+            <div style="background:#f0fdf4;border:2px dashed #066144;border-radius:10px;padding:20px;text-align:center;margin:16px 0">
+              <span style="font-size:38px;font-weight:900;letter-spacing:12px;color:#04412e;font-family:monospace">${otp}</span>
             </div>
             <p style="color:#6b7280;font-size:13px;margin-top:12px">⏱️ এই কোড <strong>২ মিনিট</strong> পর্যন্ত valid।</p>
             <p style="color:#6b7280;font-size:13px">🔒 কোডটি কারো সাথে শেয়ার করবেন না।</p>
           </div>
-          <p style="text-align:center;color:#9ca3af;font-size:12px;margin-top:14px">মারকাযুদ দিরাসাতিল ইলমিয়্যাহ</p>
+          <p style="text-align:center;color:#9ca3af;font-size:12px;margin-top:14px">ইবনে খালদুন ইনস্টিটিউট</p>
         </div>
       </body></html>`,
       'otp'
@@ -1034,7 +1022,7 @@ app.get('/api/admin/users', authMiddleware, async (_, res) => {
 // ============================================================
 app.get('/api/admin/stats', authMiddleware, async (_, res) => {
   try {
-    const [totalCourses, totalUsers, totalLivePurchases, totalAccessRequests, pendingLive, pendingAccess, totalBlogs, totalMessages] = await Promise.all([
+    const [totalCourses, totalUsers, totalAccessRequests, pendingAccess, totalBlogs, totalMessages] = await Promise.all([
       Course.countDocuments(),
       User.countDocuments(),
       LiveCoursePurchase.countDocuments(),
@@ -1045,8 +1033,8 @@ app.get('/api/admin/stats', authMiddleware, async (_, res) => {
       ContactMessage.countDocuments(),
     ]);
     res.json({
-      totalCourses, totalUsers, totalLivePurchases, totalAccessRequests,
-      pendingLive, pendingAccess, totalBlogs, totalMessages,
+      totalCourses, totalUsers, totalAccessRequests,
+      pendingAccess, totalBlogs, totalMessages,
     });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -1342,7 +1330,7 @@ async function seedDatabase() {
       await Testimonial.insertMany([
     { name: 'আব্দুল্লাহ আল মামুন', designation: 'ছাত্র, ঢাকা', rating: 5, message: 'অসাধারণ কোর্স! শিক্ষকদের পড়ানোর ধরন অসম্ভব সুন্দর। আলহামদুলিল্লাহ্‌ অনেক উপকৃত হয়েছি।', avatar: 'https://i.pravatar.cc/240?u=t1' },
     { name: 'ফাতেমা খাতুন', designation: 'গৃহিণী, চট্টগ্রাম', rating: 5, message: 'ঘরে বসেই কুরআন শিখতে পারছি — এটা আমার জন্য বিশাল নিয়ামত। জাযাকাল্লাহ্‌ খাইরান।', avatar: 'https://i.pravatar.cc/240?u=t2' },
-    { name: 'মুহাম্মাদ ইউসুফ', designation: 'প্রবাসী, সৌদি আরব', rating: 5, message: 'প্রবাসে থেকেও দীনি শিক্ষা চালিয়ে যেতে পারছি। মারকাযুদ দিরাসাতিল ইলমিয়্যাহ অনন্য।', avatar: 'https://i.pravatar.cc/240?u=t3' },
+    { name: 'মুহাম্মাদ ইউসুফ', designation: 'প্রবাসী, সৌদি আরব', rating: 5, message: 'প্রবাসে থেকেও দীনি শিক্ষা চালিয়ে যেতে পারছি। ইবনে খালদুন ইনস্টিটিউট অনন্য।', avatar: 'https://i.pravatar.cc/240?u=t3' },
     { name: 'আয়েশা সিদ্দিকা', designation: 'ছাত্রী, রাজশাহী', rating: 5, message: 'তাজবীদ কোর্সে ভর্তি হয়ে আমার তিলাওয়াতে অনেক উন্নতি হয়েছে — মাশাআল্লাহ্‌।', avatar: 'https://i.pravatar.cc/240?u=t4' },
     { name: 'আবু বকর', designation: 'ব্যবসায়ী, সিলেট', rating: 5, message: 'সাশ্রয়ী মূল্যে এত মানসম্পন্ন কোর্স আর কোথাও পাইনি। সকলকে রিকমেন্ড করছি।', avatar: 'https://i.pravatar.cc/240?u=t5' },
     { name: 'উমর ফারুক', designation: 'শিক্ষক, খুলনা', rating: 5, message: 'শিক্ষকদের আন্তরিকতা ও পাঠদান পদ্ধতি অসাধারণ। আল্লাহ্‌ এই প্রতিষ্ঠানের কল্যাণ করুন।', avatar: 'https://i.pravatar.cc/240?u=t6' },
@@ -1396,15 +1384,15 @@ async function seedDatabase() {
     // Settings: whyJoin section + about + contact
     const whyExists = await Settings.findOne({ key: 'whyJoin' });
     if (!whyExists) {
-      await Settings.create({ key: 'whyJoin', value: JSON.parse('{"title": "কেন মারকাযুদ দিরাসাতিল ইলমিয়্যাহতে যুক্ত হবেন?", "subtitle": "অভিজ্ঞ আলেমদের তত্ত্বাবধানে অথেনটিক ইসলামি শিক্ষার সম্পূর্ণ অনলাইন প্ল্যাটফর্ম।", "items": [{"icon": "fa-user-graduate", "title": "অভিজ্ঞ আলেম", "desc": "দেশ-বিদেশের প্রসিদ্ধ আলেমদের কাছ থেকে সরাসরি শিক্ষা।"}, {"icon": "fa-laptop", "title": "যেকোনো ডিভাইস", "desc": "মোবাইল, ট্যাবলেট বা কম্পিউটার — যেকোনো স্থান থেকে।"}, {"icon": "fa-clock", "title": "সুবিধাজনক সময়", "desc": "নিজের সুবিধামতো সময়ে রেকর্ডেড ক্লাস দেখুন।"}, {"icon": "fa-certificate", "title": "সার্টিফিকেট", "desc": "কোর্স শেষে প্রতিষ্ঠান-স্বীকৃত সার্টিফিকেট।"}, {"icon": "fa-users", "title": "সাপোর্ট গ্রুপ", "desc": "প্রতিটি কোর্সের নিজস্ব WhatsApp সাপোর্ট।"}, {"icon": "fa-shield-halved", "title": "মানি-ব্যাক গ্যারান্টি", "desc": "৭ দিনের মধ্যে অসন্তুষ্ট হলে ১০০% রিফান্ড।"}]}') });
+      await Settings.create({ key: 'whyJoin', value: JSON.parse('{"title": "কেন ইবনে খালদুন ইনস্টিটিউটতে যুক্ত হবেন?", "subtitle": "অভিজ্ঞ আলেমদের তত্ত্বাবধানে অথেনটিক ইসলামি শিক্ষার সম্পূর্ণ অনলাইন প্ল্যাটফর্ম।", "items": [{"icon": "fa-user-graduate", "title": "অভিজ্ঞ আলেম", "desc": "দেশ-বিদেশের প্রসিদ্ধ আলেমদের কাছ থেকে সরাসরি শিক্ষা।"}, {"icon": "fa-laptop", "title": "যেকোনো ডিভাইস", "desc": "মোবাইল, ট্যাবলেট বা কম্পিউটার — যেকোনো স্থান থেকে।"}, {"icon": "fa-clock", "title": "সুবিধাজনক সময়", "desc": "নিজের সুবিধামতো সময়ে রেকর্ডেড ক্লাস দেখুন।"}, {"icon": "fa-certificate", "title": "সার্টিফিকেট", "desc": "কোর্স শেষে প্রতিষ্ঠান-স্বীকৃত সার্টিফিকেট।"}, {"icon": "fa-users", "title": "সাপোর্ট গ্রুপ", "desc": "প্রতিটি কোর্সের নিজস্ব WhatsApp সাপোর্ট।"}, {"icon": "fa-shield-halved", "title": "মানি-ব্যাক গ্যারান্টি", "desc": "৭ দিনের মধ্যে অসন্তুষ্ট হলে ১০০% রিফান্ড।"}]}') });
       console.log('🌱 Seeded whyJoin');
     }
 
     const aboutExists = await Settings.findOne({ key: 'about' });
     if (!aboutExists) {
       await Settings.create({ key: 'about', value: {
-        title: 'মারকাযুদ দিরাসাতিল ইলমিয়্যাহ সম্পর্কে',
-        body: '<p>মারকাযুদ দিরাসাতিল ইলমিয়্যাহ একটি অনলাইন ইসলামি শিক্ষা প্রতিষ্ঠান, যেখানে অভিজ্ঞ আলেমদের তত্ত্বাবধানে কুরআন, হাদিস, ফিকহ, আকীদা ও আরবি ভাষার অথেনটিক কোর্স পরিচালিত হয়।</p><p>আমাদের লক্ষ্য — ঘরে বসেই প্রতিটি মুসলিমের জন্য মানসম্পন্ন দীনি শিক্ষা পৌঁছে দেওয়া।</p>'
+        title: 'ইবনে খালদুন ইনস্টিটিউট সম্পর্কে',
+        body: '<p>ইবনে খালদুন ইনস্টিটিউট একটি অনলাইন ইসলামি শিক্ষা প্রতিষ্ঠান, যেখানে অভিজ্ঞ আলেমদের তত্ত্বাবধানে কুরআন, হাদিস, ফিকহ, আকীদা ও আরবি ভাষার অথেনটিক কোর্স পরিচালিত হয়।</p><p>আমাদের লক্ষ্য — ঘরে বসেই প্রতিটি মুসলিমের জন্য মানসম্পন্ন দীনি শিক্ষা পৌঁছে দেওয়া।</p>'
       } });
       console.log('🌱 Seeded about');
     }
