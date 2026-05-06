@@ -368,6 +368,23 @@ tr:hover td{background:#faf8ff}
         <h3 style="margin-bottom:10px;font-size:16px"><i class="fas fa-fire" style="color:#ef4444"></i> আজকের জনপ্রিয় কোর্স</h3>
         <div class="table-wrap" id="top-courses-table"></div>
       </div>
+
+      <!-- DEFAULT DATA SEED CARD (index.html-এর ডিফল্ট কন্টেন্ট DB-তে যোগ করার জন্য) -->
+      <div class="card" style="margin-top:14px;border:2px dashed #a3e635;background:linear-gradient(135deg,#f7fee7,#ecfccb)">
+        <h3 style="margin-bottom:6px;font-size:17px;color:#365314"><i class="fas fa-seedling" style="color:#65a30d"></i> ডিফল্ট ডেটা যোগ করুন (index.html → DB)</h3>
+        <p style="font-size:13px;color:#4d7c0f;margin-bottom:12px">
+          index.html-এ যেসব ডিফল্ট কোর্স, শিক্ষক, ব্লগ, ক্যাটাগরি, FAQ ও অভিমত আছে — সেগুলো একসাথে DB-তে যোগ করতে নিচের বাটনে ক্লিক করুন।
+          এরপর অ্যাডমিন প্যানেল থেকে edit/delete করতে পারবেন এবং পরিবর্তন সাথে সাথে index.html-এ দেখা যাবে।
+          <br><strong>নোট:</strong> ইতোমধ্যে DB-তে থাকা একই নামের আইটেম স্কিপ করা হবে (ডুপ্লিকেট হবে না)।
+        </p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="btn btn-primary" id="seed-defaults-btn" onclick="seedDefaultData()">
+            <i class="fas fa-cloud-upload-alt"></i> সব ডিফল্ট ডেটা DB-তে যোগ করুন
+          </button>
+          <span id="seed-status" style="font-size:13px;color:#4d7c0f"></span>
+        </div>
+        <div id="seed-log" style="margin-top:10px;font-size:12px;color:#365314;max-height:180px;overflow:auto;font-family:monospace;white-space:pre-wrap"></div>
+      </div>
     </div>
 
     <!-- COURSES -->
@@ -2286,6 +2303,130 @@ function qnaAdd(){ __qna.push({question:'',answer:''}); qnaSync(); }
 function qnaRemove(i){ __qna.splice(i,1); qnaSync(); }
 function qnaInit(arr){ __qna = Array.isArray(arr) ? JSON.parse(JSON.stringify(arr)) : []; qnaSync(); }
 window.qnaAdd=qnaAdd; window.qnaRemove=qnaRemove;
+
+// ============================================================
+// DEFAULT DATA SEED (index.html-এর DEFAULT_* অ্যারে → DB)
+// ============================================================
+const THUMB = (seed, w=600, h=380) => `https://picsum.photos/seed/tia-${seed}/${w}/${h}`;
+
+const SEED_CATEGORIES = [
+  { name:'কুরআন ও তাজবীদ', slug:'quran-tajweed', description:'কুরআন তিলাওয়াত, তাজবীদ ও মাখরাজ' },
+  { name:'হাদিস ও সীরাহ', slug:'hadith-seerah', description:'হাদিস শাস্ত্র ও নবী জীবনী' },
+  { name:'ফিকহ ও মাসায়েল', slug:'fiqh', description:'দৈনন্দিন জীবনের ইসলামি বিধান' },
+  { name:'আকীদা ও বিশ্বাস', slug:'aqeedah', description:'ইসলামি আকীদাগত শিক্ষা' },
+  { name:'আরবি ভাষা', slug:'arabic', description:'আরবি ভাষা শিক্ষা — শুরু থেকে উন্নত' },
+  { name:'পরিবার ও সমাজ', slug:'family', description:'ইসলামি পারিবারিক জীবন' },
+];
+
+const SEED_INSTRUCTORS = [
+  { name:'ক্বারী হামিদ', designation:'প্রধান ক্বারী', specialization:'তাজবীদ ও কিরাত', bio:'৩০ বছরের অভিজ্ঞ ক্বারী, একাধিক আন্তর্জাতিক প্রতিযোগিতার বিজয়ী।', photo:THUMB('inst1',300,300) },
+  { name:'মুফতি সাদিক', designation:'সিনিয়র মুফতি', specialization:'ফিকহ ও মাসায়েল', bio:'দারুল উলুম দেওবন্দ থেকে ফাতাওয়া বিভাগে স্নাতক।', photo:THUMB('inst2',300,300) },
+  { name:'উস্তাদ ফারুক', designation:'আকীদা বিশেষজ্ঞ', specialization:'আকীদা ও তাফসীর', bio:'মদীনা ইসলামী বিশ্ববিদ্যালয়ের গ্র্যাজুয়েট।', photo:THUMB('inst3',300,300) },
+  { name:'মুফতি কামাল', designation:'যাকাত বিশেষজ্ঞ', specialization:'যাকাত ও আর্থিক ফিকহ', bio:'ইসলামি অর্থনীতিতে পিএইচডি।', photo:THUMB('inst4',300,300) },
+  { name:'উস্তাদা ফাতেমা', designation:'মহিলা শিক্ষিকা', specialization:'পারিবারিক ফিকহ', bio:'মহিলাদের জন্য নিবেদিতপ্রাণ অভিজ্ঞ আলেমা।', photo:THUMB('inst5',300,300) },
+  { name:'মাওলানা ইউনুস', designation:'হাদিস বিশারদ', specialization:'৪০ হাদিস ও সীরাহ', bio:'হাদিস শাস্ত্রে ২০ বছরের অধ্যাপনা।', photo:THUMB('inst6',300,300) },
+  { name:'মুফতি হারুন', designation:'হজ্জ গাইড', specialization:'হজ্জ ও উমরাহ', bio:'২৫ বার হজ্জ পরিচালনার অভিজ্ঞতা।', photo:THUMB('inst7',300,300) },
+  { name:'ক্বারী আনাস', designation:'দুআ ও যিকর শিক্ষক', specialization:'মাসনুন দুআ', bio:'দুআ ও যিকর-এ বিশেষজ্ঞ ক্বারী।', photo:THUMB('inst8',300,300) },
+];
+
+const SEED_RECORDED_COURSES = [
+  {type:'recorded',title:'নূরানী কুরআন শিক্ষা',shortDescription:'একদম শুরু থেকে কুরআন পড়া শেখার ভিডিও কোর্স।',price:500,oldPrice:1000,instructor:'ক্বারী হামিদ',duration:'৩০ ভিডিও',thumbnail:THUMB('rec1'),category:'কুরআন ও তাজবীদ'},
+  {type:'recorded',title:'নামাজ শিক্ষা — সম্পূর্ণ গাইড',shortDescription:'অজু, নামাজ ও দুআ — ভিডিওসহ ধাপে ধাপে।',price:300,oldPrice:600,instructor:'মুফতি সাদিক',duration:'২৫ ভিডিও',thumbnail:THUMB('rec2'),category:'ফিকহ ও মাসায়েল'},
+  {type:'recorded',title:'রমজান প্রস্তুতি কোর্স',shortDescription:'রমজানকে সর্বোচ্চ কাজে লাগানোর গাইড।',price:0,oldPrice:0,instructor:'উস্তাদ ফারুক',duration:'১৫ ভিডিও',thumbnail:THUMB('rec3'),category:'ফিকহ ও মাসায়েল'},
+  {type:'recorded',title:'যাকাত ও সদকা',shortDescription:'সম্পদের যাকাত হিসাব ও বিতরণ পদ্ধতি।',price:400,oldPrice:700,instructor:'মুফতি কামাল',duration:'১২ ভিডিও',thumbnail:THUMB('rec4'),category:'ফিকহ ও মাসায়েল'},
+  {type:'recorded',title:'আদর্শ মুসলিম পরিবার',shortDescription:'ইসলাম অনুযায়ী সুখী সংসার গঠনের পাঠ।',price:600,oldPrice:900,instructor:'উস্তাদা ফাতেমা',duration:'১৮ ভিডিও',thumbnail:THUMB('rec5'),category:'পরিবার ও সমাজ'},
+  {type:'recorded',title:'৪০ হাদিস — ইমাম নববী',shortDescription:'বিখ্যাত ৪০ হাদিসের ব্যাখ্যা।',price:350,oldPrice:600,instructor:'মাওলানা ইউনুস',duration:'৪০ পর্ব',thumbnail:THUMB('rec6'),category:'হাদিস ও সীরাহ'},
+  {type:'recorded',title:'হজ্জ ও উমরাহ গাইড',shortDescription:'হজ্জের প্রতিটি ধাপের সচিত্র ভিডিও পাঠ।',price:800,oldPrice:1300,instructor:'মুফতি হারুন',duration:'২২ ভিডিও',thumbnail:THUMB('rec7'),category:'ফিকহ ও মাসায়েল'},
+  {type:'recorded',title:'কুরআনের আলোকে দুআ',shortDescription:'প্রতিদিনের জীবনে গুরুত্বপূর্ণ দুআসমূহ।',price:0,oldPrice:0,instructor:'ক্বারী আনাস',duration:'২০ ভিডিও',thumbnail:THUMB('rec8'),category:'কুরআন ও তাজবীদ'},
+];
+
+const SEED_FAQS = [
+  {question:'কোর্সে ভর্তি হতে কী কী লাগবে?',answer:'একটি স্মার্টফোন বা কম্পিউটার, ইন্টারনেট সংযোগ এবং কোর্স ফি (ফ্রি কোর্সের ক্ষেত্রে শুধু রেজিস্ট্রেশন)। এর বেশি কিছু লাগবে না।'},
+  {question:'লাইভ ক্লাস কোথায় হবে?',answer:'লাইভ ক্লাসগুলো Zoom বা Google Meet-এ হয়। প্রবেশের লিংক WhatsApp গ্রুপে শেয়ার করা হয়।'},
+  {question:'কোর্সসমূহ কতদিন দেখা যাবে?',answer:'একবার এনরোল করলে আজীবন অ্যাক্সেস — যেকোনো সময়, যেকোনো ডিভাইস থেকে।'},
+  {question:'কোর্স শেষে সার্টিফিকেট পাব কি?',answer:'হ্যাঁ, প্রতিটি কোর্স সফলভাবে সম্পন্ন করার পর প্রতিষ্ঠান-স্বীকৃত ডিজিটাল সার্টিফিকেট দেওয়া হয়।'},
+  {question:'পেমেন্ট কীভাবে করব?',answer:'বিকাশ, নগদ, রকেট, ব্যাংক ট্রান্সফার ও কার্ড পেমেন্ট সাপোর্টেড। চেকআউটে সব অপশন পাবেন।'},
+  {question:'ক্লাস বুঝতে না পারলে কী করব?',answer:'প্রতিটি কোর্সের আলাদা WhatsApp সাপোর্ট গ্রুপ থাকে — শিক্ষকের কাছে সরাসরি প্রশ্ন করতে পারবেন।'},
+  {question:'মেয়েদের জন্য আলাদা ব্যবস্থা আছে?',answer:'হ্যাঁ, পর্দা মেইনটেইন করে অডিও/ভিডিও ব্যবস্থা ও মহিলা শিক্ষিকার অধীনে পৃথক ক্লাস আয়োজন করা হয়।'},
+  {question:'রিফান্ড পলিসি কী?',answer:'কোর্স শুরুর প্রথম ৭ দিনের মধ্যে যেকোনো কারণে অসন্তুষ্ট হলে ১০০% মানি-ব্যাক গ্যারান্টি।'},
+];
+
+const SEED_TESTIMONIALS = [
+  {name:'আব্দুল্লাহ আল মামুন',designation:'ছাত্র, ঢাকা',rating:5,message:'অসাধারণ কোর্স! শিক্ষকদের পড়ানোর ধরন অসম্ভব সুন্দর। আলহামদুলিল্লাহ্‌ অনেক উপকৃত হয়েছি।',avatar:THUMB('t1',120,120)},
+  {name:'ফাতেমা খাতুন',designation:'গৃহিণী, চট্টগ্রাম',rating:5,message:'ঘরে বসেই কুরআন শিখতে পারছি — এটা আমার জন্য বিশাল নিয়ামত। জাযাকাল্লাহ্‌ খাইরান।',avatar:THUMB('t2',120,120)},
+  {name:'মুহাম্মাদ ইউসুফ',designation:'প্রবাসী, সৌদি আরব',rating:5,message:'প্রবাসে থেকেও দীনি শিক্ষা চালিয়ে যেতে পারছি। ইবনে খালদুন ইনস্টিটিউট অনন্য।',avatar:THUMB('t3',120,120)},
+  {name:'আয়েশা সিদ্দিকা',designation:'ছাত্রী, রাজশাহী',rating:5,message:'তাজবীদ কোর্সে ভর্তি হয়ে আমার তিলাওয়াতে অনেক উন্নতি হয়েছে — মাশাআল্লাহ্‌।',avatar:THUMB('t4',120,120)},
+  {name:'আবু বকর',designation:'ব্যবসায়ী, সিলেট',rating:5,message:'সাশ্রয়ী মূল্যে এত মানসম্পন্ন কোর্স আর কোথাও পাইনি। সকলকে রিকমেন্ড করছি।',avatar:THUMB('t5',120,120)},
+  {name:'উমর ফারুক',designation:'শিক্ষক, খুলনা',rating:5,message:'শিক্ষকদের আন্তরিকতা ও পাঠদান পদ্ধতি অসাধারণ। আল্লাহ্‌ এই প্রতিষ্ঠানের কল্যাণ করুন।',avatar:THUMB('t6',120,120)},
+  {name:'খাদিজা রহমান',designation:'ডাক্তার, ঢাকা',rating:5,message:'ব্যস্ত জীবনের মাঝেও দীন শেখার সুযোগ — সত্যি অমূল্য। জাযাকাল্লাহু খাইরা।',avatar:THUMB('t7',120,120)},
+  {name:'হাসান মাহমুদ',designation:'শিক্ষার্থী, বরিশাল',rating:5,message:'আকীদা কোর্সটা আমার ঈমানি দৃষ্টিভঙ্গি বদলে দিয়েছে। আলহামদুলিল্লাহ্‌।',avatar:THUMB('t8',120,120)},
+];
+
+const SEED_BLOGS = [
+  {slug:'def-b1',title:'রমজানের ফজিলত ও প্রস্তুতি',excerpt:'রমজান মাসের গুরুত্ব এবং এই মাসকে কাজে লাগানোর প্রায়োগিক গাইডলাইন।',content:'রমজান মাসের গুরুত্ব এবং এই মাসকে কাজে লাগানোর প্রায়োগিক গাইডলাইন।',author:'সম্পাদকীয়',isPublished:true,image:THUMB('b1')},
+  {slug:'def-b2',title:'কুরআন তিলাওয়াতের আদব',excerpt:'কুরআন তিলাওয়াতের সময় যেসব আদব মেনে চলা প্রয়োজন তার বিস্তারিত আলোচনা।',content:'কুরআন তিলাওয়াতের সময় যেসব আদব মেনে চলা প্রয়োজন।',author:'মুফতি আব্দুল্লাহ',isPublished:true,image:THUMB('b2')},
+  {slug:'def-b3',title:'নামাজে মনোযোগ আনার ১০টি উপায়',excerpt:'খুশু-খুজু সহকারে সালাত আদায়ের ব্যবহারিক টিপস।',content:'খুশু-খুজু সহকারে সালাত আদায়ের ব্যবহারিক টিপস।',author:'মাওলানা ইউনুস',isPublished:true,image:THUMB('b3')},
+  {slug:'def-b4',title:'যাকাতের হিসাব কীভাবে করবেন',excerpt:'নিসাব, সম্পদের ধরন ও যাকাত গণনার সরল পদ্ধতি।',content:'নিসাব, সম্পদের ধরন ও যাকাত গণনার সরল পদ্ধতি।',author:'মুফতি কামাল',isPublished:true,image:THUMB('b4')},
+  {slug:'def-b5',title:'সন্তানকে দীনি শিক্ষায় গড়ে তোলা',excerpt:'প্রাথমিক বয়স থেকেই সন্তানকে দীনের পথে অভ্যস্ত করার কৌশল।',content:'প্রাথমিক বয়স থেকেই সন্তানকে দীনের পথে অভ্যস্ত করার কৌশল।',author:'উস্তাদা ফাতেমা',isPublished:true,image:THUMB('b5')},
+  {slug:'def-b6',title:'হালাল উপার্জনের গুরুত্ব',excerpt:'রিজিকের বরকত পেতে হালাল পথে অর্জনের অনিবার্যতা।',content:'রিজিকের বরকত পেতে হালাল পথে অর্জনের অনিবার্যতা।',author:'মুফতি জাকির',isPublished:true,image:THUMB('b6')},
+  {slug:'def-b7',title:'হজ্জের প্রস্তুতি — A to Z',excerpt:'হজ্জের সফরের আগে যা যা জানা ও প্রস্তুত করা দরকার।',content:'হজ্জের সফরের আগে যা যা জানা ও প্রস্তুত করা দরকার।',author:'মুফতি হারুন',isPublished:true,image:THUMB('b7')},
+  {slug:'def-b8',title:'দৈনন্দিন জীবনের ১৫টি গুরুত্বপূর্ণ দুআ',excerpt:'সকাল-সন্ধ্যা ও বিভিন্ন কাজের আগে-পরে পাঠযোগ্য দুআ।',content:'সকাল-সন্ধ্যা ও বিভিন্ন কাজের আগে-পরে পাঠযোগ্য দুআ।',author:'ক্বারী আনাস',isPublished:true,image:THUMB('b8')},
+];
+
+function _seedLog(msg){
+  const el = document.getElementById('seed-log');
+  if (el) el.textContent += msg + '\n';
+}
+function _seedStatus(msg){
+  const el = document.getElementById('seed-status');
+  if (el) el.textContent = msg;
+}
+
+async function _seedOne(endpoint, items, uniqueKey, label){
+  let existing = [];
+  try { existing = await api('/api/admin/'+endpoint) || []; } catch(e){}
+  const have = new Set(existing.map(x => String((x[uniqueKey]||'').trim().toLowerCase())));
+  let added = 0, skipped = 0, failed = 0;
+  for (const item of items){
+    const key = String((item[uniqueKey]||'').trim().toLowerCase());
+    if (have.has(key)) { skipped++; continue; }
+    try {
+      await api('/api/admin/'+endpoint, { method:'POST', body: item });
+      added++;
+    } catch(e){
+      failed++;
+      _seedLog('  ✖ '+label+': '+(item[uniqueKey]||'')+' — '+(e.message||e));
+    }
+  }
+  _seedLog(`✓ ${label}: ${added} যোগ হয়েছে, ${skipped} আগে থেকে আছে${failed?', '+failed+' ব্যর্থ':''}`);
+  return { added, skipped, failed };
+}
+
+async function seedDefaultData(){
+  if (!confirm('index.html-এর সব ডিফল্ট ডেটা DB-তে যোগ করবেন? (ডুপ্লিকেট স্কিপ হবে)')) return;
+  const btn = document.getElementById('seed-defaults-btn');
+  const log = document.getElementById('seed-log');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> চলছে...'; }
+  if (log) log.textContent = '';
+  _seedStatus('সিড করা হচ্ছে...');
+  try {
+    await _seedOne('categories',   SEED_CATEGORIES,   'name', 'ক্যাটাগরি');
+    await _seedOne('instructors',  SEED_INSTRUCTORS,  'name', 'শিক্ষক');
+    await _seedOne('faqs',         SEED_FAQS,         'question', 'FAQ');
+    await _seedOne('testimonials', SEED_TESTIMONIALS, 'name', 'অভিমত');
+    await _seedOne('blog',         SEED_BLOGS,        'slug', 'ব্লগ');
+    await _seedOne('courses',      SEED_RECORDED_COURSES, 'title', 'কোর্স');
+    _seedStatus('✓ সম্পন্ন হয়েছে — index.html রিফ্রেশ করুন');
+    toast && toast('ডিফল্ট ডেটা সফলভাবে যোগ হয়েছে', 'success');
+  } catch(e){
+    _seedLog('✖ ত্রুটি: '+(e.message||e));
+    _seedStatus('✖ ত্রুটি ঘটেছে');
+    toast && toast('সিড করতে সমস্যা: '+(e.message||e), 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> সব ডিফল্ট ডেটা DB-তে যোগ করুন'; }
+  }
+}
+window.seedDefaultData = seedDefaultData;
 
 </script>
 </body>
