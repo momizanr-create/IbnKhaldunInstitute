@@ -1737,8 +1737,11 @@ function closeModal(id){ $('#'+id).classList.remove('open'); document.body.style
 // ── Cache layer (Stale-While-Revalidate) ──
 // GET requests: instantly return cached data, refresh in background, dispatch event.
 // Result: refresh দিলে loading দেখা যায় না — পুরোনো data instant, পরে silent update।
-const _CACHE_PREFIX = 'tia_cache_v1::';
-const _CACHE_TTL_MS = 1000*60*60*24*7; // 7 days
+const _CACHE_PREFIX = 'tia_cache_v2::';
+// ⚡ FIX: 7 দিন থেকে কমিয়ে ৬০ সেকেন্ড — admin থেকে কোর্স যোগ করলে visitor দ্রুত দেখবে
+const _CACHE_TTL_MS = 1000*60; // 60 seconds (was 7 days — caused stale course list)
+// Auto-clean পুরাতন v1 cache
+try { Object.keys(localStorage).filter(k=>k.startsWith('tia_cache_v1::')).forEach(k=>localStorage.removeItem(k)); } catch{}
 function _cacheGet(path){
   try{
     const raw = localStorage.getItem(_CACHE_PREFIX+path);

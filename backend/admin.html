@@ -1,0 +1,2151 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0f766e" />
+<title>অ্যাডমিন প্যানেল — ইবনে খালদুন ইনস্টিটিউট</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<!-- ApexCharts for dashboard data visualization -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.2/dist/apexcharts.min.js" defer></script>
+<style>
+:root{
+  /* Eduplex-inspired dark sidebar + light main palette */
+  --primary:#7c3aed;
+  --primary-dark:#5b21b6;
+  --primary-light:#ede9fe;
+  --primary-glow:#c4b5fd;
+  --accent:#a3e635;
+  --accent-dark:#65a30d;
+  --secondary:#f59e0b;
+  --bg:#f5f5f7;
+  --card:#ffffff;
+  --surface-tint:#f3f0ff;
+  --text:#111827;
+  --text-soft:#6b7280;
+  --border:#e5e7eb;
+  --success:#16a34a;
+  --danger:#ef4444;
+  --info:#3b82f6;
+  --radius:14px;
+  --shadow:0 1px 4px rgba(0,0,0,.06),0 2px 12px rgba(0,0,0,.04);
+  --shadow-lg:0 8px 32px rgba(124,58,237,.12);
+  --sidebar-w:240px;
+  --sidebar-bg:#1e1b4b;
+  --sidebar-bg-2:#13112e;
+  --sidebar-text:#c7c3f4;
+  --sidebar-active:#a3e635;
+  --sidebar-active-text:#13112e;
+  --sidebar-icon-bg:rgba(255,255,255,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{font-family:'Hind Siliguri','Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;min-height:100dvh}
+img{max-width:100%;display:block}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:10px;border:none;cursor:pointer;font-family:inherit;font-weight:600;font-size:14px;transition:.18s;text-decoration:none;line-height:1.2}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(124,58,237,.25)}
+.btn-primary:hover{background:var(--primary-dark);transform:translateY(-1px);box-shadow:0 4px 14px rgba(124,58,237,.35)}
+.btn-success{background:var(--success);color:#fff}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-warn{background:var(--secondary);color:#fff}
+.btn-outline{background:#fff;color:var(--primary);border:1.5px solid rgba(124,58,237,.25)}
+.btn-outline:hover{background:var(--surface-tint);border-color:var(--primary)}
+.btn-sm{padding:6px 11px;font-size:12px;border-radius:8px}
+.btn-block{width:100%;justify-content:center}
+
+input,textarea,select{font-family:inherit;font-size:14px;padding:10px 13px;border:1.5px solid var(--border);border-radius:10px;width:100%;background:#fff;color:var(--text);transition:.15s}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(124,58,237,.1)}
+textarea{resize:vertical;min-height:80px}
+.label{display:block;font-weight:600;font-size:13px;margin-bottom:6px;color:var(--text)}
+.form-group{margin-bottom:14px}
+.badge{display:inline-block;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-success{background:#dcfce7;color:#166534}
+.badge-warn{background:#fef3c7;color:#a16207}
+.badge-danger{background:#fee2e2;color:#dc2626}
+.badge-info{background:#dbeafe;color:#1e40af}
+
+/* LOGIN */
+#loginPage{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1e1b4b 0%,#4c1d95 50%,#1e1b4b 100%);padding:16px;position:relative;overflow:hidden}
+#loginPage::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(163,230,53,.15),transparent 70%);top:-150px;right:-100px}
+#loginPage::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.3),transparent 70%);bottom:-150px;left:-80px}
+.login-card{background:rgba(255,255,255,.97);border-radius:20px;padding:36px 30px;width:100%;max-width:420px;box-shadow:0 25px 80px rgba(0,0,0,.35);position:relative;z-index:1;border:1px solid rgba(255,255,255,.3)}
+.login-card h1{text-align:center;color:var(--primary);margin-bottom:18px;font-size:clamp(18px,5vw,22px);font-weight:800}
+
+/* LAYOUT */
+#app{display:none;min-height:100vh;min-height:100dvh}
+.layout{display:flex;min-height:100vh;min-height:100dvh}
+
+/* SIDEBAR — Eduplex dark purple */
+.sidebar{
+  width:var(--sidebar-w);
+  background:var(--sidebar-bg);
+  background-image:linear-gradient(180deg,var(--sidebar-bg) 0%,var(--sidebar-bg-2) 100%);
+  color:var(--sidebar-text);
+  padding:0 0 24px;
+  position:fixed;top:0;left:0;height:100vh;height:100dvh;
+  overflow-y:auto;z-index:60;
+  transition:transform .25s ease;
+  border-right:1px solid rgba(255,255,255,.04)
+}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:6px}
+
+/* Sidebar brand */
+.sidebar h2{
+  padding:22px 20px 20px;
+  color:#fff;font-size:17px;font-weight:700;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  margin-bottom:12px;
+}
+.sidebar h2 i{
+  background:var(--primary);color:#fff;
+  width:34px;height:34px;border-radius:10px;
+  display:grid;place-items:center;font-size:15px;
+  box-shadow:0 4px 12px rgba(124,58,237,.4)
+}
+
+.sidebar-section-label{
+  padding:10px 20px 5px;font-size:10px;font-weight:700;
+  text-transform:uppercase;letter-spacing:1.5px;color:rgba(199,195,244,.35)
+}
+
+.sidebar-link{
+  display:flex;align-items:center;gap:11px;
+  padding:10px 12px;margin:2px 10px;border-radius:10px;
+  cursor:pointer;font-size:13.5px;color:rgba(199,195,244,.75);
+  transition:all .15s;user-select:none;font-weight:500;
+}
+.sidebar-link i{
+  width:32px;height:32px;border-radius:8px;
+  background:var(--sidebar-icon-bg);
+  display:grid;place-items:center;font-size:13px;flex-shrink:0;
+  transition:all .15s;
+}
+.sidebar-link:hover{background:rgba(255,255,255,.06);color:#fff}
+.sidebar-link:hover i{background:rgba(124,58,237,.3);color:#c4b5fd}
+.sidebar-link.active{
+  background:linear-gradient(90deg,rgba(163,230,53,.15),rgba(163,230,53,.06));
+  color:#fff;font-weight:600;
+  border:1px solid rgba(163,230,53,.2);
+}
+.sidebar-link.active i{
+  background:var(--sidebar-active);color:var(--sidebar-active-text);
+  box-shadow:0 3px 8px rgba(163,230,53,.3)
+}
+
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:55;backdrop-filter:blur(2px)}
+.sidebar-backdrop.show{display:block}
+
+.main{flex:1;margin-left:var(--sidebar-w);padding:18px 22px;min-width:0}
+
+/* TOPBAR */
+.topbar{
+  background:#fff;padding:14px 20px;border-radius:var(--radius);
+  box-shadow:var(--shadow);margin-bottom:22px;
+  display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap
+}
+.topbar h1{font-size:clamp(15px,2.5vw,19px);font-weight:700;color:var(--text)}
+.topbar-right{font-size:13px;color:var(--text-soft);display:flex;align-items:center;gap:10px}
+.topbar-right .email-text{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--surface-tint);color:var(--primary-dark);
+  padding:7px 14px;border-radius:999px;font-weight:600;font-size:13px;
+  border:1px solid rgba(124,58,237,.12)
+}
+.topbar-right .email-text::before{
+  content:'';width:8px;height:8px;border-radius:50%;background:var(--accent);
+  box-shadow:0 0 0 3px rgba(163,230,53,.25)
+}
+.menu-btn{display:none;background:transparent;border:none;font-size:22px;cursor:pointer;color:var(--primary);padding:4px 8px}
+
+@media(max-width:900px){
+  :root{--sidebar-w:260px}
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0;padding:14px}
+  .menu-btn{display:inline-flex}
+}
+@media(max-width:480px){
+  .main{padding:10px}
+  .topbar{padding:10px 12px;border-radius:12px}
+  .topbar-right .email-text{display:none}
+}
+
+/* CARDS */
+.card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);margin-bottom:18px;border:1px solid rgba(0,0,0,.03)}
+
+/* STAT CARDS — Eduplex style */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:14px;margin-bottom:22px}
+.stat{
+  background:#fff;border-radius:var(--radius);padding:18px;
+  box-shadow:var(--shadow);border:1px solid rgba(0,0,0,.04);
+  display:flex;align-items:center;gap:14px;
+  transition:.2s;position:relative;overflow:hidden
+}
+.stat::after{
+  content:'';position:absolute;top:0;right:0;width:80px;height:80px;
+  border-radius:0 14px 0 80px;
+  background:linear-gradient(135deg,var(--surface-tint),transparent);
+  opacity:.7;pointer-events:none
+}
+.stat:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.stat .stat-icon{
+  width:46px;height:46px;border-radius:12px;
+  background:var(--surface-tint);color:var(--primary);
+  display:grid;place-items:center;font-size:19px;flex-shrink:0;
+  box-shadow:0 2px 8px rgba(124,58,237,.12)
+}
+.stat .stat-num{font-size:22px;font-weight:800;color:var(--text);line-height:1.1;font-family:'Plus Jakarta Sans',sans-serif}
+.stat .stat-label{color:var(--text-soft);font-size:12px;margin-top:3px}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);-webkit-overflow-scrolling:touch;border:1px solid rgba(0,0,0,.04)}
+table{width:100%;border-collapse:collapse;min-width:520px}
+th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
+th{background:var(--surface-tint);font-weight:700;color:var(--primary-dark);text-transform:uppercase;font-size:10.5px;letter-spacing:.7px;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#faf8ff}
+.actions{display:flex;gap:5px;flex-wrap:wrap}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(15,10,40,.6);backdrop-filter:blur(6px);z-index:1000;display:none;align-items:flex-start;justify-content:center;padding:20px 12px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.modal-bg.open{display:flex}
+.modal{background:#fff;border-radius:18px;max-width:680px;width:100%;padding:26px;position:relative;margin:auto;box-shadow:0 30px 80px rgba(0,0,0,.28),0 0 0 1px rgba(124,58,237,.08)}
+.modal-close{position:absolute;top:14px;right:14px;background:#f5f3ff;border:none;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center;transition:.15s;color:#7c3aed}
+.modal-close:hover{background:var(--danger);color:#fff}
+.modal h2{margin-bottom:20px;font-size:clamp(16px,3vw,20px);padding-right:42px;color:var(--primary-dark)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){
+  .row{grid-template-columns:1fr;gap:0}
+  .modal{padding:20px 16px;border-radius:14px}
+}
+
+.toast{position:fixed;bottom:20px;left:20px;right:20px;background:var(--text);color:#fff;padding:13px 18px;border-radius:10px;z-index:2000;opacity:0;transform:translateY(20px);transition:.25s;max-width:380px;font-size:14px;box-shadow:var(--shadow-lg)}
+@media(min-width:600px){.toast{right:auto}}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.success{background:var(--success)}
+.toast.error{background:var(--danger)}
+.loader{display:inline-block;width:22px;height:22px;border:3px solid #e7f5ec;border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:36px 16px;color:var(--text-soft);font-size:14px}
+.section{display:none}
+.section.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.thumb{width:48px;height:48px;border-radius:8px;object-fit:cover;background:#e2e8f0;flex-shrink:0;border:1px solid var(--border)}
+
+/* tabs */
+.tab-row{display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab-row button{padding:10px 16px;border:none;background:transparent;cursor:pointer;font-family:inherit;font-weight:600;color:var(--text-soft);border-bottom:3px solid transparent;margin-bottom:-2px;font-size:13px;white-space:nowrap;flex-shrink:0;transition:.15s}
+.tab-row button:hover{color:var(--primary)}
+.tab-row button.active{color:var(--primary);border-bottom-color:var(--primary)}
+
+/* settings group */
+.settings-section h4{font-size:15px;color:var(--primary);margin:16px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+
+/* util */
+.flex-wrap{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.text-soft{color:var(--text-soft);font-size:13px}
+@media(max-width:480px){
+  .stat{padding:14px}
+  .stat .stat-num{font-size:18px}
+  .stat .stat-icon{width:42px;height:42px;font-size:18px}
+  .card{padding:14px}
+  th,td{padding:10px 9px;font-size:12px}
+}
+
+/* === Drag & Drop image upload === */
+.dropzone{position:relative;border:2px dashed var(--border);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:.18s;background:#f8fafc}
+.dropzone:hover{border-color:var(--primary);background:var(--primary-light)}
+.dropzone.drag{border-color:var(--primary);background:var(--primary-glow)}
+.dropzone .dz-text{color:var(--text-soft);font-size:13px}
+.dropzone .dz-text strong{color:var(--primary)}
+.dropzone .dz-icon{font-size:34px;color:var(--primary);margin-bottom:8px}
+.dropzone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.dropzone .dz-preview{display:flex;align-items:center;gap:10px;justify-content:center}
+.dropzone .dz-preview img{width:72px;height:72px;border-radius:10px;object-fit:cover;border:1px solid var(--border)}
+.dropzone .dz-preview .dz-info{text-align:left;font-size:12px;color:var(--text-soft);min-width:0}
+.dropzone .dz-clear{background:var(--danger);color:#fff;border:none;border-radius:7px;padding:6px 11px;font-size:12px;cursor:pointer;font-family:inherit}
+.dropzone.has-file{padding:14px;border-style:solid;border-color:var(--success);background:#f0fdf4}
+
+/* button loading state */
+.btn[data-loading="1"]{opacity:.75;cursor:not-allowed;pointer-events:none}
+.btn .btn-spin{display:inline-block;width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite;margin-left:6px}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage">
+  <div class="login-card">
+    <h1><i class="fas fa-mosque"></i> অ্যাডমিন প্যানেল</h1>
+    <p style="text-align:center;color:var(--text-soft);font-size:13px;margin-bottom:18px">ইবনে খালদুন ইনস্টিটিউট</p>
+    <form onsubmit="login(event)">
+      <div class="form-group"><label class="label">ইউজারনেম</label><input type="text" id="username" autocomplete="username" required /></div>
+      <div class="form-group"><label class="label">পাসওয়ার্ড</label><input type="password" id="password" autocomplete="current-password" required /></div>
+      <button class="btn btn-primary btn-block" style="padding:11px">লগইন</button>
+      <p style="text-align:center;margin-top:12px;font-size:12px;color:var(--text-soft)">ইউজারনেম ও পাসওয়ার্ড সার্ভারের <code>.env</code> ফাইলে সেট করা।</p>
+      <p style="text-align:center;margin-top:6px;font-size:11px;color:#94a3b8">🔗 Server: <code style="font-size:10px">ibnkhalduninstitute.onrender.com</code></p>
+    </form>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+<div class="layout">
+  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar(false)"></div>
+  <aside class="sidebar" id="sidebar">
+    <h2><i class="fas fa-graduation-cap"></i> ইবনে খালদুন</h2>
+    <div class="sidebar-section-label">মূল মেনু</div>
+    <div class="sidebar-link active" data-section="dashboard"><i class="fas fa-th-large"></i> ড্যাশবোর্ড</div>
+    <div class="sidebar-link" data-section="courses"><i class="fas fa-book-open"></i> কোর্স</div>
+    <div class="sidebar-link" data-section="accessRequests"><i class="fas fa-key"></i> কোর্স অ্যাক্সেস</div>
+    <div class="sidebar-link" data-section="users"><i class="fas fa-user-graduate"></i> ছাত্রছাত্রী</div>
+    <div class="sidebar-link" data-section="instructors"><i class="fas fa-chalkboard-teacher"></i> শিক্ষক</div>
+    <div class="sidebar-link" data-section="testimonials"><i class="fas fa-star"></i> অভিমত</div>
+    <div class="sidebar-link" data-section="notices"><i class="fas fa-bell"></i> নোটিশ</div>
+    <div class="sidebar-section-label">কন্টেন্ট</div>
+    <div class="sidebar-link" data-section="categories"><i class="fas fa-folder-open"></i> ক্যাটাগরি</div>
+    <div class="sidebar-link" data-section="topics"><i class="fas fa-th-large"></i> বিষয়সমূহ (টপিকস)</div>
+    <div class="sidebar-link" data-section="faqs"><i class="fas fa-question-circle"></i> FAQ</div>
+    <div class="sidebar-link" data-section="blog"><i class="fas fa-newspaper"></i> ব্লগ</div>
+    <div class="sidebar-link" data-section="messages"><i class="fas fa-envelope"></i> বার্তা</div>
+    <div class="sidebar-section-label">সিস্টেম</div>
+    <div class="sidebar-link" data-section="settings"><i class="fas fa-sliders-h"></i> সেটিংস</div>
+    <div class="sidebar-link" onclick="logout()" style="margin-top:8px;color:rgba(248,113,113,.8)"><i class="fas fa-sign-out-alt"></i> লগআউট</div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:8px;min-width:0">
+        <button class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+        <h1 id="pageTitle">ড্যাশবোর্ড</h1>
+      </div>
+      <div class="topbar-right">
+        <span class="email-text" id="adminEmail"></span>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="section active" id="sec-dashboard">
+      <!-- Live visitor pulse -->
+      <div class="card" style="margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;background:linear-gradient(135deg,#1e1b4b,#5b21b6);color:#fff">
+        <div style="display:flex;align-items:center;gap:14px">
+          <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;position:relative">
+            <i class="fas fa-circle" style="font-size:14px;color:#a3e635;animation:pulse 1.5s infinite"></i>
+          </div>
+          <div>
+            <div style="font-size:13px;opacity:.8">এই মুহূর্তে ওয়েবসাইটে</div>
+            <div style="font-size:28px;font-weight:800;line-height:1.1"><span id="liveVisitorCount">—</span> জন</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:18px;flex-wrap:wrap">
+          <div style="text-align:center"><div style="font-size:22px;font-weight:800" id="todayViewsCount">—</div><div style="font-size:12px;opacity:.8">আজকের ভিউ</div></div>
+          <div style="text-align:center"><div style="font-size:22px;font-weight:800" id="uniqueTodayCount">—</div><div style="font-size:12px;opacity:.8">আজকের ইউনিক ভিজিটর</div></div>
+          <div style="text-align:center"><div style="font-size:22px;font-weight:800" id="todayCourseViewsCount">—</div><div style="font-size:12px;opacity:.8">আজকের কোর্স ভিউ</div></div>
+        </div>
+      </div>
+      <style>@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.4)}}</style>
+
+      <div class="stat-grid" id="statGrid"><div class="loader"></div></div>
+
+      <!-- Data Visualization: charts -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px">
+        <div class="card">
+          <h3 style="margin-bottom:8px;font-size:15px"><i class="fas fa-chart-line" style="color:var(--primary)"></i> গত ৭ দিনের ভিজিটর ট্রেন্ড</h3>
+          <div id="chartTrend" style="min-height:240px"></div>
+        </div>
+        <div class="card">
+          <h3 style="margin-bottom:8px;font-size:15px"><i class="fas fa-chart-pie" style="color:var(--primary)"></i> অনুরোধ স্ট্যাটাস</h3>
+          <div id="chartStatus" style="min-height:240px"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <h3 style="margin-bottom:10px;font-size:16px"><i class="fas fa-fire" style="color:#ef4444"></i> আজকের জনপ্রিয় কোর্স</h3>
+        <div class="table-wrap" id="topCoursesTable"></div>
+      </div>
+    </div>
+
+    <!-- COURSES -->
+    <div class="section" id="sec-courses">
+      <button class="btn btn-primary" onclick="openCourseModal()" style="margin-bottom:14px"><i class="fas fa-plus"></i> নতুন কোর্স</button>
+      <div style="margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <div style="flex:1;min-width:240px;position:relative">
+          <i class="fas fa-search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7c3aed"></i>
+          <input type="text" id="courseAdminSearch" placeholder="কোর্স খুঁজুন... (নাম, ক্যাটাগরি, প্রকার)" oninput="filterAdminCourses(this.value)" style="width:100%;padding:11px 14px 11px 42px;border-radius:10px;border:1.5px solid #e5e7eb;font-family:inherit;font-size:14px;background:#fff" />
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('courseAdminSearch').value='';filterAdminCourses('')"><i class="fas fa-times"></i> ক্লিয়ার</button>
+      </div>
+      <div class="table-wrap"><table id="coursesTable"></table></div>
+    </div>
+
+    <!-- ACCESS REQUESTS -->
+    <div class="section" id="sec-accessRequests">
+      <div class="card">
+        <h3 style="font-size:16px"><i class="fas fa-key"></i> কোর্সসমূহ অ্যাক্সেস অনুরোধ</h3>
+        <p class="text-soft">Approve করলে ছাত্র ইমেইলে কনফার্মেশন পাবে।</p>
+      </div>
+      <div class="table-wrap"><table id="accessTable"></table></div>
+    </div>
+
+    <!-- USERS -->
+    <div class="section" id="sec-users"><div class="table-wrap"><table id="usersTable"></table></div></div>
+
+    <!-- INSTRUCTORS -->
+    <div class="section" id="sec-instructors">
+      <button class="btn btn-primary" onclick="openCrudModal('instructors')" style="margin-bottom:14px"><i class="fas fa-plus"></i> নতুন শিক্ষক</button>
+      <div class="table-wrap"><table id="instructorsTable"></table></div>
+    </div>
+    <div class="section" id="sec-testimonials">
+      <button class="btn btn-primary" onclick="openCrudModal('testimonials')" style="margin-bottom:14px"><i class="fas fa-plus"></i> নতুন অভিমত</button>
+      <div class="table-wrap"><table id="testimonialsTable"></table></div>
+    </div>
+    <div class="section" id="sec-notices">
+      <button class="btn btn-primary" onclick="openCrudModal('notices')" style="margin-bottom:14px"><i class="fas fa-plus"></i> নতুন নোটিশ</button>
+      <div class="table-wrap"><table id="noticesTable"></table></div>
+    </div>
+    <div class="section" id="sec-categories">
+      <div class="card" style="margin-bottom:14px">
+        <h3 style="font-size:16px;margin-bottom:6px"><i class="fas fa-folder-tree"></i> ক্যাটাগরি ও সাব-ক্যাটাগরি</h3>
+        <p class="text-soft">একটি ক্যাটাগরির অধীনে একাধিক সাব-ক্যাটাগরি যোগ করতে পারবেন। কোর্স তৈরির সময় এগুলো ড্রপডাউনে আসবে।</p>
+      </div>
+      <button class="btn btn-primary" onclick="openCategoryModal()" style="margin-bottom:14px"><i class="fas fa-plus"></i> নতুন ক্যাটাগরি</button>
+      <div class="table-wrap"><table id="categoriesTable"></table></div>
+    </div>
+    <div class="section" id="sec-faqs">
+      <button class="btn btn-primary" onclick="openCrudModal('faqs')" style="margin-bottom:14px"><i class="fas fa-plus"></i> নতুন FAQ</button>
+      <div class="table-wrap"><table id="faqsTable"></table></div>
+    </div>
+    <div class="section" id="sec-blog">
+      <button class="btn btn-primary" onclick="openBlogModal()" style="margin-bottom:14px"><i class="fas fa-plus"></i> নতুন পোস্ট</button>
+      <div class="table-wrap"><table id="blogTable"></table></div>
+    </div>
+    
+    <!-- TOPICS SECTION -->
+    <div class="section" id="sec-topics">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <div>
+          <h3 style="font-size:16px;margin-bottom:4px"><i class="fas fa-th-large"></i> বিষয়সমূহ (টপিকস)</h3>
+          <p class="text-soft" style="font-size:13px">হোমপেজে "কোন বিষয়ে আপনি ইলম অর্জন করতে চান?" সেকশনের আইটেম। প্রতিটি বিষয়ের অধীনে কোর্স সিলেক্ট করতে পারবেন।</p>
+        </div>
+        <button class="btn btn-primary" onclick="openTopicModal()"><i class="fas fa-plus"></i> নতুন বিষয়</button>
+      </div>
+      <div class="table-wrap"><table id="topicsTable"></table></div>
+    </div>
+
+    <div class="section" id="sec-messages"><div class="table-wrap"><table id="messagesTable"></table></div></div>
+
+    <!-- SETTINGS -->
+    <div class="section" id="sec-settings">
+      <div class="card">
+        <div class="tab-row" id="settingsTabs">
+          <button class="active" data-set="contact">যোগাযোগ</button>
+          <button data-set="payment">পেমেন্ট</button>
+          <button data-set="social">সোশ্যাল</button>
+          <button data-set="notice">টপ নোটিশ</button>
+          <button data-set="hero">হিরো সেকশন</button>
+          <button data-set="about">পরিচিতি</button>
+          <button data-set="faqSection">FAQ ছবি</button>
+          <button data-set="whatsapp">WhatsApp উইজেট</button>
+          <button data-set="siteSettings">সাইট তথ্য</button>
+          <button data-set="whyJoin">কেন যুক্ত হবেন</button>
+          <button data-set="navigation">নেভিগেশন</button>
+          <button data-set="footer">ফুটার</button>
+          <button data-set="welcomePopup">ওয়েলকাম পপআপ</button>
+          <button data-set="cta">CTA সেকশন</button>
+        </div>
+        <div id="setPane"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const $ = (s,p=document)=>p.querySelector(s);
+const $$ = (s,p=document)=>[...p.querySelectorAll(s)];
+const escapeHtml = (s='')=>s.toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+// সংখ্যা ও তারিখ — অ্যাডমিন প্যানেলে সর্বদা ইংরেজি
+const fmt = n => Number(n||0).toLocaleString('en-US');
+const fmtDate = d => d ? new Date(d).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'2-digit' }) : '—';
+const fmtDateTime = d => d ? new Date(d).toLocaleString('en-US', { year:'numeric', month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit' }) : '—';
+
+const DEFAULT_API = 'https://ibnkhalduninstitute.onrender.com';
+let API = localStorage.getItem('adminApiUrl') || DEFAULT_API;
+
+// ── Admin SWR cache (silent background refresh, no spinner on refresh) ──
+const _ADM_CACHE = 'tia_admin_cache_v1::';
+const _ADM_TTL = 1000*60*30; // 30 min
+const _admGet = p=>{ try{ const r=localStorage.getItem(_ADM_CACHE+p); if(!r) return null; const o=JSON.parse(r); if(Date.now()-o.t>_ADM_TTL) return null; return o.d; }catch{ return null; } };
+const _admSet = (p,d)=>{ try{ localStorage.setItem(_ADM_CACHE+p, JSON.stringify({t:Date.now(),d})); }catch{} };
+const _admBust = ()=>Object.keys(localStorage).filter(k=>k.startsWith(_ADM_CACHE)).forEach(k=>localStorage.removeItem(k));
+
+let TOKEN = localStorage.getItem('adminToken') || '';
+let ALL_COURSES_ADMIN = [];
+
+function toast(m,t=''){const el=$('#toast');el.textContent=m;el.className='toast show '+t;setTimeout(()=>el.className='toast',3000)}
+function openModal(html){$('#modalBody').innerHTML=html;$('#modal').classList.add('open');document.body.style.overflow='hidden'}
+function closeModal(){$('#modal').classList.remove('open');document.body.style.overflow=''}
+
+function toggleSidebar(force){
+  const sb = $('#sidebar'), bd = $('#sidebarBackdrop');
+  const open = force===undefined ? !sb.classList.contains('open') : force;
+  sb.classList.toggle('open', open);
+  bd.classList.toggle('show', open);
+}
+
+async function api(path, opts={}){
+  const headers = { ...(opts.headers||{}) };
+  if (TOKEN && !headers.Authorization) headers.Authorization='Bearer '+TOKEN;
+  let body = opts.body;
+  // FormData → if no actual file is attached, convert to JSON so server (without multer) parses it.
+  if (body instanceof FormData){
+    let hasFile = false;
+    for (const [,v] of body.entries()){ if (v instanceof File && v.size>0){ hasFile = true; break; } }
+    if (!hasFile){
+      const obj = {};
+      for (const [k,v] of body.entries()){
+        if (v instanceof File) continue; // skip empty file fields
+        obj[k] = v;
+      }
+      body = JSON.stringify(obj);
+      headers['Content-Type'] = 'application/json';
+    }
+  } else if (body && typeof body !== 'string'){
+    headers['Content-Type']='application/json';
+    body = JSON.stringify(body);
+  }
+  const r = await fetch(API+path,{...opts,headers,body});
+  const d = await r.json().catch(()=>({}));
+  if (!r.ok){
+    const msg = (d.error||'').toString();
+    // Token invalid/expired → auto logout & back to login
+    if (r.status===401 || r.status===403 || /invalid token|token|unauthorized|jwt/i.test(msg)){
+      if (TOKEN){
+        TOKEN='';
+        try{ localStorage.removeItem('adminToken'); }catch{}
+        try{ _admBust(); }catch{}
+        toast('সেশন শেষ হয়েছে — আবার লগইন করুন','error');
+        setTimeout(()=>location.reload(), 800);
+      }
+    }
+    throw new Error(msg||'অনুরোধ ব্যর্থ');
+  }
+  return d;
+}
+
+// ── Submit-button loading helper ──
+function withBtnLoading(btn, fn){
+  if (!btn) return fn();
+  const old = btn.innerHTML;
+  btn.dataset.loading = '1';
+  btn.innerHTML = '<span class="btn-spin"></span> সংরক্ষণ হচ্ছে...';
+  return Promise.resolve().then(fn).finally(()=>{
+    btn.dataset.loading = '';
+    btn.innerHTML = old;
+  });
+}
+function formSubmitBtn(form){ return form.querySelector('button[type="submit"], button:not([type="button"])'); }
+
+// ── Drag & drop image input ──
+function dropzoneHTML(name, currentUrl){
+  return `<div class="dropzone${currentUrl?' has-file':''}" data-dz data-field="${name}">
+    ${currentUrl
+      ? `<div class="dz-preview"><img src="${escapeHtml(currentUrl)}" alt=""/><div class="dz-info"><div>বর্তমান ছবি</div><div style="display:flex;gap:6px;margin-top:6px"><button type="button" class="dz-clear">পরিবর্তন</button><button type="button" class="dz-remove" style="background:#fff;color:var(--danger);border:1px solid var(--danger);border-radius:7px;padding:6px 11px;font-size:12px;cursor:pointer;font-family:inherit"><i class="fas fa-trash"></i> মুছুন</button></div></div></div>`
+      : `<div><div class="dz-icon"><i class="fas fa-cloud-upload-alt"></i></div><div class="dz-text"><strong>ক্লিক করুন</strong> অথবা ছবি এখানে <strong>ড্র্যাগ করে ছাড়ুন</strong><br/><small>JPG, PNG, WebP — সর্বোচ্চ 10MB</small></div></div>`}
+    <input type="file" name="${name}" accept="image/*"/>
+    <input type="hidden" name="__remove_${name}" value="" />
+  </div>`;
+}
+function bindDropzones(root=document){
+  root.querySelectorAll('[data-dz]').forEach(dz=>{
+    if (dz.dataset.bound) return; dz.dataset.bound='1';
+    const inp = dz.querySelector('input[type=file]');
+    const removeFlag = dz.querySelector(`input[name^="__remove_"]`);
+    const fieldName = dz.dataset.field;
+    const setPreview = (file)=>{
+      if (!file) return;
+      const url = URL.createObjectURL(file);
+      dz.classList.add('has-file');
+      if (removeFlag) removeFlag.value = '';
+      dz.innerHTML = `<div class="dz-preview"><img src="${url}" alt=""/><div class="dz-info"><div>${escapeHtml(file.name)}</div><div>${(file.size/1024).toFixed(0)} KB</div><div style="display:flex;gap:6px;margin-top:6px"><button type="button" class="dz-clear">পরিবর্তন</button><button type="button" class="dz-remove" style="background:#fff;color:var(--danger);border:1px solid var(--danger);border-radius:7px;padding:6px 11px;font-size:12px;cursor:pointer;font-family:inherit"><i class="fas fa-trash"></i> মুছুন</button></div></div></div>`;
+      dz.appendChild(inp);
+      if (removeFlag) dz.appendChild(removeFlag);
+      inp.style.position='absolute'; inp.style.inset='0'; inp.style.opacity='0';
+      delete dz.dataset.bound;
+      bindDropzones(dz.parentNode);
+    };
+    const clearAll = ()=>{
+      dz.classList.remove('has-file');
+      if (inp) { inp.value = ''; }
+      if (removeFlag) removeFlag.value = '1';
+      dz.innerHTML = `<div><div class="dz-icon"><i class="fas fa-cloud-upload-alt"></i></div><div class="dz-text"><strong>ক্লিক করুন</strong> অথবা ছবি এখানে <strong>ড্র্যাগ করে ছাড়ুন</strong><br/><small>JPG, PNG, WebP — সর্বোচ্চ 10MB</small></div></div>
+        <input type="file" name="${fieldName}" accept="image/*"/>
+        <input type="hidden" name="__remove_${fieldName}" value="1" />`;
+      delete dz.dataset.bound;
+      bindDropzones(dz.parentNode);
+    };
+    inp.addEventListener('change', e=>{ if (inp.files[0]) setPreview(inp.files[0]); });
+    dz.addEventListener('dragover', e=>{ e.preventDefault(); dz.classList.add('drag'); });
+    dz.addEventListener('dragleave', ()=>dz.classList.remove('drag'));
+    dz.addEventListener('drop', e=>{
+      e.preventDefault(); dz.classList.remove('drag');
+      const f = e.dataTransfer.files?.[0];
+      if (f && f.type.startsWith('image/')){
+        const dt = new DataTransfer(); dt.items.add(f); inp.files = dt.files;
+        setPreview(f);
+      }
+    });
+    const clearBtn = dz.querySelector('.dz-clear');
+    if (clearBtn) clearBtn.addEventListener('click', e=>{ e.stopPropagation(); inp.value=''; inp.click(); });
+    const removeBtn = dz.querySelector('.dz-remove');
+    if (removeBtn) removeBtn.addEventListener('click', e=>{ e.stopPropagation(); e.preventDefault(); clearAll(); });
+  });
+}
+
+// Helper: from a FormData, drop empty file fields (size 0) so backend doesn't choke.
+function cleanFormDataFiles(fd, fields){
+  fields.forEach(name => {
+    const v = fd.get(name);
+    if (v instanceof File && v.size === 0) fd.delete(name);
+  });
+}
+
+// ============================================================
+// AUTH
+// ============================================================
+// API URL সর্বদা hardcoded — লগইন করা থাকলে সরাসরি app লোড করো
+if (TOKEN && API){ bootApp(); }
+
+async function login(e){
+  e.preventDefault();
+  API = DEFAULT_API; localStorage.setItem('adminApiUrl', API);
+  try{
+    const r = await api('/api/admin/login',{method:'POST',body:{username:$('#username').value,password:$('#password').value}});
+    TOKEN = r.token; localStorage.setItem('adminToken',TOKEN);
+    localStorage.setItem('adminUser', JSON.stringify(r.admin||{username:$('#username').value}));
+    bootApp();
+  }catch(err){ toast(err.message,'error') }
+}
+
+function logout(){TOKEN='';localStorage.removeItem('adminToken');location.reload()}
+
+function bootApp(){
+  $('#loginPage').style.display='none';
+  $('#app').style.display='block';
+  const u = JSON.parse(localStorage.getItem('adminUser')||'{}');
+  $('#adminEmail').textContent = u.username || u.email || '';
+  loadDashboard();
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+$$('.sidebar-link[data-section]').forEach(el=>el.addEventListener('click',()=>{
+  $$('.sidebar-link').forEach(l=>l.classList.remove('active'));
+  el.classList.add('active');
+  const s = el.dataset.section;
+  $$('.section').forEach(x=>x.classList.remove('active'));
+  $('#sec-'+s).classList.add('active');
+  $('#pageTitle').textContent = el.textContent.trim();
+  toggleSidebar(false);
+  loadSection(s);
+}));
+
+// settings tabs delegated
+$('#settingsTabs').addEventListener('click', e=>{
+  const b = e.target.closest('button[data-set]'); if (!b) return;
+  $$('#settingsTabs button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  switchSetTab(b.dataset.set);
+});
+
+function loadSection(s){
+  ({
+    dashboard: loadDashboard,
+    courses: loadCourses,
+    accessRequests: loadAccessRequests,
+    users: loadUsers,
+    instructors: ()=>loadCrud('instructors'),
+    testimonials: ()=>loadCrud('testimonials'),
+    notices: ()=>loadCrud('notices'),
+    categories: loadCategories,
+    topics: loadTopics,
+    faqs: ()=>loadCrud('faqs'),
+    blog: loadBlog,
+    messages: loadMessages,
+    settings: ()=>{ $$('#settingsTabs button').forEach((x,i)=>x.classList.toggle('active',i===0)); switchSetTab('contact'); },
+  })[s]?.();
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+async function loadDashboard(){
+  try{
+    const s = await api('/api/admin/stats');
+    $('#statGrid').innerHTML = [
+      ['কোর্স',s.totalCourses,'fa-book'],
+      ['ছাত্র',s.totalUsers,'fa-users'],
+      ['কোর্স অ্যাক্সেস অনুরোধ',s.totalAccessRequests,'fa-key'],
+      ['পেন্ডিং অনুরোধ',s.pendingAccess||0,'fa-clock'],
+      ['ব্লগ',s.totalBlogs||0,'fa-newspaper'],
+      ['বার্তা',s.totalMessages||0,'fa-envelope'],
+    ].map(([l,n,ic])=>`<div class="stat"><div class="stat-icon"><i class="${ic.startsWith('fab')?ic:'fas '+ic}"></i></div><div style="min-width:0"><div class="stat-num">${fmt(n)}</div><div class="stat-label">${l}</div></div></div>`).join('');
+    loadAnalyticsWidgets([]);
+  }catch(e){ $('#statGrid').innerHTML=`<div class="empty">${escapeHtml(e.message)}</div>` }
+}
+
+// ============================================================
+// LIVE ANALYTICS + CHARTS
+// ============================================================
+let __analyticsTimer = null;
+let __chartTrend = null, __chartStatus = null;
+
+async function loadAnalyticsWidgets(liveList){
+  // Live counters (auto-refresh every 15s while dashboard is active)
+  const refresh = async () => {
+    try {
+      const a = await api('/api/admin/analytics/summary');
+      const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = fmt(v||0); };
+      set('liveVisitorCount', a.live);
+      set('todayViewsCount', a.todayViews);
+      set('uniqueTodayCount', a.uniqueToday);
+      set('todayCourseViewsCount', a.todayCourseViews);
+    } catch(e){}
+  };
+  refresh();
+  if (__analyticsTimer) clearInterval(__analyticsTimer);
+  __analyticsTimer = setInterval(() => {
+    if (document.getElementById('sec-dashboard')?.classList.contains('active')) refresh();
+  }, 15000);
+
+  // Trend chart (7 days)
+  try {
+    const trend = await api('/api/admin/analytics/trend?days=7');
+    const dates = trend.map(t => t.date.slice(5));
+    const views = trend.map(t => t.views);
+    const unique = trend.map(t => t.unique);
+    if (window.ApexCharts){
+      const el = document.getElementById('chartTrend'); if (el){
+        if (__chartTrend) __chartTrend.destroy();
+        __chartTrend = new ApexCharts(el, {
+          chart:{type:'area',height:240,toolbar:{show:false},fontFamily:'Hind Siliguri,sans-serif'},
+          series:[{name:'মোট ভিউ',data:views},{name:'ইউনিক ভিজিটর',data:unique}],
+          xaxis:{categories:dates},
+          colors:['#7c3aed','#a3e635'],
+          stroke:{curve:'smooth',width:2},
+          fill:{type:'gradient',gradient:{shadeIntensity:1,opacityFrom:.45,opacityTo:.05}},
+          dataLabels:{enabled:false},
+          legend:{position:'top'},
+          tooltip:{theme:'dark'},
+        });
+        __chartTrend.render();
+      }
+    }
+  } catch(e){}
+
+  // Status pie
+  try {
+    const live = liveList || await api('/api/admin/live-purchases');
+    const counts = { approved:0, pending:0, rejected:0 };
+    live.forEach(p => { if (counts[p.status] !== undefined) counts[p.status]++; });
+    if (window.ApexCharts){
+      const el = document.getElementById('chartStatus'); if (el){
+        if (__chartStatus) __chartStatus.destroy();
+        __chartStatus = new ApexCharts(el, {
+          chart:{type:'donut',height:240,fontFamily:'Hind Siliguri,sans-serif'},
+          series:[counts.approved, counts.pending, counts.rejected],
+          labels:['Approved','Pending','Rejected'],
+          colors:['#16a34a','#f59e0b','#ef4444'],
+          legend:{position:'bottom'},
+          plotOptions:{pie:{donut:{size:'65%'}}},
+        });
+        __chartStatus.render();
+      }
+    }
+  } catch(e){}
+
+  // Top courses today
+  try {
+    const top = await api('/api/admin/analytics/top-courses?limit=10');
+    const t = document.getElementById('topCoursesTable');
+    if (t){
+      t.innerHTML = top.length ? `<table>
+        <tr><th>#</th><th>থাম্বনেইল</th><th>কোর্স</th><th>আজকের ভিউ</th><th>মোট ভিউ</th></tr>
+        ${top.map((c,i)=>`<tr>
+          <td>${i+1}</td>
+          <td>${c.thumbnail?`<img src="${escapeHtml(c.thumbnail)}" class="thumb"/>`:'—'}</td>
+          <td><strong>${escapeHtml(c.title)}</strong></td>
+          <td><span class="badge badge-info">${fmt(c.viewsToday)}</span></td>
+          <td>${fmt(c.viewsTotal)}</td>
+        </tr>`).join('')}</table>` : '<p class="empty">আজ এখনো কেউ কোনো কোর্স দেখেনি</p>';
+    }
+  } catch(e){}
+}
+
+
+function statusBadge(s){
+  return `<span class="badge ${s==='approved'?'badge-success':s==='rejected'?'badge-danger':'badge-warn'}">${s}</span>`;
+}
+
+// ============================================================
+// COURSES
+// ============================================================
+async function loadCourses(){
+  try{
+    const list = await api('/api/admin/courses');
+    ALL_COURSES_ADMIN = list;
+    $('#coursesTable').innerHTML = `<tr><th>থাম্বনেইল</th><th>শিরোনাম</th><th>ক্যাটাগরি</th><th>মূল্য</th><th>সক্রিয়</th><th>অ্যাকশন</th></tr>
+      ${list.map(c=>`<tr>
+        <td><img src="${c.thumbnail||'https://via.placeholder.com/60'}" class="thumb"/></td>
+        <td><strong>${escapeHtml(c.title)}</strong><br/><small style="color:var(--text-soft)">${escapeHtml(c.slug||'')}</small></td>
+        <td>${c.category?`<span class="badge badge-info">${escapeHtml(c.category)}</span>`:'<span class="text-soft">—</span>'}${c.subCategory?`<br/><small class="text-soft">${escapeHtml(c.subCategory)}</small>`:''}</td>
+        <td>৳${fmt(c.price)}</td>
+        <td>${c.isActive?'✅':'❌'}</td>
+        <td class="actions">
+          <button class="btn btn-outline btn-sm" onclick='openCourseModal(${JSON.stringify(c).replace(/'/g,"&#39;")})' title="সম্পাদনা"><i class="fas fa-edit"></i></button>
+          <button class="btn btn-outline btn-sm" onclick="openCourseComments('${c._id}','${escapeHtml(c.title||'').replace(/'/g,"&#39;")}')" title="মন্তব্য মডারেশন"><i class="fas fa-comments"></i></button>
+          <button class="btn btn-danger btn-sm" onclick="delItem('courses','${c._id}',loadCourses)" title="মুছুন"><i class="fas fa-trash"></i></button>
+        </td>
+      </tr>`).join('')||'<tr><td colspan="6" class="empty">কোর্স নেই</td></tr>'}`;
+  }catch(e){ toast(e.message,'error') }
+}
+
+function openCourseModal(c={}){
+  const isLive = false;
+  setTimeout(()=>{ try{ qnaInit(c.qna||[]); }catch(e){} }, 30);
+  openModal(`
+    <h2>${c._id?'কোর্স সম্পাদনা':'নতুন কোর্স'}</h2>
+    <form onsubmit="saveCourse(event,'${c._id||''}')" enctype="multipart/form-data">
+      <div class="row">
+        <div class="form-group"><label class="label">শিরোনাম *</label><input name="title" value="${escapeHtml(c.title||'')}" required /></div>
+        <div class="form-group"><label class="label">Slug *</label><input name="slug" value="${escapeHtml(c.slug||'')}" required /></div>
+      </div>
+      <div class="row">
+        <div class="form-group"><label class="label">ধরন</label><input type="hidden" name="type" value="recorded" /><input value="কোর্সসমূহ" disabled /></div>
+        <div class="form-group">
+          <label class="label">ক্যাটাগরি</label>
+          <select name="category" id="courseCategorySel" onchange="onCourseCategoryChange(this.value)">
+            <option value="">— নির্বাচন করুন —</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group">
+          <label class="label">সাব-ক্যাটাগরি</label>
+          <select name="subCategory" id="courseSubCategorySel">
+            <option value="">— নির্বাচন করুন —</option>
+          </select>
+        </div>
+        <div></div>
+      </div>
+      <div class="form-group"><label class="label">সংক্ষিপ্ত বিবরণ</label><input name="shortDescription" value="${escapeHtml(c.shortDescription||'')}" /></div>
+      <div class="form-group"><label class="label">পূর্ণ বিবরণ</label><textarea name="description" rows="4">${escapeHtml(c.description||'')}</textarea></div>
+      <div class="row">
+        <div class="form-group"><label class="label">মূল্য (৳)</label><input type="number" name="price" value="${c.price||0}" /></div>
+        <div class="form-group"><label class="label">পুরাতন মূল্য</label><input type="number" name="oldPrice" value="${c.oldPrice||0}" /></div>
+      </div>
+      <div class="row">
+        <div class="form-group"><label class="label">শিক্ষক</label>
+            <select name="instructorId" id="courseInstructorSel">
+              <option value="">— শিক্ষক নির্বাচন করুন —</option>
+            </select>
+            <input type="hidden" name="instructor" id="courseInstructorName" value="${escapeHtml(c.instructor||'')}" />
+          </div>
+        <div class="form-group"><label class="label">সময়কাল</label><input name="duration" value="${escapeHtml(c.duration||'')}" /></div>
+      </div>
+      <div class="row">
+        <div class="form-group"><label class="label">মোট লেসন</label><input type="number" name="totalLessons" value="${c.totalLessons||0}" /></div>
+        <div class="form-group"><label class="label">লেভেল</label><select name="level">
+          <option value="beginner" ${c.level==='beginner'?'selected':''}>প্রাথমিক</option>
+          <option value="intermediate" ${c.level==='intermediate'?'selected':''}>মধ্যম</option>
+          <option value="advanced" ${c.level==='advanced'?'selected':''}>উচ্চতর</option>
+        </select></div>
+      </div>
+      <div class="form-group"><label class="label">বৈশিষ্ট্যসমূহ (প্রতি লাইনে একটি — "আপনি যা শিখবেন")</label>
+        <textarea name="features_text" rows="4" placeholder="বৈশিষ্ট্য ১&#10;বৈশিষ্ট্য ২">${escapeHtml((c.features||[]).join('\n'))}</textarea>
+      </div>
+
+      <!-- ── Recorded course rich detail (no certificate) ── -->
+      <div id="recordedFields" style="display:block;border:2px solid #d1fae5;border-radius:10px;padding:14px;margin:12px 0;background:#ecfdf5">
+        <h4 style="color:var(--primary);margin-bottom:10px"><i class="fas fa-play-circle"></i> কোর্স বিস্তারিত পেজের তথ্য</h4>
+        <div class="row">
+          <div class="form-group"><label class="label">প্রিভিউ ভিডিও (YouTube ID)</label><input name="previewVideoId" value="${escapeHtml(c.previewVideoId||'')}" placeholder="YouTube URL বা ID (যেমন: LXb3EKWsInQ)" onblur="const _v=extractYouTubeId(this.value);if(_v!==this.value)this.value=_v;" onpaste="setTimeout(()=>{const _v=extractYouTubeId(this.value);if(_v!==this.value)this.value=_v;},0)" /></div>
+          <div class="form-group"><label class="label">মোট ভিডিও সময়</label><input name="videoLessonsTime" value="${escapeHtml(c.videoLessonsTime||'')}" placeholder="০৪ : ৩২ : ১০" /></div>
+        </div>
+        <div class="row">
+          <div class="form-group"><label class="label">শিক্ষার্থী সংখ্যা</label><input type="number" name="students" value="${c.students||0}" /></div>
+          <div class="form-group"><label class="label">রেটিং (০-৫)</label><input type="number" step="0.1" name="rating" value="${c.rating||0}" /></div>
+        </div>
+        <div class="form-group"><label class="label">ইন্সট্রাক্টর ছবি URL</label><input name="instructorPhoto" value="${escapeHtml(c.instructorPhoto||'')}" placeholder="https://..." /></div>
+        <div class="form-group"><label class="label">ইন্সট্রাক্টর পরিচিতি</label><textarea name="instructorBio" rows="2">${escapeHtml(c.instructorBio||'')}</textarea></div>
+        <div class="form-group"><label class="label">এই কোর্সে অন্তর্ভুক্ত (প্রতি লাইনে একটি — সাইডবারে দেখানো হবে)</label>
+          <textarea name="includes_text" rows="4" placeholder="৪২ ঘণ্টার অন-ডিমান্ড ভিডিও&#10;১৪২টি ডাউনলোডযোগ্য রিসোর্স&#10;আজীবন অ্যাক্সেস">${escapeHtml((c.includes||[]).join('\n'))}</textarea>
+        </div>
+        <div class="form-group">
+          <label class="label" style="display:flex;justify-content:space-between;align-items:center">
+            <span><i class="fas fa-list-ul"></i> কোর্স কারিকুলাম (সেকশন + ভিডিও লেসন)</span>
+            <button type="button" class="btn btn-primary btn-sm" onclick="curriculumAddSection()"><i class="fas fa-plus"></i> নতুন সেকশন</button>
+          </label>
+          <div id="curriculumBuilder" style="border:1px dashed #cbd5e1;border-radius:8px;padding:10px;background:#fff;min-height:60px"></div>
+          <input type="hidden" name="curriculum" id="curriculumHidden" />
+          <small style="color:var(--text-soft);font-size:11px">প্রতিটি সেকশনের ভিতরে ভিডিও লেসন যোগ করুন। ভিডিও ID = YouTube URL এর শেষ অংশ (যেমন: <code>LXb3EKWsInQ</code>)। "ফ্রি" চেক করলে লেসনটি ছাত্ররা কেনার আগেই দেখতে পাবে।</small>
+        </div>
+      </div>
+        <div class="form-group"><label class="label">সিট সংখ্যা</label><input type="number" name="liveSeats" value="${c.liveSeats||0}" /></div>
+        <div class="form-group">
+          <label class="label">📷 "কীভাবে কিনতে হয়" বিস্তারিত ছবি</label>
+          ''
+          <small style="color:var(--text-soft);font-size:11px">এই ছবিটি কোর্স বিস্তারিত পেজে "কীভাবে এই লাইভ কোর্সটি কিনবেন?" সেকশনে দেখানো হবে</small>
+        </div>
+        <div class="form-group">
+          <label class="label">📝 "কীভাবে কিনতে হয়" বিস্তারিত টেক্সট</label>
+          <textarea name="liveDetailText" rows="5" placeholder="ধাপে ধাপে নির্দেশনা লিখুন...">${escapeHtml(c.liveDetailText||'')}</textarea>
+          <small style="color:var(--text-soft);font-size:11px">এই টেক্সট ছবির নিচে দেখানো হবে। প্রতিটি ধাপ আলাদা লাইনে লিখুন।</small>
+        </div>
+      </div>
+
+            <!-- ── COURSE Q&A ── -->
+      <div style="border:2px solid #c4e8d6;border-radius:10px;padding:14px;margin:12px 0;background:#ecfdf5">
+        <h4 style="color:var(--primary);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+          <span><i class="fas fa-question-circle"></i> কোর্স সম্পর্কিত প্রশ্নোত্তর (Q&A)</span>
+          <button type="button" class="btn btn-primary btn-sm" onclick="qnaAdd()"><i class="fas fa-plus"></i> নতুন প্রশ্ন</button>
+        </h4>
+        <div id="qnaList" style="display:flex;flex-direction:column;gap:8px"></div>
+        <input type="hidden" name="qna" id="qnaHidden" />
+        <small class="text-soft" style="font-size:11px">কোর্স বিস্তারিত পেজে এই প্রশ্নোত্তরসমূহ "প্রশ্নোত্তর" ট্যাবে দেখানো হবে।</small>
+      </div>
+
+      <div class="form-group"><label class="label">থাম্বনেইল</label>${dropzoneHTML('thumbnail', c.thumbnail||'')}</div>
+
+      <!-- ===== AUTO-SEO SECTION ===== -->
+      <div style="border:2px solid #c4b5fd;border-radius:10px;padding:14px;margin:12px 0;background:linear-gradient(135deg,#f5f3ff,#ede9fe)">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+          <h4 style="color:var(--primary);margin:0"><i class="fas fa-search"></i> SEO অপটিমাইজেশন (Google, Bing, Yahoo, DuckDuckGo)</h4>
+          <button type="button" class="btn btn-primary btn-sm" onclick="autoFillSeo(this.form)"><i class="fas fa-magic"></i> অটো এসিও</button>
+        </div>
+        <div class="form-group"><label class="label">SEO শিরোনাম <small class="text-soft">(৫০-৬০ অক্ষর সর্বোত্তম)</small></label>
+          <input name="seoTitle" id="seoTitleInput" maxlength="70" value="${escapeHtml(c.seoTitle||'')}" oninput="updateSeoPreview()" />
+          <small class="text-soft" id="seoTitleLen">0 অক্ষর</small>
+        </div>
+        <div class="form-group"><label class="label">SEO বিবরণ <small class="text-soft">(১৫০-১৬০ অক্ষর সর্বোত্তম)</small></label>
+          <textarea name="seoDescription" id="seoDescInput" rows="2" maxlength="180" oninput="updateSeoPreview()">${escapeHtml(c.seoDescription||'')}</textarea>
+          <small class="text-soft" id="seoDescLen">0 অক্ষর</small>
+        </div>
+        <div class="form-group"><label class="label">কীওয়ার্ডস <small class="text-soft">(কমা দিয়ে আলাদা)</small></label>
+          <input name="seoKeywords" value="${escapeHtml(c.seoKeywords||'')}" placeholder="কুরআন কোর্স, ইসলামী শিক্ষা, অনলাইন ক্লাস" />
+        </div>
+        <div class="form-group"><label class="label">OG Image URL <small class="text-soft">(সোশ্যাল শেয়ারের জন্য — খালি রাখলে থাম্বনেইল ব্যবহার হবে)</small></label>
+          <input name="ogImage" value="${escapeHtml(c.ogImage||'')}" placeholder="https://..." />
+        </div>
+
+        <!-- Search engine preview -->
+        <div style="margin-top:12px">
+          <label class="label" style="margin-bottom:6px"><i class="fab fa-google"></i> Google সার্চ রেজাল্টে যেমন দেখাবে:</label>
+          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:12px;font-family:Arial,sans-serif">
+            <div id="seoPreviewUrl" style="color:#202124;font-size:12px">https://yoursite.com › course › ...</div>
+            <div id="seoPreviewTitle" style="color:#1a0dab;font-size:18px;margin:4px 0;cursor:pointer">কোর্সের শিরোনাম</div>
+            <div id="seoPreviewDesc" style="color:#4d5156;font-size:13px;line-height:1.4">কোর্সের বিবরণ এখানে দেখাবে...</div>
+          </div>
+
+          <label class="label" style="margin:10px 0 6px"><i class="fab fa-microsoft"></i> Bing সার্চ রেজাল্টে যেমন দেখাবে:</label>
+          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:12px;font-family:'Segoe UI',sans-serif">
+            <div id="seoPreviewBingTitle" style="color:#0066cc;font-size:18px;font-weight:500;cursor:pointer">কোর্সের শিরোনাম</div>
+            <div id="seoPreviewBingUrl" style="color:#006621;font-size:13px;margin:2px 0">yoursite.com</div>
+            <div id="seoPreviewBingDesc" style="color:#444;font-size:13px;line-height:1.4">কোর্সের বিবরণ এখানে দেখাবে...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" name="isFeatured" value="true" ${c.isFeatured?'checked':''} style="width:auto"/> ফিচার্ড</label>
+        <label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" name="isActive" value="true" ${c.isActive!==false?'checked':''} style="width:auto"/> সক্রিয়</label>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top:12px;padding:11px"><i class="fas fa-save"></i> সংরক্ষণ</button>
+    </form>
+  `);
+  bindDropzones($('#modalBody'));
+  populateCourseCategoryDropdowns(c.category||'', c.subCategory||'');
+  populateCourseInstructorDropdown(c.instructorId||'', c.instructor||'');
+  curriculumInit(c.curriculum||[]);
+  setTimeout(updateSeoPreview, 100);
+}
+
+// ============================================================
+// AUTO-SEO — generates SEO fields from course details
+// ============================================================
+function autoFillSeo(form){
+  if (!form) return;
+  const fd = new FormData(form);
+  const title = (fd.get('title')||'').toString().trim();
+  const cat   = (fd.get('category')||'').toString().trim();
+  const sub   = (fd.get('subCategory')||'').toString().trim();
+  const instr = (form.querySelector('#courseInstructorSel')?.selectedOptions[0]?.text || fd.get('instructor') || '').toString().trim();
+  const type  = fd.get('type')==='live' ? 'লাইভ' : 'প্রিমিয়াম';
+  const shortDesc = (fd.get('shortDescription')||'').toString().trim();
+  const desc  = (fd.get('description')||'').toString().trim();
+  const dur   = (fd.get('duration')||'').toString().trim();
+
+  // Build SEO title (≤60 chars)
+  let seoTitle = title;
+  if (cat && !seoTitle.includes(cat)) seoTitle = `${title} — ${cat}`;
+  seoTitle = `${seoTitle} | ${type} ইসলামী কোর্স`;
+  if (seoTitle.length > 65) seoTitle = seoTitle.slice(0, 62) + '...';
+
+  // Build SEO description (≤160 chars)
+  let seoDesc = shortDesc || desc.slice(0, 140);
+  if (!seoDesc) seoDesc = `${title} — অনলাইনে ${type} ইসলামী কোর্স।`;
+  if (instr && !seoDesc.includes(instr)) seoDesc += ` শিক্ষক: ${instr}।`;
+  if (dur && !seoDesc.includes(dur)) seoDesc += ` সময়কাল: ${dur}।`;
+  seoDesc = seoDesc.replace(/\s+/g,' ').trim();
+  if (seoDesc.length > 158) seoDesc = seoDesc.slice(0, 155) + '...';
+
+  // Keywords
+  const kwParts = [title, cat, sub, instr, type+' কোর্স', 'ইসলামী শিক্ষা', 'অনলাইন কোর্স', 'কুরআন কোর্স', 'হাদিস', 'ফিকহ'].filter(Boolean);
+  const kws = [...new Set(kwParts)].join(', ');
+
+  // Apply
+  const setVal = (name, val) => { const el = form.querySelector(`[name="${name}"]`); if (el){ el.value = val; } };
+  setVal('seoTitle', seoTitle);
+  setVal('seoDescription', seoDesc);
+  setVal('seoKeywords', kws);
+  // OG image fallback to thumbnail preview if empty
+  const ogIn = form.querySelector('[name="ogImage"]');
+  if (ogIn && !ogIn.value){
+    const thumbPrev = form.querySelector('[data-dropzone="thumbnail"] img, .dz-preview img');
+    if (thumbPrev?.src) ogIn.value = thumbPrev.src;
+  }
+  updateSeoPreview();
+  toast('SEO অটো-জেনারেট করা হয়েছে ✓','success');
+}
+
+function updateSeoPreview(){
+  const t = document.getElementById('seoTitleInput')?.value || '';
+  const d = document.getElementById('seoDescInput')?.value || '';
+  const tl = document.getElementById('seoTitleLen'); if (tl){
+    tl.textContent = t.length + ' অক্ষর';
+    tl.style.color = (t.length>=50 && t.length<=65) ? '#16a34a' : (t.length>65 ? '#ef4444' : '#6b7280');
+  }
+  const dl = document.getElementById('seoDescLen'); if (dl){
+    dl.textContent = d.length + ' অক্ষর';
+    dl.style.color = (d.length>=120 && d.length<=160) ? '#16a34a' : (d.length>160 ? '#ef4444' : '#6b7280');
+  }
+  const setT = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v || el.textContent; };
+  if (t) { setT('seoPreviewTitle', t); setT('seoPreviewBingTitle', t); }
+  if (d) { setT('seoPreviewDesc', d); setT('seoPreviewBingDesc', d); }
+}
+
+// ============================================================
+// CURRICULUM BUILDER (Sections + Video Lessons)
+// ============================================================
+let __curriculum = [];
+function curriculumInit(data){
+  __curriculum = Array.isArray(data) ? JSON.parse(JSON.stringify(data)) : [];
+  // Normalise
+  __curriculum = __curriculum.map(s=>({
+    sectionTitle: s.sectionTitle||s.title||'',
+    lessons: Array.isArray(s.lessons)? s.lessons.map(l=>({
+      title: l.title||'', duration: l.duration||'', videoId: l.videoId||l.video||'', isFree: !!l.isFree
+    })) : []
+  }));
+  curriculumRender();
+}
+function curriculumSync(){
+  const el = document.getElementById('curriculumHidden');
+  if (el) el.value = JSON.stringify(__curriculum);
+}
+function curriculumRender(){
+  const box = document.getElementById('curriculumBuilder');
+  if (!box) return;
+  curriculumSync();
+  if (!__curriculum.length){
+    box.innerHTML = '<div style="text-align:center;padding:18px;color:var(--text-soft);font-size:13px">এখনো কোনো সেকশন যোগ করা হয়নি। উপরে "নতুন সেকশন" বাটনে ক্লিক করুন।</div>';
+    return;
+  }
+  box.innerHTML = __curriculum.map((s,si)=>`
+    <div style="border:1px solid #e2e8f0;border-radius:8px;margin-bottom:10px;background:#f8fafc">
+      <div style="display:flex;gap:8px;align-items:center;padding:8px 10px;background:#eef2ff;border-radius:8px 8px 0 0">
+        <span style="font-weight:700;color:var(--primary);min-width:22px">${si+1}.</span>
+        <input type="text" value="${escapeHtml(s.sectionTitle)}" placeholder="সেকশনের নাম (যেমন: সেকশন ১ — পরিচিতি)"
+          oninput="curriculumSetSectionTitle(${si}, this.value)"
+          style="flex:1;padding:6px 8px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;font-weight:600" />
+        <button type="button" class="btn btn-outline btn-sm" onclick="curriculumMoveSection(${si},-1)" title="উপরে"><i class="fas fa-arrow-up"></i></button>
+        <button type="button" class="btn btn-outline btn-sm" onclick="curriculumMoveSection(${si},1)" title="নিচে"><i class="fas fa-arrow-down"></i></button>
+        <button type="button" class="btn btn-danger btn-sm" onclick="curriculumDeleteSection(${si})" title="সেকশন মুছুন"><i class="fas fa-trash"></i></button>
+      </div>
+      <div style="padding:10px">
+        ${s.lessons.length? s.lessons.map((l,li)=>`
+          <div style="display:grid;grid-template-columns:24px 2fr 1fr 1.4fr auto auto;gap:6px;align-items:center;padding:6px;background:#fff;border:1px solid #e2e8f0;border-radius:6px;margin-bottom:6px">
+            <span style="color:var(--text-soft);font-size:12px;text-align:center">${li+1}</span>
+            <input type="text" value="${escapeHtml(l.title)}" placeholder="ভিডিওর শিরোনাম"
+              oninput="curriculumSetLesson(${si},${li},'title',this.value)"
+              style="padding:5px 7px;border:1px solid #cbd5e1;border-radius:5px;font-size:12px" />
+            <input type="text" value="${escapeHtml(l.duration)}" placeholder="সময় (12:30)"
+              oninput="curriculumSetLesson(${si},${li},'duration',this.value)"
+              style="padding:5px 7px;border:1px solid #cbd5e1;border-radius:5px;font-size:12px" />
+            <input type="text" value="${escapeHtml(l.videoId)}" placeholder="YouTube URL বা Video ID"
+              oninput="curriculumSetLesson(${si},${li},'videoId',this.value)"
+              onblur="const _id=extractYouTubeId(this.value);if(_id!==this.value){this.value=_id;curriculumSetLesson(${si},${li},'videoId',_id);}"
+              onpaste="setTimeout(()=>{const _id=extractYouTubeId(this.value);if(_id!==this.value){this.value=_id;curriculumSetLesson(${si},${li},'videoId',_id);}},0)"
+              style="padding:5px 7px;border:1px solid #cbd5e1;border-radius:5px;font-size:12px;font-family:monospace" />
+            <label style="display:flex;gap:4px;align-items:center;font-size:11px;cursor:pointer" title="ফ্রি প্রিভিউ">
+              <input type="checkbox" ${l.isFree?'checked':''} onchange="curriculumSetLesson(${si},${li},'isFree',this.checked)" style="width:auto" />
+              <span>ফ্রি</span>
+            </label>
+            <button type="button" class="btn btn-danger btn-sm" onclick="curriculumDeleteLesson(${si},${li})" title="মুছুন"><i class="fas fa-times"></i></button>
+          </div>
+        `).join('') : '<div style="color:var(--text-soft);font-size:12px;text-align:center;padding:6px">এই সেকশনে কোনো ভিডিও নেই</div>'}
+        <button type="button" class="btn btn-success btn-sm" onclick="curriculumAddLesson(${si})" style="margin-top:4px">
+          <i class="fas fa-video"></i> ভিডিও লেসন যোগ করুন
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+function curriculumAddSection(){
+  __curriculum.push({ sectionTitle:'সেকশন '+(__curriculum.length+1), lessons:[] });
+  curriculumRender();
+}
+function curriculumDeleteSection(si){
+  if (!confirm('এই সেকশন এবং এর সব ভিডিও মুছে ফেলতে চান?')) return;
+  __curriculum.splice(si,1); curriculumRender();
+}
+function curriculumMoveSection(si, dir){
+  const ni = si + dir; if (ni<0 || ni>=__curriculum.length) return;
+  const tmp = __curriculum[si]; __curriculum[si] = __curriculum[ni]; __curriculum[ni] = tmp;
+  curriculumRender();
+}
+function curriculumSetSectionTitle(si, v){ __curriculum[si].sectionTitle = v; curriculumSync(); }
+function curriculumAddLesson(si){
+  __curriculum[si].lessons.push({ title:'', duration:'', videoId:'', isFree:false });
+  curriculumRender();
+}
+function curriculumDeleteLesson(si, li){
+  __curriculum[si].lessons.splice(li,1); curriculumRender();
+}
+function extractYouTubeId(input){
+  const s = (input||'').trim();
+  // Already a plain ID (no slash, no dot, 11 chars alphanumeric/-/_)
+  if (/^[a-zA-Z0-9_-]{11}$/.test(s)) return s;
+  // Try URL patterns
+  try {
+    const url = new URL(s);
+    // youtu.be/ID
+    if (url.hostname === 'youtu.be') return url.pathname.slice(1).split('?')[0].split('&')[0];
+    // youtube.com/watch?v=ID  or  /embed/ID  or  /v/ID  or  /shorts/ID
+    if (url.hostname.includes('youtube.com')){
+      if (url.searchParams.get('v')) return url.searchParams.get('v');
+      const m = url.pathname.match(/\/(embed|v|shorts)\/([a-zA-Z0-9_-]{11})/);
+      if (m) return m[2];
+    }
+  } catch(e){}
+  // Fallback regex on raw string
+  const m = s.match(/(?:v=|\/embed\/|\/v\/|\/shorts\/|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  return m ? m[1] : s;
+}
+function curriculumSetLesson(si, li, key, val){
+  if (key === 'videoId') val = extractYouTubeId(val);
+  __curriculum[si].lessons[li][key] = val; curriculumSync();
+}
+
+function toggleCourseTypeFields(){}
+
+async function saveCourse(e, id){
+  e.preventDefault();
+  const btn = formSubmitBtn(e.target);
+  await withBtnLoading(btn, async ()=>{
+    const fd = new FormData(e.target);
+    fd.set('isFeatured', e.target.isFeatured.checked?'true':'false');
+    fd.set('isActive', e.target.isActive.checked?'true':'false');
+    const ftext = fd.get('features_text')||''; fd.delete('features_text');
+    fd.set('features', JSON.stringify(ftext.toString().split('\n').map(s=>s.trim()).filter(Boolean)));
+    const itext = fd.get('includes_text')||''; fd.delete('includes_text');
+    fd.set('includes', JSON.stringify(itext.toString().split('\n').map(s=>s.trim()).filter(Boolean)));
+    if (!fd.get('curriculum')) fd.set('curriculum', JSON.stringify(__curriculum||[]));
+    fd.set('qna', JSON.stringify(__qna||[]));
+    // CRITICAL: drop empty file inputs (otherwise multer.fields gets an empty file
+    // and live-image upload silently fails or returns "অনুরোধ ব্যর্থ")
+    cleanFormDataFiles(fd, ['thumbnail']);
+    try{
+      if (id) await api('/api/admin/courses/'+id,{method:'PUT',body:fd});
+      else await api('/api/admin/courses',{method:'POST',body:fd});
+      closeModal(); toast('সংরক্ষিত','success'); loadCourses();
+    }catch(err){ toast(err.message||'অনুরোধ ব্যর্থ','error') }
+  });
+}
+
+// ============================================================
+// ACCESS REQUESTS (recorded)
+// ============================================================
+async function loadAccessRequests(){
+  try{
+    const list = await api('/api/admin/access-requests');
+    $('#accessTable').innerHTML = `<tr>
+      <th>ছাত্র</th><th>কোর্স</th><th>পেমেন্ট</th><th>স্ক্রিনশট</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th>
+    </tr>${list.map(p=>`<tr>
+      <td><strong>${escapeHtml(p.userName||'')}</strong><br/><small style="color:var(--text-soft)">${escapeHtml(p.userEmail||'')}</small></td>
+      <td>${escapeHtml(p.courseTitle||'')}</td>
+      <td>${escapeHtml(p.paymentMethod||'')}<br/><small>${escapeHtml(p.trxId||'')}</small><br/><strong>৳${fmt(p.amount)}</strong></td>
+      <td>${p.screenshot?`<a href="${escapeHtml(p.screenshot)}" target="_blank"><img src="${escapeHtml(p.screenshot)}" class="thumb"/></a>`:'—'}</td>
+      <td>${statusBadge(p.status)}</td>
+      <td class="actions">
+        ${p.status==='pending'?`
+          <button class="btn btn-success btn-sm" onclick="approveAccess('${p._id}')"><i class="fas fa-check"></i></button>
+          <button class="btn btn-danger btn-sm" onclick="rejectAccess('${p._id}')"><i class="fas fa-times"></i></button>`
+        :'—'}
+      </td>
+    </tr>`).join('')||'<tr><td colspan="6" class="empty">কোনো অনুরোধ নেই</td></tr>'}`;
+  }catch(e){ toast(e.message,'error') }
+}
+
+async function approveAccess(id){
+  if (!confirm('Approve করবেন? ছাত্রকে ইমেইলে কনফার্মেশন পাঠানো হবে।')) return;
+  try{ await api('/api/admin/access-requests/'+id,{method:'PUT',body:{status:'approved'}}); toast('অনুমোদিত','success'); loadAccessRequests(); }
+  catch(err){ toast(err.message,'error') }
+}
+async function rejectAccess(id){
+  const note = prompt('কারণ:'); if (note===null) return;
+  try{ await api('/api/admin/access-requests/'+id,{method:'PUT',body:{status:'rejected',adminNote:note}}); toast('প্রত্যাখ্যান'); loadAccessRequests(); }
+  catch(err){ toast(err.message,'error') }
+}
+
+// ============================================================
+// USERS
+// ============================================================
+async function loadUsers(){
+  try{
+    const list = await api('/api/admin/users');
+    $('#usersTable').innerHTML = `<tr><th>নাম</th><th>ইমেইল</th><th>ফোন</th><th>WhatsApp</th><th>কোর্স</th><th>যোগদান</th></tr>
+      ${list.map(u=>`<tr>
+        <td><strong>${escapeHtml(u.name||'')}</strong></td>
+        <td>${escapeHtml(u.email||'')}</td>
+        <td>${escapeHtml(u.phone||'—')}</td>
+        <td>${escapeHtml(u.whatsapp||'—')}</td>
+        <td>${u.enrolledCourses?.length||0}</td>
+        <td>${fmtDate(u.createdAt)}</td>
+      </tr>`).join('')||'<tr><td colspan="6" class="empty">কোনো ছাত্র নেই</td></tr>'}`;
+  }catch(e){ toast(e.message,'error') }
+}
+
+// ============================================================
+// GENERIC CRUD
+// ============================================================
+const CRUD_CONFIG = {
+  instructors: {
+    fields:[['name','নাম','text',true],['designation','পদবী','text'],['bio','বিবরণ','textarea']],
+    file:'photo', columns:['photo','name','designation']
+  },
+  testimonials: {
+    fields:[['name','নাম','text',true],['designation','পদবী','text'],['message','বার্তা','textarea',true],['rating','রেটিং (১-৫)','number']],
+    file:'avatar', columns:['avatar','name','message']
+  },
+  notices: {
+    fields:[['title','শিরোনাম','text',true],['content','বিবরণ','textarea',true]],
+    file:'image', columns:['image','title','content']
+  },
+  faqs: {
+    fields:[['question','প্রশ্ন','text',true],['answer','উত্তর','textarea',true],['order','ক্রম','number']],
+    columns:['question','answer']
+  },
+};
+
+async function loadCrud(name){
+  const cfg = CRUD_CONFIG[name];
+  try{
+    const list = await api('/api/admin/'+name);
+    const cols = cfg.columns.map(c=>`<th>${c}</th>`).join('');
+    $('#'+name+'Table').innerHTML = `<tr>${cols}<th>অ্যাকশন</th></tr>` + (list.map(item=>`<tr>
+      ${cfg.columns.map(c=>{
+        if (c==='photo'||c==='avatar'||c==='image') return `<td>${item[c]?`<img src="${item[c]}" class="thumb"/>`:'—'}</td>`;
+        return `<td>${escapeHtml((item[c]||'').toString().slice(0,80))}</td>`;
+      }).join('')}
+      <td class="actions">
+        <button class="btn btn-outline btn-sm" onclick='openCrudModal("${name}",${JSON.stringify(item).replace(/'/g,"&#39;")})'><i class="fas fa-edit"></i></button>
+        <button class="btn btn-danger btn-sm" onclick="delItem('${name}','${item._id}',()=>loadCrud('${name}'))"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>`).join('')||`<tr><td colspan="${cfg.columns.length+1}" class="empty">কিছু নেই</td></tr>`);
+  }catch(e){ toast(e.message,'error') }
+}
+
+function openCrudModal(name, item={}){
+  const cfg = CRUD_CONFIG[name];
+  const fieldsHtml = cfg.fields.map(([k,l,t,req])=>`
+    <div class="form-group"><label class="label">${l}${req?' *':''}</label>
+      ${t==='textarea'?`<textarea name="${k}" rows="3" ${req?'required':''}>${escapeHtml(item[k]||'')}</textarea>`
+        :`<input type="${t}" name="${k}" value="${escapeHtml(item[k]||'')}" ${req?'required':''} />`}
+    </div>`).join('');
+  const fileHtml = cfg.file?`<div class="form-group"><label class="label">${cfg.file === 'photo' ? 'ছবি' : cfg.file === 'avatar' ? 'অবতার' : 'ছবি'}</label>${dropzoneHTML(cfg.file, item[cfg.file]||'')}</div>`:'';
+  openModal(`<h2>${item._id?'সম্পাদনা':'নতুন'}</h2>
+    <form onsubmit="saveCrud(event,'${name}','${item._id||''}')">
+      ${fieldsHtml}${fileHtml}
+      <button type="submit" class="btn btn-primary btn-block" style="padding:11px"><i class="fas fa-save"></i> সংরক্ষণ</button>
+    </form>`);
+  bindDropzones($('#modalBody'));
+}
+
+async function saveCrud(e, name, id){
+  e.preventDefault();
+  const cfg = CRUD_CONFIG[name];
+  const btn = formSubmitBtn(e.target);
+  await withBtnLoading(btn, async ()=>{
+    const fd = new FormData(e.target);
+    if (cfg.file && !fd.get(cfg.file)?.size) fd.delete(cfg.file);
+    try{
+      if (id) await api(`/api/admin/${name}/${id}`,{method:'PUT',body:fd});
+      else await api(`/api/admin/${name}`,{method:'POST',body:fd});
+      closeModal(); toast('সংরক্ষিত','success'); loadCrud(name);
+    }catch(err){ toast(err.message,'error') }
+  });
+}
+
+async function delItem(name, id, cb){
+  if (!confirm('মুছে ফেলবেন?')) return;
+  try{ await api(`/api/admin/${name}/${id}`,{method:'DELETE'}); toast('মুছে ফেলা হয়েছে'); cb&&cb(); }
+  catch(err){ toast(err.message,'error') }
+}
+
+// ============================================================
+// BLOG
+// ============================================================
+async function loadBlog(){
+  try{
+    const list = await api('/api/admin/blog');
+    $('#blogTable').innerHTML = `<tr><th>ছবি</th><th>শিরোনাম</th><th>লেখক</th><th>প্রকাশিত</th><th>অ্যাকশন</th></tr>
+      ${list.map(b=>`<tr>
+        <td>${b.image?`<img src="${b.image}" class="thumb"/>`:'—'}</td>
+        <td><strong>${escapeHtml(b.title||'')}</strong><br/><small>${escapeHtml(b.slug||'')}</small></td>
+        <td>${escapeHtml(b.author||'')}</td>
+        <td>${b.isPublished?'✅':'❌'}</td>
+        <td class="actions">
+          <button class="btn btn-outline btn-sm" onclick='openBlogModal(${JSON.stringify(b).replace(/'/g,"&#39;")})'><i class="fas fa-edit"></i></button>
+          <button class="btn btn-danger btn-sm" onclick="delItem('blog','${b._id}',loadBlog)"><i class="fas fa-trash"></i></button>
+        </td>
+      </tr>`).join('')||'<tr><td colspan="5" class="empty">কোনো ব্লগ নেই</td></tr>'}`;
+  }catch(e){ toast(e.message,'error') }
+}
+
+function openBlogModal(b={}){
+  openModal(`<h2>${b._id?'ব্লগ সম্পাদনা':'নতুন ব্লগ'}</h2>
+    <form onsubmit="saveBlog(event,'${b._id||''}')">
+      <div class="row">
+        <div class="form-group"><label class="label">শিরোনাম *</label><input name="title" value="${escapeHtml(b.title||'')}" required /></div>
+        <div class="form-group"><label class="label">Slug *</label><input name="slug" value="${escapeHtml(b.slug||'')}" required /></div>
+      </div>
+      <div class="form-group"><label class="label">লেখক</label><input name="author" value="${escapeHtml(b.author||'')}" /></div>
+      <div class="form-group"><label class="label">সংক্ষিপ্ত বিবরণ</label><textarea name="excerpt" rows="2">${escapeHtml(b.excerpt||'')}</textarea></div>
+      <div class="form-group"><label class="label">পূর্ণ কন্টেন্ট</label><textarea name="content" rows="8" required>${escapeHtml(b.content||'')}</textarea></div>
+      <div class="form-group"><label class="label">ছবি</label>${dropzoneHTML('image', b.image||'')}</div>
+      <label style="display:flex;gap:8px;font-size:14px"><input type="checkbox" name="isPublished" value="true" ${b.isPublished!==false?'checked':''} style="width:auto"/> প্রকাশিত</label>
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top:12px;padding:11px"><i class="fas fa-save"></i> সংরক্ষণ</button>
+    </form>`);
+  bindDropzones($('#modalBody'));
+}
+
+async function saveBlog(e, id){
+  e.preventDefault();
+  const btn = formSubmitBtn(e.target);
+  await withBtnLoading(btn, async ()=>{
+    const fd = new FormData(e.target);
+    fd.set('isPublished', e.target.isPublished.checked?'true':'false');
+    if (!fd.get('image')?.size) fd.delete('image');
+    try{
+      if (id) await api('/api/admin/blog/'+id,{method:'PUT',body:fd});
+      else await api('/api/admin/blog',{method:'POST',body:fd});
+      closeModal(); toast('সংরক্ষিত','success'); loadBlog();
+    }catch(err){ toast(err.message,'error') }
+  });
+}
+
+// ============================================================
+// MESSAGES
+// ============================================================
+async function loadMessages(){
+  try{
+    const list = await api('/api/admin/contact-messages');
+    $('#messagesTable').innerHTML = `<tr><th>নাম</th><th>ইমেইল</th><th>বিষয়</th><th>বার্তা</th><th>তারিখ</th><th>অ্যাকশন</th></tr>
+      ${list.map(m=>`<tr>
+        <td><strong>${escapeHtml(m.name||'')}</strong></td>
+        <td>${escapeHtml(m.email||'')}<br/><small>${escapeHtml(m.phone||'')}</small></td>
+        <td>${escapeHtml(m.subject||'')}</td>
+        <td style="max-width:280px">${escapeHtml((m.message||'').slice(0,150))}</td>
+        <td>${fmtDate(m.createdAt)}</td>
+        <td class="actions">
+            <button class="btn btn-outline btn-sm" onclick='viewMessage(${JSON.stringify(m).replace(/\x27/g,"&#39;")})'><i class="fas fa-eye"></i> দেখুন</button>
+            <button class="btn btn-danger btn-sm" onclick="delItem('contact-messages','${m._id}',loadMessages)"><i class="fas fa-trash"></i></button>
+          </td>
+      </tr>`).join('')||'<tr><td colspan="6" class="empty">কোনো বার্তা নেই</td></tr>'}`;
+  }catch(e){ toast(e.message,'error') }
+}
+
+// ============================================================
+// SETTINGS
+// ============================================================
+const SETTINGS_FIELDS = {
+  contact:{
+    title:'যোগাযোগ তথ্য',
+    desc:'এই তথ্য সাইটের ফুটার ও Contact পেজে দেখানো হবে।',
+    fields:[
+      ['email','ইমেইল','text'],
+      ['phone','ফোন','text'],
+      ['address','ঠিকানা','textarea'],
+      ['mapUrl','Google Maps Embed URL','textarea'],
+    ]
+  },
+  payment:{
+    title:'পেমেন্ট তথ্য',
+    desc:'এই নাম্বারগুলো কোর্স কেনার সময় ছাত্রদের দেখানো হবে।',
+    fields:[
+      ['bkash','bKash নম্বর','text'],
+      ['nagad','Nagad নম্বর','text'],
+      ['rocket','Rocket নম্বর','text'],
+      ['bank','ব্যাংক তথ্য','textarea'],
+      ['instructions','অতিরিক্ত নির্দেশনা','textarea'],
+    ]
+  },
+  social:{
+    title:'সোশ্যাল মিডিয়া',
+    desc:'ফুটারে আইকন সহ দেখানো হবে।',
+    fields:[
+      ['facebook','Facebook URL','text'],
+      ['youtube','YouTube URL','text'],
+      ['instagram','Instagram URL','text'],
+      ['whatsapp','WhatsApp URL','text'],
+      ['twitter','Twitter URL','text'],
+    ]
+  },
+  notice:{
+    title:'টপ নোটিশ বার',
+    desc:'হেডারের উপরের রঙিন বারে যা দেখানো হবে। খালি রাখলে বারটি লুকানো থাকবে।',
+    fields:[
+      ['text','নোটিশ টেক্সট','textarea'],
+    ]
+  },
+  hero:{
+    title:'হোম পেজ — হিরো সেকশন',
+    desc:'হোম পেজের শীর্ষ ব্যানারের কন্টেন্ট। খালি রাখলে নিচের ডিফল্ট মান index.html থেকে দেখানো হবে।',
+    fields:[
+      ['pill','উপরের পিল টেক্সট','text','বাংলাদেশের নির্ভরযোগ্য ইসলামিক একাডেমি'],
+      ['title','মূল শিরোনাম','text','অনলাইনে নতুন দক্ষতা অর্জন করুন'],
+      ['highlight','গোল্ড হাইলাইট অংশ (শিরোনামের ভিতরে)','text','দক্ষতা অর্জন'],
+      ['subtitle','উপ-শিরোনাম','textarea','কুরআন, সীরাহ, ফিকাহ, হাদীস ও আরবি ভাষা — অভিজ্ঞ আলেমদের তত্ত্বাবধানে ঘরে বসেই দীন শিক্ষার আধুনিক প্ল্যাটফর্ম।'],
+      ['primaryButtonText','প্রাইমারি বাটন টেক্সট','text','সব কোর্স দেখুন'],
+      ['secondaryButtonText','সেকেন্ডারি বাটন টেক্সট','text','আমাদের সম্পর্কে'],
+      ['stat1Num','স্ট্যাট ১ — সংখ্যা','text','১২,০০০+'],
+      ['stat1Lbl','স্ট্যাট ১ — লেবেল','text','শিক্ষার্থী'],
+      ['stat2Num','স্ট্যাট ২ — সংখ্যা','text','৬০+'],
+      ['stat2Lbl','স্ট্যাট ২ — লেবেল','text','কোর্স'],
+      ['stat3Num','স্ট্যাট ৩ — সংখ্যা','text','২৫+'],
+      ['stat3Lbl','স্ট্যাট ৩ — লেবেল','text','শিক্ষক'],
+      ['stat4Num','স্ট্যাট ৪ — সংখ্যা','text','৪.৯★'],
+      ['stat4Lbl','স্ট্যাট ৪ — লেবেল','text','রেটিং'],
+      ['card1Title','গ্লাস কার্ড ১ — শিরোনাম','text','অথেনটিক কোর্স'],
+      ['card1Desc','গ্লাস কার্ড ১ — বিবরণ','textarea','কুরআন ও সহীহ হাদিসভিত্তিক যাচাইকৃত পাঠ্যক্রম।'],
+      ['card2Title','গ্লাস কার্ড ২ — শিরোনাম','text','অভিজ্ঞ আলেম'],
+      ['card2Desc','গ্লাস কার্ড ২ — বিবরণ','textarea','দেশ-বিদেশের প্রসিদ্ধ আলেমদের তত্ত্বাবধানে।'],
+      ['card3Title','গ্লাস কার্ড ৩ — শিরোনাম','text','সার্টিফিকেট'],
+      ['card3Desc','গ্লাস কার্ড ৩ — বিবরণ','textarea','প্রতিষ্ঠান-স্বীকৃত ডিজিটাল সনদ।'],
+    ]
+  },
+  about:{
+    title:'পরিচিতি পেজ',
+    desc:'About পেজে দেখানো বিষয়বস্তু, ট্যাগলাইন ও ৪টি স্ট্যাট কার্ড।',
+    fields:[
+      ['title','পেজ শিরোনাম','text'],
+      ['tagline','ট্যাগলাইন','text'],
+      ['paragraph1','অনুচ্ছেদ ১','textarea'],
+      ['paragraph2','অনুচ্ছেদ ২','textarea'],
+      ['paragraph3','অনুচ্ছেদ ৩','textarea'],
+      ['mission','আমাদের লক্ষ্য','textarea'],
+      ['stat1Num','স্ট্যাট ১ — সংখ্যা (যেমন: ৫০+)','text'],
+      ['stat1Lbl','স্ট্যাট ১ — লেবেল','text'],
+      ['stat2Num','স্ট্যাট ২ — সংখ্যা','text'],
+      ['stat2Lbl','স্ট্যাট ২ — লেবেল','text'],
+      ['stat3Num','স্ট্যাট ৩ — সংখ্যা','text'],
+      ['stat3Lbl','স্ট্যাট ৩ — লেবেল','text'],
+      ['stat4Num','স্ট্যাট ৪ — সংখ্যা','text'],
+      ['stat4Lbl','স্ট্যাট ৪ — লেবেল','text'],
+    ]
+  },
+  faqSection:{
+    title:'FAQ সেকশনের ছবি',
+    desc:'হোম পেজের FAQ সেকশনের পাশে দেখানো ছবি।',
+    fields:[
+      ['image','FAQ ছবি (আপলোড)','image'],
+    ]
+  },
+  whatsapp:{
+    title:'WhatsApp ফ্লোটিং বাটন',
+    desc:'সাইটের কোণায় WhatsApp চ্যাট বাটন।',
+    fields:[
+      ['enabled','সক্রিয় করুন','select',['true','false']],
+      ['number','WhatsApp নম্বর (যেমন +8801XXXXXXXXX)','text'],
+      ['message','ডিফল্ট মেসেজ','textarea'],
+    ]
+  },
+  siteSettings:{
+    title:'সাইট সাধারণ তথ্য',
+    desc:'সাইটের নাম, লোগো, ট্যাগলাইন।',
+    fields:[
+      ['siteName','সাইটের নাম','text'],
+      ['tagline','ট্যাগলাইন','text'],
+      ['logo','লোগো ছবি (আপলোড)','image'],
+      ['favicon','ফ্যাভিকন (আপলোড)','image'],
+      ['footerAbout','ফুটার পরিচিতি','textarea'],
+      ['copyright','কপিরাইট টেক্সট ({year} = বর্তমান বছর)','text'],
+    ]
+  },
+  navigation:{
+    title:'নেভিগেশন মেনু',
+    desc:'হেডারের প্রধান মেনু আইটেমের লেবেল।',
+    fields:[
+      ['homeLabel','হোম','text'],
+      ['coursesLabel','কোর্স','text'],
+      ['instructorsLabel','শিক্ষকবৃন্দ','text'],
+      ['blogLabel','ব্লগ','text'],
+      ['aboutLabel','পরিচিতি','text'],
+      ['contactLabel','যোগাযোগ','text'],
+    ]
+  },
+  footer:{
+    title:'ফুটার সেটিংস',
+    desc:'ফুটারের অতিরিক্ত তথ্য ও কলাম শিরোনাম।',
+    fields:[
+      ['col1Title','কলাম ১ শিরোনাম (যেমন: দ্রুত লিংক)','text'],
+      ['col2Title','কলাম ২ শিরোনাম (যেমন: কোর্স)','text'],
+      ['col3Title','কলাম ৩ শিরোনাম (যেমন: যোগাযোগ)','text'],
+      ['newsletterTitle','নিউজলেটার শিরোনাম','text'],
+      ['newsletterDesc','নিউজলেটার বিবরণ','textarea'],
+      ['bottomNote','নিচের অতিরিক্ত নোট','textarea'],
+    ]
+  },
+  welcomePopup:{
+    title:'ওয়েলকাম পপআপ',
+    desc:'সাইট খোলার পর ছাত্রদের প্রথমে দেখানো পপআপ।',
+    fields:[
+      ['enabled','সক্রিয় করুন','select',['true','false']],
+      ['title','পপআপ শিরোনাম','text'],
+      ['message','পপআপ বার্তা','textarea'],
+      ['image','পপআপ ছবি (আপলোড)','image'],
+      ['buttonText','বাটন টেক্সট','text'],
+      ['buttonLink','বাটন লিংক','text'],
+    ]
+  },
+  cta:{
+    title:'CTA সেকশন (Call-to-Action)',
+    desc:'হোম পেজের নিচের অংশে বড় কল-টু-অ্যাকশন ব্যানার।',
+    fields:[
+      ['title','CTA শিরোনাম','text'],
+      ['subtitle','CTA উপ-শিরোনাম','textarea'],
+      ['buttonText','বাটন টেক্সট','text'],
+      ['buttonLink','বাটন লিংক','text'],
+      ['backgroundImage','ব্যাকগ্রাউন্ড ছবি (আপলোড)','image'],
+    ]
+  },
+};
+
+async function switchSetTab(key){
+  if (key === 'whyJoin') return renderWhyJoinTab();
+  const cfg = SETTINGS_FIELDS[key];
+  if (!cfg){ $('#setPane').innerHTML=''; return; }
+  $('#setPane').innerHTML = `<div class="empty"><div class="loader"></div></div>`;
+  let val = {};
+  try{ val = (await api('/api/admin/settings/'+key)) || {}; }catch{}
+  $('#setPane').innerHTML = `
+    <div class="settings-section">
+      <h4>${cfg.title}</h4>
+      <p class="text-soft" style="margin-bottom:14px">${cfg.desc}</p>
+      <form onsubmit="saveSet(event,'${key}')">
+        ${cfg.fields.map(([k,l,t,opts])=>{
+          const def = (Array.isArray(opts) || t==='select') ? '' : (opts||'');
+          const cur = (val[k] !== undefined && val[k] !== '') ? val[k] : def;
+          return `
+          <div class="form-group">
+            <label class="label">${l}</label>
+            ${t==='textarea'
+              ? `<textarea name="${k}" rows="3" placeholder="${escapeHtml(def)}">${escapeHtml(cur)}</textarea>`
+              : t==='select'
+              ? `<select name="${k}">${(opts||[]).map(o=>`<option value="${escapeHtml(o)}" ${String(val[k])===String(o)?'selected':''}>${escapeHtml(o==='true'?'হ্যাঁ (চালু)':o==='false'?'না (বন্ধ)':o)}</option>`).join('')}</select>`
+              : t==='image'
+              ? `<div class="set-img-field" data-field="${k}">
+                  <input type="hidden" name="${k}" value="${escapeHtml(val[k]||'')}" />
+                  <div class="set-img-preview" style="width:100%;max-width:280px;aspect-ratio:16/9;border:2px dashed var(--border);border-radius:10px;background:#f8fafc;overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:8px">
+                    ${val[k]
+                      ? `<img src="${escapeHtml(val[k])}" style="width:100%;height:100%;object-fit:cover" alt=""/>`
+                      : `<div style="text-align:center;color:var(--text-soft);font-size:13px"><i class="fas fa-image" style="font-size:28px;display:block;margin-bottom:4px"></i>কোনো ছবি নেই</div>`}
+                  </div>
+                  <div style="display:flex;gap:6px;flex-wrap:wrap">
+                    <label class="btn btn-outline btn-sm" style="cursor:pointer">
+                      <i class="fas fa-upload"></i> ${val[k]?'পরিবর্তন':'আপলোড'}
+                      <input type="file" accept="image/*" style="display:none" onchange="settingImageUpload(this,'${k}')" />
+                    </label>
+                    ${val[k]?`<button type="button" class="btn btn-danger btn-sm" onclick="settingImageClear('${k}')"><i class="fas fa-trash"></i> মুছুন</button>`:''}
+                  </div>
+                  <small style="color:var(--text-soft);font-size:11px;display:block;margin-top:4px">JPG / PNG / WebP — সর্বোচ্চ 10MB</small>
+                </div>`
+              : `<input name="${k}" value="${escapeHtml(cur)}" placeholder="${escapeHtml(def)}"/>`}
+          </div>`;}).join('')}
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> সংরক্ষণ</button>
+      </form>
+    </div>`;
+  bindDropzones($('#setPane'));
+}
+
+// ── Image-type setting field: upload to /api/admin/upload, store URL in hidden input ──
+async function settingImageUpload(input, fieldKey){
+  const f = input.files?.[0]; if (!f) return;
+  const wrap = input.closest('.set-img-field');
+  const hidden = wrap.querySelector(`input[type="hidden"][name="${fieldKey}"]`);
+  const preview = wrap.querySelector('.set-img-preview');
+  preview.innerHTML = `<div class="loader"></div>`;
+  try{
+    const fd = new FormData(); fd.append('file', f);
+    const r = await api('/api/admin/upload', { method:'POST', body: fd });
+    hidden.value = r.url || '';
+    preview.innerHTML = `<img src="${escapeHtml(r.url)}" style="width:100%;height:100%;object-fit:cover" alt=""/>`;
+    // Re-render field controls so "মুছুন" button appears
+    const labelBtn = wrap.querySelector('label.btn-outline');
+    if (labelBtn) labelBtn.innerHTML = `<i class="fas fa-upload"></i> পরিবর্তন<input type="file" accept="image/*" style="display:none" onchange="settingImageUpload(this,'${fieldKey}')" />`;
+    if (!wrap.querySelector('button.btn-danger')){
+      const btn = document.createElement('button');
+      btn.type='button'; btn.className='btn btn-danger btn-sm';
+      btn.innerHTML = '<i class="fas fa-trash"></i> মুছুন';
+      btn.onclick = ()=>settingImageClear(fieldKey);
+      labelBtn.parentNode.appendChild(btn);
+    }
+    toast('ছবি আপলোড হয়েছে','success');
+  }catch(err){
+    toast(err.message||'আপলোড ব্যর্থ','error');
+    preview.innerHTML = `<div style="text-align:center;color:var(--danger);font-size:13px"><i class="fas fa-exclamation-triangle"></i> ব্যর্থ</div>`;
+  }
+}
+function settingImageClear(fieldKey){
+  const wrap = document.querySelector(`.set-img-field[data-field="${fieldKey}"]`);
+  if (!wrap) return;
+  const hidden = wrap.querySelector(`input[type="hidden"][name="${fieldKey}"]`);
+  hidden.value = '';
+  const preview = wrap.querySelector('.set-img-preview');
+  preview.innerHTML = `<div style="text-align:center;color:var(--text-soft);font-size:13px"><i class="fas fa-image" style="font-size:28px;display:block;margin-bottom:4px"></i>কোনো ছবি নেই</div>`;
+  const danger = wrap.querySelector('button.btn-danger'); if (danger) danger.remove();
+  const labelBtn = wrap.querySelector('label.btn-outline');
+  if (labelBtn) labelBtn.innerHTML = `<i class="fas fa-upload"></i> আপলোড<input type="file" accept="image/*" style="display:none" onchange="settingImageUpload(this,'${fieldKey}')" />`;
+}
+
+// ── "কেন যুক্ত হবেন" ডাইনামিক আইটেম এডিটর ──
+async function renderWhyJoinTab(){
+  $('#setPane').innerHTML = `<div class="empty"><div class="loader"></div></div>`;
+  let val = {};
+  try{ val = (await api('/api/admin/settings/whyJoin')) || {}; }catch{}
+  let items = val.items;
+  if (typeof items === 'string'){ try{ items = JSON.parse(items); }catch{ items=[]; } }
+  if (!Array.isArray(items) || !items.length) items = [
+    {icon:'fa-quran',                title:'অথেনটিক ইসলামি শিক্ষা', description:'কুরআন ও সহীহ হাদিসভিত্তিক সঠিক জ্ঞান, যাচাইকৃত উৎস থেকে।'},
+    {icon:'fa-chalkboard-teacher',   title:'অভিজ্ঞ আলেম',           description:'দেশ-বিদেশের প্রসিদ্ধ মাদ্রাসা ও বিশ্ববিদ্যালয়ের গ্র্যাজুয়েট শিক্ষকমণ্ডলী।'},
+    {icon:'fa-laptop-house',         title:'ঘরে বসেই দীন শিক্ষা',   description:'যেকোনো ডিভাইস থেকে — মোবাইল, ট্যাব বা কম্পিউটার দিয়ে।'},
+    {icon:'fa-whatsapp',             title:'লাইভ সাপোর্ট',          description:'WhatsApp গ্রুপে শিক্ষকের সাথে সরাসরি প্রশ্নোত্তর।'},
+    {icon:'fa-certificate',          title:'সার্টিফিকেট',           description:'কোর্স সম্পন্ন করার পর প্রতিষ্ঠান-স্বীকৃত সার্টিফিকেট।'},
+    {icon:'fa-tag',                  title:'সাশ্রয়ী মূল্য',         description:'সকলের সাধ্যের মধ্যে — কম খরচে উন্নত মানের ইসলামি শিক্ষা।'},
+  ];
+  if (!val.title)    val.title    = 'কেন ইবনে খালদুন ইনস্টিটিউটতে যুক্ত হবেন?';
+  if (!val.subtitle) val.subtitle = 'আমাদের বিশেষত্ব যা আপনার দীনি যাত্রাকে সহজ করবে';
+  window.__wj = { title: val.title||'', subtitle: val.subtitle||'', items };
+  drawWhyJoinUI();
+}
+function drawWhyJoinUI(){
+  const w = window.__wj;
+  $('#setPane').innerHTML = `
+    <div class="settings-section">
+      <h4>"কেন যুক্ত হবেন?" সেকশন</h4>
+      <p class="text-soft" style="margin-bottom:14px">হোম পেজের ফিচার কার্ডগুলো এখান থেকে পরিবর্তন করুন।</p>
+      <form onsubmit="saveWhyJoin(event)">
+        <div class="form-group"><label class="label">সেকশন শিরোনাম</label><input name="title" value="${escapeHtml(w.title)}" placeholder="কেন ইবনে খালদুন ইনস্টিটিউটতে যুক্ত হবেন?"/></div>
+        <div class="form-group"><label class="label">উপ-শিরোনাম</label><input name="subtitle" value="${escapeHtml(w.subtitle)}"/></div>
+        <h4 style="margin-top:18px">কার্ডসমূহ</h4>
+        <div id="wjItems">
+          ${w.items.map((it,i)=>`
+            <div class="card" style="padding:12px;margin-bottom:10px;background:#f8fafc">
+              <div class="row" style="align-items:flex-start">
+                <div class="form-group" style="flex:0 0 180px">
+                  <label class="label">আইকন ছবি</label>
+                  <div class="wj-thumb" style="width:120px;height:120px;border-radius:12px;border:2px dashed var(--border);overflow:hidden;background:#fff;position:relative;display:flex;align-items:center;justify-content:center">
+                    ${it.image
+                      ? `<img src="${escapeHtml(it.image)}" style="width:100%;height:100%;object-fit:cover"/>`
+                      : `<i class="fas fa-image" style="font-size:32px;color:var(--text-soft)"></i>`}
+                  </div>
+                  <div style="display:flex;gap:6px;margin-top:6px">
+                    <label class="btn btn-outline btn-sm" style="cursor:pointer;flex:1;text-align:center">
+                      <i class="fas fa-upload"></i> ${it.image?'পরিবর্তন':'আপলোড'}
+                      <input type="file" accept="image/*" style="display:none" onchange="wjUpload(${i}, this)" />
+                    </label>
+                    ${it.image?`<button type="button" class="btn btn-danger btn-sm" onclick="window.__wj.items[${i}].image='';drawWhyJoinUI()" title="মুছুন"><i class="fas fa-trash"></i></button>`:''}
+                  </div>
+                </div>
+                <div style="flex:1">
+                  <div class="form-group"><label class="label">শিরোনাম</label><input value="${escapeHtml(it.title||'')}" oninput="window.__wj.items[${i}].title=this.value"/></div>
+                  <div class="form-group"><label class="label">বিবরণ</label><textarea rows="3" oninput="window.__wj.items[${i}].description=this.value">${escapeHtml(it.description||'')}</textarea></div>
+                  <button type="button" class="btn btn-danger btn-sm" onclick="window.__wj.items.splice(${i},1);drawWhyJoinUI()"><i class="fas fa-trash"></i> মুছুন</button>
+                </div>
+              </div>
+            </div>`).join('')}
+        </div>
+        <button type="button" class="btn btn-outline" onclick="window.__wj.items.push({image:'',title:'',description:''});drawWhyJoinUI()" style="margin-bottom:12px"><i class="fas fa-plus"></i> নতুন কার্ড</button>
+        <button type="submit" class="btn btn-primary btn-block" style="padding:11px"><i class="fas fa-save"></i> সংরক্ষণ</button>
+      </form>
+    </div>`;
+}
+async function wjUpload(idx, input){
+  const f = input.files?.[0]; if (!f) return;
+  const fd = new FormData(); fd.append('file', f);
+  try{
+    const r = await api('/api/admin/upload', { method:'POST', body: fd });
+    window.__wj.items[idx].image = r.url;
+    drawWhyJoinUI();
+    toast('ছবি আপলোড হয়েছে','success');
+  }catch(err){ toast(err.message||'আপলোড ব্যর্থ','error'); }
+}
+async function saveWhyJoin(e){
+  e.preventDefault();
+  const btn = formSubmitBtn(e.target);
+  await withBtnLoading(btn, async ()=>{
+    const fd = Object.fromEntries(new FormData(e.target));
+    const value = { title: fd.title||'', subtitle: fd.subtitle||'', items: window.__wj.items.filter(x=>x.title) };
+    try{ await api('/api/admin/settings/whyJoin',{method:'POST',body:{value}}); toast('সংরক্ষিত','success'); }
+    catch(err){ toast(err.message,'error') }
+  });
+}
+
+async function saveSet(e, key){
+  e.preventDefault();
+  const btn = formSubmitBtn(e.target);
+  await withBtnLoading(btn, async ()=>{
+    const fd = Object.fromEntries(new FormData(e.target));
+    try{ await api('/api/admin/settings/'+key,{method:'POST',body:{value:fd}}); toast('সংরক্ষিত','success'); }
+    catch(err){ toast(err.message,'error') }
+  });
+}
+
+// ============================================================
+// COURSE COMMENTS MODERATION
+// ============================================================
+async function openCourseComments(courseId, courseTitle){
+  openModal(`
+    <h2><i class="fas fa-comments"></i> মন্তব্য মডারেশন</h2>
+    <p class="text-soft" style="margin-bottom:14px">${escapeHtml(courseTitle||'')}</p>
+    <div id="courseCommentsList"><div class="loader"></div></div>
+  `);
+  try{
+    const list = await api('/api/courses/'+courseId+'/comments');
+    const box = document.getElementById('courseCommentsList');
+    if (!Array.isArray(list) || !list.length){
+      box.innerHTML = '<div class="empty">এই কোর্সে কোনো মন্তব্য নেই</div>';
+      return;
+    }
+    box.innerHTML = list.map(cm=>`
+      <div class="card" style="padding:12px;margin-bottom:8px;background:#f8fafc">
+        <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:600;margin-bottom:4px">${escapeHtml(cm.userName||cm.name||'ছাত্র')}</div>
+            <div style="font-size:13px;color:var(--text);white-space:pre-wrap">${escapeHtml(cm.message||cm.comment||'')}</div>
+            <div style="font-size:11px;color:var(--text-soft);margin-top:6px">${fmtDateTime(cm.createdAt)}</div>
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="deleteCourseComment('${cm._id}','${courseId}','${escapeHtml(courseTitle||'').replace(/'/g,'&#39;')}')" title="মুছুন">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>`).join('');
+  }catch(e){
+    document.getElementById('courseCommentsList').innerHTML = `<div class="empty" style="color:var(--danger)">${escapeHtml(e.message)}</div>`;
+  }
+}
+async function deleteCourseComment(commentId, courseId, courseTitle){
+  if (!confirm('এই মন্তব্যটি মুছে ফেলতে চান?')) return;
+  try{
+    await api('/api/admin/courses/comments/'+commentId, { method:'DELETE' });
+    toast('মন্তব্য মুছে ফেলা হয়েছে','success');
+    openCourseComments(courseId, courseTitle);
+  }catch(e){ toast(e.message,'error'); }
+}
+
+
+// ============================================================
+let ALL_CATEGORIES = [];
+
+async function loadCategories(){
+  try{
+    const list = await api('/api/admin/categories');
+    ALL_CATEGORIES = list || [];
+    $('#categoriesTable').innerHTML = `<tr>
+        <th>নাম</th><th>Slug</th><th>প্রযোজ্য</th><th>সাব-ক্যাটাগরি</th><th>ক্রম</th><th>অ্যাকশন</th>
+      </tr>` + (ALL_CATEGORIES.map(cat => {
+        const subs = (cat.subCategories||[]);
+        const subsHtml = subs.length
+          ? subs.map(s => `<span class="badge badge-info" style="margin:2px">${escapeHtml(s.name||'')}</span>`).join(' ')
+          : '<span class="text-soft">—</span>';
+        return `<tr>
+          <td><strong>${escapeHtml(cat.name||'')}</strong>${cat.icon?` <i class="fas ${escapeHtml(cat.icon)}" style="color:var(--primary);margin-right:4px"></i>`:''}</td>
+          <td><code style="font-size:11px">${escapeHtml(cat.slug||'')}</code></td>
+          <td>${subsHtml}<br/><small class="text-soft">${fmt(subs.length)} টি</small></td>
+          <td>${fmt(cat.order||0)}</td>
+          <td class="actions">
+            <button class="btn btn-outline btn-sm" onclick='openCategoryModal(${JSON.stringify(cat).replace(/'/g,"&#39;")})'><i class="fas fa-edit"></i></button>
+            <button class="btn btn-danger btn-sm" onclick="delItem('categories','${cat._id}',loadCategories)"><i class="fas fa-trash"></i></button>
+          </td>
+        </tr>`;
+      }).join('') || '<tr><td colspan="6" class="empty">কোনো ক্যাটাগরি নেই</td></tr>');
+  }catch(e){ toast(e.message,'error') }
+}
+
+// Local working copy of subCategories while editing
+window.__catSubs = [];
+
+function openCategoryModal(cat={}){
+  window.__catSubs = Array.isArray(cat.subCategories) ? JSON.parse(JSON.stringify(cat.subCategories)) : [];
+  openModal(`
+    <h2>${cat._id?'ক্যাটাগরি সম্পাদনা':'নতুন ক্যাটাগরি'}</h2>
+    <form onsubmit="saveCategory(event,'${cat._id||''}')" enctype="multipart/form-data">
+      <div class="row">
+        <div class="form-group"><label class="label">নাম *</label><input name="name" value="${escapeHtml(cat.name||'')}" required /></div>
+        <div class="form-group"><label class="label">Slug</label><input name="slug" value="${escapeHtml(cat.slug||'')}" placeholder="auto-generated" /></div>
+      </div>
+      <div class="row">
+        <div class="form-group"><label class="label">আইকন ছবি</label>${dropzoneHTML('image', cat.image||'')}<small class="text-soft" style="font-size:11px">এই ছবিটি ক্যাটাগরি কার্ডে দেখানো হবে</small></div>
+        <div class="form-group"><label class="label">ক্রম</label><input type="number" name="order" value="${cat.order||0}" /></div>
+      </div>
+      <div class="row">
+        <div class="form-group"><label class="label">প্রযোজ্য</label>
+          <select name="appliesTo">
+            <option value="both" ${(cat.appliesTo||'both')==='both'?'selected':''}>লাইভ ও প্রিমিয়াম উভয়</option>
+            <option value="live" ${cat.appliesTo==='live'?'selected':''}>শুধু লাইভ কোর্স</option>
+            <option value="recorded" ${cat.appliesTo==='recorded'?'selected':''}>শুধু কোর্সসমূহ</option>
+          </select>
+        </div>
+        <div></div>
+      </div>
+
+      <h4 style="font-size:14px;color:var(--primary);margin:14px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border)">
+        <i class="fas fa-list"></i> সাব-ক্যাটাগরিসমূহ
+      </h4>
+      <div id="subCatList"></div>
+
+      <div class="row" style="align-items:flex-end">
+        <div class="form-group"><label class="label">নতুন সাব-ক্যাটাগরি নাম</label>
+          <input id="newSubName" placeholder="যেমন: তাজবীদ" />
+        </div>
+        <div class="form-group">
+          <button type="button" class="btn btn-outline btn-block" onclick="addSubCategory()"><i class="fas fa-plus"></i> যোগ করুন</button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top:14px;padding:11px"><i class="fas fa-save"></i> সংরক্ষণ</button>
+    </form>
+  `);
+  drawSubCategoryList();
+  bindDropzones($('#modalBody'));
+}
+
+function drawSubCategoryList(){
+  const html = window.__catSubs.length
+    ? window.__catSubs.map((s,i) => `
+        <div class="card" style="padding:10px;margin-bottom:8px;background:#f8fafc;display:flex;gap:8px;align-items:center">
+          <div style="flex:1;min-width:0">
+            <input value="${escapeHtml(s.name||'')}" oninput="window.__catSubs[${i}].name=this.value;window.__catSubs[${i}].slug=slugifyClient(this.value)" placeholder="নাম" />
+            <small class="text-soft" style="font-size:11px">slug: <code>${escapeHtml(s.slug||'')}</code></small>
+          </div>
+          <button type="button" class="btn btn-danger btn-sm" onclick="window.__catSubs.splice(${i},1);drawSubCategoryList()"><i class="fas fa-trash"></i></button>
+        </div>`).join('')
+    : '<p class="text-soft" style="font-size:13px;padding:8px 0">কোনো সাব-ক্যাটাগরি যোগ করা হয়নি।</p>';
+  $('#subCatList').innerHTML = html;
+}
+
+function slugifyClient(s){
+  return (s||'').toString().toLowerCase().trim()
+    .replace(/[^\u0980-\u09FFa-z0-9\s-]/g,'')
+    .replace(/\s+/g,'-').replace(/-+/g,'-');
+}
+
+function addSubCategory(){
+  const inp = $('#newSubName');
+  const name = (inp.value||'').trim();
+  if (!name) { toast('সাব-ক্যাটাগরির নাম দিন','error'); return; }
+  window.__catSubs.push({ name, slug: slugifyClient(name) });
+  inp.value = '';
+  drawSubCategoryList();
+}
+
+async function saveCategory(e, id){
+  e.preventDefault();
+  const btn = formSubmitBtn(e.target);
+  await withBtnLoading(btn, async ()=>{
+    const fd = new FormData(e.target);
+    if (!fd.get('slug')) fd.set('slug', slugifyClient(fd.get('name')||''));
+    fd.set('order', String(Number(fd.get('order')||0)));
+    const subs = window.__catSubs.filter(s => s.name && s.name.trim()).map(s => ({
+      name: s.name.trim(),
+      slug: s.slug || slugifyClient(s.name),
+    }));
+    fd.set('subCategories', JSON.stringify(subs));
+    cleanFormDataFiles(fd, ['image']);
+    try{
+      if (id) await api('/api/admin/categories/'+id, { method:'PUT', body: fd });
+      else    await api('/api/admin/categories',     { method:'POST', body: fd });
+      closeModal(); toast('সংরক্ষিত','success'); loadCategories();
+    }catch(err){ toast(err.message,'error') }
+  });
+}
+
+// ── Course form: load categories into <select>, and subcategories on change
+async function populateCourseCategoryDropdowns(selectedCat='', selectedSub=''){
+  const catSel = $('#courseCategorySel');
+  if (!catSel) return;
+  try{
+    if (!ALL_CATEGORIES.length){
+      // fetch only if not cached
+      ALL_CATEGORIES = await api('/api/admin/categories');
+    }
+  }catch{}
+  catSel.innerHTML = '<option value="">— নির্বাচন করুন —</option>' +
+    ALL_CATEGORIES.map(c => `<option value="${escapeHtml(c.name||'')}" ${c.name===selectedCat?'selected':''}>${escapeHtml(c.name||'')}</option>`).join('');
+  onCourseCategoryChange(selectedCat, selectedSub);
+}
+
+function onCourseCategoryChange(catName, selectedSub=''){
+  const subSel = $('#courseSubCategorySel');
+  if (!subSel) return;
+  const cat = ALL_CATEGORIES.find(c => c.name === catName);
+  const subs = cat?.subCategories || [];
+  subSel.innerHTML = '<option value="">— নেই —</option>' +
+    subs.map(s => `<option value="${escapeHtml(s.name||'')}" ${s.name===selectedSub?'selected':''}>${escapeHtml(s.name||'')}</option>`).join('');
+}
+
+
+// ============================================================
+// VIEW MESSAGE DETAIL
+// ============================================================
+function viewMessage(m){
+  openModal(`
+    <h2><i class="fas fa-envelope-open"></i> বার্তা বিস্তারিত</h2>
+    <div style="margin-bottom:14px">
+      <div class="row" style="margin-bottom:12px">
+        <div><strong>নাম:</strong> ${escapeHtml(m.name||'—')}</div>
+        <div><strong>ইমেইল:</strong> ${escapeHtml(m.email||'—')}</div>
+      </div>
+      <div style="margin-bottom:12px"><strong>ফোন:</strong> ${escapeHtml(m.phone||'—')}</div>
+      <div style="margin-bottom:12px"><strong>বিষয়:</strong> ${escapeHtml(m.subject||'—')}</div>
+      <div style="margin-bottom:12px"><strong>তারিখ:</strong> ${m.createdAt ? new Date(m.createdAt).toLocaleString('bn-BD') : '—'}</div>
+    </div>
+    <div class="card" style="padding:18px;background:#f8fafc">
+      <h4 style="margin-bottom:10px;color:var(--primary)"><i class="fas fa-comment-dots"></i> বার্তা</h4>
+      <p style="white-space:pre-wrap;line-height:1.8">${escapeHtml(m.message||'কোনো বার্তা নেই')}</p>
+    </div>
+    <div style="margin-top:14px;text-align:right">
+      <button class="btn btn-outline" onclick="closeModal()">বন্ধ করুন</button>
+    </div>
+  `);
+}
+
+// ============================================================
+// TOPICS (Admin — manage homepage subject blocks)
+// ============================================================
+let ALL_TOPICS_ADMIN = [];
+
+async function loadTopics(){
+  try{
+    const list = await api('/api/admin/topics');
+    ALL_TOPICS_ADMIN = list || [];
+    const tbl = $('#topicsTable');
+    tbl.innerHTML = `<tr><th>ছবি</th><th>নাম</th><th>Slug</th><th>কোর্স</th><th>ক্রম</th><th>অ্যাকশন</th></tr>` +
+      (ALL_TOPICS_ADMIN.length ? ALL_TOPICS_ADMIN.map(t => {
+        const courseNames = (t.courseIds||[]).length ? `<small class="text-soft">${(t.courseIds||[]).length}টি কোর্স</small>` : '<span class="text-soft">—</span>';
+        const visual = t.image
+          ? `<img src="${escapeHtml(t.image)}" class="thumb" style="width:42px;height:42px;border-radius:8px;object-fit:cover"/>`
+          : `<i class="fas ${escapeHtml(t.icon||'fa-book-open')}" style="font-size:20px;color:var(--primary)"></i>`;
+        return `<tr>
+          <td>${visual}</td>
+          <td><strong>${escapeHtml(t.name||'')}</strong></td>
+          <td><code style="font-size:11px">${escapeHtml(t.slug||'')}</code></td>
+          <td>${courseNames}</td>
+          <td>${fmt(t.order||0)}</td>
+          <td class="actions">
+            <button class="btn btn-outline btn-sm" onclick='openTopicModal(${JSON.stringify(t).replace(/\x27/g,"&#39;")})'><i class="fas fa-edit"></i></button>
+            <button class="btn btn-danger btn-sm" onclick="delItem('topics','${t._id}',loadTopics)"><i class="fas fa-trash"></i></button>
+          </td>
+        </tr>`;
+      }).join('') : '<tr><td colspan="6" class="empty">কোনো বিষয় যোগ করা হয়নি</td></tr>');
+  }catch(e){ toast(e.message,'error') }
+}
+
+function openTopicModal(t={}){
+  const selectedIds = (t.courseIds||[]).map(c => typeof c === 'object' ? c._id : c);
+  openModal(`
+    <h2>${t._id?'বিষয় সম্পাদনা':'নতুন বিষয়'}</h2>
+    <form onsubmit="saveTopic(event,'${t._id||''}')" enctype="multipart/form-data">
+      <div class="row">
+        <div class="form-group"><label class="label">নাম *</label><input name="name" value="${escapeHtml(t.name||'')}" required /></div>
+        <div class="form-group"><label class="label">Slug</label><input name="slug" value="${escapeHtml(t.slug||'')}" placeholder="auto-generated" /></div>
+      </div>
+      <div class="row">
+        <div class="form-group"><label class="label">আইকন ছবি</label>${dropzoneHTML('image', t.image||'')}<small class="text-soft" style="font-size:11px">এই ছবিটি বিষয় কার্ডের আইকন হিসেবে দেখানো হবে</small></div>
+        <div class="form-group"><label class="label">ক্রম</label><input type="number" name="order" value="${t.order||0}" /></div>
+      </div>
+      <div class="form-group">
+        <label class="label"><i class="fas fa-book"></i> কোর্সসমূহ নির্বাচন করুন</label>
+        <div id="topicCoursePicker" style="max-height:250px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;padding:10px;background:#f8fafc">
+          <div class="loading-state"><div class="loader"></div></div>
+        </div>
+        <small class="text-soft" style="font-size:11px">এই বিষয়ের অধীনে যে কোর্সগুলো দেখানো হবে সেগুলো সিলেক্ট করুন।</small>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top:14px;padding:11px"><i class="fas fa-save"></i> সংরক্ষণ</button>
+    </form>
+  `);
+  bindDropzones($('#modalBody'));
+  loadTopicCoursePicker(selectedIds);
+}
+
+async function loadTopicCoursePicker(selectedIds=[]){
+  const picker = $('#topicCoursePicker');
+  if (!picker) return;
+  try{
+    let courses = [];
+    try { courses = await api('/api/admin/courses'); } catch {}
+    if (!courses.length) { picker.innerHTML = '<p class="text-soft">কোনো কোর্স পাওয়া যায়নি</p>'; return; }
+    picker.innerHTML = courses.map(c => `
+      <label style="display:flex;gap:8px;align-items:center;padding:8px 6px;border-bottom:1px solid var(--border);cursor:pointer;font-size:13px">
+        <input type="checkbox" name="courseIds" value="${c._id}" ${selectedIds.includes(c._id)?'checked':''} style="width:auto;flex-shrink:0" />
+        <span style="flex:1;min-width:0">
+          <strong>${escapeHtml(c.title||'')}</strong>
+          <span class="badge ${c.type==='live'?'badge-danger':'badge-info'}" style="font-size:10px;margin-left:6px">${c.type==='live'?'লাইভ':'প্রিমিয়াম'}</span>
+        </span>
+      </label>`).join('');
+  }catch(e){ picker.innerHTML = `<p class="text-soft">${escapeHtml(e.message)}</p>`; }
+}
+
+async function saveTopic(e, id){
+  e.preventDefault();
+  const btn = formSubmitBtn(e.target);
+  await withBtnLoading(btn, async ()=>{
+    const fd = new FormData(e.target);
+    if (!fd.get('slug')) fd.set('slug', slugifyClient(fd.get('name')||''));
+    fd.set('order', String(Number(fd.get('order')||0)));
+    // Collect checked courseIds → JSON
+    const checks = e.target.querySelectorAll('input[name="courseIds"]:checked');
+    const ids = Array.from(checks).map(c => c.value);
+    // Remove the auto-collected duplicates first
+    fd.delete('courseIds');
+    fd.set('courseIds', JSON.stringify(ids));
+    cleanFormDataFiles(fd, ['image']);
+    try{
+      if (id) await api('/api/admin/topics/'+id, { method:'PUT', body: fd });
+      else    await api('/api/admin/topics',     { method:'POST', body: fd });
+      closeModal(); toast('সংরক্ষিত','success'); loadTopics();
+    }catch(err){ toast(err.message||'অনুরোধ ব্যর্থ','error') }
+  });
+}
+
+// ============================================================
+// INSTRUCTOR SELECT IN COURSE FORM
+// ============================================================
+let ALL_INSTRUCTORS_ADMIN = [];
+
+async function populateCourseInstructorDropdown(selectedId='', selectedName=''){
+  const sel = $('#courseInstructorSel');
+  const nameInp = $('#courseInstructorName');
+  if (!sel) return;
+  try{
+    if (!ALL_INSTRUCTORS_ADMIN.length) ALL_INSTRUCTORS_ADMIN = await api('/api/admin/instructors');
+  }catch{}
+  sel.innerHTML = '<option value="">— শিক্ষক নির্বাচন করুন —</option>' +
+    ALL_INSTRUCTORS_ADMIN.map(i => {
+      const isSel = (selectedId && String(i._id)===String(selectedId)) || (!selectedId && selectedName && i.name === selectedName);
+      return `<option value="${i._id}" ${isSel?'selected':''}>${escapeHtml(i.name||'')} — ${escapeHtml(i.designation||'')}</option>`;
+    }).join('');
+  sel.onchange = function(){
+    const opt = this.options[this.selectedIndex];
+    if (nameInp) nameInp.value = opt && opt.value ? opt.textContent.split(' — ')[0].trim() : '';
+  };
+  // Trigger initial
+  if (sel.value && nameInp && !nameInp.value){
+    const opt = sel.options[sel.selectedIndex];
+    if (opt) nameInp.value = opt.textContent.split(' — ')[0].trim();
+  }
+}
+
+
+// ── Course search (admin Change #2) ──────────────────────────
+window.__ALL_ADMIN_COURSES = window.__ALL_ADMIN_COURSES || [];
+window.filterAdminCourses = function(q){
+  q = (q||'').trim().toLowerCase();
+  const tbl = document.getElementById('coursesTable');
+  if (!tbl) return;
+  const rows = tbl.querySelectorAll('tbody tr, tr');
+  let firstHeader = true;
+  rows.forEach(tr => {
+    if (firstHeader && tr.querySelector('th')){ firstHeader = false; return; }
+    const txt = tr.textContent.toLowerCase();
+    tr.style.display = (!q || txt.includes(q)) ? '' : 'none';
+  });
+};
+
+// ── Modern popup transitions (admin Change #1) ──────────────
+(function(){
+  const style = document.createElement('style');
+  style.textContent = `
+    .modal-bg{transition:opacity .22s ease}
+    .modal-bg.open .modal{animation:modalPopIn .28s cubic-bezier(.34,1.56,.64,1)}
+    @keyframes modalPopIn{from{opacity:0;transform:translateY(20px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+    .modal-close{transition:.18s !important}
+    .modal-close:hover{background:var(--danger)!important;color:#fff!important;transform:rotate(90deg)}
+    /* Better form spacing inside popups */
+    .modal .form-group{margin-bottom:14px}
+    .modal label.label{font-size:13px;font-weight:600;color:#1e1b4b;margin-bottom:6px;display:block}
+    .modal input,.modal select,.modal textarea{
+      width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:10px;
+      font-family:inherit;font-size:14px;transition:.15s
+    }
+    .modal input:focus,.modal select:focus,.modal textarea:focus{
+      border-color:#7c3aed;outline:none;box-shadow:0 0 0 3px rgba(124,58,237,.12)
+    }
+  `;
+  document.head.appendChild(style);
+})();
+
+
+// ====== COURSE Q&A EDITOR ======
+let __qna = [];
+function qnaSync(){
+  const el = document.getElementById('qnaList');
+  if (!el) return;
+  el.innerHTML = __qna.map((q,i)=>`
+    <div style="border:1px solid var(--border);border-radius:8px;padding:10px;background:#fff">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+        <strong style="color:var(--primary)">প্রশ্ন ${i+1}</strong>
+        <span style="flex:1"></span>
+        <button type="button" class="btn btn-danger btn-sm" onclick="qnaRemove(${i})"><i class="fas fa-trash"></i></button>
+      </div>
+      <input placeholder="প্রশ্ন লিখুন" value="${escapeHtml(q.question||'')}" oninput="__qna[${i}].question=this.value" style="margin-bottom:6px"/>
+      <textarea rows="2" placeholder="উত্তর লিখুন" oninput="__qna[${i}].answer=this.value">${escapeHtml(q.answer||'')}</textarea>
+    </div>`).join('') || '<p class="text-soft" style="font-size:12px">কোনো প্রশ্নোত্তর যোগ করা হয়নি।</p>';
+  const hid = document.getElementById('qnaHidden');
+  if (hid) hid.value = JSON.stringify(__qna);
+}
+function qnaAdd(){ __qna.push({question:'',answer:''}); qnaSync(); }
+function qnaRemove(i){ __qna.splice(i,1); qnaSync(); }
+function qnaInit(arr){ __qna = Array.isArray(arr) ? JSON.parse(JSON.stringify(arr)) : []; qnaSync(); }
+window.qnaAdd=qnaAdd; window.qnaRemove=qnaRemove;
+
+</script>
+</body>
+</html>
