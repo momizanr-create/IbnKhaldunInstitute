@@ -21,7 +21,8 @@
 <link rel="dns-prefetch" href="https://ibnkhalduninstitute.onrender.com" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="icon" id="favicon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23066144'/%3E%3Ctext x='50' y='66' text-anchor='middle' fill='%23F5C518' font-size='52' font-family='sans-serif' font-weight='bold'%3Eإ%3C/text%3E%3C/svg%3E" />
+<link rel="icon" type="image/png" id="favicon" href="logo.png" />
+<link rel="apple-touch-icon" href="logo.png" />
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
@@ -93,11 +94,11 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--primary)
 .badge-success{background:#dcfce7;color:#15803d}
 .badge-warn{background:#fef3c7;color:#a16207}
 
-/* ===== HEADER / NAVBAR — Dark Educrat-style ===== */
+/* ===== HEADER / NAVBAR — matches hero gradient ===== */
 header{
-  background:#1a0a3c;
+  background:linear-gradient(135deg,#022b1d 0%,#066144 55%,#0f9d58 100%);
   position:sticky;top:0;z-index:100;
-  box-shadow:0 2px 20px rgba(0,0,0,.35);
+  box-shadow:0 2px 20px rgba(2,43,29,.35);
 }
 .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0;gap:16px}
 .logo{display:flex;align-items:center;gap:10px;line-height:1;flex-shrink:0;cursor:pointer}
@@ -1101,26 +1102,35 @@ th{background:#f1f5f9;font-weight:600}
 .about-value:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:var(--primary-glow)}
 .about-value .ic{width:54px;height:54px;border-radius:14px;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:12px}
 
-/* Logo visibility fix */
+/* Logo — emblem mark + Bengali wordmark on dark/green navbar */
 #site-logo-img{
   display:block;
-  height:52px;
+  height:48px;
   width:auto;
-  max-width:220px;
+  max-width:60px;
   object-fit:contain;
-  border-radius:7px;
   flex-shrink:0;
   background:transparent;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.25));
 }
-@media(max-width:700px){#site-logo-img{height:44px;max-width:180px}}
-@media(max-width:480px){#site-logo-img{height:38px;max-width:150px}}
+@media(max-width:700px){#site-logo-img{height:42px;max-width:54px}}
+@media(max-width:480px){#site-logo-img{height:38px;max-width:48px}}
 
-.logo{display:flex;align-items:center;gap:0;min-width:42px;min-height:42px;background:transparent}
+.logo{display:flex;align-items:center;gap:10px;min-height:48px;background:transparent}
 .logo::before{content:'';display:none}
 
-/* Text block hidden — text is part of logo image */
-#logo-text-block{display:none}
+/* Text block — Bengali wordmark next to emblem */
+#logo-text-block{
+  display:flex;flex-direction:column;line-height:1.05;color:#fff;
+  font-family:'Hind Siliguri',sans-serif;
+}
+#logo-line1{font-size:18px;font-weight:800;letter-spacing:.01em;color:#F5C518}
+#logo-line2{font-size:13px;font-weight:600;color:rgba(255,255,255,.92);margin-top:2px}
 #logo-divider{display:none}
+@media(max-width:480px){
+  #logo-line1{font-size:15px}
+  #logo-line2{font-size:11px}
+}
 
 /* Fallback if logo fails to load */
 #site-logo-fallback{display:none;align-items:center;gap:8px;font-weight:800;font-size:18px;color:#fff}
@@ -1322,11 +1332,11 @@ header .logo span#logo-line1,header .logo span#logo-line2,header .logo #logo-div
 <header>
   <div class="container nav">
     <a class="logo" data-nav="home" id="site-logo-link" style="cursor:pointer" aria-label="ইবনে খালদুন ইনস্টিটিউট">
-      <img src="images/IBN KHALDUN.png" alt="ইবনে খালদুন ইনস্টিটিউট" id="site-logo-img" onerror="this.parentNode.classList.add('no-img')" />
+      <img src="logo.png" alt="ইবনে খালদুন ইনস্টিটিউট" id="site-logo-img" onerror="this.parentNode.classList.add('no-img')" />
       <span id="logo-text-block">
-        <span id="logo-line1">IBN KHALDUN</span>
+        <span id="logo-line1">ইবনে খালদুন</span>
         <span id="logo-divider"></span>
-        <span id="logo-line2">INSTITUTE</span>
+        <span id="logo-line2">ইনস্টিটিউট</span>
       </span>
       <span id="site-logo-fallback"><i class="fas fa-mosque"></i> <span id="site-logo-name">ইবনে খালদুন</span></span>
     </a>
