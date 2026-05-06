@@ -3132,10 +3132,14 @@ async function loadCourseDetail(id){
 
     return renderRecordedDetail(c);
   } catch(e){ $('#course-detail-content').innerHTML = emptyHtml(e.message) }
-  // After render: check progress & certificate state
-  setTimeout(()=>{
+  // After render: server থেকে progress sync করে curriculum badges আপডেট করি
+  setTimeout(async ()=>{
     if(CURRENT_COURSE && isUserEnrolled(CURRENT_COURSE._id)){
+      // Cross-device sync: server থেকে latest progress লোড করি
+      await tiaSyncProgressFromServer(CURRENT_COURSE._id);
       cdCheckCourseCompletion(CURRENT_COURSE._id, CURRENT_COURSE.curriculum||[]);
+      // Curriculum-এর lesson badges re-render করি (synced data দিয়ে)
+      renderCurriculumProgressBadges(CURRENT_COURSE._id, CURRENT_COURSE.curriculum||[]);
       // If already completed before, show side button
       if(certIsComplete(CURRENT_COURSE._id)){
         const sideBtn = document.getElementById('cd-cert-side-btn');
@@ -3469,6 +3473,33 @@ async function downloadCertificate(imgUrl, courseTitle, userName){
 }
 
 // Check overall course completion % and trigger certificate if 100%
+// Server sync-এর পরে curriculum rows-এর lesson badges update করি
+function renderCurriculumProgressBadges(courseId, curriculum){
+  (curriculum||[]).forEach(sec=>{
+    (sec.lessons||[]).forEach(ls=>{
+      const vid = tiaExtractYouTubeId(ls.videoId||'');
+      if(!vid) return;
+      const row = document.querySelector(`[data-lesson-vid="${vid}"]`);
+      if(!row) return;
+      const saved = tiaGetSavedProgress(courseId, vid);
+      const ico = row.querySelector('.ico');
+      const progEl = row.querySelector('.lesson-prog');
+      if(saved && saved.completed){
+        if(ico){ ico.classList.add('watched'); ico.textContent='✓'; }
+        if(progEl) progEl.textContent='✓ সম্পূর্ণ';
+        // pill
+        const pill = row.querySelector('.tia-progress-pill span');
+        if(pill) pill.textContent='১০০%';
+        const pillEl = row.querySelector('.tia-progress-pill');
+        if(pillEl) pillEl.classList.add('done');
+      } else if(saved && saved.percent > 0){
+        if(ico){ ico.classList.remove('watched'); ico.textContent='▶'; }
+        if(progEl) progEl.textContent=(saved.percent||0)+'%';
+      }
+    });
+  });
+}
+
 function cdCheckCourseCompletion(courseId, curriculum){
   const allLessons = [];
   (curriculum||[]).forEach(sec=>(sec.lessons||[]).forEach(ls=>{ const id=tiaExtractYouTubeId(ls.videoId||''); if(id) allLessons.push(id); }));
@@ -3631,7 +3662,30 @@ function tiaGetSavedProgress(courseId, videoId){
   try{ return JSON.parse(localStorage.getItem(tiaProgKey(courseId,videoId))||'null'); }catch{ return null; }
 }
 function tiaSaveProgress(courseId, videoId, percent, completed){
+  // 1) সবসময় localStorage-এ সেভ করি (offline/instant)
   try{ localStorage.setItem(tiaProgKey(courseId,videoId), JSON.stringify({ percent, completed, t: Date.now() })); }catch{}
+  // 2) লগইন থাকলে server-এও sync করি (cross-device)
+  if(TOKEN){
+    fetch(API_BASE+'/api/user/lesson-progress', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},
+      body: JSON.stringify({ courseId, videoId, percent, completed })
+    }).catch(()=>{});
+  }
+}
+// Server থেকে একটি কোর্সের সব lesson progress লোড করে localStorage-এ সেভ করি
+async function tiaSyncProgressFromServer(courseId){
+  if(!TOKEN || !courseId) return;
+  try{
+    const resp = await fetch(API_BASE+'/api/user/lesson-progress/'+courseId, {
+      headers:{'Authorization':'Bearer '+TOKEN}
+    });
+    if(!resp.ok) return;
+    const list = await resp.json();
+    list.forEach(item=>{
+      try{ localStorage.setItem(tiaProgKey(courseId, item.videoId), JSON.stringify({ percent: item.percent, completed: item.completed, t: Date.now() })); }catch{}
+    });
+  }catch(_){}
 }
 function tiaFmtTime(s){
   s = Math.max(0, Math.floor(s||0));

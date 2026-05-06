@@ -267,6 +267,18 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 const User = mongoose.model('User', userSchema);
 
+// --- Lesson Progress (per-lesson, cross-device)
+const lessonProgressSchema = new mongoose.Schema({
+  userId:    { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  courseId:  { type: String, required: true },   // ObjectId string
+  videoId:   { type: String, required: true },   // YouTube video id
+  percent:   { type: Number, default: 0 },
+  completed: { type: Boolean, default: false },
+  updatedAt: { type: Date, default: Date.now },
+}, { timestamps: false });
+lessonProgressSchema.index({ userId: 1, courseId: 1, videoId: 1 }, { unique: true });
+const LessonProgress = mongoose.model('LessonProgress', lessonProgressSchema);
+
 // --- Course comment
 const courseCommentSchema = new mongoose.Schema({
   courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },
@@ -833,7 +845,7 @@ app.post('/api/user/reset-password-otp', async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// User: lesson progress (per-lesson completion)
+// User: overall course progress (per-course percentage — legacy)
 app.post('/api/user/progress', userAuthMiddleware, async (req, res) => {
   try {
     const { courseId, progress } = req.body;
@@ -844,6 +856,56 @@ app.post('/api/user/progress', userAuthMiddleware, async (req, res) => {
     if (e) { e.progress = pct; }
     await user.save();
     res.json({ ok: true, progress: pct });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// User: save a single lesson's watch progress (cross-device sync)
+// POST /api/user/lesson-progress  { courseId, videoId, percent, completed }
+app.post('/api/user/lesson-progress', userAuthMiddleware, async (req, res) => {
+  try {
+    const { courseId, videoId, percent, completed } = req.body;
+    if (!courseId || !videoId) return res.status(400).json({ error: 'courseId ও videoId লাগবে' });
+    const pct = Math.max(0, Math.min(100, Number(percent || 0)));
+    const done = completed === true || completed === 'true';
+
+    await LessonProgress.findOneAndUpdate(
+      { userId: req.user.id, courseId: String(courseId), videoId: String(videoId) },
+      { percent: pct, completed: done, updatedAt: new Date() },
+      { upsert: true, new: true }
+    );
+
+    // Also update overall course progress
+    const allProgress = await LessonProgress.find({ userId: req.user.id, courseId: String(courseId) });
+    const completedCount = allProgress.filter(p => p.completed).length;
+    // Update enrolled course progress if we know total lessons
+    try {
+      const course = await Course.findById(courseId).select('curriculum');
+      if (course) {
+        let totalLessons = 0;
+        (course.curriculum || []).forEach(sec => totalLessons += (sec.lessons || []).length);
+        if (totalLessons > 0) {
+          const overallPct = Math.round((completedCount / totalLessons) * 100);
+          await User.findOneAndUpdate(
+            { _id: req.user.id, 'enrolledCourses.courseId': courseId },
+            { $set: { 'enrolledCourses.$.progress': overallPct } }
+          );
+        }
+      }
+    } catch (_) {}
+
+    res.json({ ok: true, percent: pct, completed: done });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// User: get all lesson progress for a course (for cross-device sync on load)
+// GET /api/user/lesson-progress/:courseId
+app.get('/api/user/lesson-progress/:courseId', userAuthMiddleware, async (req, res) => {
+  try {
+    const list = await LessonProgress.find({
+      userId: req.user.id,
+      courseId: String(req.params.courseId),
+    }).select('videoId percent completed -_id');
+    res.json(list);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
