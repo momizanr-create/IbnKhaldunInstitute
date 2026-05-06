@@ -1091,6 +1091,12 @@ function normalizeTopicData(req) {
     catch { data.courseIds = data.courseIds.split(',').map(s => s.trim()).filter(Boolean); }
   }
   if (!Array.isArray(data.courseIds)) data.courseIds = data.courseIds ? [data.courseIds] : [];
+  // subCategories: JSON string or array
+  if (typeof data.subCategories === 'string') {
+    try { data.subCategories = JSON.parse(data.subCategories); }
+    catch { data.subCategories = data.subCategories.split(',').map(s=>({name:s.trim(),slug:s.trim().toLowerCase().replace(/\s+/g,'-')})).filter(s=>s.name); }
+  }
+  if (!Array.isArray(data.subCategories)) data.subCategories = [];
   if (req.file) data.image = req.file.path;
   if (data.__remove_image === '1') { data.image = ''; delete data.__remove_image; }
   if (!data.slug) data.slug = String(data.name||'').toLowerCase().trim().replace(/\s+/g,'-');
