@@ -1961,6 +1961,18 @@ const API =
     ? 'http://localhost:5000'
     : 'https://ibnkhalduninstitute.onrender.com';
 
+// PDF/ফাইল URL absolutize: relative ('/uploads/..') হলে backend host prepend করো
+function cdAbsPdfUrl(u){
+  if(!u) return '';
+  try{
+    const s = String(u).trim();
+    if(/^https?:\/\//i.test(s) || /^data:/i.test(s) || /^blob:/i.test(s)) return s;
+    if(s.startsWith('//')) return window.location.protocol + s;
+    if(s.startsWith('/')) return API + s;
+    return API + '/' + s;
+  }catch{ return u; }
+}
+
 let TOKEN = (()=>{ try{ return localStorage.getItem('userToken')||''; }catch{ return ''; } })();
 let CURRENT_USER = null;
 let SITE_CONFIG = {};
@@ -3619,7 +3631,7 @@ function renderCurriculumHTML(c, enrolled){
           <span>সেকশন ${si+1}: ${escapeHtml(sec.sectionTitle||'')}</span>
           <span style="color:var(--text-soft);font-size:13px;font-weight:400">${(sec.lessons||[]).length} লেসন</span>
         </div>
-        ${sec.pdfUrl?`<a href="${escapeHtml(sec.pdfUrl)}" target="_blank" rel="noopener" class="cd-section-pdf" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#fff5f5;border-bottom:1px solid var(--border);color:#d33;font-size:13px;font-weight:600;text-decoration:none">
+        ${sec.pdfUrl?`<a href="${escapeHtml(cdAbsPdfUrl(sec.pdfUrl))}" target="_blank" rel="noopener" class="cd-section-pdf" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#fff5f5;border-bottom:1px solid var(--border);color:#d33;font-size:13px;font-weight:600;text-decoration:none">
           <i class="fas fa-file-pdf"></i>
           <span>${escapeHtml(sec.pdfTitle||'সেকশন PDF ডাউনলোড করুন')}</span>
           <i class="fas fa-download" style="margin-left:auto;font-size:12px"></i>
@@ -3631,7 +3643,7 @@ function renderCurriculumHTML(c, enrolled){
           const pctTxt = saved ? (saved.completed ? '✓ সম্পূর্ণ' : (saved.percent||0).toLocaleString('bn-BD')+'%') : '';
           const watchedCls = saved && saved.completed ? ' watched' : '';
           const lessonPdfHTML = (isUnlocked && ls.pdfUrl) ? `
-            <a href="${escapeHtml(ls.pdfUrl)}" target="_blank" rel="noopener"
+            <a href="${escapeHtml(cdAbsPdfUrl(ls.pdfUrl))}" target="_blank" rel="noopener"
                onclick="event.stopPropagation()"
                class="cd-lesson-pdf"
                title="${escapeHtml(ls.pdfName||'PDF ডাউনলোড')}"
@@ -3639,7 +3651,7 @@ function renderCurriculumHTML(c, enrolled){
               <i class="fas fa-file-pdf"></i><span>PDF</span>
             </a>` : '';
           if (isUnlocked) {
-            return `<div class="cd-lesson" data-lesson-vid="${escapeHtml(lessonVideoId)}" data-lesson-title="${escapeHtml(ls.title||'')}" data-lesson-dur="${escapeHtml(ls.duration||'')}" data-lesson-pdf="${escapeHtml(ls.pdfUrl||'')}" data-lesson-pdfname="${escapeHtml(ls.pdfName||'')}" onclick="cdPlayLessonFromEl(this)">
+            return `<div class="cd-lesson" data-lesson-vid="${escapeHtml(lessonVideoId)}" data-lesson-title="${escapeHtml(ls.title||'')}" data-lesson-dur="${escapeHtml(ls.duration||'')}" data-lesson-pdf="${escapeHtml(cdAbsPdfUrl(ls.pdfUrl||''))}" data-lesson-pdfname="${escapeHtml(ls.pdfName||'')}" onclick="cdPlayLessonFromEl(this)">
               <span class="ico${watchedCls}">${saved&&saved.completed?'✓':'▶'}</span>
               <span class="ttl">${escapeHtml(ls.title||'')}${ls.isFree && !enrolled?`<span class="free-tag">বিনামূল্যে</span>`:''}</span>
               <span class="lesson-prog">${pctTxt}</span>
@@ -4016,11 +4028,11 @@ function cdShowLessonPdfPanel(pdfUrl, pdfName, title){
       <div style="font-weight:700;color:#7f1d1d;font-size:14px">এই পাঠের সংযুক্ত পিডিএফ</div>
       <div style="color:#991b1b;font-size:12px;margin-top:2px;word-break:break-word">${escapeHtml(pdfName||'lesson.pdf')}</div>
     </div>
-    <a href="${escapeHtml(pdfUrl)}" target="_blank" rel="noopener"
+    <a href="${escapeHtml(cdAbsPdfUrl(pdfUrl))}" target="_blank" rel="noopener"
        style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#d33;color:#fff;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none">
       <i class="fas fa-eye"></i> দেখুন
     </a>
-    <a href="${escapeHtml(pdfUrl)}" download
+    <a href="${escapeHtml(cdAbsPdfUrl(pdfUrl))}" download
        style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#fff;color:#d33;border:1px solid #d33;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none">
       <i class="fas fa-download"></i> ডাউনলোড
     </a>`;
