@@ -1964,6 +1964,9 @@ const API =
 // PDF/ফাইল URL absolutize + Cloudinary raw PDF fix
 // (Cloudinary raw URL-এ .pdf extension না থাকলে browser PDF viewer
 //  Content-Type ঠিকমত পায় না → "Failed to load PDF document" error হয়)
+// PDF URL absolutize + Cloudinary fix
+// ✅ inline view: fl_attachment ছাড়া (browser PDF viewer এ open হবে)
+// ✅ download: cdAbsPdfDownloadUrl() ব্যবহার করুন (fl_attachment সহ)
 function cdAbsPdfUrl(u){
   if(!u) return '';
   try{
@@ -1973,21 +1976,28 @@ function cdAbsPdfUrl(u){
     else if(!/^https?:\/\//i.test(s)){
       s = s.startsWith('/') ? (API + s) : (API + '/' + s);
     }
-    // Cloudinary raw PDF delivery fix
-    if(/res\.cloudinary\.com\/[^/]+\/raw\/upload\//i.test(s)){
-      // 1) URL-এ .pdf extension না থাকলে যোগ করি (query থাকলে তার আগে)
-      if(!/\.pdf(\?|#|$)/i.test(s)){
-        s = s.replace(/(\?|#|$)/, function(m){ return '.pdf' + (m||''); });
-      }
-      // 2) fl_attachment flag inject — Cloudinary তখন proper Content-Type
-      //    (application/pdf) ও filename সহ deliver করে, browser PDF viewer
-      //    inline render করতে পারে
-      if(!/\/upload\/[^/]*fl_attachment/i.test(s)){
-        s = s.replace(/\/upload\//, '/upload/fl_attachment/');
-      }
+    // পুরনো raw/upload URL → image/upload এ migrate (নতুন backend image হিসেবে upload করে)
+    s = s.replace(/(res\.cloudinary\.com\/[^/]+)\/raw\/upload\//i, '$1/image/upload/');
+    // .pdf extension না থাকলে যোগ করি
+    if(/res\.cloudinary\.com\/[^/]+\/(image|raw)\/upload\//i.test(s) && !/\.pdf(\?|#|$)/i.test(s)){
+      s = s.replace(/(\?|#|$)/, function(m){ return '.pdf' + (m||''); });
     }
+    // ❌ fl_attachment আর যোগ করি না — সেটা forced download করায়, inline view ভেঙে দেয়
     return s;
   }catch{ return u; }
+}
+
+// ডাউনলোড করার জন্য আলাদা URL — fl_attachment flag সহ
+function cdAbsPdfDownloadUrl(u, filename){
+  let s = cdAbsPdfUrl(u);
+  if(!s) return '';
+  if(/res\.cloudinary\.com\/[^/]+\/(image|raw)\/upload\//i.test(s) && !/\/upload\/[^/]*fl_attachment/i.test(s)){
+    const flag = filename
+      ? 'fl_attachment:' + encodeURIComponent(String(filename).replace(/\.pdf$/i,''))
+      : 'fl_attachment';
+    s = s.replace(/\/upload\//, '/upload/' + flag + '/');
+  }
+  return s;
 }
 
 let TOKEN = (()=>{ try{ return localStorage.getItem('userToken')||''; }catch{ return ''; } })();
@@ -4049,7 +4059,7 @@ function cdShowLessonPdfPanel(pdfUrl, pdfName, title){
        style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#d33;color:#fff;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none">
       <i class="fas fa-eye"></i> দেখুন
     </a>
-    <a href="${escapeHtml(cdAbsPdfUrl(pdfUrl))}" download
+    <a href="${escapeHtml(cdAbsPdfDownloadUrl(pdfUrl, pdfName))}" rel="noopener"
        style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#fff;color:#d33;border:1px solid #d33;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none">
       <i class="fas fa-download"></i> ডাউনলোড
     </a>`;

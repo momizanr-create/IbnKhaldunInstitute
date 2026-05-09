@@ -86,18 +86,21 @@ const storage = new CloudinaryStorage({
     const base = (file.originalname || 'file').replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_\-]/g, '_').slice(0, 80) || 'file';
     const params = {
       folder: 'markazuddirasah',
-      resource_type: isImage ? 'image' : (isVideo ? 'video' : 'raw'),
+      // ✅ PDF কে 'image' resource_type হিসেবে upload করি — Cloudinary তখন
+      //    proper application/pdf Content-Type সহ serve করে এবং account-level
+      //    "Allow delivery of PDF" security restriction এ পড়ে না।
+      //    raw/upload এ PDF default-এ block থাকে → "Failed to load PDF" error।
+      resource_type: isImage ? 'image' : (isVideo ? 'video' : (isPdf ? 'image' : 'raw')),
       public_id: `${base}_${Date.now()}`,
       use_filename: true,
       unique_filename: false,
     };
     if (isPdf) {
-      // PDF কে raw হিসেবে আপলোড করি কিন্তু public_id-তে .pdf extension রাখি,
-      // যাতে delivered URL `.pdf` দিয়ে শেষ হয় এবং browser PDF viewer
-      // proper Content-Type পায় ("Failed to load PDF document" সমাধান)
-      params.public_id = `${base}_${Date.now()}.pdf`;
-      params.use_filename = false;
+      // image resource_type এ PDF upload — URL হবে /image/upload/.../file.pdf
+      // browser inline render করতে পারবে, fl_attachment ছাড়াই।
+      params.public_id = `${base}_${Date.now()}`;
       params.format = 'pdf';
+      params.use_filename = false;
     }
     return params;
   },
