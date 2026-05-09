@@ -228,6 +228,13 @@ td .tbl-actions{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
 .lesson-free{width:16px;height:16px;cursor:pointer;flex-shrink:0;accent-color:var(--primary)}
 .free-lbl{font-size:11px;color:var(--text-soft);white-space:nowrap}
 
+/* PDF Mini Upload for Lessons */
+.lesson-pdf-row{margin-bottom:8px;margin-left:28px}
+.pdf-upload-mini{display:flex;align-items:center;gap:8px;padding:6px 10px;border:1.5px dashed var(--border);border-radius:8px;cursor:pointer;transition:all .2s;background:#fff}
+.pdf-upload-mini:hover{border-color:var(--primary);background:var(--primary-light)}
+.pdf-upload-mini.drag-over{border-color:var(--primary);background:var(--primary-light);transform:scale(1.01)}
+.pdf-name-mini{font-size:12px;color:var(--text);flex:1}
+
 /* QnA */
 .qna-item{background:#fafbff;border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
 .qna-item textarea{margin-bottom:6px}
@@ -316,6 +323,13 @@ td .tbl-actions{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
 .img-preview-strip .remove-img{background:var(--danger);color:#fff;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;margin-left:-6px;margin-top:-28px;flex-shrink:0;z-index:1;position:relative}
 .url-or-upload{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--text-muted);margin:7px 0}
 .url-or-upload::before,.url-or-upload::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* PDF UPLOAD AREA */
+.pdf-upload-area{border:2px dashed var(--border);border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all .2s;background:#fafbff}
+.pdf-upload-area:hover{border-color:var(--primary);background:var(--primary-light)}
+.pdf-upload-area.drag-over{border-color:var(--primary);background:var(--primary-light);transform:scale(1.02)}
+.pdf-upload-content{display:flex;flex-direction:column;align-items:center;justify-content:center}
+.pdf-name{font-weight:600;color:var(--text);margin-bottom:4px;font-size:14px}
 
 /* Course checklist */
 .course-checklist{max-height:260px;overflow-y:auto;border:1.5px solid var(--border);border-radius:10px;padding:8px}
@@ -1847,6 +1861,28 @@ function cmRenderCurriculum(){
           <input type="checkbox" class="lesson-free" title="ফ্রি প্রিভিউ" ${ls.isFree?'checked':''} onchange="CM_CURRICULUM[${si}].lessons[${li}].isFree=this.checked"/>
           <span class="free-lbl">ফ্রি</span>
           <button type="button" class="btn btn-danger btn-xs" onclick="CM_CURRICULUM[${si}].lessons.splice(${li},1);cmRenderCurriculum()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="lesson-pdf-row">
+          <div class="pdf-upload-mini" 
+               id="pdf-drop-${si}-${li}"
+               ondrop="handleCmPdfDrop(event, ${si}, ${li})"
+               ondragover="handleCmPdfDragOver(event)"
+               ondragleave="handleCmPdfDragLeave(event)"
+               onclick="$('#pdf-input-${si}-${li}').click()">
+            <input type="file" 
+                   id="pdf-input-${si}-${li}" 
+                   accept=".pdf" 
+                   style="display:none"
+                   onchange="handleCmPdfFileSelect(event, ${si}, ${li})">
+            ${ls.pdfUrl ? `
+              <i class="fas fa-file-pdf" style="color:var(--danger);font-size:16px;margin-left:6px"></i>
+              <span class="pdf-name-mini">${esc(ls.pdfName||'ডকুমেন্ট.pdf')}</span>
+              <button type="button" class="btn btn-danger btn-xs" onclick="event.stopPropagation();removeCmPdf(${si},${li})" title="মুছুন"><i class="fas fa-trash"></i></button>
+            ` : `
+              <i class="fas fa-cloud-upload-alt" style="color:var(--text-muted);font-size:14px;margin-left:6px"></i>
+              <span style="font-size:12px;color:var(--text-muted)">পিডিএফ যোগ করুন</span>
+            `}
+          </div>
         </div>`).join('')}
         ${!(sec.lessons&&sec.lessons.length)?'<div style="font-size:12px;color:var(--text-muted);padding:6px">এখনো কোনো পাঠ নেই</div>':''}
       </div>
@@ -2538,6 +2574,99 @@ async function saveContactSettings(e){
   const btn=e.target.querySelector('[type=submit]');btn.disabled=true;
   try{await adminApi('/api/admin/config',{method:'PUT',body});toast('সংরক্ষিত হয়েছে ✅','success');}
   catch(err){toast(err.message,'error');}finally{btn.disabled=false;}
+}
+
+// ============================================================
+// PDF UPLOAD HANDLERS FOR CURRICULUM
+// ============================================================
+function handleCmPdfDragOver(e){
+  e.preventDefault();
+  e.stopPropagation();
+  e.currentTarget.classList.add('drag-over');
+}
+
+function handleCmPdfDragLeave(e){
+  e.preventDefault();
+  e.stopPropagation();
+  e.currentTarget.classList.remove('drag-over');
+}
+
+function handleCmPdfDrop(e, secIdx, lesIdx){
+  e.preventDefault();
+  e.stopPropagation();
+  e.currentTarget.classList.remove('drag-over');
+  const files = e.dataTransfer.files;
+  if(files.length > 0){
+    handleCmPdfFile(files[0], secIdx, lesIdx);
+  }
+}
+
+function handleCmPdfFileSelect(e, secIdx, lesIdx){
+  e.stopPropagation();
+  const files = e.target.files;
+  if(files.length > 0){
+    handleCmPdfFile(files[0], secIdx, lesIdx);
+  }
+}
+
+async function handleCmPdfFile(file, secIdx, lesIdx){
+  // Validate file type
+  if(!file.type.includes('pdf')){
+    toast('শুধুমাত্র PDF ফাইল আপলোড করুন', 'error');
+    return;
+  }
+  
+  // Validate file size (max 10MB)
+  if(file.size > 10 * 1024 * 1024){
+    toast('ফাইল সাইজ সর্বোচ্চ ১০ মেগাবাইট হতে পারবে', 'error');
+    return;
+  }
+  
+  try {
+    toast('পিডিএফ আপলোড হচ্ছে...', 'info');
+    
+    // Create FormData and upload
+    const formData = new FormData();
+    formData.append('pdf', file);
+    
+    const response = await fetch('/api/admin/upload-pdf', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${ADMIN_TOKEN}`
+      },
+      body: formData
+    });
+    
+    if(!response.ok){
+      throw new Error('আপলোড ব্যর্থ হয়েছে');
+    }
+    
+    const data = await response.json();
+    
+    // Update the lesson with PDF info
+    if(!CM_CURRICULUM[secIdx].lessons[lesIdx]){
+      CM_CURRICULUM[secIdx].lessons[lesIdx] = {};
+    }
+    CM_CURRICULUM[secIdx].lessons[lesIdx].pdfUrl = data.url;
+    CM_CURRICULUM[secIdx].lessons[lesIdx].pdfName = file.name;
+    
+    // Re-render to show the uploaded PDF
+    cmRenderCurriculum();
+    
+    toast('পিডিএফ আপলোড সফল ✅', 'success');
+  } catch(err){
+    console.error('PDF upload error:', err);
+    toast(err.message || 'আপলোড ব্যর্থ হয়েছে', 'error');
+  }
+}
+
+function removeCmPdf(secIdx, lesIdx){
+  if(confirm('পিডিএফ মুছে ফেলবেন?')){
+    delete CM_CURRICULUM[secIdx].lessons[lesIdx].pdfUrl;
+    delete CM_CURRICULUM[secIdx].lessons[lesIdx].pdfName;
+    cmRenderCurriculum();
+    toast('পিডিএফ মুছে ফেলা হয়েছে', 'success');
+  }
 }
 
 // ============================================================

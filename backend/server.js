@@ -1240,6 +1240,26 @@ app.post('/api/admin/upload', authMiddleware, upload.single('file'), (req, res) 
 });
 
 // ============================================================
+// PDF Upload (admin) - for course lessons
+// ============================================================
+app.post('/api/admin/upload-pdf', authMiddleware, upload.single('pdf'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No PDF file uploaded' });
+  
+  // Validate file type
+  const mimeType = req.file.mimetype;
+  if (mimeType !== 'application/pdf') {
+    return res.status(400).json({ error: 'শুধুমাত্র PDF ফাইল আপলোড করুন' });
+  }
+  
+  // Return Cloudinary URL
+  res.json({ 
+    url: req.file.path,
+    filename: req.file.originalname,
+    size: req.file.size
+  });
+});
+
+// ============================================================
 // TOPICS — public + admin
 // ============================================================
 app.get('/api/topics', async (req, res) => {
