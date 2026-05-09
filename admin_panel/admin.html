@@ -228,12 +228,17 @@ td .tbl-actions{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
 .lesson-free{width:16px;height:16px;cursor:pointer;flex-shrink:0;accent-color:var(--primary)}
 .free-lbl{font-size:11px;color:var(--text-soft);white-space:nowrap}
 
-/* PDF Mini Upload for Lessons */
-.lesson-pdf-row{margin-bottom:8px;margin-left:28px}
-.pdf-upload-mini{display:flex;align-items:center;gap:8px;padding:6px 10px;border:1.5px dashed var(--border);border-radius:8px;cursor:pointer;transition:all .2s;background:#fff}
+/* Lesson PDF (lesson-level only) */
+.lesson-block{margin-bottom:10px}
+.lesson-pdf-row{margin:4px 0 0 28px}
+.pdf-upload-mini{display:flex;align-items:center;gap:8px;padding:7px 12px;border:1.5px dashed var(--border);border-radius:8px;cursor:pointer;transition:all .2s;background:#fafbff}
 .pdf-upload-mini:hover{border-color:var(--primary);background:var(--primary-light)}
 .pdf-upload-mini.drag-over{border-color:var(--primary);background:var(--primary-light);transform:scale(1.01)}
-.pdf-name-mini{font-size:12px;color:var(--text);flex:1}
+.pdf-chip{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid #fecaca;background:#fff5f5;border-radius:8px;max-width:100%}
+.pdf-name-mini{font-size:12px;color:#7f1d1d;font-weight:600;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pdf-chip-btn{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:6px;background:#fff;border:1px solid #fecaca;color:#d33;cursor:pointer;font-size:11px;text-decoration:none;transition:.15s}
+.pdf-chip-btn:hover{background:#d33;color:#fff;border-color:#d33}
+.pdf-chip-btn.danger:hover{background:var(--danger);border-color:var(--danger);color:#fff}
 
 /* QnA */
 .qna-item{background:#fafbff;border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
@@ -324,12 +329,7 @@ td .tbl-actions{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
 .url-or-upload{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--text-muted);margin:7px 0}
 .url-or-upload::before,.url-or-upload::after{content:'';flex:1;height:1px;background:var(--border)}
 
-/* PDF UPLOAD AREA */
-.pdf-upload-area{border:2px dashed var(--border);border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all .2s;background:#fafbff}
-.pdf-upload-area:hover{border-color:var(--primary);background:var(--primary-light)}
-.pdf-upload-area.drag-over{border-color:var(--primary);background:var(--primary-light);transform:scale(1.02)}
-.pdf-upload-content{display:flex;flex-direction:column;align-items:center;justify-content:center}
-.pdf-name{font-weight:600;color:var(--text);margin-bottom:4px;font-size:14px}
+
 
 /* Course checklist */
 .course-checklist{max-height:260px;overflow-y:auto;border:1.5px solid var(--border);border-radius:10px;padding:8px}
@@ -1847,41 +1847,42 @@ function cmRenderCurriculum(){
         <button type="button" class="btn btn-primary btn-sm" onclick="cmAddLesson(${si})"><i class="fas fa-plus"></i> পাঠ</button>
         <button type="button" class="btn btn-danger btn-sm" onclick="CM_CURRICULUM.splice(${si},1);cmRenderCurriculum()"><i class="fas fa-trash"></i></button>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:#fff;border-bottom:1px solid var(--border)">
-        <i class="fas fa-file-pdf" style="color:#d33;flex-shrink:0"></i>
-        <input value="${esc(sec.pdfUrl||'')}" placeholder="সেকশন PDF লিংক (ঐচ্ছিক) — যেমন https://example.com/notes.pdf" oninput="CM_CURRICULUM[${si}].pdfUrl=this.value" style="flex:1;border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;direction:ltr"/>
-        <input value="${esc(sec.pdfTitle||'')}" placeholder="PDF নাম (ঐচ্ছিক)" oninput="CM_CURRICULUM[${si}].pdfTitle=this.value" style="width:160px;border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px"/>
-      </div>
       <div class="curr-lessons">
-        ${(sec.lessons||[]).map((ls,li)=>`<div class="lesson-row">
-          <i class="fas fa-play-circle" style="color:var(--primary);flex-shrink:0;font-size:13px"></i>
-          <input value="${esc(ls.title||'')}" placeholder="পাঠের নাম..." oninput="CM_CURRICULUM[${si}].lessons[${li}].title=this.value"/>
-          <input class="lesson-dur" value="${esc(ls.duration||'')}" placeholder="সময়" title="সময়কাল" oninput="CM_CURRICULUM[${si}].lessons[${li}].duration=this.value"/>
-          <input class="lesson-vid" value="${esc(ls.videoId||'')}" placeholder="YouTube ID/URL" title="YouTube ভিডিও ID" oninput="cmLessonVideoInput(this,${si},${li})" style="direction:ltr"/>
-          <input type="checkbox" class="lesson-free" title="ফ্রি প্রিভিউ" ${ls.isFree?'checked':''} onchange="CM_CURRICULUM[${si}].lessons[${li}].isFree=this.checked"/>
-          <span class="free-lbl">ফ্রি</span>
-          <button type="button" class="btn btn-danger btn-xs" onclick="CM_CURRICULUM[${si}].lessons.splice(${li},1);cmRenderCurriculum()"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="lesson-pdf-row">
-          <div class="pdf-upload-mini" 
-               id="pdf-drop-${si}-${li}"
-               ondrop="handleCmPdfDrop(event, ${si}, ${li})"
-               ondragover="handleCmPdfDragOver(event)"
-               ondragleave="handleCmPdfDragLeave(event)"
-               onclick="$('#pdf-input-${si}-${li}').click()">
-            <input type="file" 
-                   id="pdf-input-${si}-${li}" 
-                   accept=".pdf" 
+        ${(sec.lessons||[]).map((ls,li)=>`<div class="lesson-block">
+          <div class="lesson-row">
+            <i class="fas fa-play-circle" style="color:var(--primary);flex-shrink:0;font-size:13px"></i>
+            <input value="${esc(ls.title||'')}" placeholder="পাঠের নাম..." oninput="CM_CURRICULUM[${si}].lessons[${li}].title=this.value"/>
+            <input class="lesson-dur" value="${esc(ls.duration||'')}" placeholder="সময়" title="সময়কাল" oninput="CM_CURRICULUM[${si}].lessons[${li}].duration=this.value"/>
+            <input class="lesson-vid" value="${esc(ls.videoId||'')}" placeholder="YouTube ID/URL" title="YouTube ভিডিও ID" oninput="cmLessonVideoInput(this,${si},${li})" style="direction:ltr"/>
+            <input type="checkbox" class="lesson-free" title="ফ্রি প্রিভিউ" ${ls.isFree?'checked':''} onchange="CM_CURRICULUM[${si}].lessons[${li}].isFree=this.checked"/>
+            <span class="free-lbl">ফ্রি</span>
+            <button type="button" class="btn btn-danger btn-xs" onclick="CM_CURRICULUM[${si}].lessons.splice(${li},1);cmRenderCurriculum()"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="lesson-pdf-row">
+            ${ls.pdfUrl ? `
+              <div class="pdf-chip">
+                <i class="fas fa-file-pdf" style="color:#d33"></i>
+                <span class="pdf-name-mini" title="${esc(ls.pdfName||'')}">${esc(ls.pdfName||'lesson.pdf')}</span>
+                <a href="${esc(ls.pdfUrl)}" target="_blank" rel="noopener" class="pdf-chip-btn" title="দেখুন"><i class="fas fa-external-link-alt"></i></a>
+                <button type="button" class="pdf-chip-btn danger" onclick="removeCmPdf(${si},${li})" title="মুছুন"><i class="fas fa-trash"></i></button>
+                <button type="button" class="pdf-chip-btn" onclick="$('#pdf-input-${si}-${li}').click()" title="পরিবর্তন"><i class="fas fa-sync-alt"></i></button>
+              </div>
+            ` : `
+              <div class="pdf-upload-mini"
+                   id="pdf-drop-${si}-${li}"
+                   ondrop="handleCmPdfDrop(event, ${si}, ${li})"
+                   ondragover="handleCmPdfDragOver(event)"
+                   ondragleave="handleCmPdfDragLeave(event)"
+                   onclick="$('#pdf-input-${si}-${li}').click()">
+                <i class="fas fa-cloud-upload-alt" style="color:var(--primary);font-size:14px"></i>
+                <span style="font-size:12px;color:var(--text-soft);font-weight:600">পাঠের PDF আপলোড করুন (ঐচ্ছিক)</span>
+              </div>
+            `}
+            <input type="file"
+                   id="pdf-input-${si}-${li}"
+                   accept="application/pdf,.pdf"
                    style="display:none"
                    onchange="handleCmPdfFileSelect(event, ${si}, ${li})">
-            ${ls.pdfUrl ? `
-              <i class="fas fa-file-pdf" style="color:var(--danger);font-size:16px;margin-left:6px"></i>
-              <span class="pdf-name-mini">${esc(ls.pdfName||'ডকুমেন্ট.pdf')}</span>
-              <button type="button" class="btn btn-danger btn-xs" onclick="event.stopPropagation();removeCmPdf(${si},${li})" title="মুছুন"><i class="fas fa-trash"></i></button>
-            ` : `
-              <i class="fas fa-cloud-upload-alt" style="color:var(--text-muted);font-size:14px;margin-left:6px"></i>
-              <span style="font-size:12px;color:var(--text-muted)">পিডিএফ যোগ করুন</span>
-            `}
           </div>
         </div>`).join('')}
         ${!(sec.lessons&&sec.lessons.length)?'<div style="font-size:12px;color:var(--text-muted);padding:6px">এখনো কোনো পাঠ নেই</div>':''}
@@ -1924,7 +1925,7 @@ async function saveCourse(e){
   const fd=new FormData(e.target);
   const features=CM_FEATURES.filter(f=>f.trim());
   const includes=CM_INCLUDES.filter(f=>f.trim());
-  const curriculum=CM_CURRICULUM.map(sec=>({sectionTitle:sec.sectionTitle||'',pdfUrl:sec.pdfUrl||'',pdfTitle:sec.pdfTitle||'',lessons:(sec.lessons||[]).map(ls=>({title:ls.title||'',duration:ls.duration||'',videoId:extractYouTubeId(ls.videoId||'')||ls.videoId||'',isFree:!!ls.isFree,pdfUrl:ls.pdfUrl||'',pdfName:ls.pdfName||''}))}));
+  const curriculum=CM_CURRICULUM.map(sec=>({sectionTitle:sec.sectionTitle||'',lessons:(sec.lessons||[]).map(ls=>({title:ls.title||'',duration:ls.duration||'',videoId:extractYouTubeId(ls.videoId||'')||ls.videoId||'',isFree:!!ls.isFree,pdfUrl:ls.pdfUrl||'',pdfName:ls.pdfName||''}))}));
   const qna=CM_QNA.filter(q=>q.question||q.answer);
   const previewVideoId=document.getElementById('cm-preview-hidden')?.value||extractYouTubeId(fd.get('previewVideoUrl')||'');
   const body={title:fd.get('title'),slug:fd.get('slug')||undefined,shortDescription:fd.get('shortDescription'),description:fd.get('description'),price:Number(fd.get('price')||0),oldPrice:Number(fd.get('oldPrice')||0),instructor:fd.get('instructor'),instructorBio:fd.get('instructorBio'),instructorPhoto:fd.get('instructorPhoto'),duration:fd.get('duration'),videoLessonsTime:fd.get('videoLessonsTime'),totalLessons:Number(fd.get('totalLessons')||0),students:Number(fd.get('students')||0),rating:Number(fd.get('rating')||0),thumbnail:fd.get('thumbnailUrl')||undefined,previewVideoId,previewVideo:previewVideoId,certificateImage:fd.get('certificateImage')||undefined,category:cmGetCategory()||fd.get('category')||'',subCategory:fd.get('subCategory')||'',level:fd.get('level')||'beginner',type:fd.get('type')||CM_TYPE,isFeatured:fd.get('isFeatured')==='on',isActive:fd.get('isActive')==='true',features:JSON.stringify(features),includes:JSON.stringify(includes),curriculum:JSON.stringify(curriculum),qna:JSON.stringify(qna),seoTitle:fd.get('seoTitle'),seoDescription:fd.get('seoDescription'),seoKeywords:fd.get('seoKeywords'),ogImage:fd.get('ogImage'),canonicalUrl:fd.get('canonicalUrl')};

@@ -112,20 +112,19 @@ const upload = multer({ storage, limits: { fileSize: 50 * 1024 * 1024 } });
 // ============================================================
 
 // --- Lesson (sub)
+// PDF system: lesson-level only. Two fields → pdfUrl (Cloudinary URL) + pdfName (original filename).
 const lessonSchema = new mongoose.Schema({
   title:    { type: String, required: true },
   duration: String,           // "12:30"
-  videoId:  String,           // YouTube video id (e.g. "LXb3EKWsInQ")
+  videoId:  String,           // YouTube video id
   isFree:   { type: Boolean, default: false },
   pdfUrl:   String,           // Cloudinary PDF URL (per lesson)
-  pdfName:  String,           // Original PDF filename
+  pdfName:  String,           // Original PDF filename (e.g. "lesson-1.pdf")
 }, { _id: false });
 
-// --- Curriculum section
+// --- Curriculum section (PDF সরানো হয়েছে — শুধু lesson-level PDF)
 const curriculumSectionSchema = new mongoose.Schema({
   sectionTitle: String,
-  pdfUrl:       String,       // Section-level PDF link
-  pdfTitle:     String,       // Section-level PDF display name
   lessons:      [lessonSchema],
 }, { _id: false });
 
@@ -1266,22 +1265,31 @@ app.post('/api/admin/upload', authMiddleware, upload.single('file'), (req, res) 
 });
 
 // ============================================================
-// PDF Upload (admin) - for course lessons
+// PDF Upload (admin) — lesson-level PDF only
+// Uploads to Cloudinary as image resource_type so browser can inline-view
+// the PDF (no "Allow delivery of PDF" account restriction issue).
 // ============================================================
-app.post('/api/admin/upload-pdf', authMiddleware, upload.single('pdf'), (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'No PDF file uploaded' });
-  
-  // Validate file type
-  const mimeType = req.file.mimetype;
-  if (mimeType !== 'application/pdf') {
-    return res.status(400).json({ error: 'শুধুমাত্র PDF ফাইল আপলোড করুন' });
-  }
-  
-  // Return Cloudinary URL
-  res.json({ 
-    url: req.file.path,
-    filename: req.file.originalname,
-    size: req.file.size
+app.post('/api/admin/upload-pdf', authMiddleware, (req, res) => {
+  upload.single('pdf')(req, res, (err) => {
+    if (err) {
+      const msg = err.code === 'LIMIT_FILE_SIZE'
+        ? 'ফাইল সাইজ সর্বোচ্চ ৫০ মেগাবাইট হতে পারবে'
+        : (err.message || 'আপলোড ব্যর্থ হয়েছে');
+      return res.status(400).json({ error: msg });
+    }
+    if (!req.file) return res.status(400).json({ error: 'কোনো PDF ফাইল পাওয়া যায়নি' });
+
+    const mt = (req.file.mimetype || '').toLowerCase();
+    const nameOk = /\.pdf$/i.test(req.file.originalname || '');
+    if (mt !== 'application/pdf' && !nameOk) {
+      return res.status(400).json({ error: 'শুধুমাত্র PDF ফাইল আপলোড করুন' });
+    }
+
+    return res.json({
+      url:      req.file.path,                // Cloudinary secure URL
+      filename: req.file.originalname || 'lesson.pdf',
+      size:     req.file.size || 0,
+    });
   });
 });
 
