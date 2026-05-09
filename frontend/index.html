@@ -3630,17 +3630,26 @@ function renderCurriculumHTML(c, enrolled){
           const saved = tiaGetSavedProgress(c._id, lessonVideoId);
           const pctTxt = saved ? (saved.completed ? '✓ সম্পূর্ণ' : (saved.percent||0).toLocaleString('bn-BD')+'%') : '';
           const watchedCls = saved && saved.completed ? ' watched' : '';
+          const lessonPdfHTML = (isUnlocked && ls.pdfUrl) ? `
+            <a href="${escapeHtml(ls.pdfUrl)}" target="_blank" rel="noopener"
+               onclick="event.stopPropagation()"
+               class="cd-lesson-pdf"
+               title="${escapeHtml(ls.pdfName||'PDF ডাউনলোড')}"
+               style="display:inline-flex;align-items:center;gap:5px;padding:4px 9px;background:#fff5f5;border:1px solid #fecaca;color:#d33;border-radius:7px;font-size:11.5px;font-weight:600;text-decoration:none;flex-shrink:0;margin-right:6px">
+              <i class="fas fa-file-pdf"></i><span>PDF</span>
+            </a>` : '';
           if (isUnlocked) {
-            return `<div class="cd-lesson" data-lesson-vid="${escapeHtml(lessonVideoId)}" data-lesson-title="${escapeHtml(ls.title||'')}" data-lesson-dur="${escapeHtml(ls.duration||'')}" onclick="cdPlayLessonFromEl(this)">
+            return `<div class="cd-lesson" data-lesson-vid="${escapeHtml(lessonVideoId)}" data-lesson-title="${escapeHtml(ls.title||'')}" data-lesson-dur="${escapeHtml(ls.duration||'')}" data-lesson-pdf="${escapeHtml(ls.pdfUrl||'')}" data-lesson-pdfname="${escapeHtml(ls.pdfName||'')}" onclick="cdPlayLessonFromEl(this)">
               <span class="ico${watchedCls}">${saved&&saved.completed?'✓':'▶'}</span>
               <span class="ttl">${escapeHtml(ls.title||'')}${ls.isFree && !enrolled?`<span class="free-tag">বিনামূল্যে</span>`:''}</span>
               <span class="lesson-prog">${pctTxt}</span>
+              ${lessonPdfHTML}
               <span class="dur">${escapeHtml(ls.duration||'')}</span>
             </div>`;
           }
           return `<div class="cd-lesson locked" onclick="cdLockedClick()">
             <span class="ico"><i class="fas fa-lock"></i></span>
-            <span class="ttl">${escapeHtml(ls.title||'')}</span>
+            <span class="ttl">${escapeHtml(ls.title||'')}${ls.pdfUrl?'<i class="fas fa-file-pdf" style="color:#d33;margin-left:6px;font-size:11px" title="PDF সংযুক্ত"></i>':''}</span>
             <span class="dur">${escapeHtml(ls.duration||'')}</span>
           </div>`;
         }).join('')}
@@ -3982,10 +3991,44 @@ function cdPlayPreview(){
 }
 
 function cdPlayLessonFromEl(el){
-  cdPlayLesson(el?.dataset?.lessonVid || '', el?.dataset?.lessonTitle || '', el?.dataset?.lessonDur || '');
+  cdPlayLesson(
+    el?.dataset?.lessonVid || '',
+    el?.dataset?.lessonTitle || '',
+    el?.dataset?.lessonDur || '',
+    el?.dataset?.lessonPdf || '',
+    el?.dataset?.lessonPdfname || ''
+  );
 }
 
-function cdPlayLesson(videoId, title, dur){
+function cdShowLessonPdfPanel(pdfUrl, pdfName, title){
+  const host = document.getElementById('cd-preview');
+  if(!host) return;
+  // আগের panel থাকলে সরাও
+  const old = document.getElementById('cd-lesson-pdf-panel');
+  if(old) old.remove();
+  if(!pdfUrl) return;
+  const panel = document.createElement('div');
+  panel.id = 'cd-lesson-pdf-panel';
+  panel.style.cssText = 'margin-top:10px;padding:12px 14px;background:#fff5f5;border:1px solid #fecaca;border-radius:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap';
+  panel.innerHTML = `
+    <i class="fas fa-file-pdf" style="color:#d33;font-size:22px;flex-shrink:0"></i>
+    <div style="flex:1;min-width:160px">
+      <div style="font-weight:700;color:#7f1d1d;font-size:14px">এই পাঠের সংযুক্ত পিডিএফ</div>
+      <div style="color:#991b1b;font-size:12px;margin-top:2px;word-break:break-word">${escapeHtml(pdfName||'lesson.pdf')}</div>
+    </div>
+    <a href="${escapeHtml(pdfUrl)}" target="_blank" rel="noopener"
+       style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#d33;color:#fff;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none">
+      <i class="fas fa-eye"></i> দেখুন
+    </a>
+    <a href="${escapeHtml(pdfUrl)}" download
+       style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#fff;color:#d33;border:1px solid #d33;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none">
+      <i class="fas fa-download"></i> ডাউনলোড
+    </a>`;
+  // player-এর parent-এর পরে যোগ করি
+  if(host.parentNode) host.parentNode.insertBefore(panel, host.nextSibling);
+}
+
+function cdPlayLesson(videoId, title, dur, pdfUrl, pdfName){
   videoId = tiaExtractYouTubeId(videoId);
   if (!videoId) { toast('ভিডিও পাওয়া যায়নি'); return; }
   const box = $('#cd-preview'); box.removeAttribute('onclick'); box.innerHTML='';
@@ -3993,20 +4036,19 @@ function cdPlayLesson(videoId, title, dur){
   tiaMountPlayer(box, videoId, {
     courseId,
     onProgress:(pct)=>{
-      // update curriculum lesson progress badge
       const el = document.querySelector(`[data-lesson-vid="${videoId}"] .lesson-prog`);
       if (el) el.textContent = pct.toLocaleString('bn-BD')+'%';
-      // update overall progress
       cdCheckCourseCompletion(courseId, CURRENT_COURSE?.curriculum||[]);
     },
     onComplete:()=>{
       const row = document.querySelector(`[data-lesson-vid="${videoId}"]`);
       if (row){ row.querySelector('.ico')?.classList.add('watched'); const p=row.querySelector('.lesson-prog'); if (p){ p.textContent='✓ সম্পূর্ণ'; } }
       toast('লেসন সম্পন্ন হয়েছে — ✓','success');
-      // check if whole course is now done
       cdCheckCourseCompletion(courseId, CURRENT_COURSE?.curriculum||[]);
     }
   });
+  // Lesson-এর সাথে PDF থাকলে player-এর নিচে দেখাও
+  cdShowLessonPdfPanel(pdfUrl||'', pdfName||'', title||'');
   toast('▶ '+title+(dur?' ('+dur+')':''));
   window.scrollTo({top:0,behavior:'smooth'});
 }

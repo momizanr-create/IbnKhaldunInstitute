@@ -2610,38 +2610,51 @@ function handleCmPdfFileSelect(e, secIdx, lesIdx){
 }
 
 async function handleCmPdfFile(file, secIdx, lesIdx){
-  // Validate file type
-  if(!file.type.includes('pdf')){
+  // Validate file type (mimetype বা extension যেকোনোটা)
+  const isPdfMime = (file.type||'').toLowerCase().includes('pdf');
+  const isPdfExt  = /\.pdf$/i.test(file.name||'');
+  if(!isPdfMime && !isPdfExt){
     toast('শুধুমাত্র PDF ফাইল আপলোড করুন', 'error');
     return;
   }
-  
-  // Validate file size (max 10MB)
-  if(file.size > 10 * 1024 * 1024){
-    toast('ফাইল সাইজ সর্বোচ্চ ১০ মেগাবাইট হতে পারবে', 'error');
+
+  // Validate file size (max 50MB — server limit)
+  if(file.size > 50 * 1024 * 1024){
+    toast('ফাইল সাইজ সর্বোচ্চ ৫০ মেগাবাইট হতে পারবে', 'error');
     return;
   }
-  
+
+  if(!ADMIN_TOKEN){
+    toast('অনুগ্রহ করে আবার লগইন করুন', 'error');
+    return;
+  }
+
   try {
     toast('পিডিএফ আপলোড হচ্ছে...', 'info');
-    
-    // Create FormData and upload
+
+    // Create FormData and upload — backend (Render) এ পাঠাও, relative URL এ নয়
     const formData = new FormData();
-    formData.append('pdf', file);
-    
-    const response = await fetch('/api/admin/upload-pdf', {
+    // server.js multer field name: 'pdf'
+    formData.append('pdf', file, file.name);
+
+    const response = await fetch(API + '/api/admin/upload-pdf', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${ADMIN_TOKEN}`
+        'Authorization': 'Bearer ' + ADMIN_TOKEN
+        // NOTE: Content-Type set করবো না — browser নিজে multipart boundary দেবে
       },
       body: formData
     });
-    
+
     if(!response.ok){
-      throw new Error('আপলোড ব্যর্থ হয়েছে');
+      let msg = 'আপলোড ব্যর্থ হয়েছে';
+      try { const er = await response.json(); if(er && er.error) msg = er.error; }
+      catch { try { const t = await response.text(); if(t) msg = t.slice(0,200); } catch{} }
+      throw new Error(msg + ' (HTTP ' + response.status + ')');
     }
-    
+
     const data = await response.json();
+    if(!data || !data.url) throw new Error('সার্ভার থেকে PDF URL পাওয়া যায়নি');
     
     // Update the lesson with PDF info
     if(!CM_CURRICULUM[secIdx].lessons[lesIdx]){
