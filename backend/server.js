@@ -92,7 +92,11 @@ const storage = new CloudinaryStorage({
       unique_filename: false,
     };
     if (isPdf) {
-      // Preserve .pdf extension on the delivered URL
+      // PDF কে raw হিসেবে আপলোড করি কিন্তু public_id-তে .pdf extension রাখি,
+      // যাতে delivered URL `.pdf` দিয়ে শেষ হয় এবং browser PDF viewer
+      // proper Content-Type পায় ("Failed to load PDF document" সমাধান)
+      params.public_id = `${base}_${Date.now()}.pdf`;
+      params.use_filename = false;
       params.format = 'pdf';
     }
     return params;

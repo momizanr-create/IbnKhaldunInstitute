@@ -1961,15 +1961,32 @@ const API =
     ? 'http://localhost:5000'
     : 'https://ibnkhalduninstitute.onrender.com';
 
-// PDF/ফাইল URL absolutize: relative ('/uploads/..') হলে backend host prepend করো
+// PDF/ফাইল URL absolutize + Cloudinary raw PDF fix
+// (Cloudinary raw URL-এ .pdf extension না থাকলে browser PDF viewer
+//  Content-Type ঠিকমত পায় না → "Failed to load PDF document" error হয়)
 function cdAbsPdfUrl(u){
   if(!u) return '';
   try{
-    const s = String(u).trim();
-    if(/^https?:\/\//i.test(s) || /^data:/i.test(s) || /^blob:/i.test(s)) return s;
-    if(s.startsWith('//')) return window.location.protocol + s;
-    if(s.startsWith('/')) return API + s;
-    return API + '/' + s;
+    let s = String(u).trim();
+    if(/^data:/i.test(s) || /^blob:/i.test(s)) return s;
+    if(s.startsWith('//')) s = window.location.protocol + s;
+    else if(!/^https?:\/\//i.test(s)){
+      s = s.startsWith('/') ? (API + s) : (API + '/' + s);
+    }
+    // Cloudinary raw PDF delivery fix
+    if(/res\.cloudinary\.com\/[^/]+\/raw\/upload\//i.test(s)){
+      // 1) URL-এ .pdf extension না থাকলে যোগ করি (query থাকলে তার আগে)
+      if(!/\.pdf(\?|#|$)/i.test(s)){
+        s = s.replace(/(\?|#|$)/, function(m){ return '.pdf' + (m||''); });
+      }
+      // 2) fl_attachment flag inject — Cloudinary তখন proper Content-Type
+      //    (application/pdf) ও filename সহ deliver করে, browser PDF viewer
+      //    inline render করতে পারে
+      if(!/\/upload\/[^/]*fl_attachment/i.test(s)){
+        s = s.replace(/\/upload\//, '/upload/fl_attachment/');
+      }
+    }
+    return s;
   }catch{ return u; }
 }
 
