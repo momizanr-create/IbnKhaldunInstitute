@@ -77,10 +77,25 @@ mongoose.connect(process.env.MONGODB_URI)
 // ============================================================
 const storage = new CloudinaryStorage({
   cloudinary,
-  params: {
-    folder: 'markazuddirasah',
-    allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'pdf', 'mp4'],
-    resource_type: 'auto',
+  params: async (req, file) => {
+    const mt = (file.mimetype || '').toLowerCase();
+    const isPdf = mt === 'application/pdf';
+    const isVideo = mt.startsWith('video/');
+    const isImage = mt.startsWith('image/');
+    // Strip extension for public_id; keep original name for download
+    const base = (file.originalname || 'file').replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_\-]/g, '_').slice(0, 80) || 'file';
+    const params = {
+      folder: 'markazuddirasah',
+      resource_type: isImage ? 'image' : (isVideo ? 'video' : 'raw'),
+      public_id: `${base}_${Date.now()}`,
+      use_filename: true,
+      unique_filename: false,
+    };
+    if (isPdf) {
+      // Preserve .pdf extension on the delivered URL
+      params.format = 'pdf';
+    }
+    return params;
   },
 });
 const upload = multer({ storage, limits: { fileSize: 50 * 1024 * 1024 } });
@@ -95,11 +110,15 @@ const lessonSchema = new mongoose.Schema({
   duration: String,           // "12:30"
   videoId:  String,           // YouTube video id (e.g. "LXb3EKWsInQ")
   isFree:   { type: Boolean, default: false },
+  pdfUrl:   String,           // Cloudinary PDF URL (per lesson)
+  pdfName:  String,           // Original PDF filename
 }, { _id: false });
 
 // --- Curriculum section
 const curriculumSectionSchema = new mongoose.Schema({
   sectionTitle: String,
+  pdfUrl:       String,       // Section-level PDF link
+  pdfTitle:     String,       // Section-level PDF display name
   lessons:      [lessonSchema],
 }, { _id: false });
 
