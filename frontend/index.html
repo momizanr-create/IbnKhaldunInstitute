@@ -18,6 +18,7 @@
 <meta name="twitter:card" content="summary_large_image" />
 
 <link rel="preconnect" href="https://ibnkhalduninstitute.onrender.com" crossorigin />
+<script>(function(){try{var u=(location.hostname==="localhost"?"http://localhost:5000":"https://ibnkhalduninstitute.onrender.com")+"/api/health";fetch(u,{cache:"no-store",mode:"cors",keepalive:true}).catch(function(){var i=new Image();i.src=u+"?_="+Date.now();});}catch(e){}})();</script>
 <link rel="dns-prefetch" href="https://ibnkhalduninstitute.onrender.com" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -595,7 +596,8 @@ th{background:#f1f5f9;font-weight:600}
 
 
 /* ── Course Detail (rich) ── */
-.cd-wrap{background:#fff;width:100%;overflow-x:hidden}
+.cd-wrap{background:#fff;width:100%;overflow-x:hidden;box-sizing:border-box}
+.cd-main{min-width:0;overflow-x:hidden;box-sizing:border-box}
 .cd-hero{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:30px 0}
 .cd-hero h1{font-size:clamp(20px,3.5vw,30px);margin:8px 0;line-height:1.3}
 @media(max-width:600px){
@@ -609,9 +611,11 @@ th{background:#f1f5f9;font-weight:600}
   .cd-meta span{gap:4px}
 }
 .cd-stars{color:var(--secondary)}
-.cd-grid{display:grid;grid-template-columns:1.7fr 1fr;gap:24px;padding:24px 0}
+.cd-grid{display:grid;grid-template-columns:1.7fr 1fr;gap:24px;padding:24px 0;width:100%;box-sizing:border-box}
+.cd-grid > *{min-width:0;overflow-x:hidden;box-sizing:border-box}
 @media(max-width:900px){
-  .cd-grid{grid-template-columns:1fr;gap:16px;padding:16px 0}
+  .cd-grid{grid-template-columns:1fr;gap:16px;padding:16px 0;width:100%;max-width:100%}
+  .cd-grid > *{min-width:0;max-width:100%;overflow-x:hidden}
   .cd-side{position:static;top:auto}
   .cd-side-card{margin-bottom:20px}
 }
@@ -625,13 +629,22 @@ th{background:#f1f5f9;font-weight:600}
 @media(max-width:600px){
   .cd-play-big{width:56px;height:56px;font-size:22px}
 }
-.cd-tabs{display:flex;gap:4px;border-bottom:2px solid var(--border);margin:12px 0 18px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.cd-tabs{display:flex;gap:6px;border-bottom:none;margin:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;background:#2a7a3b;border-radius:14px;padding:8px 10px;align-items:center;flex:1}
 .cd-tabs::-webkit-scrollbar{display:none}
-.cd-tab{padding:10px 16px;border:none;background:transparent;cursor:pointer;font-family:inherit;font-weight:600;color:var(--text-soft);border-bottom:3px solid transparent;margin-bottom:-2px;font-size:14px;white-space:nowrap}
-@media(max-width:600px){
-  .cd-tab{padding:8px 12px;font-size:13px}
+.cd-tabs-wrapper{display:flex;align-items:center;gap:0;margin:12px 0 18px;position:relative;width:100%;max-width:100%;box-sizing:border-box;overflow:hidden}
+.cd-tabs-arrow{display:none;align-items:center;justify-content:center;width:34px;height:34px;min-width:34px;background:#fff;border:none;color:#222;font-size:22px;font-weight:900;cursor:pointer;border-radius:50%;z-index:2;line-height:1;padding:0;transition:background .2s,opacity .2s,box-shadow .2s;opacity:.92;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.cd-tabs-arrow:hover{opacity:1;box-shadow:0 3px 12px rgba(0,0,0,.28)}
+.cd-tabs-arrow-left{margin-right:5px}
+.cd-tabs-arrow-right{margin-left:5px}
+@media(max-width:900px){
+  .cd-tabs-arrow{display:flex}
 }
-.cd-tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.cd-tab{padding:10px 22px;border:none;background:transparent;cursor:pointer;font-family:inherit;font-weight:800;color:#fff;border-bottom:none;margin-bottom:0;font-size:17px;white-space:nowrap;border-radius:10px;transition:background .2s,color .2s}
+.cd-tab:hover{background:rgba(255,255,255,.18)}
+@media(max-width:600px){
+  .cd-tab{padding:8px 14px;font-size:15px;font-weight:800}
+}
+.cd-tab.active{background:#fff;color:#111;border-bottom:none}
 .cd-tabpane{display:none}
 .cd-tabpane.active{display:block}
 .cd-section{margin-bottom:14px;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#fff}
@@ -1459,9 +1472,15 @@ header .logo span#logo-line1,header .logo span#logo-line2,header .logo #logo-div
   .cd-meta{gap:8px 12px;font-size:12px;margin-top:8px}
   .cd-meta span{font-size:12px}
   .cd-grid{gap:14px;padding:12px 0}
-  .cd-tabs{gap:2px;margin:10px 0 14px;padding-bottom:2px}
-  .cd-tab{padding:8px 11px;font-size:12.5px}
-  .cd-tab i{font-size:12px}
+  /* ── overflow fix ── */
+  .cd-wrap{overflow-x:hidden !important}
+  .cd-main{min-width:0;overflow-x:hidden}
+  .cd-preview{width:100% !important;max-width:100% !important;box-sizing:border-box}
+  .cd-tabs-wrapper{width:100%;max-width:100%;box-sizing:border-box;overflow:hidden}
+  .cd-tabs{gap:2px;margin:0;padding:6px 8px;box-sizing:border-box;min-width:0}
+  /* ── end overflow fix ── */
+  .cd-tab{padding:8px 11px;font-size:15px;font-weight:800;border-radius:8px}
+  .cd-tab i{font-size:14px}
   .cd-tabpane .card{padding:16px !important}
   .cd-tabpane h3{font-size:16px}
   .cd-side-card{margin-bottom:18px}
@@ -1481,7 +1500,7 @@ header .logo span#logo-line1,header .logo span#logo-line2,header .logo #logo-div
   #course-detail-content [style*="max-width:340px"]{max-width:100% !important}
 }
 @media(max-width:380px){
-  .cd-tab{padding:7px 9px;font-size:12px}
+  .cd-tab{padding:7px 9px;font-size:14px;font-weight:800;border-radius:7px}
   .cd-hero h1{font-size:18px}
   .cd-meta{font-size:11.5px;gap:6px 10px}
 }
@@ -1497,7 +1516,7 @@ header .logo span#logo-line1,header .logo span#logo-line2,header .logo #logo-div
 /* ---- Footer responsive grid ---- */
 @media(max-width:600px){
   footer{padding:36px 0 18px;margin-top:40px}
-  .footer-grid{grid-template-columns:1fr;gap:22px;text-align:right}
+  .footer-grid{grid-template-columns:1fr;gap:22px;text-align:left}
 }
 
 /* ---- Hero overflow guard on tiny screens ---- */
@@ -1977,6 +1996,14 @@ function _cacheGet(path){
     return o.d;
   }catch{ return null; }
 }
+// ⚡ Stale fallback — TTL শেষ হলেও পুরোনো data ফেরত দাও (silent background refresh হবে)
+function _cacheGetAny(path){
+  try{
+    const raw = localStorage.getItem(_CACHE_PREFIX+path);
+    if (!raw) return null;
+    return JSON.parse(raw).d;
+  }catch{ return null; }
+}
 function _cacheSet(path, data){
   try{ localStorage.setItem(_CACHE_PREFIX+path, JSON.stringify({t:Date.now(), d:data})); }catch{}
 }
@@ -1995,8 +2022,10 @@ function _emitSwr(path, data){
 let _serverAwake = false;
 let _wakePromise = null;
 function _showWakeBanner(show) {
+  // ⚡ FIX: কখনই 'সার্ভার চালু হচ্ছে' banner দেখাবো না
+  // Cache থেকে আগেই UI render হচ্ছে, তাই user-কে অপেক্ষার বার্তা দেখানোর দরকার নেই
   const b = document.getElementById('server-wake-banner');
-  if (b) b.style.display = show ? 'block' : 'none';
+  if (b) b.style.display = 'none';
 }
 
 // Server জাগানো — resolve হলে server ready, reject মানে timeout
@@ -2045,16 +2074,20 @@ async function api(path, opts={}) {
   }
   const isGET = !opts.method || opts.method.toUpperCase()==='GET';
   // ── Stale-While-Revalidate for GET ──
+  // ⚡ FIX: fresh অথবা stale — যেকোনো cache থাকলেই instant return করো,
+  // background-এ silent refresh হবে। ফলে cold-start-এও user অপেক্ষা করবে না।
   if (isGET && !opts.noCache){
-    const cached = _cacheGet(path);
-    if (cached !== null){
-      // background refresh — silent, no error toast
+    const fresh = _cacheGet(path);
+    const stale = fresh !== null ? fresh : _cacheGetAny(path);
+    if (stale !== null){
       fetch(API+path,{...opts,headers}).then(r=>r.ok?r.json():null).then(d=>{
-        if (d && JSON.stringify(d) !== JSON.stringify(cached)){
+        if (d && JSON.stringify(d) !== JSON.stringify(stale)){
           _cacheSet(path, d); _emitSwr(path, d);
+        } else if (d){
+          _cacheSet(path, d); // refresh timestamp
         }
       }).catch(()=>{});
-      return cached;
+      return stale;
     }
   }
   // ── POST/PUT/DELETE: আগে server জাগানো নিশ্চিত করো ──
@@ -3244,13 +3277,17 @@ function renderRecordedDetail(c){
               </div>
             </div>
 
-            <div class="cd-tabs">
-              <button class="cd-tab active" onclick="cdSwitchTab(this,'desc')">সংক্ষিপ্ত বিবরণ</button>
-              <button class="cd-tab" onclick="cdSwitchTab(this,'curriculum')">কারিকুলাম</button>
-              <button class="cd-tab" onclick="cdSwitchTab(this,'instructor')">ইন্সট্রাক্টর</button>
-              <button class="cd-tab" onclick="cdSwitchTab(this,'qna')"><i class="fas fa-question-circle"></i> প্রশ্নোত্তর</button>
-              <button class="cd-tab" onclick="cdSwitchTab(this,'comments');loadCourseComments()"><i class="fas fa-comments"></i> মন্তব্য</button>
-              ${enrolled && c.certificateImage ? `<button class="cd-tab" id="cert-tab-btn" onclick="cdSwitchTab(this,'certificate')"><i class="fas fa-certificate" style="color:#F5C518"></i> সার্টিফিকেট</button>` : ''}
+            <div class="cd-tabs-wrapper">
+              <button class="cd-tabs-arrow cd-tabs-arrow-left" onclick="cdTabsScroll(-1)" aria-label="বামে স্ক্রল">❮</button>
+              <div class="cd-tabs" id="cdTabsScroller">
+                <button class="cd-tab active" onclick="cdSwitchTab(this,'desc')">সংক্ষিপ্ত বিবরণ</button>
+                <button class="cd-tab" onclick="cdSwitchTab(this,'curriculum')">কারিকুলাম</button>
+                <button class="cd-tab" onclick="cdSwitchTab(this,'instructor')">ইন্সট্রাক্টর</button>
+                <button class="cd-tab" onclick="cdSwitchTab(this,'qna')"><i class="fas fa-question-circle"></i> প্রশ্নোত্তর</button>
+                <button class="cd-tab" onclick="cdSwitchTab(this,'comments');loadCourseComments()"><i class="fas fa-comments"></i> ডিসকোর্স</button>
+                ${enrolled && c.certificateImage ? `<button class="cd-tab" id="cert-tab-btn" onclick="cdSwitchTab(this,'certificate')"><i class="fas fa-certificate" style="color:#F5C518"></i> সার্টিফিকেট</button>` : ''}
+              </div>
+              <button class="cd-tabs-arrow cd-tabs-arrow-right" onclick="cdTabsScroll(1)" aria-label="ডানে স্ক্রল">❯</button>
             </div>
 
             <div id="cd-pane-desc" class="cd-tabpane active">
@@ -3616,6 +3653,15 @@ function cdSwitchTab(btn, name){
   btn.classList.add('active');
   $$('.cd-tabpane').forEach(p=>p.classList.remove('active'));
   $('#cd-pane-'+name).classList.add('active');
+  // active ট্যাব দৃশ্যমান রাখো
+  const scroller = $('#cdTabsScroller');
+  if(scroller) btn.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+}
+
+function cdTabsScroll(dir){
+  const scroller = $('#cdTabsScroller');
+  if(!scroller) return;
+  scroller.scrollBy({left: dir * 160, behavior:'smooth'});
 }
 
 // ─────────── Custom Secure YouTube Player ───────────
@@ -5104,6 +5150,19 @@ window.addEventListener('focus', ()=>{
 /* All text left-aligned by default (Bangla LTR-left preference) */
 body, p, li, dd, dt, blockquote, figcaption, label, .card, .tab-pane, .container, footer, .footer-col, .about-text, .notice-bar, td, th{text-align:left !important}
 .hero, .hero *, .section-title, .page-title, h1.center, .text-center, [style*="text-align:center"]{text-align:left !important}
+
+/* ── cd-preview & cd-tabs mobile overflow fix ── */
+@media(max-width:900px){
+  .cd-wrap,.cd-main,.cd-preview,.cd-tabs-wrapper,.cd-grid,.cd-grid > *{max-width:100% !important;overflow-x:hidden !important;box-sizing:border-box !important}
+  .cd-grid{grid-template-columns:1fr !important;width:100% !important}
+  .cd-grid > *{min-width:0 !important;width:100% !important}
+  .cd-preview{width:100% !important}
+  .cd-tabs-wrapper{width:100% !important}
+  .cd-tabs{max-width:100%;min-width:0}
+  /* inline style overrides যেগুলো overflow করে */
+  .cd-grid [style*="max-width"]{max-width:100% !important}
+  .cd-grid [style*="width:"]{width:100% !important;max-width:100% !important}
+}
 .footer-bottom{text-align:left !important}
 ul, ol{padding-left:1.25em !important;padding-right:0 !important}
 </style>

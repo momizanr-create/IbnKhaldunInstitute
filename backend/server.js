@@ -1615,3 +1615,30 @@ app.use((req, res) => res.status(404).json({ error: 'Not found', path: req.path 
 app.listen(PORT, () => {
   console.log(`🚀 ${SITE_NAME} server on port ${PORT}`);
 });
+
+// ============================================================
+// Keep-Alive Self-Ping — Render free-tier cold start ঠেকানোর জন্য
+// প্রতি 10 মিনিটে নিজেকে ping করে instance জাগিয়ে রাখে
+// ============================================================
+const SELF_URL =
+  process.env.RENDER_EXTERNAL_URL ||
+  process.env.SELF_URL ||
+  process.env.RENDER_URL ||
+  '';
+
+if (SELF_URL) {
+  const pingUrl = SELF_URL.replace(/\/$/, '') + '/api/health';
+  const doPing = () => {
+    const fetchFn = (typeof fetch !== 'undefined') ? fetch : require('node-fetch');
+    fetchFn(pingUrl)
+      .then(() => console.log('[keep-alive] pinged', pingUrl))
+      .catch((e) => console.log('[keep-alive] ping failed:', e.message));
+  };
+  // 10 মিনিট পরপর — Render ১৫ মিনিটে ঘুমায়, তাই ১০ মিনিট safe
+  setInterval(doPing, 10 * 60 * 1000);
+  // Boot হওয়ার পর প্রথম ping ৩০ সেকেন্ড পর
+  setTimeout(doPing, 30 * 1000);
+  console.log('[keep-alive] self-ping enabled →', pingUrl);
+} else {
+  console.log('[keep-alive] disabled — set RENDER_EXTERNAL_URL or SELF_URL env to enable');
+}
