@@ -775,6 +775,9 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden}
       <div class="nav-item active" onclick="showPanel('dashboard')">
         <span class="nav-ico"><i class="fas fa-th-large"></i></span> ড্যাশবোর্ড
       </div>
+      <div class="nav-item" onclick="showPanel('analytics')">
+        <span class="nav-ico"><i class="fas fa-chart-line"></i></span> অ্যানালিটিক্স
+      </div>
 
       <div class="nav-group-label">কন্টেন্ট</div>
       <div class="nav-item" onclick="showPanel('courses')">
@@ -795,6 +798,12 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden}
       <div class="nav-item" onclick="showPanel('testimonials')">
         <span class="nav-ico"><i class="fas fa-star"></i></span> প্রশংসাপত্র
       </div>
+      <div class="nav-item" onclick="showPanel('categories')">
+        <span class="nav-ico"><i class="fas fa-folder-tree"></i></span> ক্যাটেগরি
+      </div>
+      <div class="nav-item" onclick="showPanel('notices')">
+        <span class="nav-ico"><i class="fas fa-bullhorn"></i></span> নোটিশ
+      </div>
 
       <div class="nav-group-label">ব্যবহারকারী</div>
       <div class="nav-item" onclick="showPanel('users')">
@@ -806,6 +815,14 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden}
       </div>
       <div class="nav-item" onclick="showPanel('enrollments')">
         <span class="nav-ico"><i class="fas fa-user-check"></i></span> এনরোলমেন্ট
+      </div>
+      <div class="nav-item" onclick="showPanel('live-purchases')">
+        <span class="nav-ico"><i class="fas fa-broadcast-tower"></i></span> লাইভ কোর্স পেমেন্ট
+        <span class="nav-badge" id="live-pending-count" style="display:none">0</span>
+      </div>
+      <div class="nav-item" onclick="showPanel('contact-messages')">
+        <span class="nav-ico"><i class="fas fa-envelope"></i></span> যোগাযোগ বার্তা
+        <span class="nav-badge" id="contact-unread-count" style="display:none">0</span>
       </div>
 
       <div class="nav-group-label">সেটিংস</div>
@@ -1241,6 +1258,104 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden}
         </form>
       </div>
 
+
+      <!-- ===== ANALYTICS ===== -->
+      <div class="panel" id="panel-analytics">
+        <div class="section-head">
+          <h2><i class="fas fa-chart-line"></i> অ্যানালিটিক্স ড্যাশবোর্ড</h2>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select id="analytics-range" onchange="loadAnalytics()" style="width:auto">
+              <option value="7">শেষ ৭ দিন</option>
+              <option value="14">শেষ ১৪ দিন</option>
+              <option value="30" selected>শেষ ৩০ দিন</option>
+              <option value="90">শেষ ৯০ দিন</option>
+            </select>
+            <button class="btn btn-outline btn-sm" onclick="loadAnalytics()"><i class="fas fa-sync"></i></button>
+          </div>
+        </div>
+        <div class="stats-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px">
+          <div class="card stat-card"><div class="stat-ico" style="background:#eef1fe;color:var(--primary)"><i class="fas fa-eye"></i></div><div><div class="stat-num" id="an-total-views">0</div><div class="stat-lbl">মোট ভিউ</div></div></div>
+          <div class="card stat-card"><div class="stat-ico" style="background:#fef3c7;color:#d97706"><i class="fas fa-users"></i></div><div><div class="stat-num" id="an-unique-visitors">0</div><div class="stat-lbl">ইউনিক ভিজিটর</div></div></div>
+          <div class="card stat-card"><div class="stat-ico" style="background:#dcfce7;color:#16a34a"><i class="fas fa-clock"></i></div><div><div class="stat-num" id="an-avg-session">0</div><div class="stat-lbl">গড় সেশন (sec)</div></div></div>
+          <div class="card stat-card"><div class="stat-ico" style="background:#fce7f3;color:#db2777"><i class="fas fa-play-circle"></i></div><div><div class="stat-num" id="an-course-views">0</div><div class="stat-lbl">কোর্স ভিউ</div></div></div>
+        </div>
+        <div class="card" style="margin-bottom:20px">
+          <h4 style="margin-bottom:14px"><i class="fas fa-chart-area"></i> দৈনিক ভিউ ট্রেন্ড</h4>
+          <div id="an-trend-chart" style="height:240px;display:flex;align-items:end;gap:4px;padding:10px 0;border-bottom:1px solid var(--border)">
+            <div class="loading-state" style="margin:auto"><div class="loader"></div></div>
+          </div>
+          <div id="an-trend-labels" style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-soft);margin-top:6px;padding:0 4px"></div>
+        </div>
+        <div class="card" style="padding:0">
+          <h4 style="padding:16px 20px 0"><i class="fas fa-trophy"></i> জনপ্রিয় কোর্সসমূহ</h4>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>#</th><th>কোর্স</th><th>মোট ভিউ</th><th>আজকের ভিউ</th><th>এনরোলমেন্ট</th></tr></thead>
+            <tbody id="an-top-courses-tbody"><tr><td colspan="5"><div class="loading-state"><div class="loader"></div></div></td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- ===== CATEGORIES ===== -->
+      <div class="panel" id="panel-categories">
+        <div class="section-head">
+          <h2><i class="fas fa-folder-tree"></i> ক্যাটেগরি ব্যবস্থাপনা</h2>
+          <button class="btn btn-primary" onclick="openCategoryModal()"><i class="fas fa-plus"></i> নতুন ক্যাটেগরি</button>
+        </div>
+        <div class="card" style="padding:0">
+          <div class="tbl-wrap"><table id="categories-table">
+            <thead><tr><th>ছবি</th><th>নাম</th><th>স্লাগ</th><th>সাব-ক্যাটেগরি</th><th>প্রযোজ্য</th><th>ক্রম</th><th>কার্য</th></tr></thead>
+            <tbody id="categories-tbody"><tr><td colspan="7"><div class="loading-state"><div class="loader"></div></div></td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- ===== NOTICES ===== -->
+      <div class="panel" id="panel-notices">
+        <div class="section-head">
+          <h2><i class="fas fa-bullhorn"></i> নোটিশ ব্যবস্থাপনা</h2>
+          <button class="btn btn-primary" onclick="openNoticeModal()"><i class="fas fa-plus"></i> নতুন নোটিশ</button>
+        </div>
+        <div class="card" style="padding:0">
+          <div class="tbl-wrap"><table id="notices-table">
+            <thead><tr><th>ছবি</th><th>শিরোনাম</th><th>কন্টেন্ট</th><th>স্ট্যাটাস</th><th>তারিখ</th><th>কার্য</th></tr></thead>
+            <tbody id="notices-tbody"><tr><td colspan="6"><div class="loading-state"><div class="loader"></div></div></td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- ===== LIVE COURSE PURCHASES ===== -->
+      <div class="panel" id="panel-live-purchases">
+        <div class="section-head">
+          <h2><i class="fas fa-broadcast-tower"></i> লাইভ কোর্স পেমেন্ট রিকোয়েস্ট</h2>
+        </div>
+        <div class="tab-row">
+          <button class="tab-btn active" onclick="loadLivePurchases('pending',this)">⏳ পেন্ডিং</button>
+          <button class="tab-btn" onclick="loadLivePurchases('approved',this)">✅ অনুমোদিত</button>
+          <button class="tab-btn" onclick="loadLivePurchases('rejected',this)">❌ বাতিল</button>
+          <button class="tab-btn" onclick="loadLivePurchases('',this)">সব</button>
+        </div>
+        <div class="card" style="padding:0">
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>শিক্ষার্থী</th><th>WhatsApp</th><th>কোর্স</th><th>পেমেন্ট</th><th>পরিমাণ</th><th>তারিখ</th><th>অবস্থা</th><th>কার্য</th></tr></thead>
+            <tbody id="live-purchases-tbody"><tr><td colspan="8"><div class="loading-state"><div class="loader"></div></div></td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- ===== CONTACT MESSAGES ===== -->
+      <div class="panel" id="panel-contact-messages">
+        <div class="section-head">
+          <h2><i class="fas fa-envelope"></i> যোগাযোগ বার্তা</h2>
+          <div class="search-bar"><i class="fas fa-search"></i><input type="text" placeholder="নাম, ইমেইল, বিষয়..." oninput="filterTable('contact-messages-table',this.value)" style="width:240px"/></div>
+        </div>
+        <div class="card" style="padding:0">
+          <div class="tbl-wrap"><table id="contact-messages-table">
+            <thead><tr><th>প্রেরক</th><th>ইমেইল</th><th>ফোন</th><th>বিষয়</th><th>তারিখ</th><th>কার্য</th></tr></thead>
+            <tbody id="contact-messages-tbody"><tr><td colspan="6"><div class="loading-state"><div class="loader"></div></div></td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
     </div><!-- /page-content -->
   </div><!-- /main-wrap -->
 </div><!-- /app -->
@@ -1293,6 +1408,19 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden}
       <button class="btn btn-danger" id="confirm-ok-btn"><i class="fas fa-trash"></i> নিশ্চিত করুন</button>
     </div>
   </div>
+</div>
+
+<div class="modal-bg" id="category-modal">
+  <div class="modal modal-lg"><button class="modal-close" onclick="closeModal('category-modal')">×</button><div id="category-modal-body"></div></div>
+</div>
+<div class="modal-bg" id="notice-modal">
+  <div class="modal modal-lg"><button class="modal-close" onclick="closeModal('notice-modal')">×</button><div id="notice-modal-body"></div></div>
+</div>
+<div class="modal-bg" id="live-purchase-modal">
+  <div class="modal modal-lg"><button class="modal-close" onclick="closeModal('live-purchase-modal')">×</button><div id="live-purchase-modal-body"></div></div>
+</div>
+<div class="modal-bg" id="contact-message-modal">
+  <div class="modal modal-lg"><button class="modal-close" onclick="closeModal('contact-message-modal')">×</button><div id="contact-message-modal-body"></div></div>
 </div>
 
 <div id="toast" class="toast"></div>
@@ -1472,18 +1600,24 @@ async function initApp(){
 // SIDEBAR / NAV
 // ============================================================
 const PANEL_TITLES={
-  'dashboard':'ড্যাশবোর্ড','courses':'কোর্সসমূহ',
+  'dashboard':'ড্যাশবোর্ড','analytics':'অ্যানালিটিক্স','courses':'কোর্সসমূহ',
   'topics':'বিষয়সমূহ','instructors':'শিক্ষকবৃন্দ','faqs':'FAQ',
-  'blog':'ব্লগ পোস্ট','testimonials':'প্রশংসাপত্র','users':'ব্যবহারকারী',
+  'blog':'ব্লগ পোস্ট','testimonials':'প্রশংসাপত্র',
+  'categories':'ক্যাটেগরি','notices':'নোটিশ','users':'ব্যবহারকারী',
   'access-requests':'কোর্স রিকোয়েস্ট','enrollments':'এনরোলমেন্ট',
+  'live-purchases':'লাইভ কোর্স পেমেন্ট','contact-messages':'যোগাযোগ বার্তা',
   'site-settings':'সাইট সেটিংস','hero-settings':'হোম হিরো',
   'why-join':'কেন যুক্ত হবেন','payment-settings':'পেমেন্ট সেটিংস',
   'contact-settings':'যোগাযোগ ও সোশ্যাল',
 };
 const PANEL_LOADERS={
+  'dashboard':loadDashboard,'analytics':loadAnalytics,
   'courses':loadCourses,'topics':loadTopics,'instructors':loadInstructors,
   'faqs':loadFaqs,'blog':loadBlog,'testimonials':loadTestimonials,'users':loadUsers,
+  'categories':loadCategories,'notices':loadNotices,
   'access-requests':()=>loadRequests('pending'),'enrollments':loadEnrollments,
+  'live-purchases':()=>loadLivePurchases('pending'),
+  'contact-messages':loadContactMessages,
   'why-join':loadWhyJoin,'site-settings':loadCurrentSettings,
   'hero-settings':loadHeroSettings,'payment-settings':loadPaymentSettings,
   'contact-settings':loadContactSettings,
@@ -2681,6 +2815,347 @@ function removeCmPdf(secIdx, lesIdx){
     cmRenderCurriculum();
     toast('পিডিএফ মুছে ফেলা হয়েছে', 'success');
   }
+}
+
+
+// ============================================================
+// CATEGORIES (NEW)
+// ============================================================
+let ALL_CATEGORIES_DATA=[];
+async function loadCategories(){
+  try{
+    const list=await adminApi('/api/admin/categories');
+    ALL_CATEGORIES_DATA=list||[];
+    $('#categories-tbody').innerHTML=list&&list.length?list.map(c=>`<tr>
+      <td>${c.image?`<img src="${esc(c.image)}" style="width:42px;height:42px;border-radius:8px;object-fit:cover"/>`:`<div style="width:42px;height:42px;border-radius:8px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;color:var(--primary)"><i class="fas ${esc(c.icon||'fa-folder')}"></i></div>`}</td>
+      <td style="font-weight:600">${esc(c.name||'—')}</td>
+      <td style="font-family:monospace;font-size:12px;color:var(--text-soft)">${esc(c.slug||'—')}</td>
+      <td style="font-size:12px">${(c.subCategories||[]).map(s=>`<span class="badge badge-info" style="margin:2px">${esc(s.name||s)}</span>`).join('')||'—'}</td>
+      <td><span class="badge badge-info">${esc(c.appliesTo||'both')}</span></td>
+      <td>${c.order||0}</td>
+      <td><div class="tbl-actions">
+        <button class="btn btn-outline btn-sm" onclick="openCategoryModal('${esc(c._id)}')"><i class="fas fa-edit"></i></button>
+        <button class="btn btn-danger btn-sm" onclick="deleteCategory('${esc(c._id)}')"><i class="fas fa-trash"></i></button>
+      </div></td>
+    </tr>`).join(''):`<tr><td colspan="7"><div class="empty"><i class="fas fa-folder-open"></i><p>কোনো ক্যাটেগরি নেই</p></div></td></tr>`;
+  }catch(e){$('#categories-tbody').innerHTML=`<tr><td colspan="7"><div class="empty"><p>${esc(e.message)}</p></div></td></tr>`;}
+}
+function openCategoryModal(id=''){
+  const c=id?ALL_CATEGORIES_DATA.find(x=>x._id===id)||{}:{};
+  const subs=Array.isArray(c.subCategories)?c.subCategories:[];
+  $('#category-modal-body').innerHTML=`
+    <h3><i class="fas fa-folder-tree" style="color:var(--primary)"></i> ${id?'ক্যাটেগরি এডিট':'নতুন ক্যাটেগরি'}</h3>
+    <form id="category-form" onsubmit="saveCategory(event,'${esc(id)}')" enctype="multipart/form-data">
+      <div class="form-row">
+        <div class="form-group"><label class="label">নাম *</label><input name="name" value="${esc(c.name||'')}" required/></div>
+        <div class="form-group"><label class="label">স্লাগ</label><input name="slug" value="${esc(c.slug||'')}" placeholder="auto from name"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="label">আইকন (Font Awesome class)</label><input name="icon" value="${esc(c.icon||'fa-folder')}"/></div>
+        <div class="form-group"><label class="label">প্রযোজ্য</label>
+          <select name="appliesTo">
+            <option value="both" ${(c.appliesTo||'both')==='both'?'selected':''}>উভয়</option>
+            <option value="recorded" ${c.appliesTo==='recorded'?'selected':''}>রেকর্ডেড</option>
+            <option value="live" ${c.appliesTo==='live'?'selected':''}>লাইভ</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="label">ক্রম (Order)</label><input type="number" name="order" value="${c.order||0}"/></div>
+        <div class="form-group"><label class="label">ছবি (optional)</label><input type="file" name="image" accept="image/*"/>${c.image?`<div style="margin-top:6px"><img src="${esc(c.image)}" style="width:60px;height:60px;border-radius:8px;object-fit:cover"/></div>`:''}</div>
+      </div>
+      <div class="form-group"><label class="label">সাব-ক্যাটেগরি (কমা দিয়ে আলাদা)</label>
+        <input name="subCategoriesText" value="${esc(subs.map(s=>s.name||s).join(', '))}" placeholder="যেমন: কুরআন, হাদীস, ফিকহ"/>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px">
+        <button type="button" class="btn btn-outline" onclick="closeModal('category-modal')">বাতিল</button>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> সংরক্ষণ</button>
+      </div>
+    </form>`;
+  openModal('category-modal');
+}
+async function saveCategory(e,id){
+  e.preventDefault();const f=e.target;const btn=f.querySelector('[type=submit]');btn.disabled=true;
+  try{
+    const fd=new FormData(f);
+    const subsText=fd.get('subCategoriesText')||'';
+    fd.delete('subCategoriesText');
+    const subs=subsText.split(',').map(s=>s.trim()).filter(Boolean).map(name=>({name, slug:name.toLowerCase().replace(/\s+/g,'-')}));
+    fd.append('subCategories', JSON.stringify(subs));
+    const url='/api/admin/categories'+(id?'/'+id:'');
+    await adminApi(url,{method:id?'PUT':'POST',body:fd});
+    closeModal('category-modal');toast('সংরক্ষিত ✅','success');loadCategories();
+  }catch(err){toast(err.message,'error');}finally{btn.disabled=false;}
+}
+function deleteCategory(id){
+  confirmAction('এই ক্যাটেগরি মুছে ফেলবেন?',async()=>{
+    try{await adminApi('/api/admin/categories/'+id,{method:'DELETE'});toast('মুছে ফেলা হয়েছে','success');loadCategories();}
+    catch(err){toast(err.message,'error');}
+  });
+}
+
+// ============================================================
+// NOTICES (NEW)
+// ============================================================
+let ALL_NOTICES_DATA=[];
+async function loadNotices(){
+  try{
+    const list=await adminApi('/api/admin/notices');
+    ALL_NOTICES_DATA=list||[];
+    $('#notices-tbody').innerHTML=list&&list.length?list.map(n=>`<tr>
+      <td>${n.image?`<img src="${esc(n.image)}" style="width:42px;height:42px;border-radius:8px;object-fit:cover"/>`:'—'}</td>
+      <td style="font-weight:600;max-width:180px">${esc(n.title||'—')}</td>
+      <td style="max-width:280px;font-size:13px;color:var(--text-soft)">${esc((n.content||'').slice(0,100))}${(n.content||'').length>100?'…':''}</td>
+      <td>${n.isActive?'<span class="badge badge-success">সক্রিয়</span>':'<span class="badge badge-danger">নিষ্ক্রিয়</span>'}</td>
+      <td style="font-size:12px">${n.createdAt?new Date(n.createdAt).toLocaleDateString('bn-BD'):'—'}</td>
+      <td><div class="tbl-actions">
+        <button class="btn btn-outline btn-sm" onclick="openNoticeModal('${esc(n._id)}')"><i class="fas fa-edit"></i></button>
+        <button class="btn btn-danger btn-sm" onclick="deleteNotice('${esc(n._id)}')"><i class="fas fa-trash"></i></button>
+      </div></td>
+    </tr>`).join(''):`<tr><td colspan="6"><div class="empty"><i class="fas fa-bullhorn"></i><p>কোনো নোটিশ নেই</p></div></td></tr>`;
+  }catch(e){$('#notices-tbody').innerHTML=`<tr><td colspan="6"><div class="empty"><p>${esc(e.message)}</p></div></td></tr>`;}
+}
+function openNoticeModal(id=''){
+  const n=id?ALL_NOTICES_DATA.find(x=>x._id===id)||{}:{isActive:true};
+  $('#notice-modal-body').innerHTML=`
+    <h3><i class="fas fa-bullhorn" style="color:var(--primary)"></i> ${id?'নোটিশ এডিট':'নতুন নোটিশ'}</h3>
+    <form id="notice-form" onsubmit="saveNotice(event,'${esc(id)}')" enctype="multipart/form-data">
+      <div class="form-group"><label class="label">শিরোনাম *</label><input name="title" value="${esc(n.title||'')}" required/></div>
+      <div class="form-group"><label class="label">কন্টেন্ট</label><textarea name="content" rows="4">${esc(n.content||'')}</textarea></div>
+      <div class="form-group"><label class="label">ছবি (optional)</label><input type="file" name="image" accept="image/*"/>${n.image?`<div style="margin-top:6px"><img src="${esc(n.image)}" style="max-width:200px;border-radius:8px"/></div>`:''}</div>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:600;font-size:14px;margin-top:8px">
+        <input type="checkbox" name="isActive" ${n.isActive!==false?'checked':''} style="width:16px;height:16px;accent-color:var(--primary)"/> সক্রিয় রাখুন
+      </label>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px">
+        <button type="button" class="btn btn-outline" onclick="closeModal('notice-modal')">বাতিল</button>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> সংরক্ষণ</button>
+      </div>
+    </form>`;
+  openModal('notice-modal');
+}
+async function saveNotice(e,id){
+  e.preventDefault();const f=e.target;const btn=f.querySelector('[type=submit]');btn.disabled=true;
+  try{
+    const fd=new FormData(f);
+    fd.set('isActive', f.elements['isActive'].checked ? 'true' : 'false');
+    const url='/api/admin/notices'+(id?'/'+id:'');
+    await adminApi(url,{method:id?'PUT':'POST',body:fd});
+    closeModal('notice-modal');toast('সংরক্ষিত ✅','success');loadNotices();
+  }catch(err){toast(err.message,'error');}finally{btn.disabled=false;}
+}
+function deleteNotice(id){
+  confirmAction('এই নোটিশ মুছে ফেলবেন?',async()=>{
+    try{await adminApi('/api/admin/notices/'+id,{method:'DELETE'});toast('মুছে ফেলা হয়েছে','success');loadNotices();}
+    catch(err){toast(err.message,'error');}
+  });
+}
+
+// ============================================================
+// LIVE COURSE PURCHASES (NEW)
+// ============================================================
+let currentLivePurchaseStatus='pending';
+let ALL_LIVE_PURCHASES=[];
+async function loadLivePurchases(status, tabBtn=null){
+  currentLivePurchaseStatus=status||'';
+  if(tabBtn){$$('#panel-live-purchases .tab-btn').forEach(b=>b.classList.remove('active'));tabBtn.classList.add('active');}
+  try{
+    const list=await adminApi('/api/admin/live-purchases');
+    ALL_LIVE_PURCHASES=list||[];
+    const filtered=status?list.filter(p=>p.status===status):list;
+    const pendingCount=list.filter(p=>p.status==='pending').length;
+    const badge=$('#live-pending-count');
+    if(badge){if(pendingCount>0){badge.textContent=pendingCount;badge.style.display='inline';}else{badge.style.display='none';}}
+    $('#live-purchases-tbody').innerHTML=filtered&&filtered.length?filtered.map(p=>`<tr>
+      <td><div style="font-weight:600">${esc(p.userName||'—')}</div><div style="font-size:11px;color:var(--text-soft)">${esc(p.userEmail||'')}</div></td>
+      <td style="font-family:monospace;font-size:12px;direction:ltr">${esc(p.whatsappNumber||'—')}</td>
+      <td style="max-width:160px;font-size:13px">${esc(p.courseTitle||'—')}</td>
+      <td><span class="badge badge-info">${esc(p.paymentMethod||'—')}</span></td>
+      <td style="font-weight:600;color:var(--primary)">${p.amount?`৳${fmt(p.amount)}`:'—'}</td>
+      <td style="font-size:12px">${p.createdAt?new Date(p.createdAt).toLocaleDateString('bn-BD'):'—'}</td>
+      <td>${statusBadge(p.status||'pending')}</td>
+      <td><div class="tbl-actions">
+        <button class="btn btn-outline btn-sm" onclick="viewLivePurchase('${esc(p._id)}')"><i class="fas fa-eye"></i></button>
+        ${p.status==='pending'?`
+        <button class="btn btn-success btn-sm" onclick="approveLivePurchase('${esc(p._id)}')" title="অনুমোদন"><i class="fas fa-check"></i></button>
+        <button class="btn btn-danger btn-sm" onclick="updateLivePurchase('${esc(p._id)}','rejected')" title="বাতিল"><i class="fas fa-times"></i></button>`:''}
+        <button class="btn btn-danger btn-sm" onclick="deleteLivePurchase('${esc(p._id)}')" title="মুছুন"><i class="fas fa-trash"></i></button>
+      </div></td>
+    </tr>`).join(''):`<tr><td colspan="8"><div class="empty"><i class="fas fa-broadcast-tower"></i><p>কোনো লাইভ পেমেন্ট রিকোয়েস্ট নেই</p></div></td></tr>`;
+  }catch(e){$('#live-purchases-tbody').innerHTML=`<tr><td colspan="8"><div class="empty"><p>${esc(e.message)}</p></div></td></tr>`;}
+}
+function viewLivePurchase(id){
+  const p=ALL_LIVE_PURCHASES.find(x=>x._id===id)||{};
+  $('#live-purchase-modal-body').innerHTML=`
+    <h3><i class="fas fa-broadcast-tower" style="color:var(--primary)"></i> লাইভ কোর্স পেমেন্ট বিবরণ</h3>
+    <div style="background:var(--bg);border-radius:12px;padding:16px;margin-bottom:16px;display:flex;align-items:center;gap:14px">
+      <div style="width:48px;height:48px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;color:var(--primary);font-weight:700;font-size:18px">${(p.userName||'?')[0]}</div>
+      <div><div style="font-weight:700;font-size:15px">${esc(p.userName||'—')}</div><div style="color:var(--text-soft);font-size:13px">${esc(p.userEmail||'')}</div></div>
+      <div style="margin-left:auto">${statusBadge(p.status||'pending')}</div>
+    </div>
+    <div class="ar-detail">
+      <p><strong>ফোন:</strong> ${esc(p.userPhone||'—')}</p>
+      <p><strong>WhatsApp নম্বর:</strong> <a href="https://wa.me/${esc((p.whatsappNumber||'').replace(/\D/g,''))}" target="_blank" style="color:#25d366;font-family:monospace">${esc(p.whatsappNumber||'—')}</a></p>
+      <p><strong>কোর্স:</strong> ${esc(p.courseTitle||'—')}</p>
+      <p><strong>পেমেন্ট মাধ্যম:</strong> ${esc(p.paymentMethod||'—')}</p>
+      <p><strong>পরিমাণ:</strong> ${p.amount?`৳${fmt(p.amount)}`:'—'}</p>
+      <p><strong>TrxID:</strong> <span style="direction:ltr;font-family:monospace">${esc(p.trxId||'—')}</span></p>
+      <p><strong>তারিখ:</strong> ${p.createdAt?new Date(p.createdAt).toLocaleString('bn-BD'):'—'}</p>
+      ${p.whatsappGroupLink?`<p><strong>WhatsApp Group:</strong> <a href="${esc(p.whatsappGroupLink)}" target="_blank" style="color:#25d366">${esc(p.whatsappGroupLink)}</a></p>`:''}
+      ${p.adminNote?`<p><strong>অ্যাডমিন নোট:</strong> ${esc(p.adminNote)}</p>`:''}
+    </div>
+    ${p.screenshot?`<div style="margin-top:14px"><div style="font-weight:600;font-size:13px;margin-bottom:8px">পেমেন্ট স্ক্রিনশট:</div><img src="${esc(p.screenshot)}" style="max-width:100%;border-radius:10px;border:2px solid var(--border)"/></div>`:''}
+    ${p.status==='pending'?`<div style="display:flex;gap:10px;margin-top:20px">
+      <button class="btn btn-success" style="flex:1" onclick="closeModal('live-purchase-modal');approveLivePurchase('${esc(p._id)}')"><i class="fas fa-check"></i> অনুমোদন দিন</button>
+      <button class="btn btn-danger" style="flex:1" onclick="updateLivePurchase('${esc(p._id)}','rejected');closeModal('live-purchase-modal')"><i class="fas fa-times"></i> বাতিল করুন</button>
+    </div>`:''}`;
+  openModal('live-purchase-modal');
+}
+function approveLivePurchase(id){
+  const link=prompt('WhatsApp Group Link দিন (অপশনাল — ফাঁকা রাখলে শুধু অনুমোদন হবে):','');
+  if(link===null) return;
+  updateLivePurchase(id,'approved',link||'');
+}
+async function updateLivePurchase(id,status,whatsappGroupLink=''){
+  try{
+    const body={status};
+    if(whatsappGroupLink) body.whatsappGroupLink=whatsappGroupLink;
+    await adminApi('/api/admin/live-purchases/'+id,{method:'PUT',body});
+    toast(status==='approved'?'অনুমোদন দেওয়া হয়েছে ✅':'বাতিল করা হয়েছে','success');
+    loadLivePurchases(currentLivePurchaseStatus);
+  }catch(err){toast(err.message,'error');}
+}
+function deleteLivePurchase(id){
+  confirmAction('এই লাইভ পেমেন্ট রিকোয়েস্ট মুছবেন?',async()=>{
+    try{await adminApi('/api/admin/live-purchases/'+id,{method:'DELETE'});toast('মুছে ফেলা হয়েছে','success');loadLivePurchases(currentLivePurchaseStatus);}
+    catch(err){toast(err.message,'error');}
+  });
+}
+
+// ============================================================
+// CONTACT MESSAGES (NEW)
+// ============================================================
+let ALL_CONTACT_MESSAGES=[];
+async function loadContactMessages(){
+  try{
+    const list=await adminApi('/api/admin/contact-messages');
+    ALL_CONTACT_MESSAGES=list||[];
+    const unread=list.filter(m=>!m.read).length;
+    const badge=$('#contact-unread-count');
+    if(badge){if(unread>0){badge.textContent=unread;badge.style.display='inline';}else{badge.style.display='none';}}
+    $('#contact-messages-tbody').innerHTML=list&&list.length?list.map(m=>`<tr style="${m.read?'':'background:#fef9e7'}">
+      <td><div style="font-weight:600">${esc(m.name||'—')}${m.read?'':' <span class="badge badge-warn" style="font-size:10px">নতুন</span>'}</div></td>
+      <td style="font-size:13px"><a href="mailto:${esc(m.email||'')}" style="color:var(--primary)">${esc(m.email||'—')}</a></td>
+      <td style="font-family:monospace;font-size:12px">${esc(m.phone||'—')}</td>
+      <td style="max-width:200px;font-size:13px">${esc(m.subject||'—')}</td>
+      <td style="font-size:12px">${m.createdAt?new Date(m.createdAt).toLocaleDateString('bn-BD'):'—'}</td>
+      <td><div class="tbl-actions">
+        <button class="btn btn-outline btn-sm" onclick="viewContactMessage('${esc(m._id)}')"><i class="fas fa-eye"></i></button>
+        <button class="btn btn-danger btn-sm" onclick="deleteContactMessage('${esc(m._id)}')"><i class="fas fa-trash"></i></button>
+      </div></td>
+    </tr>`).join(''):`<tr><td colspan="6"><div class="empty"><i class="fas fa-envelope-open"></i><p>কোনো বার্তা নেই</p></div></td></tr>`;
+  }catch(e){$('#contact-messages-tbody').innerHTML=`<tr><td colspan="6"><div class="empty"><p>${esc(e.message)}</p></div></td></tr>`;}
+}
+function viewContactMessage(id){
+  const m=ALL_CONTACT_MESSAGES.find(x=>x._id===id)||{};
+  $('#contact-message-modal-body').innerHTML=`
+    <h3><i class="fas fa-envelope-open" style="color:var(--primary)"></i> বার্তার বিবরণ</h3>
+    <div style="background:var(--bg);border-radius:12px;padding:16px;margin-bottom:16px">
+      <div style="font-weight:700;font-size:15px;margin-bottom:4px">${esc(m.name||'—')}</div>
+      <div style="color:var(--text-soft);font-size:13px;margin-bottom:2px"><i class="fas fa-envelope"></i> <a href="mailto:${esc(m.email||'')}" style="color:var(--primary)">${esc(m.email||'—')}</a></div>
+      ${m.phone?`<div style="color:var(--text-soft);font-size:13px"><i class="fas fa-phone"></i> ${esc(m.phone)}</div>`:''}
+      <div style="color:var(--text-muted);font-size:12px;margin-top:6px">${m.createdAt?new Date(m.createdAt).toLocaleString('bn-BD'):''}</div>
+    </div>
+    ${m.subject?`<div style="margin-bottom:14px"><div style="font-weight:600;font-size:13px;margin-bottom:4px">বিষয়:</div><div style="font-size:14px">${esc(m.subject)}</div></div>`:''}
+    <div><div style="font-weight:600;font-size:13px;margin-bottom:6px">বার্তা:</div><div style="background:var(--bg);padding:14px;border-radius:10px;font-size:14px;line-height:1.7;white-space:pre-wrap">${esc(m.message||'—')}</div></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px">
+      ${m.email?`<a href="mailto:${esc(m.email)}?subject=Re: ${encodeURIComponent(m.subject||'')}" class="btn btn-primary"><i class="fas fa-reply"></i> ইমেইল রিপ্লাই</a>`:''}
+      <button class="btn btn-danger" onclick="closeModal('contact-message-modal');deleteContactMessage('${esc(m._id)}')"><i class="fas fa-trash"></i> মুছুন</button>
+    </div>`;
+  openModal('contact-message-modal');
+}
+function deleteContactMessage(id){
+  confirmAction('এই বার্তা মুছে ফেলবেন?',async()=>{
+    try{await adminApi('/api/admin/contact-messages/'+id,{method:'DELETE'});toast('মুছে ফেলা হয়েছে','success');loadContactMessages();}
+    catch(err){toast(err.message,'error');}
+  });
+}
+
+// ============================================================
+// ANALYTICS (NEW)
+// ============================================================
+async function loadAnalytics(){
+  const days=parseInt($('#analytics-range')?.value||'30',10);
+  try{
+    const [summary,trend,top]=await Promise.allSettled([
+      adminApi('/api/admin/analytics/summary?days='+days),
+      adminApi('/api/admin/analytics/trend?days='+days),
+      adminApi('/api/admin/analytics/top-courses?limit=10'),
+    ]);
+    // Summary
+    const s=summary.value||{};
+    animateCounter('an-total-views', s.totalViews||s.pageViews||0);
+    animateCounter('an-unique-visitors', s.uniqueVisitors||s.unique||0);
+    animateCounter('an-avg-session', Math.round(s.avgSession||s.avgDuration||0));
+    animateCounter('an-course-views', s.courseViews||s.totalCourseViews||0);
+    // Trend chart (simple bar chart)
+    const tdata=trend.value||[];
+    const chart=$('#an-trend-chart');const labels=$('#an-trend-labels');
+    if(chart){
+      if(!tdata.length){
+        chart.innerHTML='<div class="empty" style="margin:auto"><i class="fas fa-chart-line"></i><p>এখনো ডেটা নেই</p></div>';
+        if(labels) labels.innerHTML='';
+      }else{
+        const max=Math.max(...tdata.map(d=>d.count||d.views||0),1);
+        chart.innerHTML=tdata.map(d=>{
+          const v=d.count||d.views||0;
+          const h=Math.max(2, Math.round((v/max)*100));
+          return `<div title="${esc(d.date||'')}: ${v}" style="flex:1;background:linear-gradient(180deg,var(--primary),var(--primary-glow));height:${h}%;border-radius:6px 6px 0 0;min-height:2px;transition:.3s" data-v="${v}"></div>`;
+        }).join('');
+        // sparse labels (show ~6)
+        const step=Math.max(1,Math.floor(tdata.length/6));
+        if(labels) labels.innerHTML=tdata.map((d,i)=>i%step===0?`<span>${esc((d.date||'').slice(5))}</span>`:'<span></span>').join('');
+      }
+    }
+    // Top courses
+    const topList=top.value||[];
+    $('#an-top-courses-tbody').innerHTML=topList&&topList.length?topList.map((c,i)=>`<tr>
+      <td style="font-weight:700;color:var(--primary)">#${i+1}</td>
+      <td style="font-weight:600">${esc(c.title||c.courseTitle||'—')}</td>
+      <td>${fmt(c.views||0)}</td>
+      <td>${fmt(c.viewsToday||0)}</td>
+      <td>${fmt(c.enrollments||c.students||0)}</td>
+    </tr>`).join(''):`<tr><td colspan="5"><div class="empty"><i class="fas fa-trophy"></i><p>এখনো ডেটা নেই</p></div></td></tr>`;
+  }catch(e){
+    console.warn('analytics:',e);
+    toast('অ্যানালিটিক্স লোড করতে সমস্যা: '+e.message,'error');
+  }
+}
+
+// ============================================================
+// AUTO-REFRESH BADGES on app init (poll every 60s)
+// ============================================================
+async function refreshBadges(){
+  try{
+    const [reqs,lives,msgs]=await Promise.allSettled([
+      adminApi('/api/admin/access-requests'),
+      adminApi('/api/admin/live-purchases'),
+      adminApi('/api/admin/contact-messages'),
+    ]);
+    const pendR=(reqs.value||[]).filter(r=>r.status==='pending').length;
+    const pendL=(lives.value||[]).filter(p=>p.status==='pending').length;
+    const unreadM=(msgs.value||[]).filter(m=>!m.read).length;
+    const setBadge=(id,n)=>{const el=$('#'+id);if(!el)return;if(n>0){el.textContent=n;el.style.display='inline';}else{el.style.display='none';}};
+    setBadge('pending-count',pendR);
+    setBadge('live-pending-count',pendL);
+    setBadge('contact-unread-count',unreadM);
+    if(pendR+pendL+unreadM>0){const dot=$('#notif-dot');if(dot)dot.style.display='block';}
+  }catch{}
+}
+setInterval(refreshBadges, 60000);
+// Run once after login
+const _origInit=typeof initApp==='function'?initApp:null;
+if(_origInit){
+  window.initApp=function(){_origInit.apply(this,arguments);setTimeout(refreshBadges,1500);};
 }
 
 // ============================================================
