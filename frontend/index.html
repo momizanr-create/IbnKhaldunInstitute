@@ -1656,41 +1656,49 @@ header .logo span#logo-line1,header .logo span#logo-line2,header .logo #logo-div
       </div>
     </div>
   </section>
-  <section class="block">
+  <!-- জনপ্রিয় + নতুন কোর্স — ট্যাব সিস্টেম -->
+  <section class="block" id="home-courses-tab-section">
     <div class="container">
-      <div class="section-head">
-        <h2><i class="fas fa-play-circle" style="color:var(--primary)"></i> কোর্সসমূহ</h2>
-        <p>যেকোনো সময়, যেকোনো জায়গা থেকে নিজের গতিতে শিখুন</p>
+      <!-- Header row: title left, tabs right -->
+      <div class="hct-header">
+        <div class="hct-title-wrap">
+          <h2 class="hct-title">কোর্সসমূহ</h2>
+          <p class="hct-sub">অভিজ্ঞ আলেমদের তত্ত্বাবধানে সেরা কোর্সগুলো</p>
+        </div>
+        <div class="hct-tabs" id="hct-tabs">
+          <button class="hct-tab active" data-hct="popular" onclick="switchHCT('popular',this)">
+            <i class="fas fa-fire"></i> জনপ্রিয়
+          </button>
+          <button class="hct-tab" data-hct="new" onclick="switchHCT('new',this)">
+            <i class="fas fa-sparkles"></i> নতুন
+          </button>
+        </div>
       </div>
-      <div id="recorded-courses" class="grid grid-3"><div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line short"></div><div class="skel-line tiny"></div></div></div><div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line short"></div><div class="skel-line tiny"></div></div></div><div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line short"></div><div class="skel-line tiny"></div></div></div>
-        <div class="loading-state"><div class="loader"></div></div>
+
+      <!-- Panels -->
+      <div class="hct-panel active" id="hct-panel-popular">
+        <div id="popular-courses" class="grid grid-3">
+          <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line short"></div><div class="skel-line tiny"></div></div></div>
+          <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line short"></div><div class="skel-line tiny"></div></div></div>
+          <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line short"></div><div class="skel-line tiny"></div></div></div>
+        </div>
       </div>
+
+      <div class="hct-panel" id="hct-panel-new">
+        <div id="new-courses" class="grid grid-3">
+          <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line short"></div><div class="skel-line tiny"></div></div></div>
+          <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line short"></div><div class="skel-line tiny"></div></div></div>
+          <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line short"></div><div class="skel-line tiny"></div></div></div>
+        </div>
+      </div>
+
       <div style="text-align:center;margin-top:24px">
-        <button class="btn btn-outline" onclick="navigate('courses');setTimeout(()=>filterCourses('recorded',document.querySelector('[data-filter=recorded]')),100)">সব কোর্সসমূহ <i class="fas fa-arrow-left"></i></button>
+        <button class="btn btn-outline" onclick="navigate('courses')">সব কোর্স দেখুন <i class="fas fa-arrow-left"></i></button>
       </div>
     </div>
   </section>
 
-  <section class="block" style="background:#fff" id="why-join-section">
-    <div class="container">
-      <div class="section-head">
-        <h2 id="why-join-title">কেন ইবনে খালদুন ইনস্টিটিউটতে যুক্ত হবেন?</h2>
-        <p id="why-join-subtitle">আমাদের বিশেষত্ব যা আপনার দীনি যাত্রাকে সহজ করবে</p>
-      </div>
-      <div class="grid grid-3" id="why-join-grid">
-        <!-- Default cards (replaced when admin sets values) -->
-        <div class="card" style="padding:24px;text-align:center"><div style="width:64px;height:64px;background:#ecfdf5;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i class="fas fa-quran" style="font-size:28px;color:var(--primary)"></i></div><h3 style="font-size:18px;margin-bottom:8px">অথেনটিক ইসলামি শিক্ষা</h3><p style="color:var(--text-soft);font-size:14px">কুরআন ও সহীহ হাদিসভিত্তিক সঠিক জ্ঞান, যাচাইকৃত উৎস থেকে।</p></div>
-        <div class="card" style="padding:24px;text-align:center"><div style="width:64px;height:64px;background:#fef3c7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i class="fas fa-chalkboard-teacher" style="font-size:28px;color:var(--secondary)"></i></div><h3 style="font-size:18px;margin-bottom:8px">অভিজ্ঞ আলেম</h3><p style="color:var(--text-soft);font-size:14px">দেশ-বিদেশের প্রসিদ্ধ মাদ্রাসা ও বিশ্ববিদ্যালয়ের গ্র্যাজুয়েট শিক্ষকমণ্ডলী।</p></div>
-        <div class="card" style="padding:24px;text-align:center"><div style="width:64px;height:64px;background:#dbeafe;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i class="fas fa-laptop-house" style="font-size:28px;color:#2563eb"></i></div><h3 style="font-size:18px;margin-bottom:8px">ঘরে বসেই দীন শিক্ষা</h3><p style="color:var(--text-soft);font-size:14px">যেকোনো ডিভাইস থেকে — মোবাইল, ট্যাব বা কম্পিউটার দিয়ে।</p></div>
-        <div class="card" style="padding:24px;text-align:center"><div style="width:64px;height:64px;background:#fce7f3;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i class="fab fa-whatsapp" style="font-size:28px;color:#25d366"></i></div><h3 style="font-size:18px;margin-bottom:8px">লাইভ সাপোর্ট</h3><p style="color:var(--text-soft);font-size:14px">WhatsApp গ্রুপে শিক্ষকের সাথে সরাসরি প্রশ্নোত্তর।</p></div>
-        <div class="card" style="padding:24px;text-align:center"><div style="width:64px;height:64px;background:#ede9fe;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i class="fas fa-certificate" style="font-size:28px;color:#7c3aed"></i></div><h3 style="font-size:18px;margin-bottom:8px">সার্টিফিকেট</h3><p style="color:var(--text-soft);font-size:14px">কোর্স সম্পন্ন করার পর প্রতিষ্ঠান-স্বীকৃত সার্টিফিকেট।</p></div>
-        <div class="card" style="padding:24px;text-align:center"><div style="width:64px;height:64px;background:#fee2e2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i class="fas fa-tag" style="font-size:28px;color:var(--danger)"></i></div><h3 style="font-size:18px;margin-bottom:8px">সাশ্রয়ী মূল্য</h3><p style="color:var(--text-soft);font-size:14px">সকলের সাধ্যের মধ্যে — কম খরচে উন্নত মানের ইসলামি শিক্ষা।</p></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- হোমপেজ থেকে "আমাদের শিক্ষকবৃন্দ" সরানো হয়েছে — শিক্ষকবৃন্দ পেজে দেখুন -->
-
+  <!-- কোর্স সম্পর্কিত প্রশ্নোত্তর -->
   <section class="block" style="background:#fff">
     <div class="container">
       <div class="faq-with-image">
@@ -1708,6 +1716,7 @@ header .logo span#logo-line1,header .logo span#logo-line2,header .logo #logo-div
     </div>
   </section>
 
+  <!-- হাজারো শিক্ষার্থীর ভালোবাসা -->
   <section class="block">
     <div class="container">
       <div id="testimonials-layout">
@@ -1732,7 +1741,89 @@ header .logo span#logo-line1,header .logo span#logo-line2,header .logo #logo-div
     </div>
   </section>
 
-  <section class="block" style="background:#fff">
+  <!-- কেন ইবনে খালদুন ইনস্টিটিউটে যুক্ত হবেন? -->
+  <section class="block" style="background:#fff" id="why-join-section">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="why-join-title">কেন ইবনে খালদুন ইনস্টিটিউটে যুক্ত হবেন?</h2>
+        <p id="why-join-subtitle">আমাদের বিশেষত্ব যা আপনার দীনি যাত্রাকে সহজ করবে</p>
+      </div>
+      <div class="grid grid-3" id="why-join-grid">
+        <div class="card" style="padding:24px;text-align:center"><div style="width:64px;height:64px;background:#ecfdf5;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i class="fas fa-quran" style="font-size:28px;color:var(--primary)"></i></div><h3 style="font-size:18px;margin-bottom:8px">অথেনটিক ইসলামি শিক্ষা</h3><p style="color:var(--text-soft);font-size:14px">কুরআন ও সহীহ হাদিসভিত্তিক সঠিক জ্ঞান, যাচাইকৃত উৎস থেকে।</p></div>
+        <div class="card" style="padding:24px;text-align:center"><div style="width:64px;height:64px;background:#fef3c7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i class="fas fa-chalkboard-teacher" style="font-size:28px;color:var(--secondary)"></i></div><h3 style="font-size:18px;margin-bottom:8px">অভিজ্ঞ আলেম</h3><p style="color:var(--text-soft);font-size:14px">দেশ-বিদেশের প্রসিদ্ধ মাদ্রাসা ও বিশ্ববিদ্যালয়ের গ্র্যাজুয়েট শিক্ষকমণ্ডলী।</p></div>
+        <div class="card" style="padding:24px;text-align:center"><div style="width:64px;height:64px;background:#dbeafe;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i class="fas fa-laptop-house" style="font-size:28px;color:#2563eb"></i></div><h3 style="font-size:18px;margin-bottom:8px">ঘরে বসেই দীন শিক্ষা</h3><p style="color:var(--text-soft);font-size:14px">যেকোনো ডিভাইস থেকে — মোবাইল, ট্যাব বা কম্পিউটার দিয়ে।</p></div>
+        <div class="card" style="padding:24px;text-align:center"><div style="width:64px;height:64px;background:#fce7f3;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i class="fab fa-whatsapp" style="font-size:28px;color:#25d366"></i></div><h3 style="font-size:18px;margin-bottom:8px">লাইভ সাপোর্ট</h3><p style="color:var(--text-soft);font-size:14px">WhatsApp গ্রুপে শিক্ষকের সাথে সরাসরি প্রশ্নোত্তর।</p></div>
+        <div class="card" style="padding:24px;text-align:center"><div style="width:64px;height:64px;background:#ede9fe;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i class="fas fa-certificate" style="font-size:28px;color:#7c3aed"></i></div><h3 style="font-size:18px;margin-bottom:8px">সার্টিফিকেট</h3><p style="color:var(--text-soft);font-size:14px">কোর্স সম্পন্ন করার পর প্রতিষ্ঠান-স্বীকৃত সার্টিফিকেট।</p></div>
+        <div class="card" style="padding:24px;text-align:center"><div style="width:64px;height:64px;background:#fee2e2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i class="fas fa-tag" style="font-size:28px;color:var(--danger)"></i></div><h3 style="font-size:18px;margin-bottom:8px">সাশ্রয়ী মূল্য</h3><p style="color:var(--text-soft);font-size:14px">সকলের সাধ্যের মধ্যে — কম খরচে উন্নত মানের ইসলামি শিক্ষা।</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- বান্ডেল কোর্সসমূহ -->
+  <section class="block" id="bundle-courses-section" style="background:var(--bg-soft)">
+    <div class="container">
+      <div class="section-head">
+        <h2><i class="fas fa-layer-group" style="color:var(--primary)"></i> বান্ডেল কোর্সসমূহ</h2>
+        <p>একসাথে একাধিক কোর্স — বিশেষ ছাড়ে সেরা মূল্যে</p>
+      </div>
+      <div id="bundle-courses-grid" class="grid grid-3">
+        <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line short"></div><div class="skel-line tiny"></div></div></div>
+        <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line short"></div><div class="skel-line tiny"></div></div></div>
+        <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line short"></div><div class="skel-line tiny"></div></div></div>
+      </div>
+      <div style="text-align:center;margin-top:24px">
+        <button class="btn btn-outline" onclick="navigate('courses')">সব কোর্স দেখুন <i class="fas fa-arrow-left"></i></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- আজই যুক্ত হোন — counters section -->
+  <section class="block" id="join-section" style="background:#fff">
+    <div class="container">
+      <div class="section-head">
+        <h2>আজই যুক্ত হোন</h2>
+        <p>দীনি জ্ঞানার্জনের উন্মুক্ত প্ল্যাটফর্ম, তাহযীব ইনস্টিটিউটের বৃহৎ পরিবারে আজই যুক্ত হোন।</p>
+      </div>
+      <div class="join-layout">
+        <!-- Stats cards -->
+        <div class="join-stats-grid">
+          <div class="join-stat-card" style="background:#fff5f7">
+            <div class="join-stat-num" data-target="9000" id="jstat-students">০</div>
+            <div class="join-stat-label">মোট শিক্ষার্থী</div>
+          </div>
+          <div class="join-stat-card" style="background:#f0fdf4">
+            <div class="join-stat-num" data-target="10" id="jstat-instructors">০</div>
+            <div class="join-stat-label">অভিজ্ঞ উস্তায/উস্তাযা</div>
+          </div>
+          <div class="join-stat-card" style="background:#fefce8">
+            <div class="join-stat-num" data-target="100" id="jstat-materials">০</div>
+            <div class="join-stat-label">স্টাডি ম্যাটেরিয়াল</div>
+          </div>
+          <div class="join-stat-card" style="background:#f5f3ff">
+            <div class="join-stat-num" data-target="200" id="jstat-content">০</div>
+            <div class="join-stat-label">লার্নিং কন্টেন্ট</div>
+          </div>
+        </div>
+        <!-- Video / CTA -->
+        <div class="join-cta-box">
+          <div class="join-video-wrap" id="join-video-container">
+            <div class="join-video-placeholder">
+              <i class="fas fa-play-circle"></i>
+              <p>আমাদের পরিচিতি ভিডিও দেখুন</p>
+            </div>
+          </div>
+          <div style="text-align:center;margin-top:18px">
+            <button class="ibk-btn-gold" style="font-size:16px;padding:14px 32px" onclick="openAuth('register')">
+              <i class="fas fa-user-plus"></i> আজই যুক্ত হোন — বিনামূল্যে
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- সাম্প্রতিক ব্লগ -->
+  <section class="block" style="background:var(--bg-soft)">
     <div class="container">
       <div class="section-head">
         <h2>সাম্প্রতিক ব্লগ থেকে পড়ুন</h2>
@@ -1969,6 +2060,15 @@ const API =
   window.location.hostname === 'localhost'
     ? 'http://localhost:5000'
     : 'https://ibnkhalduninstitute.onrender.com';
+
+// Home Courses Tab switcher
+function switchHCT(key, btn) {
+  document.querySelectorAll('.hct-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.hct-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const panel = document.getElementById('hct-panel-' + key);
+  if (panel) panel.classList.add('active');
+}
 
 // PDF/ফাইল URL absolutize + Cloudinary raw PDF fix
 // (Cloudinary raw URL-এ .pdf extension না থাকলে browser PDF viewer
@@ -2667,14 +2767,28 @@ const DEFAULT_BLOGS = [
 // HOME data
 // ============================================================
 async function loadHomeCourses(){
-  let recorded = [];
+  let all = [];
   try{
     const list = await api('/api/courses');
     ALL_COURSES = (list || []).filter(c=>c.type!=='live');
-    recorded = ALL_COURSES.filter(c=>c.type==='recorded').slice(0,8);
+    all = ALL_COURSES;
   } catch(e){}
-  if (!recorded.length) recorded = DEFAULT_RECORDED_COURSES;
-  const el = $('#recorded-courses'); if (el) el.innerHTML = recorded.slice(0,8).map(courseCard).join('');
+  if (!all.length) all = DEFAULT_RECORDED_COURSES;
+
+  // জনপ্রিয় — enrolled বেশি বা featured
+  const popular = [...all].sort((a,b)=>(b.enrolledCount||0)-(a.enrolledCount||0)).slice(0,3);
+  const popEl = $('#popular-courses');
+  if (popEl) popEl.innerHTML = popular.length ? popular.map(courseCard).join('') : all.slice(0,3).map(courseCard).join('');
+
+  // নতুন — সর্বশেষ যোগ হওয়া
+  const newer = [...all].sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)).slice(0,3);
+  const newEl = $('#new-courses');
+  if (newEl) newEl.innerHTML = newer.length ? newer.map(courseCard).join('') : all.slice(0,3).map(courseCard).join('');
+
+  // বান্ডেল — type==='bundle' অথবা fallback হিসেবে ৩টি কোর্স
+  const bundles = all.filter(c=>c.type==='bundle').slice(0,3);
+  const bundleEl = $('#bundle-courses-grid');
+  if (bundleEl) bundleEl.innerHTML = bundles.length ? bundles.map(courseCard).join('') : all.slice(0,3).map(courseCard).join('');
 }
 
 function faqItemHtml(f, i){
@@ -5259,6 +5373,120 @@ body, p, li, dd, dt, blockquote, figcaption, label, .card, .tab-pane, .container
 }
 .footer-bottom{text-align:left !important}
 ul, ol{padding-left:1.25em !important;padding-right:0 !important}
+
+/* ====== HOME COURSES TAB (জনপ্রিয় + নতুন একসাথে) ====== */
+.hct-header{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  gap:16px;margin-bottom:22px;flex-wrap:wrap;
+}
+.hct-title-wrap{flex:1;min-width:0}
+.hct-title{
+  font-size:clamp(20px,2.8vw,28px);font-weight:800;
+  color:var(--text);margin-bottom:4px;
+  display:inline-block;position:relative;padding-bottom:10px;
+}
+.hct-title::after{
+  content:'';position:absolute;bottom:0;left:0;
+  width:48px;height:3px;border-radius:2px;
+  background:linear-gradient(90deg,var(--accent),var(--secondary));
+}
+.hct-sub{color:var(--text-soft);font-size:14px;margin-top:6px}
+.hct-tabs{
+  display:flex;gap:6px;align-items:center;flex-shrink:0;
+  background:var(--primary-light);padding:5px;border-radius:12px;
+}
+.hct-tab{
+  padding:9px 20px;border:none;border-radius:9px;
+  background:transparent;color:var(--primary-dark);
+  font-family:inherit;font-weight:600;font-size:14px;
+  cursor:pointer;transition:.18s;white-space:nowrap;
+  display:inline-flex;align-items:center;gap:7px;
+}
+.hct-tab:hover{background:rgba(6,97,68,.12)}
+.hct-tab.active{
+  background:var(--primary);color:#fff;
+  box-shadow:0 4px 12px rgba(6,97,68,.28);
+}
+.hct-tab i{font-size:13px}
+.hct-tab.active i{opacity:1}
+
+.hct-panel{display:none}
+.hct-panel.active{display:block;animation:hctFade .25s ease}
+@keyframes hctFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:600px){
+  .hct-header{align-items:flex-start;flex-direction:column;gap:12px;margin-bottom:16px}
+  .hct-tabs{align-self:flex-start;padding:4px}
+  .hct-tab{padding:8px 14px;font-size:13px}
+}
+
+/* ====== JOIN SECTION ====== */
+.join-layout{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:32px;align-items:start;
+  margin-top:10px;
+}
+@media(max-width:820px){
+  .join-layout{grid-template-columns:1fr;gap:24px}
+}
+.join-stats-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+.join-stat-card{
+  border-radius:16px;padding:22px 18px;
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+  text-align:center;
+  transition:transform .2s,box-shadow .2s;
+}
+.join-stat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
+.join-stat-num{
+  font-size:36px;font-weight:800;
+  color:var(--primary-dark);line-height:1;
+  margin-bottom:6px;
+  font-family:'Hind Siliguri',sans-serif;
+}
+.join-stat-label{font-size:13px;color:var(--text-soft);font-weight:600}
+@media(max-width:480px){
+  .join-stats-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .join-stat-num{font-size:28px}
+  .join-stat-card{padding:16px 12px}
+}
+
+.join-cta-box{display:flex;flex-direction:column;gap:0}
+.join-video-wrap{
+  border-radius:16px;overflow:hidden;
+  background:#0f3a22;
+  position:relative;aspect-ratio:16/9;
+}
+.join-video-placeholder{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+  color:rgba(255,255,255,.75);cursor:pointer;
+}
+.join-video-placeholder i{font-size:52px;color:#F5C518;opacity:.9}
+.join-video-placeholder p{font-size:15px;font-weight:600;color:rgba(255,255,255,.85)}
+
+/* ====== WHY-JOIN pill badge (nav pill) ====== */
+.pill{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(245,197,24,.18);color:#FCE490;
+  border:1px solid rgba(245,197,24,.35);
+  padding:7px 16px;border-radius:999px;
+  font-size:13px;font-weight:600;margin-bottom:18px;
+}
+
+/* ====== Testimonials left head button ====== */
+.ts-left-head .btn-ts-more{
+  background:var(--primary);color:#fff;border:none;
+  padding:13px 30px;border-radius:10px;font-size:15px;font-weight:700;
+  cursor:pointer;font-family:inherit;transition:.18s;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.ts-left-head .btn-ts-more:hover{background:var(--primary-dark);transform:translateY(-1px)}
 </style>
 
 </body>
