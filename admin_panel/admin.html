@@ -835,6 +835,12 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden}
       <div class="nav-item" onclick="showPanel('why-join')">
         <span class="nav-ico"><i class="fas fa-list-check"></i></span> কেন যুক্ত হবেন
       </div>
+      <div class="nav-item" onclick="showPanel('popular-section')">
+        <span class="nav-ico"><i class="fas fa-fire"></i></span> জনপ্রিয় কোর্স সেকশন
+      </div>
+      <div class="nav-item" onclick="showPanel('join-section')">
+        <span class="nav-ico"><i class="fas fa-user-plus"></i></span> আজই যুক্ত হোন
+      </div>
       <div class="nav-item" onclick="showPanel('payment-settings')">
         <span class="nav-ico"><i class="fas fa-money-bill-wave"></i></span> পেমেন্ট
       </div>
@@ -1199,6 +1205,64 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden}
           <button class="btn btn-outline" onclick="addWjItem()"><i class="fas fa-plus"></i> আইটেম যোগ</button>
           <button class="btn btn-primary" onclick="saveWhyJoin()"><i class="fas fa-save"></i> সংরক্ষণ</button>
         </div>
+      </div>
+
+      <!-- ===== POPULAR SECTION SETTINGS ===== -->
+      <div class="panel" id="panel-popular-section">
+        <div class="section-head"><h2><i class="fas fa-fire"></i> জনপ্রিয় কোর্স সেকশন</h2></div>
+        <div class="form-section">
+          <h4><i class="fas fa-heading"></i> সেকশন টেক্সট</h4>
+          <div class="form-row">
+            <div class="form-group"><label class="label">সেকশন শিরোনাম</label><input id="ps-title" placeholder="জনপ্রিয় ও নতুন কোর্সসমূহ"/></div>
+            <div class="form-group"><label class="label">সেকশন সাবটাইটেল</label><input id="ps-subtitle" placeholder="অভিজ্ঞ আলেমদের তত্ত্বাবধানে সেরা কোর্সগুলো"/></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="label">জনপ্রিয় ট্যাব লেবেল</label><input id="ps-popular-label" placeholder="জনপ্রিয়"/></div>
+            <div class="form-group"><label class="label">নতুন ট্যাব লেবেল</label><input id="ps-new-label" placeholder="নতুন"/></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="label">সব দেখার বাটন টেক্সট</label><input id="ps-viewall-text" placeholder="সব কোর্স দেখুন"/></div>
+            <div class="form-group" style="display:flex;align-items:center;gap:10px;padding-top:24px">
+              <input type="checkbox" id="ps-show-viewall" style="width:auto"/>
+              <label class="label" style="margin:0">সব দেখার বাটন দেখানো হবে?</label>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="savePopularSection()"><i class="fas fa-save"></i> সংরক্ষণ করুন</button>
+      </div>
+
+      <!-- ===== JOIN SECTION SETTINGS ===== -->
+      <div class="panel" id="panel-join-section">
+        <div class="section-head"><h2><i class="fas fa-user-plus"></i> "আজই যুক্ত হোন" সেকশন</h2></div>
+        <div class="form-section">
+          <h4><i class="fas fa-heading"></i> শিরোনাম ও CTA</h4>
+          <div class="form-row">
+            <div class="form-group"><label class="label">সেকশন শিরোনাম</label><input id="js-title" placeholder="আজই যুক্ত হোন"/></div>
+            <div class="form-group"><label class="label">সাবটাইটেল</label><input id="js-subtitle" placeholder="দীনি জ্ঞানার্জনের উন্মুক্ত প্ল্যাটফর্ম..."/></div>
+          </div>
+          <div class="form-group"><label class="label">বাটন টেক্সট</label><input id="js-cta-text" placeholder="আজই যুক্ত হোন — বিনামূল্যে"/></div>
+          <div class="form-group"><label class="label">ভিডিও URL (YouTube Embed)</label><input id="js-video-url" placeholder="https://www.youtube.com/embed/XXXXXXX"/></div>
+        </div>
+        <div class="form-section">
+          <h4><i class="fas fa-chart-bar"></i> কাউন্টার সংখ্যা ও লেবেল</h4>
+          <div class="form-row">
+            <div class="form-group"><label class="label">মোট শিক্ষার্থী (সংখ্যা)</label><input type="number" id="js-students-count" placeholder="9000"/></div>
+            <div class="form-group"><label class="label">শিক্ষার্থী লেবেল</label><input id="js-students-label" placeholder="মোট শিক্ষার্থী"/></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="label">উস্তায/উস্তাযা (সংখ্যা)</label><input type="number" id="js-instructors-count" placeholder="10"/></div>
+            <div class="form-group"><label class="label">উস্তায লেবেল</label><input id="js-instructors-label" placeholder="অভিজ্ঞ উস্তায/উস্তাযা"/></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="label">স্টাডি ম্যাটেরিয়াল (সংখ্যা)</label><input type="number" id="js-materials-count" placeholder="100"/></div>
+            <div class="form-group"><label class="label">ম্যাটেরিয়াল লেবেল</label><input id="js-materials-label" placeholder="স্টাডি ম্যাটেরিয়াল"/></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="label">লার্নিং কন্টেন্ট (সংখ্যা)</label><input type="number" id="js-content-count" placeholder="200"/></div>
+            <div class="form-group"><label class="label">কন্টেন্ট লেবেল</label><input id="js-content-label" placeholder="লার্নিং কন্টেন্ট"/></div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="saveJoinSection()"><i class="fas fa-save"></i> সংরক্ষণ করুন</button>
       </div>
 
       <!-- ===== PAYMENT SETTINGS ===== -->
@@ -1608,6 +1672,7 @@ const PANEL_TITLES={
   'live-purchases':'লাইভ কোর্স পেমেন্ট','contact-messages':'যোগাযোগ বার্তা',
   'site-settings':'সাইট সেটিংস','hero-settings':'হোম হিরো',
   'why-join':'কেন যুক্ত হবেন','payment-settings':'পেমেন্ট সেটিংস',
+  'popular-section':'জনপ্রিয় কোর্স সেকশন','join-section':'আজই যুক্ত হোন সেকশন',
   'contact-settings':'যোগাযোগ ও সোশ্যাল',
 };
 const PANEL_LOADERS={
@@ -1621,6 +1686,7 @@ const PANEL_LOADERS={
   'why-join':loadWhyJoin,'site-settings':loadCurrentSettings,
   'hero-settings':loadHeroSettings,'payment-settings':loadPaymentSettings,
   'contact-settings':loadContactSettings,
+  'popular-section':loadPopularSection,'join-section':loadJoinSection,
 };
 
 function showPanel(id){
@@ -2667,6 +2733,74 @@ function addWjItem(){WJ_ITEMS.push({title:'',icon:'fa-star',description:''});ren
 async function saveWhyJoin(){
   const body={title:$('#wj-title').value,subtitle:$('#wj-subtitle').value,items:JSON.stringify(WJ_ITEMS)};
   try{await adminApi('/api/admin/settings/whyJoin',{method:'PUT',body});toast('"কেন যুক্ত হবেন" আপডেট হয়েছে ✅','success');}
+  catch(err){toast(err.message,'error');}
+}
+
+// ============================================================
+// SETTINGS — জনপ্রিয় কোর্স সেকশন
+// ============================================================
+async function loadPopularSection(){
+  try{
+    const d=await adminApi('/api/settings/popularSection');
+    $('#ps-title').value=d.title||'';
+    $('#ps-subtitle').value=d.subtitle||'';
+    $('#ps-popular-label').value=d.popularLabel||'জনপ্রিয়';
+    $('#ps-new-label').value=d.newLabel||'নতুন';
+    $('#ps-viewall-text').value=d.viewAllText||'সব কোর্স দেখুন';
+    $('#ps-show-viewall').checked=d.showViewAll!==false;
+  }catch(e){}
+}
+
+async function savePopularSection(){
+  const body={
+    title:$('#ps-title').value,
+    subtitle:$('#ps-subtitle').value,
+    popularLabel:$('#ps-popular-label').value,
+    newLabel:$('#ps-new-label').value,
+    viewAllText:$('#ps-viewall-text').value,
+    showViewAll:$('#ps-show-viewall').checked
+  };
+  try{await adminApi('/api/admin/settings/popularSection',{method:'PUT',body});toast('জনপ্রিয় সেকশন আপডেট হয়েছে ✅','success');}
+  catch(err){toast(err.message,'error');}
+}
+
+// ============================================================
+// SETTINGS — আজই যুক্ত হোন সেকশন
+// ============================================================
+async function loadJoinSection(){
+  try{
+    const d=await adminApi('/api/settings/joinSection');
+    $('#js-title').value=d.title||'';
+    $('#js-subtitle').value=d.subtitle||'';
+    $('#js-cta-text').value=d.ctaText||'';
+    $('#js-video-url').value=d.videoUrl||'';
+    $('#js-students-count').value=d.studentsCount||9000;
+    $('#js-students-label').value=d.studentsLabel||'মোট শিক্ষার্থী';
+    $('#js-instructors-count').value=d.instructorsCount||10;
+    $('#js-instructors-label').value=d.instructorsLabel||'অভিজ্ঞ উস্তায/উস্তাযা';
+    $('#js-materials-count').value=d.materialsCount||100;
+    $('#js-materials-label').value=d.materialsLabel||'স্টাডি ম্যাটেরিয়াল';
+    $('#js-content-count').value=d.contentCount||200;
+    $('#js-content-label').value=d.contentLabel||'লার্নিং কন্টেন্ট';
+  }catch(e){}
+}
+
+async function saveJoinSection(){
+  const body={
+    title:$('#js-title').value,
+    subtitle:$('#js-subtitle').value,
+    ctaText:$('#js-cta-text').value,
+    videoUrl:$('#js-video-url').value,
+    studentsCount:parseInt($('#js-students-count').value)||9000,
+    studentsLabel:$('#js-students-label').value,
+    instructorsCount:parseInt($('#js-instructors-count').value)||10,
+    instructorsLabel:$('#js-instructors-label').value,
+    materialsCount:parseInt($('#js-materials-count').value)||100,
+    materialsLabel:$('#js-materials-label').value,
+    contentCount:parseInt($('#js-content-count').value)||200,
+    contentLabel:$('#js-content-label').value
+  };
+  try{await adminApi('/api/admin/settings/joinSection',{method:'PUT',body});toast('"আজই যুক্ত হোন" সেকশন আপডেট হয়েছে ✅','success');}
   catch(err){toast(err.message,'error');}
 }
 

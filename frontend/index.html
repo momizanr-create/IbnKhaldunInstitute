@@ -2698,6 +2698,66 @@ function applyWhyJoin(wj){
   }
 }
 
+function applyPopularSection(ps){
+  if (!ps || typeof ps !== 'object') return;
+  const titleEl = document.querySelector('.hct-title');
+  const subEl = document.querySelector('.hct-sub');
+  if (titleEl && ps.title) titleEl.textContent = ps.title;
+  if (subEl && ps.subtitle) subEl.textContent = ps.subtitle;
+  // ট্যাব লেবেল আপডেট
+  const tabs = document.querySelectorAll('.hct-tab');
+  tabs.forEach(tab => {
+    const key = tab.getAttribute('data-hct');
+    if (key === 'popular' && ps.popularLabel) {
+      tab.innerHTML = `<i class="fas fa-fire"></i> ${ps.popularLabel}`;
+    } else if (key === 'new' && ps.newLabel) {
+      tab.innerHTML = `<i class="fas fa-sparkles"></i> ${ps.newLabel}`;
+    }
+  });
+  // "সব দেখুন" বাটন
+  const viewAllWrap = document.querySelector('#home-courses-tab-section [onclick*="navigate(\'courses\')"]');
+  if (viewAllWrap) {
+    if (ps.showViewAll === false) {
+      viewAllWrap.closest('div[style*="text-align:center"]') && (viewAllWrap.closest('div').style.display='none');
+    } else {
+      if (ps.viewAllText) viewAllWrap.innerHTML = `${ps.viewAllText} <i class="fas fa-arrow-left"></i>`;
+    }
+  }
+}
+
+function applyJoinSection(js){
+  if (!js || typeof js !== 'object') return;
+  const section = document.getElementById('join-section');
+  if (!section) return;
+  const h2 = section.querySelector('.section-head h2');
+  const p = section.querySelector('.section-head p');
+  if (h2 && js.title) h2.textContent = js.title;
+  if (p && js.subtitle) p.textContent = js.subtitle;
+  // CTA বাটন
+  const ctaBtn = section.querySelector('.ibk-btn-gold');
+  if (ctaBtn && js.ctaText) ctaBtn.innerHTML = `<i class="fas fa-user-plus"></i> ${js.ctaText}`;
+  // কাউন্টার সংখ্যা ও লেবেল
+  const statMap = [
+    {countId:'jstat-students',   count:js.studentsCount,    label:js.studentsLabel},
+    {countId:'jstat-instructors',count:js.instructorsCount, label:js.instructorsLabel},
+    {countId:'jstat-materials',  count:js.materialsCount,   label:js.materialsLabel},
+    {countId:'jstat-content',    count:js.contentCount,     label:js.contentLabel},
+  ];
+  statMap.forEach(({countId,count,label})=>{
+    const numEl = document.getElementById(countId);
+    if (numEl) {
+      if (count !== undefined && count !== null) numEl.setAttribute('data-target', count);
+      // লেবেল আপডেট
+      if (label && numEl.nextElementSibling) numEl.nextElementSibling.textContent = label;
+    }
+  });
+  // ভিডিও URL আপডেট
+  const vidContainer = document.getElementById('join-video-container');
+  if (vidContainer && js.videoUrl && js.videoUrl.trim()) {
+    vidContainer.innerHTML = `<iframe src="${js.videoUrl}" frameborder="0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen style="width:100%;height:100%;border-radius:12px"></iframe>`;
+  }
+}
+
 function updateAuthUI(){
   const mlLogin = document.getElementById('mobile-login-btn');
   const mlDash  = document.getElementById('mobile-dash-btn');
@@ -5077,6 +5137,8 @@ onSwr('/api/faqs', ()=>loadHomeFaqs());
 onSwr('/api/blog', ()=>loadHomeBlogs());
 onSwr('/api/public/config', (cfg)=>applySiteConfig(cfg));
 onSwr('/api/settings/whyJoin', (wj)=>applyWhyJoin(wj));
+onSwr('/api/settings/popularSection', (ps)=>applyPopularSection(ps));
+onSwr('/api/settings/joinSection', (js)=>applyJoinSection(js));
 
 // ============================================================
 // ANALYTICS — track page view, live heartbeat, course views

@@ -696,9 +696,22 @@ app.post('/api/admin/settings/:key', authMiddleware, async (req, res) => {
   res.json(s.value);
 });
 
+// PUT — same as POST (admin.html uses PUT for settings updates)
+app.put('/api/admin/settings/:key', authMiddleware, async (req, res) => {
+  const value = (req.body && typeof req.body === 'object' && 'value' in req.body)
+    ? req.body.value
+    : req.body;
+  const s = await Settings.findOneAndUpdate(
+    { key: req.params.key },
+    { key: req.params.key, value, updatedAt: new Date() },
+    { upsert: true, new: true }
+  );
+  res.json(s.value);
+});
+
 app.get('/api/public/config', async (_, res) => {
   try {
-    const keys = ['siteSettings','hero','navigation','footer','theme','welcomePopup','cta','contactContent','aboutPage','featuredCoursesConfig','whatsapp','contact','payment','social','notice','about','faqSection','whyJoin','sectionTitles','homeContent'];
+    const keys = ['siteSettings','hero','navigation','footer','theme','welcomePopup','cta','contactContent','aboutPage','featuredCoursesConfig','whatsapp','contact','payment','social','notice','about','faqSection','whyJoin','sectionTitles','homeContent','popularSection','joinSection'];
     const all = await Settings.find({ key: { $in: keys } });
     const out = {};
     keys.forEach(k => { out[k] = all.find(s=>s.key===k)?.value || {}; });
@@ -1631,6 +1644,17 @@ async function seedDatabase() {
     if (!whyExists) {
       await Settings.create({ key: 'whyJoin', value: JSON.parse('{"title": "কেন ইবনে খালদুন ইনস্টিটিউটতে যুক্ত হবেন?", "subtitle": "অভিজ্ঞ আলেমদের তত্ত্বাবধানে অথেনটিক ইসলামি শিক্ষার সম্পূর্ণ অনলাইন প্ল্যাটফর্ম।", "items": [{"icon": "fa-user-graduate", "title": "অভিজ্ঞ আলেম", "desc": "দেশ-বিদেশের প্রসিদ্ধ আলেমদের কাছ থেকে সরাসরি শিক্ষা।"}, {"icon": "fa-laptop", "title": "যেকোনো ডিভাইস", "desc": "মোবাইল, ট্যাবলেট বা কম্পিউটার — যেকোনো স্থান থেকে।"}, {"icon": "fa-clock", "title": "সুবিধাজনক সময়", "desc": "নিজের সুবিধামতো সময়ে রেকর্ডেড ক্লাস দেখুন।"}, {"icon": "fa-certificate", "title": "সার্টিফিকেট", "desc": "কোর্স শেষে প্রতিষ্ঠান-স্বীকৃত সার্টিফিকেট।"}, {"icon": "fa-users", "title": "সাপোর্ট গ্রুপ", "desc": "প্রতিটি কোর্সের নিজস্ব WhatsApp সাপোর্ট।"}, {"icon": "fa-shield-halved", "title": "মানি-ব্যাক গ্যারান্টি", "desc": "৭ দিনের মধ্যে অসন্তুষ্ট হলে ১০০% রিফান্ড।"}]}') });
       console.log('🌱 Seeded whyJoin');
+    }
+    const popularExists = await Settings.findOne({ key: 'popularSection' });
+    if (!popularExists) {
+      await Settings.create({ key: 'popularSection', value: { title: 'জনপ্রিয় ও নতুন কোর্সসমূহ', subtitle: 'অভিজ্ঞ আলেমদের তত্ত্বাবধানে সেরা কোর্সগুলো', popularLabel: 'জনপ্রিয়', newLabel: 'নতুন', showViewAll: true, viewAllText: 'সব কোর্স দেখুন' } });
+      console.log('🌱 Seeded popularSection');
+    }
+
+    const joinExists = await Settings.findOne({ key: 'joinSection' });
+    if (!joinExists) {
+      await Settings.create({ key: 'joinSection', value: { title: 'আজই যুক্ত হোন', subtitle: 'দীনি জ্ঞানার্জনের উন্মুক্ত প্ল্যাটফর্ম, তাহযীব ইনস্টিটিউটের বৃহৎ পরিবারে আজই যুক্ত হোন।', ctaText: 'আজই যুক্ত হোন — বিনামূল্যে', studentsCount: 9000, instructorsCount: 10, materialsCount: 100, contentCount: 200, studentsLabel: 'মোট শিক্ষার্থী', instructorsLabel: 'অভিজ্ঞ উস্তায/উস্তাযা', materialsLabel: 'স্টাডি ম্যাটেরিয়াল', contentLabel: 'লার্নিং কন্টেন্ট', videoUrl: '' } });
+      console.log('🌱 Seeded joinSection');
     }
 
     const aboutExists = await Settings.findOne({ key: 'about' });
