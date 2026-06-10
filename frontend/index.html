@@ -115,8 +115,9 @@ body{padding-top:80px}
 /* Center nav links — desktop only */
 .nav-links{display:flex;gap:2px;align-items:center;flex:1;justify-content:center}
 .nav-links a{
-  padding:8px 16px;border-radius:8px;font-weight:500;font-size:15px;
-  transition:all .15s;cursor:pointer;color:rgba(255,255,255,.82);white-space:nowrap;
+  padding:8px 16px;border-radius:8px;font-weight:700;font-size:13.5px;
+  text-transform:uppercase;letter-spacing:.08em;
+  transition:all .15s;cursor:pointer;color:rgba(255,255,255,.85);white-space:nowrap;
 }
 .nav-links a:hover{color:#fff;background:rgba(255,255,255,.08)}
 .nav-links a.active{
@@ -541,13 +542,20 @@ section.block{padding:50px 0}
 @media(max-width:480px){.modal{padding:18px 14px;border-radius:12px}}
 
 /* Footer */
-footer{background:linear-gradient(180deg,#1a3b27 0%,#0f3a22 100%);color:#dbe9df;padding:50px 0 22px;margin-top:60px;position:relative}
+footer{background:linear-gradient(180deg,#1a3b27 0%,#0f3a22 100%);color:#dbe9df;padding:46px 0 26px;margin-top:60px;position:relative;text-align:center}
 footer::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
-.footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:30px;margin-bottom:24px}
-.footer-grid h4{color:#fff;margin-bottom:12px;font-size:16px}
-.footer-grid a{display:block;padding:4px 0;font-size:14px;color:#94a3b8;cursor:pointer}
-.footer-grid a:hover{color:var(--accent)}
-.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:16px;text-align:center;font-size:13px;color:rgba(219,233,223,.6)}
+/* Centered footer nav (image-3 style) */
+.footer-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:28px;margin-bottom:26px}
+.footer-nav a{color:#e6f0ea;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:color .2s;text-decoration:none}
+.footer-nav a:hover{color:var(--accent)}
+/* Circular social icons */
+.footer-social{display:flex;justify-content:center;align-items:center;gap:14px;margin-bottom:22px;position:relative}
+.footer-social::before,.footer-social::after{content:'';flex:0 0 60px;height:1px;background:rgba(255,255,255,.14)}
+.footer-social a{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:#cfe0d6;border:1px solid rgba(255,255,255,.22);transition:all .2s;cursor:pointer}
+.footer-social a:hover{background:var(--accent);color:#0f3a22;border-color:var(--accent);transform:translateY(-2px)}
+.footer-contact{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 22px;font-size:13px;color:#9fb6a8;margin-bottom:18px}
+.footer-contact span:empty{display:none}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:18px;text-align:center;font-size:12.5px;letter-spacing:.04em;color:rgba(219,233,223,.6)}
 
 /* Toast */
 .toast{position:fixed;bottom:20px;left:20px;right:20px;background:var(--text);color:#fff;padding:14px 20px;border-radius:10px;z-index:2000;opacity:0;transform:translateY(20px);transition:.25s;max-width:380px;font-size:14px}
@@ -719,6 +727,14 @@ th{background:#f1f5f9;font-weight:600}
   .cd-share{gap:6px;margin-top:10px}
   .cd-share a{width:32px;height:32px;font-size:14px}
 }
+/* cd-side bottom summary card (Classes / Video lessons) */
+.cd-summary-card{background:#fff;border-radius:12px;box-shadow:var(--shadow);margin-top:18px;padding:18px;display:flex;justify-content:space-around;align-items:center;gap:12px;flex-wrap:wrap}
+.cd-summary-item{display:flex;align-items:center;gap:10px;min-width:0}
+.cd-summary-ico{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.cd-summary-ico-green{background:#e8f7ee;color:#16a34a}
+.cd-summary-ico-blue{background:#e6f0ff;color:#2563eb}
+.cd-summary-num{font-size:18px;font-weight:800;color:var(--text);line-height:1.1}
+.cd-summary-lbl{font-size:12.5px;color:var(--text-soft);font-weight:600}
 .cd-yt-iframe{width:100%;height:100%;position:absolute;inset:0;border:0}
 
 /* === Custom Secure Video Player === */
@@ -990,6 +1006,7 @@ th{background:#f1f5f9;font-weight:600}
 @media(max-width:820px){
   .faq-with-image{grid-template-columns:1fr;gap:0}
   .faq-image-wrap{display:none}
+  .faq-image-wrap.has-image{display:flex;aspect-ratio:16/10;border-radius:20px;margin-bottom:22px}
   #home-faqs details summary{font-size:14px;padding:14px 16px}
 }
 
@@ -1485,10 +1502,11 @@ header .logo span#logo-line1,header .logo span#logo-line2,header .logo #logo-div
   .cd-wrap{overflow-x:hidden !important}
   .cd-main{min-width:0;overflow-x:hidden}
   .cd-preview{width:100% !important;max-width:100% !important;box-sizing:border-box}
-  .cd-tabs-wrapper{width:100%;max-width:100%;box-sizing:border-box;overflow:hidden}
-  .cd-tabs{gap:2px;margin:0;padding:6px 8px;box-sizing:border-box;min-width:0}
+  .cd-tabs-wrapper{width:100%;max-width:100%;box-sizing:border-box;overflow:visible}
+  .cd-tabs-arrow{display:none !important}
+  .cd-tabs{gap:6px;margin:0;padding:8px;box-sizing:border-box;min-width:0;flex-wrap:wrap;overflow:visible}
   /* ── end overflow fix ── */
-  .cd-tab{padding:8px 11px;font-size:15px;font-weight:800;border-radius:8px}
+  .cd-tab{padding:9px 12px;font-size:14px;font-weight:800;border-radius:8px;flex:1 1 auto;text-align:center;white-space:nowrap}
   .cd-tab i{font-size:14px}
   .cd-tabpane .card{padding:16px !important}
   .cd-tabpane h3{font-size:16px}
@@ -1561,12 +1579,12 @@ header .logo span#logo-line1,header .logo span#logo-line2,header .logo #logo-div
     </a>
     <nav class="nav-links" id="nav-links">
       <button class="nav-close" type="button" aria-label="বন্ধ" onclick="toggleMobileNav(false)"><i class="fas fa-times"></i></button>
-      <a data-nav="home" class="active">হোম</a>
-      <a data-nav="courses">কোর্সসমূহ</a>
-      <a data-nav="instructors">শিক্ষকবৃন্দ</a>
-      <a data-nav="blog">ব্লগ</a>
-      <a data-nav="about">পরিচিতি</a>
-      <a data-nav="contact">যোগাযোগ</a>
+      <a data-nav="home" class="active">HOME</a>
+      <a data-nav="courses">COURSES</a>
+      <a data-nav="instructors">INSTRUCTORS</a>
+      <a data-nav="blog">BLOG</a>
+      <a data-nav="about">ABOUT</a>
+      <a data-nav="contact">CONTACT</a>
       <!-- Login/Dashboard + Social — bottom of fullscreen overlay -->
       <div class="nav-mobile-login">
         <button class="btn-nav-login" onclick="toggleMobileNav(false);openAuth('login')" id="mobile-login-btn"><i class="fas fa-user" style="margin-left:8px"></i> লগইন করুন</button>
@@ -1580,8 +1598,8 @@ header .logo span#logo-line1,header .logo span#logo-line2,header .logo #logo-div
       </div>
     </nav>
     <div class="nav-actions">
-      <button id="login-btn" class="btn-nav-login" onclick="openAuth('login')"><i class="fas fa-user" style="margin-left:6px"></i> লগইন</button>
-      <button id="dash-btn" class="btn-nav-dash" style="display:none" onclick="navigate('dashboard')"><i class="fas fa-th" style="margin-left:6px"></i> ড্যাশবোর্ড</button>
+      <button id="login-btn" class="btn-nav-login" onclick="openAuth('login')"><i class="fas fa-user" style="margin-left:6px"></i> LOGIN</button>
+      <button id="dash-btn" class="btn-nav-dash" style="display:none" onclick="navigate('dashboard')"><i class="fas fa-th" style="margin-left:6px"></i> DASHBOARD</button>
       <button class="menu-btn" id="menu-btn" aria-label="মেনু" onclick="toggleMobileNav()">
         <i class="fas fa-bars"></i>
       </button>
@@ -1788,19 +1806,19 @@ header .logo span#logo-line1,header .logo span#logo-line2,header .logo #logo-div
         <!-- Stats cards -->
         <div class="join-stats-grid">
           <div class="join-stat-card" style="background:#fff5f7">
-            <div class="join-stat-num" data-target="9000" id="jstat-students">০</div>
+            <div class="join-stat-num" data-target="9000" id="jstat-students">0</div>
             <div class="join-stat-label">মোট শিক্ষার্থী</div>
           </div>
           <div class="join-stat-card" style="background:#f0fdf4">
-            <div class="join-stat-num" data-target="10" id="jstat-instructors">০</div>
+            <div class="join-stat-num" data-target="10" id="jstat-instructors">0</div>
             <div class="join-stat-label">অভিজ্ঞ উস্তায/উস্তাযা</div>
           </div>
           <div class="join-stat-card" style="background:#fefce8">
-            <div class="join-stat-num" data-target="100" id="jstat-materials">০</div>
+            <div class="join-stat-num" data-target="100" id="jstat-materials">0</div>
             <div class="join-stat-label">স্টাডি ম্যাটেরিয়াল</div>
           </div>
           <div class="join-stat-card" style="background:#f5f3ff">
-            <div class="join-stat-num" data-target="200" id="jstat-content">০</div>
+            <div class="join-stat-num" data-target="200" id="jstat-content">0</div>
             <div class="join-stat-label">লার্নিং কন্টেন্ট</div>
           </div>
         </div>
@@ -1996,33 +2014,26 @@ header .logo span#logo-line1,header .logo span#logo-line2,header .logo #logo-div
 
 <footer>
   <div class="container">
-    <div class="footer-grid">
-      <div>
-        <div style="margin-bottom:14px"><img src="data:image/webp;base64,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" alt=""></div>
-        <h4 style="display:none"><span id="footer-site-name">ইবনে খালদুন ইনস্টিটিউট</span></h4>
-        <p style="font-size:14px;color:#94a3b8" id="footer-about">ইসলামি জ্ঞান অর্জনের অনলাইন প্ল্যাটফর্ম।</p>
-      </div>
-      <div>
-        <h4>কুইক লিংক</h4>
-        <a data-nav="courses">কোর্সসমূহ</a>
-        <a data-nav="instructors">শিক্ষকবৃন্দ</a>
-        <a data-nav="blog">ব্লগ</a>
-        <a data-nav="about">পরিচিতি</a>
-      </div>
-      <div>
-        <h4>যোগাযোগ</h4>
-        <a data-nav="contact">যোগাযোগ ফর্ম</a>
-        <p id="footer-email" style="font-size:14px;color:#94a3b8"></p>
-        <p id="footer-phone" style="font-size:14px;color:#94a3b8"></p>
-        <p id="footer-address" style="font-size:14px;color:#94a3b8"></p>
-      </div>
-      <div>
-        <h4>সোশ্যাল</h4>
-        <div id="footer-social" style="display:flex;gap:10px;font-size:22px"></div>
-      </div>
+    <nav class="footer-nav">
+      <a data-nav="home">HOME</a>
+      <a data-nav="about">ABOUT</a>
+      <a data-nav="courses">COURSES</a>
+      <a data-nav="instructors">INSTRUCTORS</a>
+      <a data-nav="blog">BLOG</a>
+      <a data-nav="contact">CONTACT</a>
+    </nav>
+    <div id="footer-social" class="footer-social"></div>
+    <div class="footer-contact">
+      <span id="footer-email"></span>
+      <span id="footer-phone"></span>
+      <span id="footer-address"></span>
     </div>
-    <div class="footer-bottom" id="footer-copyright">© <span id="year"></span> ইবনে খালদুন ইনস্টিটিউট। সর্বস্বত্ব সংরক্ষিত।</div>
+    <p id="footer-about" style="display:none"></p>
+    <h4 style="display:none"><span id="footer-site-name">ইবনে খালদুন ইনস্টিটিউট</span></h4>
+    <div class="footer-bottom" id="footer-copyright">© <span id="year"></span> Ibn Khaldun Institute. All Rights Reserved.</div>
   </div>
+</footer>
+
 </footer>
 
 <!-- WhatsApp floating -->
@@ -2572,13 +2583,21 @@ function applySiteConfig(cfg){
   for (let k=1;k<=4;k++){ setTxt('heroStat'+k+'Num', hero['stat'+k+'Num']); setTxt('heroStat'+k+'Lbl', hero['stat'+k+'Lbl']); }
   for (let k=1;k<=3;k++){ setTxt('heroCard'+k+'Title', hero['card'+k+'Title']); setTxt('heroCard'+k+'Desc', hero['card'+k+'Desc']); }
 
-  // FAQ / Teachers section image — accept multiple admin field names
-  const faqImg =
-    (cfg.faqSection && (cfg.faqSection.image || cfg.faqSection.teacherImage || cfg.faqSection.instructorImage)) ||
-    (cfg.faq && (cfg.faq.image || cfg.faq.teacherImage)) ||
-    (cfg.teachers && (cfg.teachers.image || cfg.teachers.heroImage)) ||
-    (cfg.siteSettings && (cfg.siteSettings.faqImage || cfg.siteSettings.teacherImage)) ||
-    cfg.faqImage || cfg.teacherImage || cfg.instructorImage;
+  // FAQ / Teachers section image — accept multiple admin field names.
+  // Only accept non-empty strings (knownKeys default {} must be ignored).
+  const pickImg = (...vals) => vals.find(v => typeof v === 'string' && v.trim());
+  const faqImg = pickImg(
+    cfg.faqSection && cfg.faqSection.image,
+    cfg.faqSection && cfg.faqSection.teacherImage,
+    cfg.faqSection && cfg.faqSection.instructorImage,
+    cfg.faq && cfg.faq.image,
+    cfg.faq && cfg.faq.teacherImage,
+    cfg.teachers && cfg.teachers.image,
+    cfg.teachers && cfg.teachers.heroImage,
+    cfg.siteSettings && cfg.siteSettings.faqImage,
+    cfg.siteSettings && cfg.siteSettings.teacherImage,
+    cfg.faqImage, cfg.teacherImage, cfg.instructorImage
+  );
   if (faqImg){
     const w = document.getElementById('faq-image-wrap');
     if (w) {
@@ -2592,6 +2611,7 @@ function applySiteConfig(cfg){
       img.loading = 'lazy';
       img.style.cssText = 'width:100%;height:100%;object-fit:cover;object-position:top center;';
       w.appendChild(img);
+      w.classList.add('has-image');
     }
   }
 
@@ -2670,6 +2690,13 @@ function applySiteConfig(cfg){
   loadTestimonials();
   loadHomeFaqs();
   loadHomeBlogs();
+
+  // Join section (admin-controlled counters)
+  try {
+    const js = await api('/api/settings/joinSection');
+    applyJoinSection(js);
+  } catch(e){ /* keep defaults */ }
+  startJoinCounters();
 })();
 
 function applyWhyJoin(wj){
@@ -2755,6 +2782,39 @@ function applyJoinSection(js){
   const vidContainer = document.getElementById('join-video-container');
   if (vidContainer && js.videoUrl && js.videoUrl.trim()) {
     vidContainer.innerHTML = `<iframe src="${js.videoUrl}" frameborder="0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen style="width:100%;height:100%;border-radius:12px"></iframe>`;
+  }
+  startJoinCounters();
+}
+
+// English-numeral animated counters for the "আজই যুক্ত হোন" section
+let __joinCountersDone = false;
+function startJoinCounters(){
+  const section = document.getElementById('join-section');
+  if (!section) return;
+  const runAnim = ()=>{
+    if (__joinCountersDone) return;
+    __joinCountersDone = true;
+    section.querySelectorAll('.join-stat-num').forEach(el=>{
+      const target = parseInt(el.getAttribute('data-target')||'0', 10) || 0;
+      const dur = 1600, start = performance.now();
+      const step = (now)=>{
+        const prog = Math.min((now - start) / dur, 1);
+        const eased = 1 - Math.pow(1 - prog, 3);
+        const val = Math.round(target * eased);
+        el.textContent = val.toLocaleString('en-US') + (prog >= 1 && target >= 1000 ? '+' : '');
+        if (prog < 1) requestAnimationFrame(step);
+      };
+      el.textContent = '0';
+      requestAnimationFrame(step);
+    });
+  };
+  if ('IntersectionObserver' in window){
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if (e.isIntersecting){ runAnim(); io.disconnect(); } });
+    }, {threshold: .3});
+    io.observe(section);
+  } else {
+    runAnim();
   }
 }
 
@@ -3585,24 +3645,26 @@ function renderRecordedDetail(c){
                     <div id="cd-prog-label" style="font-size:11px;color:var(--text-soft);margin-bottom:4px"></div>
                     ${c.certificateImage ? `<button class="cert-dl-btn" id="cd-cert-side-btn" onclick="openCertModal()" style="width:100%;justify-content:center;margin-top:6px;display:none"><i class="fas fa-certificate"></i> সার্টিফিকেট ডাউনলোড</button>` : ''}
                   </div>` : ''}
-                ${priceHtml}
+                ${enrolled ? `
+                  <div style="display:flex;align-items:center;gap:8px;background:#e8f7ee;border:1px solid #b9e6c7;color:#0a7a3b;padding:10px 14px;border-radius:10px;font-weight:600;font-size:14px;margin-bottom:12px">
+                    <i class="fas fa-check-circle" style="color:#16a34a;font-size:18px"></i>
+                    আপনি এই কোর্সটি কিনেছেন
+                  </div>
+                  <button class="btn btn-block" onclick="cdStartCourse()" style="background:linear-gradient(180deg,#16a34a,#0e8a3e);color:#fff;font-size:16px;font-weight:700;padding:14px;border-radius:10px;box-shadow:0 6px 18px rgba(16,163,74,.35);margin-bottom:14px">
+                    <i class="fas fa-play-circle"></i> কোর্স শুরু করুন
+                  </button>
+                ` : `
+                  ${priceHtml}
+                  <button class="btn btn-primary btn-block" onclick="openRecordedPurchase('${c._id}')" style="margin-bottom:14px"><i class="fas fa-shopping-cart"></i> এখনই ভর্তি হন</button>
+                `}
                 <ul class="cd-stats-list">
                   ${c.students?`<li><i class="fas fa-user"></i><span class="lbl">শিক্ষার্থী</span><span class="val">${fmt(c.students)}</span></li>`:''}
-                  ${c.videoLessonsTime?`<li><i class="fas fa-clock"></i><span class="lbl">ভিডিও সময়</span><span class="val">${escapeHtml(c.videoLessonsTime)}</span></li>`:''}
+                  ${c.videoLessonsTime?`<li><i class="fas fa-clock"></i><span class="lbl">ভিডিও লেসন</span><span class="val" style="direction:ltr">${escapeHtml(c.videoLessonsTime)}</span></li>`:''}
                   ${c.level?`<li><i class="fas fa-signal"></i><span class="lbl">লেভেল</span><span class="val">${escapeHtml(c.level)}</span></li>`:''}
                   ${c.duration?`<li><i class="fas fa-calendar"></i><span class="lbl">মেয়াদকাল</span><span class="val">${escapeHtml(c.duration)}</span></li>`:''}
-                  ${totalLessons?`<li><i class="fas fa-list"></i><span class="lbl">লেসন</span><span class="val">${fmt(totalLessons)}টি</span></li>`:''}
-                  ${c.language?`<li><i class="fas fa-language"></i><span class="lbl">ভাষা</span><span class="val">${escapeHtml(c.language)}</span></li>`:''}
+                  ${c.certificateImage?`<li><i class="fas fa-certificate" style="color:#F5C518"></i><span class="lbl">সার্টিফিকেট</span><span class="val">হ্যাঁ</span></li>`:''}
                 </ul>
-                ${includes.length?`
-                  <h4 style="font-size:14px;margin-bottom:6px;color:var(--text)">এই কোর্সে অন্তর্ভুক্ত</h4>
-                  <ul class="cd-includes">
-                    ${includes.map(it=>`<li><i class="fas fa-check"></i> ${escapeHtml(it)}</li>`).join('')}
-                  </ul>`:''}
-                ${enrolled
-                  ? `<button class="btn btn-success btn-block" disabled style="background:var(--success);color:#fff;opacity:1"><i class="fas fa-check-circle"></i> আপনি এনরোল্ড</button>`
-                  : `<button class="btn btn-primary btn-block" onclick="openRecordedPurchase('${c._id}')"><i class="fas fa-shopping-cart"></i> এখনই ভর্তি হন</button>`}
-                <div class="cd-share">
+                <div class="cd-share" style="margin-top:14px"><span style="color:var(--text-soft);font-size:13px;margin-left:6px">শেয়ার :</span>
                   <a onclick="cdShare('facebook')" title="Facebook"><i class="fab fa-facebook-f"></i></a>
                   <a onclick="cdShare('whatsapp')" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                   <a onclick="cdShare('telegram')" title="Telegram"><i class="fab fa-telegram-plane"></i></a>
@@ -3610,6 +3672,25 @@ function renderRecordedDetail(c){
                 </div>
               </div>
             </div>
+            ${(totalLessons || c.videoLessonsTime) ? `
+            <div class="cd-summary-card">
+              ${totalLessons ? `
+              <div class="cd-summary-item">
+                <span class="cd-summary-ico cd-summary-ico-green"><i class="fas fa-book-open"></i></span>
+                <div>
+                  <div class="cd-summary-num">${fmt(totalLessons)}</div>
+                  <div class="cd-summary-lbl">Classes</div>
+                </div>
+              </div>` : ''}
+              ${c.videoLessonsTime ? `
+              <div class="cd-summary-item">
+                <span class="cd-summary-ico cd-summary-ico-blue"><i class="fas fa-play-circle"></i></span>
+                <div>
+                  <div class="cd-summary-num" style="direction:ltr">${escapeHtml(c.videoLessonsTime)}</div>
+                  <div class="cd-summary-lbl">Video lessons</div>
+                </div>
+              </div>` : ''}
+            </div>` : ''}
           </aside>
         </div>
       </div>
@@ -3879,6 +3960,20 @@ function renderCurriculumHTML(c, enrolled){
         }).join('')}
       </div>`).join('')}
   </div>`;
+}
+
+function cdStartCourse(){
+  // কারিকুলাম ট্যাবে যান
+  const tab = document.querySelector('.cd-tab[onclick*="curriculum"]');
+  if(tab) cdSwitchTab(tab,'curriculum');
+  // প্রথম unlocked লেসন প্লে করুন
+  setTimeout(()=>{
+    const first = document.querySelector('#cd-pane-curriculum .cd-lesson:not(.locked)');
+    if(first){
+      first.scrollIntoView({behavior:'smooth',block:'center'});
+      try{ cdPlayLessonFromEl(first); }catch(e){ first.click(); }
+    }
+  },120);
 }
 
 function cdSwitchTab(btn, name){
@@ -5409,9 +5504,9 @@ window.addEventListener('focus', ()=>{
 <style>
 /* Logo image now contains wordmark — make it more prominent */
 #site-logo-img{height:54px !important;max-width:220px !important;width:auto !important;border-radius:6px !important;background:transparent !important;filter:none !important}
-@media(max-width:900px){#site-logo-img{height:46px !important;max-width:180px !important}}
-@media(max-width:600px){#site-logo-img{height:40px !important;max-width:160px !important}}
-@media(max-width:380px){#site-logo-img{height:36px !important;max-width:140px !important}}
+@media(max-width:900px){#site-logo-img{height:50px !important;max-width:210px !important}}
+@media(max-width:600px){#site-logo-img{height:46px !important;max-width:190px !important}}
+@media(max-width:380px){#site-logo-img{height:42px !important;max-width:168px !important}}
 #logo-text-block,#logo-line1,#logo-line2,#logo-divider{display:none !important}
 .logo{gap:0 !important}
 
@@ -5432,13 +5527,15 @@ body, p, li, dd, dt, blockquote, figcaption, label, .card, .tab-pane, .container
   .cd-grid{grid-template-columns:1fr !important;width:100% !important}
   .cd-grid > *{min-width:0 !important;width:100% !important}
   .cd-preview{width:100% !important}
-  .cd-tabs-wrapper{width:100% !important}
-  .cd-tabs{max-width:100%;min-width:0}
+  .cd-tabs-wrapper{width:100% !important;overflow:visible !important}
+  .cd-tabs-arrow{display:none !important}
+  .cd-tabs{max-width:100%;min-width:0;flex-wrap:wrap !important;overflow:visible !important;gap:6px}
+  .cd-tab{flex:1 1 auto;text-align:center;white-space:nowrap}
   /* inline style overrides যেগুলো overflow করে */
   .cd-grid [style*="max-width"]{max-width:100% !important}
   .cd-grid [style*="width:"]{width:100% !important;max-width:100% !important}
 }
-.footer-bottom{text-align:left !important}
+footer, footer *, .footer-bottom, .footer-nav, .footer-social, .footer-contact{text-align:center !important}
 ul, ol{padding-left:1.25em !important;padding-right:0 !important}
 
 /* ====== HOME COURSES TAB (জনপ্রিয় + নতুন একসাথে) ====== */
@@ -5554,7 +5651,88 @@ ul, ol{padding-left:1.25em !important;padding-right:0 !important}
   display:inline-flex;align-items:center;gap:8px;
 }
 .ts-left-head .btn-ts-more:hover{background:var(--primary-dark);transform:translateY(-1px)}
+
+/* =====================================================================
+   MOBILE EXPERIENCE POLISH — 2024 refresh
+   Additive layer: refines touch targets, spacing, typography & safety
+   nets so the whole site looks and feels perfect on phones.
+   ===================================================================== */
+@media(max-width:768px){
+  /* iOS safe-area aware page padding */
+  body{padding-bottom:env(safe-area-inset-bottom)}
+
+  /* Kill any accidental horizontal scroll */
+  html,body{overflow-x:hidden;max-width:100%}
+  .container{padding-left:16px;padding-right:16px}
+
+  /* Comfortable, readable body type */
+  body{font-size:15.5px;line-height:1.7}
+
+  /* Section rhythm — consistent vertical breathing room */
+  section.block{padding:38px 0}
+
+  /* Headings scale down gracefully (fluid) */
+  h1{font-size:clamp(24px,7vw,34px);line-height:1.25}
+  h2{font-size:clamp(20px,5.5vw,27px);line-height:1.3}
+  h3{font-size:clamp(17px,4.5vw,21px)}
+
+  /* Generous tap targets everywhere (WCAG / Apple HIG = 44px) */
+  button,.btn,.btn-nav-login,.btn-nav-dash,a.btn,input[type="submit"]{
+    min-height:46px;
+  }
+  .nav-links a{min-height:44px;display:flex;align-items:center}
+
+  /* Cards: softer, full-width, never clipped */
+  .card,.course-card,.join-stat-card,.about-values>*{border-radius:16px}
+
+  /* Images crisp & contained */
+  img{height:auto}
+}
+
+/* Small phones */
+@media(max-width:430px){
+  .container{padding-left:14px;padding-right:14px}
+  section.block{padding:30px 0}
+  .btn,button{font-size:15px}
+}
+
+/* ---- Sticky, polished header on mobile ---- */
+@media(max-width:900px){
+  header{position:sticky;top:0;z-index:1000;backdrop-filter:saturate(140%) blur(2px)}
+  .nav{min-height:60px}
+}
+
+/* ---- Mobile nav drawer: smooth, full-height, scrollable ---- */
+@media(max-width:900px){
+  #nav-links{max-height:100dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    padding-bottom:calc(28px + env(safe-area-inset-bottom))}
+}
+
+/* ---- Modals: full-height friendly + inner scroll on phones ---- */
+@media(max-width:600px){
+  .modal{max-height:92dvh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+}
+
+/* ---- Forms: comfortable inputs, no iOS zoom-on-focus ---- */
+@media(max-width:600px){
+  input,select,textarea{font-size:16px}
+  .form-group{margin-bottom:14px}
+}
+
+/* ---- Grids gracefully stack ---- */
+@media(max-width:600px){
+  .detail-grid,.contact-grid,.about-values{grid-template-columns:1fr!important}
+}
+
+/* ---- Floating WhatsApp button clears safe-area ---- */
+@media(max-width:600px){
+  .wa-float{bottom:calc(16px + env(safe-area-inset-bottom))!important}
+}
+
+/* ---- Smoother momentum scroll for horizontal carousels ---- */
+.topics-nav-wrap,.testimonials-track,[class*="-track"]{-webkit-overflow-scrolling:touch}
 </style>
+
 
 </body>
 </html>

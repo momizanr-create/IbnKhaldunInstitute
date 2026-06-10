@@ -711,10 +711,15 @@ app.put('/api/admin/settings/:key', authMiddleware, async (req, res) => {
 
 app.get('/api/public/config', async (_, res) => {
   try {
-    const keys = ['siteSettings','hero','navigation','footer','theme','welcomePopup','cta','contactContent','aboutPage','featuredCoursesConfig','whatsapp','contact','payment','social','notice','about','faqSection','whyJoin','sectionTitles','homeContent','popularSection','joinSection'];
-    const all = await Settings.find({ key: { $in: keys } });
+    // Return EVERY settings key so any field saved from the admin panel
+    // automatically reaches the public website (no whitelist gaps).
+    // A known-keys list guarantees these are always present (as {} fallback)
+    // even before they have ever been saved in the admin panel.
+    const knownKeys = ['siteSettings','hero','navigation','footer','theme','welcomePopup','cta','contactContent','aboutPage','featuredCoursesConfig','whatsapp','contact','payment','social','notice','about','faq','faqImage','faqSection','whyJoin','sectionTitles','homeContent','popularSection','joinSection','teachers','teacherImage','instructorImage'];
+    const all = await Settings.find();
     const out = {};
-    keys.forEach(k => { out[k] = all.find(s=>s.key===k)?.value || {}; });
+    knownKeys.forEach(k => { out[k] = {}; });
+    all.forEach(s => { out[s.key] = s.value; });
     out.siteName = SITE_NAME;
     // ── .env-driven defaults (safe, non-secret values only) ──
     out.env = {
@@ -728,6 +733,7 @@ app.get('/api/public/config', async (_, res) => {
     res.json(out);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
+
 
 // ── Admin-bootstrap config: returns safe .env values so admin.html can
 //    auto-discover the API base, site name, etc. without hardcoding URLs. ──
