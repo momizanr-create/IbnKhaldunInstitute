@@ -3111,19 +3111,35 @@ const DEFAULT_BLOGS = [
 // HOME data
 // ============================================================
 // localStorage থেকে home-section flags পড়ুন এবং courses এ merge করুন
+// admin.html থেকে flag save হলে স্বয়ংক্রিয়ভাবে home sections reload করুন
+window.addEventListener('storage', function(e){
+  if(e.key === 'iki_home_flags'){
+    // শুধু home page এ থাকলে reload করুন
+    const hash = window.location.hash || '#/home';
+    if(!hash || hash === '#/' || hash.startsWith('#/home') || hash === ''){
+      loadHomeCourses();
+    }
+  }
+});
+
 function _mergeHomeSectionFlags(courses){
   try{
-    const flags = JSON.parse(localStorage.getItem('iki_home_flags')||'{}');
-    if(!Object.keys(flags).length) return courses;
+    const raw = localStorage.getItem('iki_home_flags');
+    if(!raw) return courses;
+    const flags = JSON.parse(raw);
+    const keys = Object.keys(flags);
+    if(!keys.length) return courses;
     return courses.map(c=>{
-      const byId   = c._id   ? flags[c._id]   : null;
-      const bySlug = c.slug  ? flags[c.slug]  : null;
-      const f = byId || bySlug;
+      // _id, slug, title — যেকোনো একটায় match হলেই নেব
+      const f = (c._id   && flags[c._id])
+             || (c.slug  && flags[c.slug])
+             || (c.title && flags[c.title])
+             || null;
       if(!f) return c;
       return Object.assign({}, c, {
-        showPopular: f.showPopular,
-        showNew:     f.showNew,
-        showBundle:  f.showBundle
+        showPopular: !!f.showPopular,
+        showNew:     !!f.showNew,
+        showBundle:  !!f.showBundle
       });
     });
   }catch(e){ return courses; }
