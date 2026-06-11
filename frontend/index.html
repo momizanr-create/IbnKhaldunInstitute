@@ -3119,20 +3119,27 @@ async function loadHomeCourses(){
   } catch(e){}
   if (!all.length) all = DEFAULT_RECORDED_COURSES;
 
-  // জনপ্রিয় — enrolled বেশি বা featured
-  const popular = [...all].sort((a,b)=>(b.enrolledCount||0)-(a.enrolledCount||0)).slice(0,3);
+  // জনপ্রিয় — showPopular টিক দেওয়া কোর্স; না থাকলে enrolled বেশি
+  const popularTagged = all.filter(c=>c.showPopular);
+  const popular = popularTagged.length ? popularTagged : [...all].sort((a,b)=>(b.enrolledCount||0)-(a.enrolledCount||0)).slice(0,3);
   const popEl = $('#popular-courses');
-  if (popEl) popEl.innerHTML = popular.length ? popular.map(courseCard).join('') : all.slice(0,3).map(courseCard).join('');
+  if (popEl) popEl.innerHTML = popular.length ? popular.map(courseCard).join('') : '<p style="padding:24px;color:var(--text-soft);text-align:center">কোনো কোর্স নেই</p>';
 
-  // নতুন — সর্বশেষ যোগ হওয়া
-  const newer = [...all].sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)).slice(0,3);
+  // নতুন — showNew টিক দেওয়া কোর্স; না থাকলে সর্বশেষ যোগ হওয়া
+  const newTagged = all.filter(c=>c.showNew);
+  const newer = newTagged.length ? newTagged : [...all].sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)).slice(0,3);
   const newEl = $('#new-courses');
-  if (newEl) newEl.innerHTML = newer.length ? newer.map(courseCard).join('') : all.slice(0,3).map(courseCard).join('');
+  if (newEl) newEl.innerHTML = newer.length ? newer.map(courseCard).join('') : '<p style="padding:24px;color:var(--text-soft);text-align:center">কোনো কোর্স নেই</p>';
 
-  // বান্ডেল — type==='bundle' অথবা fallback হিসেবে ৩টি কোর্স
-  const bundles = all.filter(c=>c.type==='bundle').slice(0,3);
+  // বান্ডেল — showBundle টিক দেওয়া কোর্স; না থাকলে type==='bundle'
+  const bundleTagged = all.filter(c=>c.showBundle);
+  const bundleFallback = all.filter(c=>c.type==='bundle');
+  const bundles = bundleTagged.length ? bundleTagged : bundleFallback;
   const bundleEl = $('#bundle-courses-grid');
-  if (bundleEl) bundleEl.innerHTML = bundles.length ? bundles.map(courseCard).join('') : all.slice(0,3).map(courseCard).join('');
+  // বান্ডেল সেকশন লুকানো/দেখানো
+  const bundleSection = $('#bundle-courses-section');
+  if (bundleSection) bundleSection.style.display = bundles.length ? '' : 'none';
+  if (bundleEl) bundleEl.innerHTML = bundles.length ? bundles.map(courseCard).join('') : '';
 }
 
 function faqItemHtml(f, i){
