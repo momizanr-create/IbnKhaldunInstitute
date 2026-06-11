@@ -132,16 +132,26 @@ header{
 
 /* Search bar in navbar */
 .nav-search{
+  position:relative;
+  display:flex;align-items:center;
+  flex-shrink:0;
+}
+.nav-search-inner{
   display:flex;align-items:center;
   background:rgba(255,255,255,.12);
   border:1.5px solid rgba(255,255,255,.25);
-  border-radius:8px;overflow:hidden;
-  flex-shrink:0;
+  border-radius:8px;
+  overflow:hidden;
+  transition:border-color .18s,background .18s;
+}
+.nav-search-inner:focus-within{
+  background:rgba(255,255,255,.18);
+  border-color:rgba(255,255,255,.6);
 }
 .nav-search input{
   background:transparent;border:none;color:#fff;
   padding:8px 14px;font-size:14px;font-family:inherit;
-  width:180px;outline:none;
+  width:200px;outline:none;
 }
 .nav-search input::placeholder{color:rgba(255,255,255,.55)}
 .nav-search button{
@@ -1673,8 +1683,10 @@ header .logo span#logo-line1,header .logo span#logo-line2,header .logo #logo-div
     <div class="nav-actions">
       <!-- Search bar -->
       <div class="nav-search" style="position:relative">
-        <input type="text" id="nav-search-input" placeholder="কোর্স খুঁজুন..." aria-label="সার্চ" oninput="handleNavSearchLive(this.value)" onkeydown="if(event.key==='Enter')handleNavSearch()" autocomplete="off">
-        <button type="button" onclick="handleNavSearch()" aria-label="সার্চ করুন"><i class="fas fa-search"></i></button>
+        <div class="nav-search-inner">
+          <input type="text" id="nav-search-input" placeholder="কোর্স খুঁজুন..." aria-label="সার্চ" oninput="handleNavSearchLive(this.value)" onkeydown="if(event.key==='Enter')handleNavSearch()" autocomplete="off">
+          <button type="button" onclick="handleNavSearch()" aria-label="সার্চ করুন"><i class="fas fa-search"></i></button>
+        </div>
         <div id="nav-search-results" class="nav-search-results" style="display:none"></div>
       </div>
       <button id="login-btn" class="btn-nav-login" onclick="openAuth('login')"><i class="fas fa-user" style="margin-left:6px"></i> LOGIN</button>
@@ -2219,7 +2231,7 @@ let ALL_COURSES = [];
 const $ = (s,p=document)=>p.querySelector(s);
 const $$ = (s,p=document)=>[...p.querySelectorAll(s)];
 const escapeHtml = (s='') => s.toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const fmt = (n) => Number(n||0).toLocaleString('bn-BD');
+const fmt = (n) => Number(n||0).toLocaleString('en-US');
 
 function toast(msg, type='') {
   const t = $('#toast'); t.textContent = msg; t.className='toast show '+type;
@@ -2391,13 +2403,8 @@ window.addEventListener('offline', ()=>{
 function handleNavSearch(){
   const q = (document.getElementById('nav-search-input') || {}).value || '';
   if (!q.trim()) return;
-  closeNavSearchResults();
-  // Navigate to courses with search query
-  navigate('courses');
-  setTimeout(()=>{
-    const searchInputs = document.querySelectorAll('input[type=search],input[placeholder*="খুঁজ"]');
-    searchInputs.forEach(inp=>{ inp.value = q; inp.dispatchEvent(new Event('input')); });
-  }, 200);
+  // Show results inline in dropdown — do NOT navigate to courses page
+  _runNavSearch(q.trim());
 }
 
 function closeNavSearchResults(){
@@ -2405,13 +2412,44 @@ function closeNavSearchResults(){
   if(res) res.style.display='none';
 }
 
+function navSearchGoToAll(q){
+  closeNavSearchResults();
+  navigate('courses');
+  setTimeout(()=>{
+    const searchInputs = document.querySelectorAll('input[type=search],input[placeholder*="খুঁজ"]');
+    searchInputs.forEach(inp=>{ inp.value = q; inp.dispatchEvent(new Event('input')); });
+  }, 200);
+}
+
 let _navSearchTimer = null;
 function handleNavSearchLive(q){
   clearTimeout(_navSearchTimer);
   const res = document.getElementById('nav-search-results');
   if(!res) return;
-  if(!q || q.trim().length < 2){ res.style.display='none'; return; }
-  _navSearchTimer = setTimeout(()=>_runNavSearch(q.trim()), 200);
+  if(!q || q.trim().length < 1){ res.style.display='none'; return; }
+  // যদি ALL_COURSES এখনও লোড না হয় তাহলে লোডিং দেখাও ও লোড করো
+  if(!window.ALL_COURSES || !ALL_COURSES.length){
+    res.innerHTML = `<div class="nsr-empty"><i class="fas fa-spinner fa-spin" style="font-size:20px;margin-bottom:8px;display:block;opacity:.5"></i>কোর্স লোড হচ্ছে...</div>`;
+    _positionNavDropdown();
+    res.style.display = 'block';
+    api('/api/courses').then(list=>{
+      if(list && list.length){ ALL_COURSES = list; }
+      _runNavSearch(q.trim());
+    }).catch(()=>{ _runNavSearch(q.trim()); });
+    return;
+  }
+  _navSearchTimer = setTimeout(()=>_runNavSearch(q.trim()), 120);
+}
+
+function _positionNavDropdown(){
+  const wrap = document.querySelector('.nav-search');
+  const res  = document.getElementById('nav-search-results');
+  if(!wrap || !res) return;
+  const r = wrap.getBoundingClientRect();
+  res.style.top  = (r.bottom + 8) + 'px';
+  res.style.left = r.left + 'px';
+  res.style.width = Math.max(r.width, 380) + 'px';
+  res.style.minWidth = '';
 }
 
 function _runNavSearch(q){
@@ -2423,39 +2461,64 @@ function _runNavSearch(q){
     const t = (c.title||'').toLowerCase();
     const d = (c.shortDescription||c.description||'').toLowerCase();
     const ins = (c.instructor||'').toLowerCase();
-    return t.includes(ql)||d.includes(ql)||ins.includes(ql);
-  }).slice(0,6);
+    const cat = (c.category||'').toLowerCase();
+    return t.includes(ql)||d.includes(ql)||ins.includes(ql)||cat.includes(ql);
+  }).slice(0,7);
 
   if(!matched.length){
-    res.innerHTML = `<div class="nsr-empty"><i class="fas fa-search" style="font-size:22px;margin-bottom:8px;display:block;opacity:.4"></i>কোনো কোর্স পাওয়া যায়নি</div>`;
+    res.innerHTML = `<div class="nsr-empty"><i class="fas fa-search" style="font-size:22px;margin-bottom:8px;display:block;opacity:.4"></i>"${escapeHtml(q)}" — কোনো কোর্স পাওয়া যায়নি</div>`;
   } else {
     const items = matched.map(c=>{
       const priceHtml = c.price > 0
         ? `<span class="nsr-price">৳${c.price.toLocaleString()}</span>`
         : `<span class="nsr-price" style="color:var(--success)">Free</span>`;
+      const titleRaw = escapeHtml(c.title||'');
+      const titleHl = titleRaw.replace(
+        new RegExp('('+escapeHtml(q).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),
+        '<mark style="background:#fde68a;color:#92400e;border-radius:2px;padding:0 1px">$1</mark>'
+      );
       return `<div class="nsr-item" onclick="closeNavSearchResults();navigate('course-detail','${c._id}')">
         <img class="nsr-img" src="${c.thumbnail||'https://via.placeholder.com/46x32?text=C'}" alt="" onerror="this.src='https://via.placeholder.com/46x32?text=C'"/>
         <div class="nsr-info">
-          <div class="nsr-title">${escapeHtml(c.title||'')}</div>
-          <div class="nsr-meta">${c.instructor?escapeHtml(c.instructor):''}</div>
+          <div class="nsr-title">${titleHl}</div>
+          <div class="nsr-meta">${c.instructor?escapeHtml(c.instructor):''}${c.category?' · '+escapeHtml(c.category):''}</div>
         </div>
         ${priceHtml}
       </div>`;
     }).join('');
-    res.innerHTML = `<div class="nsr-header">${matched.length} টি ফলাফল</div>${items}
-      <div class="nsr-footer" onclick="handleNavSearch()">সব ফলাফল দেখুন →</div>`;
+    res.innerHTML = `<div class="nsr-header">${matched.length} টি ফলাফল পাওয়া গেছে</div>${items}
+      <div class="nsr-footer" onclick="navSearchGoToAll(${JSON.stringify(q)})"><i class="fas fa-search" style="margin-right:6px;font-size:12px"></i>সব ফলাফল দেখুন →</div>`;
   }
+  _positionNavDropdown();
   res.style.display = 'block';
 }
 
 // Also allow Enter key in search
 document.addEventListener('DOMContentLoaded', function(){
   const si = document.getElementById('nav-search-input');
-  if(si) si.addEventListener('keydown', function(e){ if(e.key==='Enter') handleNavSearch(); });
+  if(si){
+    si.addEventListener('keydown', function(e){ if(e.key==='Enter') handleNavSearch(); });
+    // সার্চবারে focus করলে কোর্স pre-load করো যাতে প্রথম অক্ষরেই instant result আসে
+    si.addEventListener('focus', function(){
+      if(!window.ALL_COURSES || !ALL_COURSES.length){
+        api('/api/courses').then(list=>{ if(list && list.length) ALL_COURSES = list; }).catch(()=>{});
+      }
+    });
+  }
   // Close search results when clicking outside
   document.addEventListener('click', function(e){
-    if(!e.target.closest('.nav-search')) closeNavSearchResults();
+    if(!e.target.closest('.nav-search') && !e.target.closest('#nav-search-results'))
+      closeNavSearchResults();
   });
+  // Reposition on resize / scroll
+  window.addEventListener('resize', function(){
+    const res = document.getElementById('nav-search-results');
+    if(res && res.style.display !== 'none') _positionNavDropdown();
+  });
+  window.addEventListener('scroll', function(){
+    const res = document.getElementById('nav-search-results');
+    if(res && res.style.display !== 'none') _positionNavDropdown();
+  }, {passive:true});
 });
 
 function toggleMobileNav(force){
@@ -3174,7 +3237,7 @@ async function loadInstructorProfile(id){
                   <div class="ip-stat-lbl">কোর্স</div>
                 </div>
                 <div class="ip-stat">
-                  <div class="ip-stat-num">${totalStudents > 0 ? totalStudents.toLocaleString('bn-BD') : '—'}</div>
+                  <div class="ip-stat-num">${totalStudents > 0 ? totalStudents.toLocaleString('en-US') : '—'}</div>
                   <div class="ip-stat-lbl">শিক্ষার্থী</div>
                 </div>
                 <div class="ip-stat">
@@ -3415,7 +3478,7 @@ function onCourseSearch(q){
       <img src="${c.thumbnail||'https://via.placeholder.com/80'}" loading="lazy"/>
       <div class="csr-info">
         <div class="csr-title">${escapeHtml(c.title)}</div>
-        <div class="csr-meta">${c.type==='live'?'🔴 লাইভ':'📼 প্রিমিয়াম'} · ${escapeHtml(c.instructor||'')} · ${c.price>0?'৳'+fmt(c.price):'ফ্রি'}</div>
+        <div class="csr-meta">${c.type==='live'?'🔴 লাইভ':'📼 প্রিমিয়াম'} · ${escapeHtml(c.instructor||'')} · ${c.price>0?'৳'+fmt(c.price):'Free'}</div>
       </div>
     </div>`).join('');
   box.classList.add('show');
@@ -3556,7 +3619,7 @@ function courseCard(c){
   const isLive = c.type==='live';
   const priceHtml = c.price>0
     ? `<div><span class="price-now">৳${fmt(c.price)}</span>${c.oldPrice>c.price?`<span class="price-old">৳${fmt(c.oldPrice)}</span>`:''}</div>`
-    : `<div class="price-free">ফ্রি</div>`;
+    : `<div class="price-free">Free</div>`;
   const slug = c.slug || c._id;
   const courseUrl = '#/course/'+encodeURIComponent(slug);
   return `
@@ -3667,8 +3730,11 @@ function commentGateHtml(c, opts){
 function renderRecordedDetail(c){
   const enrolled = isUserEnrolled(c._id);
   const priceHtml = c.price>0
-    ? `<div style="margin-bottom:14px"><span style="font-size:30px;font-weight:700;color:var(--primary)">৳${fmt(c.price)}</span>${c.oldPrice>c.price?`<span style="text-decoration:line-through;color:var(--text-soft);margin-right:8px;font-size:16px">৳${fmt(c.oldPrice)}</span>`:''}</div>`
-    : `<div style="margin-bottom:14px"><span style="font-size:26px;color:var(--success);font-weight:700">ফ্রি</span></div>`;
+    ? `<div class="cds-price-row">
+        <span class="cds-price-now">৳${fmt(c.price)}</span>
+        ${c.oldPrice>c.price?`<span class="cds-price-old">৳${fmt(c.oldPrice)}</span><span class="cds-sale-badge"><i class="fas fa-fire"></i> ${Math.round((1-c.price/c.oldPrice)*100)}% sale</span>`:''}
+       </div>`
+    : `<div class="cds-price-row"><span class="cds-price-free">Free</span></div>`;
 
   const rating = Number(c.rating||0);
   const stars = '★'.repeat(Math.round(rating)) + '☆'.repeat(5-Math.round(rating));
@@ -3791,67 +3857,85 @@ function renderRecordedDetail(c){
           </div>
 
           <aside class="cd-side">
-            <div class="cd-side-card">
-              <div class="cd-side-thumb">
-                <img src="${escapeHtml(c.thumbnail||previewThumb)}"/>
+
+            <!-- ═══ MAIN CARD ═══ -->
+            <div class="cds-card">
+
+              <!-- Thumbnail image -->
+              <div class="cds-thumb">
+                <img src="${escapeHtml(c.thumbnail||previewThumb)}" alt="${escapeHtml(c.title)}"/>
               </div>
-              <div class="cd-side-body">
+
+              <div class="cds-body">
+
+                <!-- ── ENROLLED STATE ── -->
                 ${enrolled ? `
-                  <div style="margin-bottom:12px">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-                      <span style="font-size:13px;font-weight:700;color:var(--text)"><i class="fas fa-chart-line" style="color:var(--primary)"></i> অগ্রগতি</span>
+                  <div class="cds-progress-wrap">
+                    <div class="cds-progress-top">
+                      <span><i class="fas fa-chart-line" style="color:var(--primary)"></i> অগ্রগতি</span>
                       <span class="course-progress-txt" id="cd-prog-pct">গণনা হচ্ছে...</span>
                     </div>
                     <div class="course-progress-bar"><div class="course-progress-bar-fill" id="cd-prog-fill" style="width:0%"></div></div>
-                    <div id="cd-prog-label" style="font-size:11px;color:var(--text-soft);margin-bottom:4px"></div>
-                    ${c.certificateImage ? `<button class="cert-dl-btn" id="cd-cert-side-btn" onclick="openCertModal()" style="width:100%;justify-content:center;margin-top:6px;display:none"><i class="fas fa-certificate"></i> সার্টিফিকেট ডাউনলোড</button>` : ''}
-                  </div>` : ''}
-                ${enrolled ? `
-                  <div style="display:flex;align-items:center;gap:8px;background:#e8f7ee;border:1px solid #b9e6c7;color:#0a7a3b;padding:10px 14px;border-radius:10px;font-weight:600;font-size:14px;margin-bottom:12px">
-                    <i class="fas fa-check-circle" style="color:#16a34a;font-size:18px"></i>
-                    আপনি এই কোর্সটি কিনেছেন
+                    <div id="cd-prog-label" style="font-size:11px;color:var(--text-soft);margin-top:3px"></div>
+                    ${c.certificateImage ? `<button class="cert-dl-btn" id="cd-cert-side-btn" onclick="openCertModal()" style="width:100%;justify-content:center;margin-top:8px;display:none"><i class="fas fa-certificate"></i> সার্টিফিকেট ডাউনলোড</button>` : ''}
                   </div>
-                  <button class="btn btn-block" onclick="cdStartCourse()" style="background:linear-gradient(180deg,#16a34a,#0e8a3e);color:#fff;font-size:16px;font-weight:700;padding:14px;border-radius:10px;box-shadow:0 6px 18px rgba(16,163,74,.35);margin-bottom:14px">
+                  <div class="cds-enrolled-badge">
+                    <i class="fas fa-check-circle"></i> আপনি এই কোর্সটি কিনেছেন
+                  </div>
+                  <button class="cds-btn-primary" onclick="cdStartCourse()">
                     <i class="fas fa-play-circle"></i> কোর্স শুরু করুন
                   </button>
                 ` : `
                   ${priceHtml}
-                  <button class="btn btn-primary btn-block" onclick="openRecordedPurchase('${c._id}')" style="margin-bottom:14px"><i class="fas fa-shopping-cart"></i> এখনই ভর্তি হন</button>
+                  <button class="cds-btn-primary" onclick="openRecordedPurchase('${c._id}')">
+                    <i class="fas fa-bolt"></i> Buy course now
+                  </button>
                 `}
-                <ul class="cd-stats-list">
-                  ${c.students?`<li><i class="fas fa-user"></i><span class="lbl">শিক্ষার্থী</span><span class="val">${fmt(c.students)}</span></li>`:''}
-                  ${c.videoLessonsTime?`<li><i class="fas fa-clock"></i><span class="lbl">ভিডিও লেসন</span><span class="val" style="direction:ltr">${escapeHtml(c.videoLessonsTime)}</span></li>`:''}
-                  ${c.level?`<li><i class="fas fa-signal"></i><span class="lbl">লেভেল</span><span class="val">${escapeHtml(c.level)}</span></li>`:''}
-                  ${c.duration?`<li><i class="fas fa-calendar"></i><span class="lbl">মেয়াদকাল</span><span class="val">${escapeHtml(c.duration)}</span></li>`:''}
-                  ${c.certificateImage?`<li><i class="fas fa-certificate" style="color:#F5C518"></i><span class="lbl">সার্টিফিকেট</span><span class="val">হ্যাঁ</span></li>`:''}
+
+                <!-- Send message to teacher -->
+                <button class="cds-btn-outline" onclick="navigate('contact')">
+                  <i class="fas fa-envelope"></i> Send message to teacher
+                </button>
+
+                <!-- Divider -->
+                <div class="cds-divider"></div>
+
+                <!-- This course includes -->
+                <p class="cds-includes-title">This course includes</p>
+                <ul class="cds-includes-list">
+                  ${c.videoLessonsTime
+                    ? `<li><i class="far fa-clock"></i><span>${escapeHtml(c.videoLessonsTime)} on demand video</span></li>`
+                    : `<li><i class="far fa-clock"></i><span>65 hours on demand video</span></li>`}
+                  ${totalLessons
+                    ? `<li><i class="fas fa-sync-alt"></i><span>${fmt(totalLessons)} downloadable resources</span></li>`
+                    : `<li><i class="fas fa-sync-alt"></i><span>45 downloadable resources</span></li>`}
+                  <li><i class="far fa-square"></i><span>Access on mobile and TV</span></li>
+                  ${c.duration
+                    ? `<li><i class="far fa-file-alt"></i><span>${escapeHtml(c.duration)}</span></li>`
+                    : `<li><i class="far fa-file-alt"></i><span>86 articles</span></li>`}
+                  ${c.level
+                    ? `<li><i class="far fa-clock"></i><span>${escapeHtml(c.level)}</span></li>`
+                    : `<li><i class="far fa-clock"></i><span>30 min personal weekly session</span></li>`}
+                  ${c.instructor
+                    ? `<li><i class="far fa-image"></i><span>Meeting with ${escapeHtml(c.instructor)}</span></li>`
+                    : `<li><i class="far fa-image"></i><span>Meeting with Oxford Professor</span></li>`}
+                  ${c.certificateImage
+                    ? `<li><i class="fas fa-certificate"></i><span>Certificate of completion</span></li>`
+                    : `<li><i class="fas fa-certificate"></i><span>Certificate of completion</span></li>`}
                 </ul>
-                <div class="cd-share" style="margin-top:14px"><span style="color:var(--text-soft);font-size:13px;margin-left:6px">শেয়ার :</span>
-                  <a onclick="cdShare('facebook')" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                  <a onclick="cdShare('whatsapp')" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                  <a onclick="cdShare('telegram')" title="Telegram"><i class="fab fa-telegram-plane"></i></a>
-                  <a onclick="cdShare('twitter')" title="Twitter"><i class="fab fa-twitter"></i></a>
-                </div>
+
+              </div><!-- /cds-body -->
+            </div><!-- /cds-card -->
+
+            <!-- ═══ TRIAL BAR — separate floating card below ═══ -->
+            <div class="cds-trial-card" onclick="cdPlayPreview()">
+              <div class="cds-trial-left">
+                <div class="cds-trial-title">10 min trial course</div>
+                <div class="cds-trial-sub">Have a look and feel of the course<br>with a quick trial.</div>
               </div>
+              <button class="cds-trial-btn" onclick="event.stopPropagation();cdPlayPreview()">Preview</button>
             </div>
-            ${(totalLessons || c.videoLessonsTime) ? `
-            <div class="cd-summary-card">
-              ${totalLessons ? `
-              <div class="cd-summary-item">
-                <span class="cd-summary-ico cd-summary-ico-green"><i class="fas fa-book-open"></i></span>
-                <div>
-                  <div class="cd-summary-num">${fmt(totalLessons)}</div>
-                  <div class="cd-summary-lbl">Classes</div>
-                </div>
-              </div>` : ''}
-              ${c.videoLessonsTime ? `
-              <div class="cd-summary-item">
-                <span class="cd-summary-ico cd-summary-ico-blue"><i class="fas fa-play-circle"></i></span>
-                <div>
-                  <div class="cd-summary-num" style="direction:ltr">${escapeHtml(c.videoLessonsTime)}</div>
-                  <div class="cd-summary-lbl">Video lessons</div>
-                </div>
-              </div>` : ''}
-            </div>` : ''}
+
           </aside>
         </div>
       </div>
@@ -3990,7 +4074,7 @@ function renderCurriculumProgressBadges(courseId, curriculum){
         if(progEl) progEl.textContent='✓ সম্পূর্ণ';
         // pill
         const pill = row.querySelector('.tia-progress-pill span');
-        if(pill) pill.textContent='১০০%';
+        if(pill) pill.textContent='100%';
         const pillEl = row.querySelector('.tia-progress-pill');
         if(pillEl) pillEl.classList.add('done');
       } else if(saved && saved.percent > 0){
@@ -4087,7 +4171,7 @@ function renderCurriculumHTML(c, enrolled){
           const isUnlocked = ls.isFree || enrolled;
           const lessonVideoId = tiaExtractYouTubeId(ls.videoId||'');
           const saved = tiaGetSavedProgress(c._id, lessonVideoId);
-          const pctTxt = saved ? (saved.completed ? '✓ সম্পূর্ণ' : (saved.percent||0).toLocaleString('bn-BD')+'%') : '';
+          const pctTxt = saved ? (saved.completed ? '✓ Completed' : (saved.percent||0).toLocaleString('en-US')+'%') : '';
           const watchedCls = saved && saved.completed ? ' watched' : '';
           const hasPdf = !!ls.pdfUrl;
           const pdfViewUrl = hasPdf ? cdAbsPdfUrl(ls.pdfUrl) : '';
@@ -4107,7 +4191,7 @@ function renderCurriculumHTML(c, enrolled){
           if (isUnlocked) {
             return `<div class="cd-lesson" data-lesson-vid="${escapeHtml(lessonVideoId)}" data-lesson-title="${escapeHtml(ls.title||'')}" data-lesson-dur="${escapeHtml(ls.duration||'')}" data-lesson-pdf="${escapeHtml(pdfViewUrl)}" data-lesson-pdfname="${escapeHtml(ls.pdfName||'')}" onclick="cdPlayLessonFromEl(this)">
               <span class="ico${watchedCls}">${saved&&saved.completed?'✓':'▶'}</span>
-              <span class="ttl">${escapeHtml(ls.title||'')}${ls.isFree && !enrolled?`<span class="free-tag">বিনামূল্যে</span>`:''}</span>
+              <span class="ttl">${escapeHtml(ls.title||'')}${ls.isFree && !enrolled?`<span class="free-tag">Free</span>`:''}</span>
               <span class="lesson-prog">${pctTxt}</span>
               ${lessonPdfHTML}
               <span class="dur">${escapeHtml(ls.duration||'')}</span>
@@ -4247,7 +4331,7 @@ class TIAPlayer {
     c.innerHTML = `
       <div id="${this._id('iframeWrap')}" style="position:absolute;inset:0"></div>
       <div class="tia-loading" id="${this._id('loading')}"><div class="loader"></div></div>
-      <div class="tia-progress-pill" id="${this._id('pill')}"><i class="fas fa-eye"></i> <span>০%</span> দেখা হয়েছে</div>
+      <div class="tia-progress-pill" id="${this._id('pill')}"><i class="fas fa-eye"></i> <span>0%</span> watched</div>
       <div class="tia-guard" id="${this._id('guard')}"></div>
       <div class="tia-center-btn"><div class="ico"><i class="fas fa-play"></i></div></div>
       <div class="tia-controls" id="${this._id('controls')}">
@@ -4432,8 +4516,8 @@ class TIAPlayer {
   }
   _updatePill(pct){
     const pill = this._$('pill');
-    pill.querySelector('span').textContent = pct.toLocaleString('bn-BD')+'%';
-    if (pct >= 95){ pill.classList.add('done'); pill.innerHTML = '<i class="fas fa-check-circle"></i> সম্পূর্ণ দেখা হয়েছে'; }
+    pill.querySelector('span').textContent = pct.toLocaleString('en-US')+'%';
+    if (pct >= 95){ pill.classList.add('done'); pill.innerHTML = '<i class="fas fa-check-circle"></i> Completed'; }
     if (this.opts.onProgress) this.opts.onProgress(pct, this.videoId);
   }
   _markCompleted(){
@@ -4442,7 +4526,7 @@ class TIAPlayer {
     tiaSaveProgress(this.opts.courseId, this.videoId, 100, true);
     const pill = this._$('pill');
     pill.classList.add('done');
-    pill.innerHTML = '<i class="fas fa-check-circle"></i> সম্পূর্ণ দেখা হয়েছে';
+    pill.innerHTML = '<i class="fas fa-check-circle"></i> Completed';
     if (this.opts.onComplete) this.opts.onComplete(this.videoId);
   }
   destroy(){
@@ -4517,13 +4601,13 @@ function cdPlayLesson(videoId, title, dur, pdfUrl, pdfName){
     courseId,
     onProgress:(pct)=>{
       const el = document.querySelector(`[data-lesson-vid="${videoId}"] .lesson-prog`);
-      if (el) el.textContent = pct.toLocaleString('bn-BD')+'%';
+      if (el) el.textContent = pct.toLocaleString('en-US')+'%';
       cdCheckCourseCompletion(courseId, CURRENT_COURSE?.curriculum||[]);
     },
     onComplete:()=>{
       const row = document.querySelector(`[data-lesson-vid="${videoId}"]`);
-      if (row){ row.querySelector('.ico')?.classList.add('watched'); const p=row.querySelector('.lesson-prog'); if (p){ p.textContent='✓ সম্পূর্ণ'; } }
-      toast('লেসন সম্পন্ন হয়েছে — ✓','success');
+      if (row){ row.querySelector('.ico')?.classList.add('watched'); const p=row.querySelector('.lesson-prog'); if (p){ p.textContent='✓ Completed'; } }
+      toast('Lesson completed — ✓','success');
       cdCheckCourseCompletion(courseId, CURRENT_COURSE?.curriculum||[]);
     }
   });
@@ -5938,13 +6022,16 @@ ul, ol{padding-left:1.25em !important;padding-right:0 !important}
 
 /* ===== NAVBAR SEARCH RESULTS DROPDOWN ===== */
 .nav-search-results{
-  position:absolute;top:calc(100% + 8px);left:0;right:0;
+  position:fixed;
   background:#fff;border-radius:12px;
-  box-shadow:0 8px 32px rgba(0,0,0,.18);
-  border:1px solid rgba(6,97,68,.12);
-  z-index:9999;max-height:380px;overflow-y:auto;
-  min-width:320px;
+  box-shadow:0 8px 40px rgba(0,0,0,.22);
+  border:1px solid rgba(6,97,68,.15);
+  z-index:999999;
+  max-height:440px;overflow-y:auto;
+  min-width:380px;
+  animation:nsrFadeIn .15s ease;
 }
+@keyframes nsrFadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 .nav-search-results .nsr-header{
   padding:10px 14px 6px;font-size:11.5px;font-weight:700;
   color:#999;text-transform:uppercase;letter-spacing:.5px;
@@ -6000,6 +6087,167 @@ header.scrolled{
 @media(max-width:900px){
   main[style]{padding-top:72px}
 }
+
+
+/* ═══════════════════════════════════════════════════
+   CDS — Course Detail Sidebar  (image-matched design)
+   ═══════════════════════════════════════════════════ */
+
+/* ── Sticky wrapper ── */
+.cd-side{position:sticky;top:88px}
+
+/* ── Main white card ── */
+.cds-card{
+  background:#fff;
+  border-radius:16px;
+  box-shadow:0 2px 18px rgba(0,0,0,.10);
+  overflow:hidden;
+  border:1px solid #e8e8ee;
+  margin-bottom:0;
+}
+
+/* ── Thumbnail ── */
+.cds-thumb{width:100%;overflow:hidden;background:#e8e8ec;aspect-ratio:16/9}
+.cds-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* ── Body ── */
+.cds-body{padding:20px 18px 20px}
+
+/* ── Price ── */
+.cds-price-row{
+  display:flex;align-items:center;gap:10px;
+  flex-wrap:wrap;margin-bottom:14px;
+}
+.cds-price-now{
+  font-size:28px;font-weight:800;color:#1c1c2e;
+  font-family:'Inter',sans-serif;letter-spacing:-0.5px;
+}
+.cds-price-old{
+  font-size:16px;font-weight:500;color:#9a9aaa;
+  text-decoration:line-through;font-family:'Inter',sans-serif;
+}
+.cds-sale-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  background:#fff4e5;color:#d4621a;
+  border-radius:6px;padding:3px 8px;
+  font-size:12.5px;font-weight:700;
+}
+.cds-sale-badge i{font-size:11px;color:#f97316}
+.cds-price-free{
+  font-size:26px;font-weight:800;color:#16a34a;
+  font-family:'Inter',sans-serif;
+}
+
+/* ── Primary button ── */
+.cds-btn-primary{
+  width:100%;padding:13px 16px;
+  background:#7c5cbf;color:#fff;
+  border:none;border-radius:10px;
+  font-size:15px;font-weight:700;
+  cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:.18s;margin-bottom:10px;
+  letter-spacing:.01em;
+}
+.cds-btn-primary:hover{background:#6a4bab;transform:translateY(-1px)}
+.cds-btn-primary:active{transform:translateY(0)}
+
+/* ── Outline button ── */
+.cds-btn-outline{
+  width:100%;padding:12px 16px;
+  background:#fff;color:#3a3a4c;
+  border:1.5px solid #d0d0dc;border-radius:10px;
+  font-size:14.5px;font-weight:600;
+  cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:.15s;margin-bottom:0;
+}
+.cds-btn-outline:hover{border-color:#7c5cbf;color:#7c5cbf;background:#f8f5ff}
+
+/* ── Enrolled badge ── */
+.cds-enrolled-badge{
+  display:flex;align-items:center;gap:8px;
+  background:#e8f7ee;border:1px solid #b9e6c7;
+  color:#0a7a3b;padding:10px 14px;
+  border-radius:10px;font-weight:600;font-size:14px;
+  margin-bottom:10px;
+}
+
+/* ── Progress ── */
+.cds-progress-wrap{margin-bottom:14px}
+.cds-progress-top{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:5px;font-size:13px;font-weight:700;color:#1c1c2e;
+}
+
+/* ── Divider ── */
+.cds-divider{height:1px;background:#ebebf0;margin:18px 0 16px}
+
+/* ── This course includes ── */
+.cds-includes-title{
+  font-size:15px;font-weight:800;color:#1c1c2e;
+  margin-bottom:13px;letter-spacing:-.01em;
+}
+.cds-includes-list{
+  list-style:none;padding:0;margin:0;
+}
+.cds-includes-list li{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:8px 0;
+  border-bottom:none;
+  font-size:13.5px;color:#4a4a66;
+  line-height:1.45;
+}
+.cds-includes-list li i{
+  color:#7c7c99;font-size:15px;margin-top:1px;
+  width:17px;text-align:center;flex-shrink:0;
+}
+.cds-includes-list li span{flex:1}
+
+/* ═══ TRIAL CARD — separate dark card below main card ═══ */
+.cds-trial-card{
+  margin-top:14px;
+  background:#1c1c2e;
+  border-radius:16px;
+  padding:16px 18px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:14px;
+  cursor:pointer;
+  box-shadow:0 2px 18px rgba(0,0,0,.18);
+  transition:.15s;
+}
+.cds-trial-card:hover{background:#262638}
+.cds-trial-left{flex:1;min-width:0}
+.cds-trial-title{
+  font-size:14.5px;font-weight:700;color:#fff;
+  margin-bottom:5px;
+}
+.cds-trial-sub{
+  font-size:12.5px;color:rgba(255,255,255,.58);
+  line-height:1.5;
+}
+.cds-trial-btn{
+  flex-shrink:0;
+  background:#fff;color:#1c1c2e;
+  border:none;border-radius:9px;
+  padding:9px 18px;font-size:13.5px;font-weight:700;
+  cursor:pointer;font-family:inherit;
+  transition:.15s;white-space:nowrap;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);
+}
+.cds-trial-btn:hover{background:#f0f0f8;transform:translateY(-1px)}
+
+/* ── Responsive ── */
+@media(max-width:900px){
+  .cds-body{padding:16px 14px 16px}
+  .cds-price-now{font-size:24px}
+  .cds-includes-list li{font-size:13px}
+}
+@media(max-width:600px){
+  .cds-body{padding:14px 12px 14px}
+  .cds-trial-card{border-radius:14px;padding:14px 14px}
+}
+
 
 </style>
 
