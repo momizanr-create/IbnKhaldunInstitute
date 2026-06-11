@@ -1799,20 +1799,6 @@ function statusBadge(s){
   return map[s]||`<span class="badge">${esc(s)}</span>`;
 }
 
-// ============================================================
-// ===== HOME SECTION FLAGS (localStorage bridge) =====
-function _saveHomeSectionFlags(courseId, courseKey, showPopular, showNew, showBundle){
-  try{
-    const stored = JSON.parse(localStorage.getItem('iki_home_flags')||'{}');
-    const flagData = {showPopular:!!showPopular, showNew:!!showNew, showBundle:!!showBundle, updatedAt:Date.now()};
-    // id ও slug উভয় key তে সেভ করুন (index.html উভয় দিয়ে মিলাবে)
-    if(courseId) stored[courseId] = flagData;
-    if(courseKey && courseKey !== courseId) stored[courseKey] = flagData;
-    if(!courseId && !courseKey) return;
-    localStorage.setItem('iki_home_flags', JSON.stringify(stored));
-  }catch(e){}
-}
-
 // COURSES
 // ============================================================
 async function loadCourses(){
@@ -1871,17 +1857,7 @@ function openCourseModal(type='recorded', editId=null){
   CM_TYPE=type; CM_EDIT_ID=editId;
   const isLive=type==='live';
   const course=editId?ALL_COURSES_DATA.find(c=>c._id===editId):null;
-  // localStorage থেকে home-section flags merge করুন
-  let v=course ? Object.assign({}, course) : {};
-  try{
-    const flags=JSON.parse(localStorage.getItem('iki_home_flags')||'{}');
-    const flagKey = editId || v.slug || '';
-    if(flagKey && flags[flagKey]){
-      v.showPopular = flags[flagKey].showPopular;
-      v.showNew     = flags[flagKey].showNew;
-      v.showBundle  = flags[flagKey].showBundle;
-    }
-  }catch(e){}
+  const v=course||{};
   CM_CURRICULUM=Array.isArray(v.curriculum)?JSON.parse(JSON.stringify(v.curriculum)):[];
   CM_QNA=Array.isArray(v.qna)?JSON.parse(JSON.stringify(v.qna)):[];
   CM_FEATURES=Array.isArray(v.features)?[...v.features]:[];
@@ -2186,15 +2162,9 @@ async function saveCourse(e){
   Object.keys(body).forEach(k=>{if(body[k]===undefined||body[k]==='')delete body[k];});
   const btn=e.target.querySelector('[type=submit]');btn.disabled=true;btn.innerHTML='<span class="loader" style="width:14px;height:14px;border-width:2px;border-color:rgba(255,255,255,.3);border-top-color:#fff"></span> সংরক্ষণ...';
   try{
-    let savedCourse;
-    if(CM_EDIT_ID) savedCourse = await adminApi('/api/admin/courses/'+CM_EDIT_ID,{method:'PUT',body});
-    else savedCourse = await adminApi('/api/admin/courses',{method:'POST',body});
-    // API response থেকে real _id ও slug নিন
-    const savedId   = (savedCourse && savedCourse._id)   || CM_EDIT_ID || null;
-    const savedSlug = (savedCourse && savedCourse.slug)  || body.slug  || '';
+    if(CM_EDIT_ID) await adminApi('/api/admin/courses/'+CM_EDIT_ID,{method:'PUT',body});
+    else await adminApi('/api/admin/courses',{method:'POST',body});
     closeModal('course-modal');toast(CM_EDIT_ID?'কোর্স আপডেট হয়েছে':'কোর্স যোগ হয়েছে','success');
-    // localStorage এ home-section flags সেভ করুন (id ও slug উভয় দিয়ে)
-    _saveHomeSectionFlags(savedId, savedSlug, body.showPopular, body.showNew, body.showBundle);
     loadCourses();
   }catch(err){toast(err.message,'error');}
   finally{btn.disabled=false;btn.innerHTML='<i class="fas fa-save"></i> সংরক্ষণ করুন';}

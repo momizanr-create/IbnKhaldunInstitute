@@ -161,6 +161,9 @@ const courseSchema = new mongoose.Schema({
   qna:             [{ question: String, answer: String }],   // কোর্স সম্পর্কিত প্রশ্নোত্তর
   isFeatured:   { type: Boolean, default: false },
   isActive:     { type: Boolean, default: true },
+  showPopular:  { type: Boolean, default: false },
+  showNew:      { type: Boolean, default: false },
+  showBundle:   { type: Boolean, default: false },
   // ── SEO fields (for "Auto-SEO" button in admin)
   seoTitle:       String,
   seoDescription: String,
@@ -514,7 +517,7 @@ function normalizeCourseData(body) {
     if (data[k] !== undefined && data[k] !== '') data[k] = Number(data[k]);
   });
   // boolean coercions
-  ['isFeatured','isActive'].forEach(k => {
+  ['isFeatured','isActive','showPopular','showNew','showBundle'].forEach(k => {
     if (data[k] !== undefined) data[k] = (data[k] === true || data[k] === 'true');
   });
   // FIX: ObjectId ফিল্ড খালি string হলে MongoDB-তে পাঠাবো না

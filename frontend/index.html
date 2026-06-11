@@ -3110,41 +3110,6 @@ const DEFAULT_BLOGS = [
 // ============================================================
 // HOME data
 // ============================================================
-// localStorage থেকে home-section flags পড়ুন এবং courses এ merge করুন
-// admin.html থেকে flag save হলে স্বয়ংক্রিয়ভাবে home sections reload করুন
-window.addEventListener('storage', function(e){
-  if(e.key === 'iki_home_flags'){
-    // শুধু home page এ থাকলে reload করুন
-    const hash = window.location.hash || '#/home';
-    if(!hash || hash === '#/' || hash.startsWith('#/home') || hash === ''){
-      loadHomeCourses();
-    }
-  }
-});
-
-function _mergeHomeSectionFlags(courses){
-  try{
-    const raw = localStorage.getItem('iki_home_flags');
-    if(!raw) return courses;
-    const flags = JSON.parse(raw);
-    const keys = Object.keys(flags);
-    if(!keys.length) return courses;
-    return courses.map(c=>{
-      // _id, slug, title — যেকোনো একটায় match হলেই নেব
-      const f = (c._id   && flags[c._id])
-             || (c.slug  && flags[c.slug])
-             || (c.title && flags[c.title])
-             || null;
-      if(!f) return c;
-      return Object.assign({}, c, {
-        showPopular: !!f.showPopular,
-        showNew:     !!f.showNew,
-        showBundle:  !!f.showBundle
-      });
-    });
-  }catch(e){ return courses; }
-}
-
 async function loadHomeCourses(){
   let all = [];
   try{
@@ -3152,34 +3117,29 @@ async function loadHomeCourses(){
     ALL_COURSES = (list || []).filter(c=>c.type!=='live');
     all = ALL_COURSES;
   } catch(e){}
-  if (!all.length) all = DEFAULT_RECORDED_COURSES;
 
-  // localStorage flags merge করুন (backend না থাকলেও কাজ করবে)
-  all = _mergeHomeSectionFlags(all);
-
-  // জনপ্রিয় — showPopular টিক দেওয়া কোর্স; না থাকলে enrolled বেশি
-  const popularTagged = all.filter(c=>c.showPopular);
-  const popular = popularTagged.length ? popularTagged : [...all].sort((a,b)=>(b.enrolledCount||0)-(a.enrolledCount||0)).slice(0,3);
+  // ── জনপ্রিয় ─────────────────────────────────────────────
+  const popular = all.filter(c=>c.showPopular);
   const popEl = $('#popular-courses');
-  if (popEl) popEl.innerHTML = popular.length ? popular.map(courseCard).join('') : '<p style="padding:24px;color:var(--text-soft);text-align:center">কোনো কোর্স নেই</p>';
+  if(popEl) popEl.innerHTML = popular.length
+    ? popular.map(courseCard).join('')
+    : '<p class="home-empty-msg">এখনো কোনো কোর্স যোগ করা হয়নি।</p>';
 
-  // নতুন — showNew টিক দেওয়া কোর্স; না থাকলে সর্বশেষ যোগ হওয়া
-  const newTagged = all.filter(c=>c.showNew);
-  const newer = newTagged.length ? newTagged : [...all].sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)).slice(0,3);
+  // ── নতুন ─────────────────────────────────────────────────
+  const newer = all.filter(c=>c.showNew);
   const newEl = $('#new-courses');
-  if (newEl) newEl.innerHTML = newer.length ? newer.map(courseCard).join('') : '<p style="padding:24px;color:var(--text-soft);text-align:center">কোনো কোর্স নেই</p>';
+  if(newEl) newEl.innerHTML = newer.length
+    ? newer.map(courseCard).join('')
+    : '<p class="home-empty-msg">এখনো কোনো কোর্স যোগ করা হয়নি।</p>';
 
-  // বান্ডেল — showBundle টিক দেওয়া কোর্স; না থাকলে সব কোর্স থেকে প্রথম ৩টি fallback
-  const bundleTagged = all.filter(c=>c.showBundle);
-  const bundleFallback = all.filter(c=>c.type==='bundle');
-  const bundles = bundleTagged.length ? bundleTagged : (bundleFallback.length ? bundleFallback : []);
+  // ── বান্ডেল ───────────────────────────────────────────────
+  const bundles = all.filter(c=>c.showBundle);
   const bundleEl = $('#bundle-courses-grid');
   const bundleSection = $('#bundle-courses-section');
-  // বান্ডেল সেকশন — কোর্স না থাকলেও সেকশন দেখাবে (শুধু খালি গ্রিড)
-  if (bundleSection) bundleSection.style.display = '';
-  if (bundleEl) bundleEl.innerHTML = bundles.length
+  if(bundleSection) bundleSection.style.display = '';
+  if(bundleEl) bundleEl.innerHTML = bundles.length
     ? bundles.map(courseCard).join('')
-    : '<p style="padding:32px;color:var(--text-soft);text-align:center;grid-column:1/-1">এখনো কোনো বান্ডেল কোর্স যোগ করা হয়নি।</p>';
+    : '<p class="home-empty-msg" style="grid-column:1/-1">এখনো কোনো বান্ডেল কোর্স যোগ করা হয়নি।</p>';
 }
 
 function faqItemHtml(f, i){
@@ -5874,6 +5834,10 @@ footer, footer *, .footer-bottom, .footer-nav, .footer-social, .footer-contact{t
 ul, ol{padding-left:1.25em !important;padding-right:0 !important}
 
 /* ====== HOME COURSES TAB (জনপ্রিয় + নতুন একসাথে) ====== */
+.home-empty-msg{
+  padding:40px 20px;color:var(--text-soft);font-size:15px;
+  text-align:center;width:100%;
+}
 .hct-header{
   display:flex;align-items:flex-end;justify-content:space-between;
   gap:16px;margin-bottom:22px;flex-wrap:wrap;
