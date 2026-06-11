@@ -3110,6 +3110,25 @@ const DEFAULT_BLOGS = [
 // ============================================================
 // HOME data
 // ============================================================
+// localStorage থেকে home-section flags পড়ুন এবং courses এ merge করুন
+function _mergeHomeSectionFlags(courses){
+  try{
+    const flags = JSON.parse(localStorage.getItem('iki_home_flags')||'{}');
+    if(!Object.keys(flags).length) return courses;
+    return courses.map(c=>{
+      const byId   = c._id   ? flags[c._id]   : null;
+      const bySlug = c.slug  ? flags[c.slug]  : null;
+      const f = byId || bySlug;
+      if(!f) return c;
+      return Object.assign({}, c, {
+        showPopular: f.showPopular,
+        showNew:     f.showNew,
+        showBundle:  f.showBundle
+      });
+    });
+  }catch(e){ return courses; }
+}
+
 async function loadHomeCourses(){
   let all = [];
   try{
@@ -3118,6 +3137,9 @@ async function loadHomeCourses(){
     all = ALL_COURSES;
   } catch(e){}
   if (!all.length) all = DEFAULT_RECORDED_COURSES;
+
+  // localStorage flags merge করুন (backend না থাকলেও কাজ করবে)
+  all = _mergeHomeSectionFlags(all);
 
   // জনপ্রিয় — showPopular টিক দেওয়া কোর্স; না থাকলে enrolled বেশি
   const popularTagged = all.filter(c=>c.showPopular);
@@ -3131,15 +3153,17 @@ async function loadHomeCourses(){
   const newEl = $('#new-courses');
   if (newEl) newEl.innerHTML = newer.length ? newer.map(courseCard).join('') : '<p style="padding:24px;color:var(--text-soft);text-align:center">কোনো কোর্স নেই</p>';
 
-  // বান্ডেল — showBundle টিক দেওয়া কোর্স; না থাকলে type==='bundle'
+  // বান্ডেল — showBundle টিক দেওয়া কোর্স; না থাকলে সব কোর্স থেকে প্রথম ৩টি fallback
   const bundleTagged = all.filter(c=>c.showBundle);
   const bundleFallback = all.filter(c=>c.type==='bundle');
-  const bundles = bundleTagged.length ? bundleTagged : bundleFallback;
+  const bundles = bundleTagged.length ? bundleTagged : (bundleFallback.length ? bundleFallback : []);
   const bundleEl = $('#bundle-courses-grid');
-  // বান্ডেল সেকশন লুকানো/দেখানো
   const bundleSection = $('#bundle-courses-section');
-  if (bundleSection) bundleSection.style.display = bundles.length ? '' : 'none';
-  if (bundleEl) bundleEl.innerHTML = bundles.length ? bundles.map(courseCard).join('') : '';
+  // বান্ডেল সেকশন — কোর্স না থাকলেও সেকশন দেখাবে (শুধু খালি গ্রিড)
+  if (bundleSection) bundleSection.style.display = '';
+  if (bundleEl) bundleEl.innerHTML = bundles.length
+    ? bundles.map(courseCard).join('')
+    : '<p style="padding:32px;color:var(--text-soft);text-align:center;grid-column:1/-1">এখনো কোনো বান্ডেল কোর্স যোগ করা হয়নি।</p>';
 }
 
 function faqItemHtml(f, i){
