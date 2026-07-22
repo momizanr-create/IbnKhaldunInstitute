@@ -1699,7 +1699,7 @@ header .logo span#logo-line1,header .logo span#logo-line2,header .logo #logo-div
       <!-- Search bar -->
       <div class="nav-search" style="position:relative">
         <div class="nav-search-inner">
-          <input type="text" id="nav-search-input" placeholder="কোর্�� খুঁজুন..." aria-label="সার্চ" oninput="handleNavSearchLive(this.value)" onkeydown="if(event.key==='Enter')handleNavSearch()" autocomplete="off">
+          <input type="text" id="nav-search-input" placeholder="কোর্স খুঁজুন..." aria-label="সার্চ" oninput="handleNavSearchLive(this.value)" onkeydown="if(event.key==='Enter')handleNavSearch()" autocomplete="off">
           <button type="button" onclick="handleNavSearch()" aria-label="সার্চ করুন"><i class="fas fa-search"></i></button>
         </div>
         <div id="nav-search-results" class="nav-search-results" style="display:none"></div>
@@ -2130,30 +2130,6 @@ header .logo span#logo-line1,header .logo span#logo-line2,header .logo #logo-div
 
 </main>
 
-<footer>
-  <div class="container">
-    <nav class="footer-nav">
-      <a data-nav="home">HOME</a>
-      <a data-nav="about">ABOUT</a>
-      <a data-nav="courses">COURSES</a>
-      <a data-nav="instructors">INSTRUCTORS</a>
-      <a data-nav="blog">BLOG</a>
-      <a data-nav="contact">CONTACT</a>
-    </nav>
-    <div id="footer-social" class="footer-social"></div>
-    <div class="footer-contact">
-      <span id="footer-email"></span>
-      <span id="footer-phone"></span>
-      <span id="footer-address"></span>
-    </div>
-    <p id="footer-about" style="display:none"></p>
-    <h4 style="display:none"><span id="footer-site-name">ইবনে খালদুন ইনস্টিটিউট</span></h4>
-    <div class="footer-bottom" id="footer-copyright">© <span id="year"></span> Ibn Khaldun Institute. All Rights Reserved.</div>
-  </div>
-</footer>
-
-</footer>
-
 <!-- WhatsApp floating -->
 <a href="#" id="wa-float" class="wa-float" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i></a>
 
@@ -2180,6 +2156,28 @@ header .logo span#logo-line1,header .logo span#logo-line2,header .logo #logo-div
 <div id="toast" class="toast"></div>
 <div id="server-wake-banner" style="display:none;position:fixed;bottom:70px;left:50%;transform:translateX(-50%);z-index:9999;background:#04412e;color:#fff;padding:10px 20px;border-radius:12px;font-size:13.5px;box-shadow:0 4px 20px rgba(0,0,0,.25);text-align:center;max-width:92vw;line-height:1.5"><i class="fa fa-circle-notch fa-spin" style="margin-right:6px"></i> সার্ভার চালু হচ্ছে, একটু অপেক্ষা করুন...</div>
 <div id="net-status"></div>
+
+<footer>
+  <div class="container">
+    <nav class="footer-nav">
+      <a data-nav="home">HOME</a>
+      <a data-nav="about">ABOUT</a>
+      <a data-nav="courses">COURSES</a>
+      <a data-nav="instructors">INSTRUCTORS</a>
+      <a data-nav="blog">BLOG</a>
+      <a data-nav="contact">CONTACT</a>
+    </nav>
+    <div id="footer-social" class="footer-social"></div>
+    <div class="footer-contact">
+      <span id="footer-email"></span>
+      <span id="footer-phone"></span>
+      <span id="footer-address"></span>
+    </div>
+    <p id="footer-about" style="display:none"></p>
+    <h4 style="display:none"><span id="footer-site-name">ইবনে খালদুন ইনস্টিটিউট</span></h4>
+    <div class="footer-bottom" id="footer-copyright">© <span id="year"></span> Ibn Khaldun Institute. All Rights Reserved.</div>
+  </div>
+</footer>
 
 <script>
 // ============================================================
@@ -4009,15 +4007,6 @@ function renderRecordedDetail(c){
 
               </div><!-- /cds-body -->
             </div><!-- /cds-card -->
-
-            <!-- ═══ TRIAL BAR — separate floating card below ═══ -->
-            <div class="cds-trial-card" onclick="cdPlayPreview()">
-              <div class="cds-trial-left">
-                <div class="cds-trial-title">10 min trial course</div>
-                <div class="cds-trial-sub">Have a look and feel of the course<br>with a quick trial.</div>
-              </div>
-              <button class="cds-trial-btn" onclick="event.stopPropagation();cdPlayPreview()">Preview</button>
-            </div>
 
           </aside>
         </div>
@@ -6297,39 +6286,6 @@ header.scrolled{
 }
 .cds-includes-list li span{flex:1}
 
-/* ═══ TRIAL CARD — separate dark card below main card ═══ */
-.cds-trial-card{
-  margin-top:14px;
-  background:#1c1c2e;
-  border-radius:16px;
-  padding:16px 18px;
-  display:flex;align-items:center;justify-content:space-between;
-  gap:14px;
-  cursor:pointer;
-  box-shadow:0 2px 18px rgba(0,0,0,.18);
-  transition:.15s;
-}
-.cds-trial-card:hover{background:#262638}
-.cds-trial-left{flex:1;min-width:0}
-.cds-trial-title{
-  font-size:14.5px;font-weight:700;color:#fff;
-  margin-bottom:5px;
-}
-.cds-trial-sub{
-  font-size:12.5px;color:rgba(255,255,255,.58);
-  line-height:1.5;
-}
-.cds-trial-btn{
-  flex-shrink:0;
-  background:#fff;color:#1c1c2e;
-  border:none;border-radius:9px;
-  padding:9px 18px;font-size:13.5px;font-weight:700;
-  cursor:pointer;font-family:inherit;
-  transition:.15s;white-space:nowrap;
-  box-shadow:0 2px 8px rgba(0,0,0,.12);
-}
-.cds-trial-btn:hover{background:#f0f0f8;transform:translateY(-1px)}
-
 /* ── Responsive ── */
 @media(max-width:900px){
   .cds-body{padding:16px 14px 16px}
@@ -6338,7 +6294,6 @@ header.scrolled{
 }
 @media(max-width:600px){
   .cds-body{padding:14px 12px 14px}
-  .cds-trial-card{border-radius:14px;padding:14px 14px}
 }
 
 
