@@ -18,7 +18,7 @@ const path       = require('path');
 // ✅ nodemailer সম্পূর্ণ বাদ — Google Apps Script দিয়ে email পাঠানো হচ্ছে
 
 const SITE_NAME = 'ইবনে খালদুন ইনস্টিটিউট';
-const otpStore  = new Map(); // email → { otp, expiresAt }
+// OTP এখন MongoDB-তে রাখা হয় (নিচে Otp model দেখুন) — আগের in-memory Map বাদ
 
 const app        = express();
 const PORT       = process.env.PORT || 5000;
@@ -314,6 +314,8 @@ const courseCommentSchema = new mongoose.Schema({
   userName: String,
   message:  String,
   rating:   { type: Number, default: 5 },
+  adminReply:   String,   // অ্যাডমিন প্যানেল থেকে উত্তর
+  adminReplyAt: Date,
 }, { timestamps: true });
 const CourseComment = mongoose.model('CourseComment', courseCommentSchema);
 
@@ -353,6 +355,19 @@ const liveCoursePurchaseSchema = new mongoose.Schema({
   approvedAt:    Date,
 }, { timestamps: true });
 const LiveCoursePurchase = mongoose.model('LiveCoursePurchase', liveCoursePurchaseSchema);
+
+// --- OTP (MongoDB-persisted so it survives server restarts / multiple instances)
+// ⚠️ আগে OTP শুধু server memory (Map)-এ রাখা হতো — Render রিস্টার্ট/স্লিপ হলে কোড
+//    মুছে যেত, ফলে রেজিস্ট্রেশন "OTP সঠিক নয়" দেখাত। এখন DB-তে রাখা হয়।
+const otpSchema = new mongoose.Schema({
+  email:     { type: String, required: true, unique: true },
+  otp:       { type: String, required: true },
+  expiresAt: { type: Date,   required: true },
+  verified:  { type: Boolean, default: false },
+}, { timestamps: true });
+// TTL index — MongoDB expiresAt পেরোলে ডকুমেন্ট নিজে থেকেই মুছে ফেলবে
+otpSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+const Otp = mongoose.model('Otp', otpSchema);
 
 // ============================================================
 // Auth middlewares
@@ -608,6 +623,30 @@ app.delete('/api/admin/courses/comments/:id', authMiddleware, async (req, res) =
   res.json({ ok: true });
 });
 
+// অ্যাডমিন — কমেন্টের উত্তর দেওয়া / উত্তর সম্পাদনা
+app.put('/api/admin/courses/comments/:id/reply', authMiddleware, async (req, res) => {
+  try {
+    const reply = String(req.body.reply || '').slice(0, 2000);
+    const c = await CourseComment.findByIdAndUpdate(
+      req.params.id,
+      { adminReply: reply, adminReplyAt: reply ? new Date() : null },
+      { new: true }
+    );
+    if (!c) return res.status(404).json({ error: 'কমেন্ট পাওয়া যায়নি' });
+    res.json(c);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// অ্যাডমিন — সব কোর্সের সব কমেন্ট (management panel এর জন্য)
+app.get('/api/admin/comments', authMiddleware, async (_, res) => {
+  try {
+    const list = await CourseComment.find()
+      .populate('courseId', 'title')
+      .sort({ createdAt: -1 }).limit(500);
+    res.json(list);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 // ============================================================
 // INSTRUCTORS / TESTIMONIALS / NOTICES / BLOG / CATEGORIES / FAQs
 // ============================================================
@@ -718,7 +757,7 @@ app.get('/api/public/config', async (_, res) => {
     // automatically reaches the public website (no whitelist gaps).
     // A known-keys list guarantees these are always present (as {} fallback)
     // even before they have ever been saved in the admin panel.
-    const knownKeys = ['siteSettings','hero','navigation','footer','theme','welcomePopup','cta','contactContent','aboutPage','featuredCoursesConfig','whatsapp','contact','payment','social','notice','about','faq','faqImage','faqSection','whyJoin','sectionTitles','homeContent','popularSection','joinSection','teachers','teacherImage','instructorImage'];
+    const knownKeys = ['siteSettings','hero','navigation','footer','theme','welcomePopup','cta','contactContent','aboutPage','featuredCoursesConfig','whatsapp','contact','payment','social','notice','about','faq','faqImage','faqSection','whyJoin','sectionTitles','homeContent','popularSection','joinSection','teachers','teacherImage','instructorImage','offer'];
     const all = await Settings.find();
     const out = {};
     knownKeys.forEach(k => { out[k] = {}; });
@@ -782,13 +821,17 @@ app.post('/api/user/send-otp', async (req, res) => {
       return res.status(400).json({ error: 'সঠিক ইমেইল ঠিকানা দিন' });
 
     // Rate limit: একই email এ ৬০ সেকেন্ডের মধ্যে আবার পাঠানো যাবে না
-    const existing = otpStore.get(email);
-    if (existing && (existing.expiresAt - Date.now()) > 1*60*1000) {
+    const existing = await Otp.findOne({ email });
+    if (existing && (existing.expiresAt.getTime() - Date.now()) > 1*60*1000) {
       return res.status(429).json({ error: '১ মিনিট পর আবার চেষ্টা করুন' });
     }
 
     const otp = String(Math.floor(1000 + Math.random()*9000));
-    otpStore.set(email, { otp, expiresAt: Date.now() + 2*60*1000, verified: false });
+    await Otp.findOneAndUpdate(
+      { email },
+      { email, otp, expiresAt: new Date(Date.now() + 5*60*1000), verified: false },
+      { upsert: true, new: true }
+    );
     console.log(`📧 Sending OTP to ${email}...`);
 
     const ok = await sendMail(
@@ -804,7 +847,7 @@ app.post('/api/user/send-otp', async (req, res) => {
             <div style="background:#f0fdf4;border:2px dashed #066144;border-radius:10px;padding:20px;text-align:center;margin:16px 0">
               <span style="font-size:38px;font-weight:900;letter-spacing:12px;color:#04412e;font-family:monospace">${otp}</span>
             </div>
-            <p style="color:#6b7280;font-size:13px;margin-top:12px">⏱️ এই কোড <strong>২ মিনিট</strong> পর্যন্ত valid।</p>
+            <p style="color:#6b7280;font-size:13px;margin-top:12px">⏱️ এই কোড <strong>৫ মিনিট</strong> পর্যন্ত valid।</p>
             <p style="color:#6b7280;font-size:13px">🔒 কোডটি কারো সাথে শেয়ার করবেন না।</p>
           </div>
           <p style="text-align:center;color:#9ca3af;font-size:12px;margin-top:14px">ইবনে খালদুন ইনস্টিটিউট</p>
@@ -821,14 +864,17 @@ app.post('/api/user/send-otp', async (req, res) => {
   }
 });
 
-app.post('/api/user/verify-otp', (req, res) => {
-  const { email, otp } = req.body;
-  const rec = otpStore.get(email);
-  if (!rec) return res.status(400).json({ error: 'No OTP sent' });
-  if (Date.now() > rec.expiresAt) { otpStore.delete(email); return res.status(400).json({ error: 'OTP expired' }); }
-  if (rec.otp !== otp) return res.status(400).json({ error: 'Invalid OTP' });
-  rec.verified = true;
-  res.json({ ok: true, message: 'Verified' });
+app.post('/api/user/verify-otp', async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    const rec = await Otp.findOne({ email });
+    if (!rec) return res.status(400).json({ error: 'OTP পাঠানো হয়নি' });
+    if (Date.now() > rec.expiresAt.getTime()) { await Otp.deleteOne({ email }); return res.status(400).json({ error: 'OTP মেয়াদ শেষ' }); }
+    if (rec.otp !== String(otp)) return res.status(400).json({ error: 'OTP কোড সঠিক নয়' });
+    rec.verified = true;
+    await rec.save();
+    res.json({ ok: true, message: 'Verified' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.post('/api/user/register', async (req, res) => {
@@ -838,10 +884,10 @@ app.post('/api/user/register', async (req, res) => {
     if (!otp) return res.status(400).json({ error: 'OTP কোড দিন' });
 
     // OTP যাচাই (verified হোক বা সরাসরি otp match হোক — দুটোই accept)
-    const rec = otpStore.get(email);
+    const rec = await Otp.findOne({ email });
     if (!rec) return res.status(400).json({ error: 'OTP পাঠানো হয়নি। আগে OTP পাঠান।' });
-    if (Date.now() > rec.expiresAt) {
-      otpStore.delete(email);
+    if (Date.now() > rec.expiresAt.getTime()) {
+      await Otp.deleteOne({ email });
       return res.status(400).json({ error: 'OTP মেয়াদ শেষ। নতুন OTP পাঠান।' });
     }
     if (rec.otp !== String(otp)) return res.status(400).json({ error: 'OTP কোড সঠিক নয়' });
@@ -850,7 +896,7 @@ app.post('/api/user/register', async (req, res) => {
     if (exist) return res.status(400).json({ error: 'এই ইমেইল ইতিমধ্যে নিবন্ধিত' });
     const hash = await bcrypt.hash(password, 10);
     const user = await User.create({ name, email, phone, password: hash, isVerified: true });
-    otpStore.delete(email);
+    await Otp.deleteOne({ email });
     const token = jwt.sign({ id: user._id, email }, JWT_SECRET, { expiresIn: '30d' });
     console.log(`✅ New user registered: ${email}`);
     res.json({ token, user: { id: user._id, name: user.name, email: user.email, phone: user.phone } });
@@ -880,14 +926,14 @@ app.get('/api/user/me', userAuthMiddleware, async (req, res) => {
 app.post('/api/user/reset-password-otp', async (req, res) => {
   try {
     const { email, otp, newPassword } = req.body;
-    const rec = otpStore.get(email);
-    if (!rec || rec.otp !== otp || Date.now() > rec.expiresAt)
+    const rec = await Otp.findOne({ email });
+    if (!rec || rec.otp !== String(otp) || Date.now() > rec.expiresAt.getTime())
       return res.status(400).json({ error: 'OTP সঠিক নয় বা মেয়াদ শেষ। নতুন OTP পাঠান।' });
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ error: 'এই ইমেইলে কোনো অ্যাকাউন্ট নেই' });
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
-    otpStore.delete(email);
+    await Otp.deleteOne({ email });
     res.json({ message: 'Password reset' });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -1052,9 +1098,9 @@ app.post('/api/live-course/purchase', userAuthMiddleware, upload.single('screens
     const r = await LiveCoursePurchase.create(data);
     try {
       notifyAdmin(
-        `📡 নতুন চলমান কোর্স ক্রয় অনুরোধ — ${SITE_NAME}`,
+        `📡 নতুন চলমান কোর্স ক্��য় অনুরোধ — ${SITE_NAME}`,
         `<div style="font-family:Arial,sans-serif;max-width:600px">
-          <h2 style="color:#16a34a">নতুন চলমান (লাইভ) কোর্স ক্রয় অনুরোধ</h2>
+          <h2 style="color:#16a34a">নতুন চলমান (লাইভ) কোর্স ক্রয় অন��রোধ</h2>
           <table style="width:100%;border-collapse:collapse">
             <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>কোর্স:</b></td><td style="padding:8px;border-bottom:1px solid #eee">${req.body.courseTitle||'—'}</td></tr>
             <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>মূল্য:</b></td><td style="padding:8px;border-bottom:1px solid #eee">৳${req.body.amount||'—'}</td></tr>
@@ -1149,6 +1195,27 @@ app.delete('/api/admin/live-purchases/:id', authMiddleware, async (req, res) => 
 // ============================================================
 app.get('/api/admin/users', authMiddleware, async (_, res) => {
   res.json(await User.find().select('-password').sort({ createdAt: -1 }));
+});
+
+// Update a user's info (admin) — শিক্ষার্থী তথ্য সম্পাদনা + সেভ
+app.put('/api/admin/users/:id', authMiddleware, async (req, res) => {
+  try {
+    const { name, email, phone, whatsapp, password } = req.body || {};
+    const update = {};
+    if (name    !== undefined) update.name    = name;
+    if (email   !== undefined) update.email   = email;
+    if (phone   !== undefined) update.phone   = phone;
+    if (whatsapp!== undefined) update.whatsapp= whatsapp;
+    if (password) update.password = await bcrypt.hash(password, 10);
+    // email আগে থেকেই অন্য কারো কাছে আছে কিনা যাচাই
+    if (email) {
+      const dup = await User.findOne({ email, _id: { $ne: req.params.id } });
+      if (dup) return res.status(400).json({ error: 'এই ইমেইল অন্য একজন ব্যবহার করছেন' });
+    }
+    const user = await User.findByIdAndUpdate(req.params.id, update, { new: true }).select('-password');
+    if (!user) return res.status(404).json({ error: 'ব্যবহারকারী পাওয়া যায়নি' });
+    res.json(user);
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // Delete a user (admin)
@@ -1610,7 +1677,7 @@ async function seedDatabase() {
     if (await Blog.countDocuments() === 0) {
       await Blog.insertMany([
     { slug: 'def-b1', title: 'রমজানের ফজিলত ও প্রস্তুতি', excerpt: 'রমজান মাসের গুরুত্ব এবং এই মাসকে কাজে লাগানোর প্রায়োগিক গাইডলাইন।', author: 'সম্পাদকীয়', image: 'https://picsum.photos/seed/b1/640/400', content: '<p>রমজান মাস মুমিনের জন্য অসামান্য ফজিলতের মাস। এই লেখায় আমরা রমজানের প্রস্তুতি ও ইবাদতের গুরুত্ব আলোচনা করব।</p>', isPublished: true },
-    { slug: 'def-b2', title: 'কুরআন তিলাওয়াতের আদব', excerpt: 'কুরআন তিলাওয়াতের সময় যেসব আদব মেনে চলা প্রয়োজন তার বিস্তারিত আলোচনা।', author: 'মুফতি আব্দুল্লাহ', image: 'https://picsum.photos/seed/b2/640/400', content: '<p>কুরআন তিলাওয়াতের পূর্বে অজু করা, কিবলামুখী হওয়া, ও আউযুবিল্লাহ পড়া — এসব আদব অনুসরণ করা সুন্নত।</p>', isPublished: true },
+    { slug: 'def-b2', title: 'কুরআন তিলাওয়াতের আদব', excerpt: 'কুরআন তিলাওয়াতের সময় যেসব আদব মেনে চলা প্রয়ো���ন তার বিস্তারিত আলোচনা।', author: 'মুফতি আব্দুল্লাহ', image: 'https://picsum.photos/seed/b2/640/400', content: '<p>কুরআন তিলাওয়াতের পূর্বে অজু করা, কিবলামুখী হওয়া, ও আউযুবিল্লাহ পড়া — এসব আদব অনুসরণ করা সুন্নত।</p>', isPublished: true },
     { slug: 'def-b3', title: 'নামাজে মনোযোগ আনার ১০টি উপায়', excerpt: 'খুশু-খুজু সহকারে সালাত আদায়ের ব্যবহারিক টিপস।', author: 'মাওলানা ইউনুস', image: 'https://picsum.photos/seed/b3/640/400', content: '<p>নামাজ আল্লাহর সাথে সরাসরি কথোপকথনের মাধ্যম। এতে মনোযোগ আনার ১০টি কার্যকর উপায়।</p>', isPublished: true },
     { slug: 'def-b4', title: 'যাকাতের হিসাব কীভাবে করবেন', excerpt: 'নিসাব, সম্পদের ধরন ও যাকাত গণনার সরল পদ্ধতি।', author: 'মুফতি কামাল', image: 'https://picsum.photos/seed/b4/640/400', content: '<p>যাকাত ইসলামের পঞ্চম স্তম্ভ। এই লেখায় নিসাব ও যাকাত গণনার সহজ পদ্ধতি।</p>', isPublished: true },
     { slug: 'def-b5', title: 'সন্তানকে দীনি শিক্ষায় গড়ে তোলা', excerpt: 'প্রাথমিক বয়স থেকেই সন্তানকে দীনের পথে অভ্যস্ত করার কৌশল।', author: 'উস্তাদা ফাতেমা', image: 'https://picsum.photos/seed/b5/640/400', content: '<p>শিশুকাল থেকেই সন্তানকে কুরআন, দুআ ও আদব শেখানো অত্যন্ত গুরুত্বপূর্ণ।</p>', isPublished: true },

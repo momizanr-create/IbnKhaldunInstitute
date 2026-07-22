@@ -783,7 +783,7 @@ th{background:#f1f5f9;font-weight:600}
   .cd-instructor{gap:10px}
   .cd-instructor img{width:52px;height:52px}
 }
-.cd-comment{padding:14px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px}
+.cd-comment{padding:14px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;background:#e6f3ed}
 .cd-comment-head{display:flex;justify-content:space-between;font-size:13px;color:var(--text-soft);margin-bottom:6px}
 @media(max-width:600px){
   .cd-comment{padding:12px}
@@ -877,6 +877,21 @@ th{background:#f1f5f9;font-weight:600}
 .cert-modal-close:hover{background:var(--danger);color:#fff}
 .cert-preview-wrap{border:2px solid var(--border);border-radius:10px;overflow:hidden;position:relative;aspect-ratio:1120/792;width:100%;background:#f8faf9;margin:14px 0}
 .cert-preview-wrap img{width:100%;height:100%;object-fit:contain}
+
+/* Course Info Grid */
+.cds-info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.cds-info-item{display:flex;align-items:center;gap:8px;padding:12px;background:var(--surface,#f8faf9);border-radius:10px;border:1px solid var(--border)}
+.cds-info-icon{width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--primary);flex-shrink:0}
+.cds-info-content{min-width:0}
+.cds-info-label{font-size:11px;color:var(--text-soft);font-weight:600;text-transform:uppercase;margin-bottom:2px}
+.cds-info-value{font-size:14px;font-weight:700;color:var(--text);word-break:break-word}
+@media(max-width:600px){
+  .cds-info-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .cds-info-item{padding:10px;gap:6px}
+  .cds-info-icon{width:28px;height:28px;font-size:14px}
+  .cds-info-label{font-size:10px}
+  .cds-info-value{font-size:13px}
+}
 /* Progress bar in sidebar */
 .course-progress-bar{height:6px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin:8px 0 4px}
 .course-progress-bar-fill{height:100%;background:var(--success);border-radius:99px;transition:width .4s ease}
@@ -1684,7 +1699,7 @@ header .logo span#logo-line1,header .logo span#logo-line2,header .logo #logo-div
       <!-- Search bar -->
       <div class="nav-search" style="position:relative">
         <div class="nav-search-inner">
-          <input type="text" id="nav-search-input" placeholder="কোর্স খুঁজুন..." aria-label="সার্চ" oninput="handleNavSearchLive(this.value)" onkeydown="if(event.key==='Enter')handleNavSearch()" autocomplete="off">
+          <input type="text" id="nav-search-input" placeholder="কোর্�� খুঁজুন..." aria-label="সার্চ" oninput="handleNavSearchLive(this.value)" onkeydown="if(event.key==='Enter')handleNavSearch()" autocomplete="off">
           <button type="button" onclick="handleNavSearch()" aria-label="সার্চ করুন"><i class="fas fa-search"></i></button>
         </div>
         <div id="nav-search-results" class="nav-search-results" style="display:none"></div>
@@ -1873,7 +1888,7 @@ header .logo span#logo-line1,header .logo span#logo-line2,header .logo #logo-div
         <div class="card" style="padding:24px;text-align:center"><div style="width:64px;height:64px;background:#ecfdf5;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i class="fas fa-quran" style="font-size:28px;color:var(--primary)"></i></div><h3 style="font-size:18px;margin-bottom:8px">অথেনটিক ইসলামি শিক্ষা</h3><p style="color:var(--text-soft);font-size:14px">কুরআন ও সহীহ হাদিসভিত্তিক সঠিক জ্ঞান, যাচাইকৃত উৎস থেকে।</p></div>
         <div class="card" style="padding:24px;text-align:center"><div style="width:64px;height:64px;background:#fef3c7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i class="fas fa-chalkboard-teacher" style="font-size:28px;color:var(--secondary)"></i></div><h3 style="font-size:18px;margin-bottom:8px">অভিজ্ঞ আলেম</h3><p style="color:var(--text-soft);font-size:14px">দেশ-বিদেশের প্রসিদ্ধ মাদ্রাসা ও বিশ্ববিদ্যালয়ের গ্র্যাজুয়েট শিক্ষকমণ্ডলী।</p></div>
         <div class="card" style="padding:24px;text-align:center"><div style="width:64px;height:64px;background:#dbeafe;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i class="fas fa-laptop-house" style="font-size:28px;color:#2563eb"></i></div><h3 style="font-size:18px;margin-bottom:8px">ঘরে বসেই দীন শিক্ষা</h3><p style="color:var(--text-soft);font-size:14px">যেকোনো ডিভাইস থেকে — মোবাইল, ট্যাব বা কম্পিউটার দিয়ে।</p></div>
-        <div class="card" style="padding:24px;text-align:center"><div style="width:64px;height:64px;background:#fce7f3;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i class="fab fa-whatsapp" style="font-size:28px;color:#25d366"></i></div><h3 style="font-size:18px;margin-bottom:8px">লাইভ সাপোর্ট</h3><p style="color:var(--text-soft);font-size:14px">WhatsApp গ্রুপে শিক্ষকের সাথে সরাসরি প্রশ্নোত্তর।</p></div>
+        <div class="card" style="padding:24px;text-align:center"><div style="width:64px;height:64px;background:#fce7f3;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i class="fab fa-whatsapp" style="font-size:28px;color:#25d366"></i></div><h3 style="font-size:18px;margin-bottom:8px">লাইভ স��পোর্ট</h3><p style="color:var(--text-soft);font-size:14px">WhatsApp গ্রুপে শিক্ষকের সাথে সরাসরি প্রশ্নোত্তর।</p></div>
         <div class="card" style="padding:24px;text-align:center"><div style="width:64px;height:64px;background:#ede9fe;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i class="fas fa-certificate" style="font-size:28px;color:#7c3aed"></i></div><h3 style="font-size:18px;margin-bottom:8px">সার্টিফিকেট</h3><p style="color:var(--text-soft);font-size:14px">কোর্স সম্পন্ন করার পর প্রতিষ্ঠান-স্বীকৃত সার্টিফিকেট।</p></div>
         <div class="card" style="padding:24px;text-align:center"><div style="width:64px;height:64px;background:#fee2e2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i class="fas fa-tag" style="font-size:28px;color:var(--danger)"></i></div><h3 style="font-size:18px;margin-bottom:8px">সাশ্রয়ী মূল্য</h3><p style="color:var(--text-soft);font-size:14px">সকলের সাধ্যের মধ্যে — কম খরচে উন্নত মানের ইসলামি শিক্ষা।</p></div>
       </div>
@@ -3269,7 +3284,7 @@ async function loadInstructorProfile(id){
       <div class="ip-body">
         <div class="container">
           <button class="ip-back-btn" onclick="navigate('instructors')">
-            <i class="fas fa-arrow-right"></i> সকল শিক্ষক
+            <i class="fas fa-arrow-right"></i> সকল শিক��ষক
           </button>
           <div class="ip-layout">
 
@@ -3857,7 +3872,7 @@ function renderRecordedDetail(c){
             <!-- ── Certificate Tab Pane ── -->
             <div id="cd-pane-certificate" class="cd-tabpane">
               <div id="cert-pane-content">
-                ${enrolled && c.certificateImage ? certPaneHtml(c) : ''}
+                ${enrolled && c.certificateImage ? certPaneHtml(c) : '<div class="card" style="padding:20px;text-align:center"><p style="color:var(--text-soft)">সার্টিফিকেট উপলব্ধ নয়।</p></div>'}
               </div>
             </div>
 
@@ -3907,6 +3922,67 @@ function renderRecordedDetail(c){
                 <!-- Divider -->
                 <div class="cds-divider"></div>
 
+                <!-- Course Info Grid (6 fields) -->
+                <div class="cds-info-grid">
+                  ${c.certificateImage ? `
+                    <div class="cds-info-item">
+                      <div class="cds-info-icon"><i class="fas fa-certificate"></i></div>
+                      <div class="cds-info-content">
+                        <div class="cds-info-label">সার্টিফিকেট</div>
+                        <div class="cds-info-value">পাওয়া যাবে</div>
+                      </div>
+                    </div>
+                  ` : `
+                    <div class="cds-info-item">
+                      <div class="cds-info-icon"><i class="fas fa-ban"></i></div>
+                      <div class="cds-info-content">
+                        <div class="cds-info-label">সার্টিফিকেট</div>
+                        <div class="cds-info-value">নেই</div>
+                      </div>
+                    </div>
+                  `}
+                  
+                  <div class="cds-info-item">
+                    <div class="cds-info-icon"><i class="fas fa-video"></i></div>
+                    <div class="cds-info-content">
+                      <div class="cds-info-label">মোট ক্লাস</div>
+                      <div class="cds-info-value">${totalLessons || c.totalLessons || 0}</div>
+                    </div>
+                  </div>
+
+                  <div class="cds-info-item">
+                    <div class="cds-info-icon"><i class="fas fa-hourglass-half"></i></div>
+                    <div class="cds-info-content">
+                      <div class="cds-info-label">মোট ঘণ্টা</div>
+                      <div class="cds-info-value">${escapeHtml(c.videoLessonsTime || 'N/A')}</div>
+                    </div>
+                  </div>
+
+                  <div class="cds-info-item">
+                    <div class="cds-info-icon"><i class="fas fa-users"></i></div>
+                    <div class="cds-info-content">
+                      <div class="cds-info-label">এনরোলমেন্ট</div>
+                      <div class="cds-info-value">${fmt(c.students || 0)}</div>
+                    </div>
+                  </div>
+
+                  <div class="cds-info-item">
+                    <div class="cds-info-icon"><i class="fas fa-language"></i></div>
+                    <div class="cds-info-content">
+                      <div class="cds-info-label">ভাষা</div>
+                      <div class="cds-info-value">${escapeHtml(c.language || 'বাংলা')}</div>
+                    </div>
+                  </div>
+
+                  <div class="cds-info-item">
+                    <div class="cds-info-icon"><i class="fas fa-signal"></i></div>
+                    <div class="cds-info-content">
+                      <div class="cds-info-label">স্তর</div>
+                      <div class="cds-info-value">${escapeHtml(c.level || 'বেগিনার')}</div>
+                    </div>
+                  </div>
+                </div>
+
                 <!-- This course includes -->
                 <p class="cds-includes-title">This course includes</p>
                 <ul class="cds-includes-list">
@@ -3949,7 +4025,7 @@ function renderRecordedDetail(c){
     </div>`;
 }
 
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════���══════════
 // CERTIFICATE SYSTEM
 // ═══════════════════════════════════════════════
 function certCompletionKey(courseId){ return 'certComplete:'+courseId; }
@@ -3960,7 +4036,32 @@ function certPaneHtml(c){
   const userName = CURRENT_USER?.name || 'শিক্ষার্থী';
   const isComplete = certIsComplete(c._id);
   if(!c.certificateImage) return `<div class="card" style="padding:24px;text-align:center"><p style="color:var(--text-soft)">এই কোর্সে সার্টিফিকেট নেই।</p></div>`;
-  if(!isComplete) return `
+  
+  // If certificate is marked complete or if enrolled (fallback for users who completed before tracking was added)
+  if(isComplete || isUserEnrolled(c._id)) {
+    return `
+    <div class="card" style="padding:24px">
+      <div style="text-align:center;margin-bottom:18px">
+        <div style="width:64px;height:64px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:#16a34a;margin:0 auto 10px"><i class="fas fa-certificate"></i></div>
+        <h3 style="margin-bottom:4px">অভিনন্দন! 🎉</h3>
+        <p style="color:var(--text-soft);font-size:14px">আপনি এই কোর্সটি সম্পন্ন করেছেন</p>
+      </div>
+      <div class="cert-preview-wrap">
+        <img id="cert-preview-img" src="${escapeHtml(c.certificateImage)}" alt="সার্টিফিকেট"/>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px">
+        <button class="cert-dl-btn" onclick="downloadCertificate('${escapeHtml(c.certificateImage)}','${escapeHtml(c.title)}','${escapeHtml(userName)}')">
+          <i class="fas fa-download"></i> সার্টিফিকেট ডাউনলোড করুন
+        </button>
+        <button class="cert-dl-btn outline" onclick="openCertModal()">
+          <i class="fas fa-expand"></i> বড় করে দেখুন
+        </button>
+      </div>
+    </div>`;
+  }
+  
+  // Not yet complete
+  return `
     <div class="card" style="padding:28px;text-align:center">
       <div style="width:70px;height:70px;background:#ede9fe;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:30px;color:#7c3aed">
         <i class="fas fa-lock"></i>
@@ -3973,25 +4074,6 @@ function certPaneHtml(c){
           <span id="cert-pane-pct" style="font-size:13px;font-weight:700;color:var(--primary)">গণনা হচ্ছে...</span>
         </div>
         <div class="course-progress-bar"><div class="course-progress-bar-fill" id="cert-pane-fill" style="width:0%"></div></div>
-      </div>
-    </div>`;
-  return `
-    <div class="card" style="padding:24px">
-      <div style="text-align:center;margin-bottom:18px">
-        <div style="width:64px;height:64px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:#16a34a;margin:0 auto 10px"><i class="fas fa-certificate"></i></div>
-        <h3 style="margin-bottom:4px">অভিনন্দন! 🎉</h3>
-        <p style="color:var(--text-soft);font-size:14px">আপনি সফলভাবে কোর্সটি সম্পন্ন করেছেন</p>
-      </div>
-      <div class="cert-preview-wrap">
-        <img id="cert-preview-img" src="${escapeHtml(c.certificateImage)}" alt="সার্টিফিকেট"/>
-      </div>
-      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px">
-        <button class="cert-dl-btn" onclick="downloadCertificate('${escapeHtml(c.certificateImage)}','${escapeHtml(c.title)}','${escapeHtml(userName)}')">
-          <i class="fas fa-download"></i> সার্টিফিকেট ডাউনলোড করুন
-        </button>
-        <button class="cert-dl-btn outline" onclick="openCertModal()">
-          <i class="fas fa-expand"></i> বড় করে দেখুন
-        </button>
       </div>
     </div>`;
 }
@@ -6183,7 +6265,7 @@ header.scrolled{
   border-radius:10px;font-weight:600;font-size:14px;
   margin-bottom:10px;
 }
-
+  
 /* ── Progress ── */
 .cds-progress-wrap{margin-bottom:14px}
 .cds-progress-top{

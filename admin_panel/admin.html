@@ -804,6 +804,9 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden}
       <div class="nav-item" onclick="showPanel('notices')">
         <span class="nav-ico"><i class="fas fa-bullhorn"></i></span> নোটিশ
       </div>
+      <div class="nav-item" onclick="showPanel('comments')">
+        <span class="nav-ico"><i class="fas fa-comments"></i></span> কমেন্ট ও প্রশ্নোত্তর
+      </div>
 
       <div class="nav-group-label">ব্যবহারকারী</div>
       <div class="nav-item" onclick="showPanel('users')">
@@ -840,6 +843,9 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden}
       </div>
       <div class="nav-item" onclick="showPanel('join-section')">
         <span class="nav-ico"><i class="fas fa-user-plus"></i></span> আজই যুক্ত হোন
+      </div>
+      <div class="nav-item" onclick="showPanel('offer-banner')">
+        <span class="nav-ico"><i class="fas fa-percent"></i></span> অফার ব্যানার
       </div>
       <div class="nav-item" onclick="showPanel('payment-settings')">
         <span class="nav-ico"><i class="fas fa-money-bill-wave"></i></span> পেমেন্ট
@@ -1322,6 +1328,44 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden}
         </form>
       </div>
 
+      <!-- ===== COMMENTS & Q/A MANAGEMENT ===== -->
+      <div class="panel" id="panel-comments">
+        <div class="section-head">
+          <h2><i class="fas fa-comments"></i> কমেন্ট ও প্রশ্নোত্তর</h2>
+          <button class="btn btn-outline btn-sm" onclick="loadComments()"><i class="fas fa-sync"></i> রিফ্রেশ</button>
+        </div>
+        <p style="font-size:13px;color:var(--text-soft);margin-bottom:14px">শিক্ষার্থীদের কমেন্টের উত্তর দিন বা কমেন্ট মুছে ফেলুন। উত্তর দিলে তা ফ্রন্ট-এন্ডে কমেন্টের নিচে দেখাবে।</p>
+        <div id="comments-list"><div class="loading-state"><div class="loader"></div><p>লোড হচ্ছে...</p></div></div>
+      </div>
+
+      <!-- ===== OFFER BANNER ===== -->
+      <div class="panel" id="panel-offer-banner">
+        <div class="section-head"><h2><i class="fas fa-percent"></i> অফার ব্যানার</h2></div>
+        <p style="font-size:13px;color:var(--text-soft);margin-bottom:14px">বিশেষ ছাড়/অফার ঘোষণা করুন। চালু থাকলে ওয়েবসাইটের উপরে ব্যানার হিসেবে দেখাবে।</p>
+        <form id="offer-form" onsubmit="saveOffer(event)">
+          <div class="form-section">
+            <div class="form-group">
+              <label class="label" style="display:flex;align-items:center;gap:8px">
+                <input type="checkbox" name="enabled" id="offer-enabled" style="width:auto"/> অফার চালু করুন
+              </label>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="label">অফার টেক্সট</label><input name="text" id="offer-text" placeholder="জুলাই মাসের বিশেষ অফার! সকল কোর্সে ২০% ছাড়।"/></div>
+              <div class="form-group"><label class="label">ছাড়ের হার (%)</label><input name="discount" id="offer-discount" type="number" min="0" max="100" placeholder="20"/></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="label">কুপন কোড (ঐচ্ছিক)</label><input name="couponCode" id="offer-coupon" placeholder="JULY20"/></div>
+              <div class="form-group"><label class="label">শেষ তারিখ (ঐচ্ছিক)</label><input name="expiry" id="offer-expiry" type="date"/></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="label">ব্যাকগ্রাউন্ড রঙ</label><input name="bgColor" id="offer-bg" type="color" value="#066144"/></div>
+              <div class="form-group"><label class="label">লেখার রঙ</label><input name="textColor" id="offer-fg" type="color" value="#ffffff"/></div>
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit"><i class="fas fa-save"></i> অফার সংরক্ষণ করুন</button>
+        </form>
+      </div>
+
 
       <!-- ===== ANALYTICS ===== -->
       <div class="panel" id="panel-analytics">
@@ -1674,6 +1718,7 @@ const PANEL_TITLES={
   'why-join':'কেন যুক্ত হবেন','payment-settings':'পেমেন্ট সেটিংস',
   'popular-section':'জনপ্রিয় কোর্স সেকশন','join-section':'আজই যুক্ত হোন সেকশন',
   'contact-settings':'যোগাযোগ ও সোশ্যাল',
+  'comments':'কমেন্ট ও প্রশ্নোত্তর','offer-banner':'অফার ব্যানার',
 };
 const PANEL_LOADERS={
   'dashboard':loadDashboard,'analytics':loadAnalytics,
@@ -1687,6 +1732,7 @@ const PANEL_LOADERS={
   'hero-settings':loadHeroSettings,'payment-settings':loadPaymentSettings,
   'contact-settings':loadContactSettings,
   'popular-section':loadPopularSection,'join-section':loadJoinSection,
+  'comments':loadComments,'offer-banner':loadOffer,
 };
 
 function showPanel(id){
@@ -1973,7 +2019,7 @@ function openCourseModal(type='recorded', editId=null){
             <i class="fas fa-info-circle"></i> কোর্স সাইডবার ডিজাইন (নতুন)
           </div>
           <div style="font-size:13px;color:#3a5a48;line-height:1.7">
-            কোর্স ডিটেইল পেজের সাইডবারে এখন এই ৫টি তথ্য দেখানো হবে — <b>শিক্ষার্থী</b>, <b>ভিডিও লেসন (সময়)</b>, <b>লেভেল</b>, <b>মেয়াদকাল</b>, <b>সার্টিফিকেট</b> (টেমপ্লেট আপলোড করলে স্বয়ংক্রিয়ভাবে "হ্যাঁ")।
+            কোর্স ডিটেইল পেজের সাইডবারে এখন এই ৫টি তথ্য দেখানো হবে — <b>শিক্ষার্থী</b>, <b>ভিডিও লেসন (সময়)</b>, <b>লেভেল</b>, <b>��েয়াদকাল</b>, <b>সার্টিফিকেট</b> (টেমপ্লেট আপলোড করলে স্বয়ংক্রিয়ভাবে "হ্যাঁ")।
             শিক্ষার্থী এনরোল করলে দেখাবে — <b>"আপনি এই কোর্সটি কিনেছেন"</b> ব্যাজ ও সবুজ <b>"▶ কোর্স শুরু করুন"</b> বাটন।
           </div>
         </div>
@@ -2531,22 +2577,42 @@ async function viewUser(id){
     const list=await adminApi('/api/admin/users');const u=list.find(x=>x._id===id)||{};
     const courses=ALL_COURSES_DATA.filter(c=>(u.enrolledCourses||[]).includes(c._id));
     $('#user-modal-body').innerHTML=`
-      <h3><i class="fas fa-user" style="color:var(--primary)"></i> ব্যবহারকারী বিবরণ</h3>
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;padding:16px;background:var(--bg);border-radius:12px">
-        <div style="width:56px;height:56px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;color:var(--primary);font-weight:800;font-size:22px">${(u.name||'?')[0]}</div>
-        <div><div style="font-size:16px;font-weight:700">${esc(u.name||'—')}</div><div style="font-size:13px;color:var(--text-soft)">${esc(u.email||'—')}</div></div>
-      </div>
-      <div class="ar-detail">
-        <p><strong>ফোন:</strong> ${esc(u.phone||'—')}</p>
-        <p><strong>যোগদান:</strong> ${u.createdAt?new Date(u.createdAt).toLocaleDateString('bn-BD'):'—'}</p>
-        <p><strong>এনরোলকৃত কোর্স (${courses.length}টি):</strong></p>
-        ${courses.length?`<ul style="padding-right:16px;margin-top:8px;list-style:disc">${courses.map(c=>`<li style="font-size:13.5px;margin-bottom:4px;font-weight:500">${esc(c.title)}</li>`).join('')}</ul>`:'<p style="font-size:13px;color:var(--text-soft)">কোনো কোর্স নেই</p>'}
-      </div>
-      <div style="margin-top:18px;display:flex;gap:10px">
-        <button class="btn btn-primary btn-sm" onclick="openGrantForUser('${esc(u._id)}','${esc(u.name)}')"><i class="fas fa-plus"></i> কোর্স দিন</button>
-      </div>`;
+      <h3><i class="fas fa-user-edit" style="color:var(--primary)"></i> ব্যবহারকারী তথ্য সম্পাদনা</h3>
+      <form id="user-edit-form" onsubmit="saveUser(event,'${esc(u._id)}')">
+        <div class="form-group"><label class="label">নাম</label><input name="name" value="${esc(u.name||'')}" required/></div>
+        <div class="form-group"><label class="label">ইমেইল</label><input name="email" type="email" value="${esc(u.email||'')}" style="direction:ltr" required/></div>
+        <div class="form-row">
+          <div class="form-group"><label class="label">ফোন</label><input name="phone" value="${esc(u.phone||'')}"/></div>
+          <div class="form-group"><label class="label">WhatsApp</label><input name="whatsapp" value="${esc(u.whatsapp||'')}"/></div>
+        </div>
+        <div class="form-group"><label class="label">নতুন পাসওয়ার্ড (খালি রাখলে অপরিবর্তিত)</label><input name="password" type="text" placeholder="••••••••"/></div>
+        <div style="font-size:12.5px;color:var(--text-soft);margin-bottom:12px"><i class="fas fa-calendar"></i> যোগদান: ${u.createdAt?new Date(u.createdAt).toLocaleDateString('bn-BD'):'—'}</div>
+        <div class="ar-detail" style="margin-bottom:14px">
+          <p><strong>এনরোলকৃত কোর্স (${courses.length}টি):</strong></p>
+          ${courses.length?`<ul style="padding-right:16px;margin-top:8px;list-style:disc">${courses.map(c=>`<li style="font-size:13.5px;margin-bottom:4px;font-weight:500">${esc(c.title)}</li>`).join('')}</ul>`:'<p style="font-size:13px;color:var(--text-soft)">কোনো কোর্স নেই</p>'}
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" type="submit"><i class="fas fa-save"></i> সংরক্ষণ করুন</button>
+          <button class="btn btn-outline btn-sm" type="button" onclick="openGrantForUser('${esc(u._id)}','${esc(u.name)}')"><i class="fas fa-plus"></i> কোর্স দিন</button>
+        </div>
+      </form>`;
     openModal('user-modal');
   }catch(e){toast(e.message,'error');}
+}
+
+async function saveUser(e,id){
+  e.preventDefault();
+  const fd=new FormData(e.target);
+  const body={
+    name:fd.get('name'),email:fd.get('email'),
+    phone:fd.get('phone'),whatsapp:fd.get('whatsapp'),
+  };
+  const pw=fd.get('password');if(pw&&pw.trim())body.password=pw.trim();
+  try{
+    await adminApi('/api/admin/users/'+id,{method:'PUT',body});
+    toast('শিক্ষার্থীর তথ্য সংরক্ষণ হয়েছে','success');
+    closeModal('user-modal');loadUsers();
+  }catch(err){toast(err.message,'error');}
 }
 
 async function deleteUser(id,name){
@@ -2554,6 +2620,82 @@ async function deleteUser(id,name){
     try{await adminApi('/api/admin/users/'+id,{method:'DELETE'});toast('মুছে গেছে','success');loadUsers();}
     catch(err){toast(err.message,'error');}
   });
+}
+
+// ============================================================
+// COMMENTS & Q/A MANAGEMENT
+// ============================================================
+async function loadComments(){
+  const wrap=$('#comments-list');
+  try{
+    const list=await adminApi('/api/admin/comments');
+    if(!list||!list.length){wrap.innerHTML='<div class="empty"><i class="fas fa-comments"></i><p>কোনো কমেন্ট নেই</p></div>';return;}
+    wrap.innerHTML=list.map(c=>{
+      const course=c.courseId&&c.courseId.title?c.courseId.title:'—';
+      const stars='★'.repeat(c.rating||0)+'☆'.repeat(Math.max(0,5-(c.rating||0)));
+      const date=c.createdAt?new Date(c.createdAt).toLocaleDateString('bn-BD'):'';
+      return `<div class="card" style="padding:16px;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start">
+          <div style="min-width:0">
+            <div style="font-weight:700">${esc(c.userName||'শিক্ষার্থী')} <span style="color:#e0a800;font-size:13px">${stars}</span></div>
+            <div style="font-size:12px;color:var(--text-soft)"><i class="fas fa-book"></i> ${esc(course)} • ${date}</div>
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="deleteAdminComment('${esc(c._id)}')"><i class="fas fa-trash"></i></button>
+        </div>
+        <p style="margin:10px 0;font-size:14.5px;line-height:1.6">${esc(c.message||'')}</p>
+        ${c.adminReply?`<div style="background:var(--primary-light);border-right:3px solid var(--primary);padding:9px 12px;border-radius:8px;margin-bottom:8px"><strong style="color:var(--primary);font-size:12.5px"><i class="fas fa-reply"></i> অ্যাডমিনের উত্তর:</strong><div style="font-size:13.5px;margin-top:3px">${esc(c.adminReply)}</div></div>`:''}
+        <div style="display:flex;gap:8px">
+          <input id="reply-${esc(c._id)}" placeholder="উত্তর লিখুন..." value="${esc(c.adminReply||'')}" style="flex:1"/>
+          <button class="btn btn-primary btn-sm" onclick="replyComment('${esc(c._id)}')"><i class="fas fa-paper-plane"></i> উত্তর</button>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){wrap.innerHTML=`<div class="empty"><p>${esc(e.message)}</p></div>`;}
+}
+async function replyComment(id){
+  const val=($('#reply-'+id)||{}).value||'';
+  try{
+    await adminApi('/api/admin/courses/comments/'+id+'/reply',{method:'PUT',body:{reply:val}});
+    toast('উত্তর সংরক্ষণ হয়েছে','success');loadComments();
+  }catch(e){toast(e.message,'error');}
+}
+async function deleteAdminComment(id){
+  confirmAction('এই কমেন্টটি মুছে ফেলবেন?',async()=>{
+    try{await adminApi('/api/admin/courses/comments/'+id,{method:'DELETE'});toast('মুছে গেছে','success');loadComments();}
+    catch(e){toast(e.message,'error');}
+  });
+}
+
+// ============================================================
+// OFFER BANNER
+// ============================================================
+async function loadOffer(){
+  try{
+    const o=await adminApi('/api/admin/settings/offer')||{};
+    $('#offer-enabled').checked=!!o.enabled;
+    $('#offer-text').value=o.text||'';
+    $('#offer-discount').value=o.discount||'';
+    $('#offer-coupon').value=o.couponCode||'';
+    $('#offer-expiry').value=o.expiry||'';
+    if(o.bgColor)$('#offer-bg').value=o.bgColor;
+    if(o.textColor)$('#offer-fg').value=o.textColor;
+  }catch(e){/* প্রথমবার সেটিং না থাকলে সমস্যা নেই */}
+}
+async function saveOffer(e){
+  e.preventDefault();
+  const value={
+    enabled:$('#offer-enabled').checked,
+    text:$('#offer-text').value.trim(),
+    discount:Number($('#offer-discount').value||0),
+    couponCode:$('#offer-coupon').value.trim(),
+    expiry:$('#offer-expiry').value,
+    bgColor:$('#offer-bg').value,
+    textColor:$('#offer-fg').value,
+  };
+  try{
+    await adminApi('/api/admin/settings/offer',{method:'PUT',body:{value}});
+    toast('অফার সংরক্ষণ হয়েছে','success');
+  }catch(err){toast(err.message,'error');}
 }
 
 // ============================================================
