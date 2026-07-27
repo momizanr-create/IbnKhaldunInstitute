@@ -1168,9 +1168,9 @@ app.post('/api/live-course/purchase', userAuthMiddleware, upload.single('screens
     const r = await LiveCoursePurchase.create(data);
     try {
       notifyAdmin(
-        `📡 নতুন চলমান কোর্স ক্��য় অনুরোধ — ${SITE_NAME}`,
+        `📡 নতুন চলমান কোর্স কোর্স অনুরোধ — ${SITE_NAME}`,
         `<div style="font-family:Arial,sans-serif;max-width:600px">
-          <h2 style="color:#16a34a">নতুন চলমান (লাইভ) কোর্স ক্রয় অন��রোধ</h2>
+          <h2 style="color:#16a34a">নতুন চলমান (লাইভ) কোর্স ক্রয় অনুরোধ</h2>
           <table style="width:100%;border-collapse:collapse">
             <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>কোর্স:</b></td><td style="padding:8px;border-bottom:1px solid #eee">${req.body.courseTitle||'—'}</td></tr>
             <tr><td style="padding:8px;border-bottom:1px solid #eee"><b>মূল্য:</b></td><td style="padding:8px;border-bottom:1px solid #eee">৳${req.body.amount||'—'}</td></tr>
@@ -1432,7 +1432,7 @@ app.post('/api/admin/upload-pdf', authMiddleware, (req, res) => {
   upload.single('pdf')(req, res, (err) => {
     if (err) {
       const msg = err.code === 'LIMIT_FILE_SIZE'
-        ? 'ফাইল সাইজ সর্বোচ্চ ৫০ মেগাবাইট হতে ���ারবে'
+        ? 'ফাইল সাইজ সর্বোচ্চ ৫০ মেগাবাইট হতে হবে'
         : (err.message || 'আপলোড ব্যর্থ হয়েছে');
       return res.status(400).json({ error: msg });
     }
@@ -1721,7 +1721,7 @@ async function seedDatabase() {
     { question: 'কোর্সে ভর্তি হতে কী কী লাগবে?', answer: 'একটি স্মার্টফোন বা কম্পিউটার, ইন্টারনেট সংযোগ এবং কোর্স ফি (ফ্রি কোর্সের ক্ষেত্রে শুধু রেজিস্ট্রেশন)। এর বেশি কিছু লাগবে না।' },
     { question: 'লাইভ ক্লাস কোথায় হবে?', answer: 'লাইভ ক্লাসগুলো Zoom বা Google Meet-এ হয়। প্রবেশের লিংক WhatsApp গ্রুপে শেয়ার করা হয়।' },
     { question: 'রেকর্ডেড কোর্স কতদিন দেখা যাবে?', answer: 'একবার এনরোল করলে আজীবন অ্যাক্সেস — যেকোনো সময়, যেকোনো ডিভাইস থেকে।' },
-    { question: 'কোর্স শেষে সার্টিফিকেট পাব কি?', answer: 'হ্যাঁ, প্রতিটি কোর্স সফলভাবে সম্পন্ন করার পর প্রতিষ্ঠান-স্বীক��ত ডিজিটাল সার্টিফিকেট দেওয়া হয়।' },
+    { question: 'কোর্স শেষে সার্টিফিকেট পাব কি?', answer: 'হ্যাঁ, প্রতিটি কোর্স সফলভাবে সম্পন্ন করার পর প্রতিষ্ঠান-স্বীকৃত ডিজিটাল সার্টিফিকেট দেওয়া হয়।' },
     { question: 'পেমেন্ট কীভাবে করব?', answer: 'বিকাশ, নগদ, রকেট, ব্যাংক ট্রান্সফার ও কার্ড পেমেন্ট সাপোর্টেড। চেকআউটে সব অপশন পাবেন।' },
     { question: 'ক্লাস বুঝতে না পারলে কী করব?', answer: 'প্রতিটি কোর্সের আলাদা WhatsApp সাপোর্ট গ্রুপ থাকে — শিক্ষকের কাছে সরাসরি প্রশ্ন করতে পারবেন।' },
     { question: 'মেয়েদের জন্য আলাদা ব্যবস্থা আছে?', answer: 'হ্যাঁ, পর্দা মেইনটেইন করে অডিও/ভিডিও ব্যবস্থা ও মহিলা শিক্ষিকার অধীনে পৃথক ক্লাস আয়োজন করা হয়।' },
@@ -1736,7 +1736,7 @@ async function seedDatabase() {
     { name: 'ফাতেমা খাতুন', designation: 'গৃহিণী, চট্টগ্রাম', rating: 5, message: 'ঘরে বসেই কুরআন শিখতে পারছি — এটা আমার জন্য বিশাল নিয়ামত। জাযাকাল্লাহ্‌ খাইরান।', avatar: 'https://i.pravatar.cc/240?u=t2' },
     { name: 'মুহাম্মাদ ইউসুফ', designation: 'প্রবাসী, সৌদি আরব', rating: 5, message: 'প্রবাসে থেকেও দীনি শিক্ষা চালিয়ে যেতে পারছি। ইবনে খালদুন ইনস্টিটিউট অনন্য।', avatar: 'https://i.pravatar.cc/240?u=t3' },
     { name: 'আয়েশা সিদ্দিকা', designation: 'ছাত্রী, রাজশাহী', rating: 5, message: 'তাজবীদ কোর্সে ভর্তি হয়ে আমার তিলাওয়াতে অনেক উন্নতি হয়েছে — মাশাআল্লাহ্‌।', avatar: 'https://i.pravatar.cc/240?u=t4' },
-    { name: 'আবু বকর', designation: 'ব্যবসায়ী, সিলেট', rating: 5, message: 'স��শ্রয়ী মূল্যে এত মানসম্পন্ন কোর্স আর কোথাও পাইনি। সকলকে রিকমেন্ড করছি।', avatar: 'https://i.pravatar.cc/240?u=t5' },
+    { name: 'আবু বকর', designation: 'ব্যবসায়ী, সিলেট', rating: 5, message: 'সাশ্রয়ী মূল্যে এত মানসম্পন্ন কোর্স আর কোথাও পাইনি। সকলকে রিকমেন্ড করছি।', avatar: 'https://i.pravatar.cc/240?u=t5' },
     { name: 'উমর ফারুক', designation: 'শিক্ষক, খুলনা', rating: 5, message: 'শিক্ষকদের আন্তরিকতা ও পাঠদান পদ্ধতি অসাধারণ। আল্লাহ্‌ এই প্রতিষ্ঠানের কল্যাণ করুন।', avatar: 'https://i.pravatar.cc/240?u=t6' },
     { name: 'খাদিজা রহমান', designation: 'ডাক্তার, ঢাকা', rating: 5, message: 'ব্যস্ত জীবনের মাঝেও দীন শেখার সুযোগ — সত্যি অমূল্য। জাযাকাল্লাহু খাইরা।', avatar: 'https://i.pravatar.cc/240?u=t7' },
     { name: 'হাসান মাহমুদ', designation: 'শিক্ষার্থী, বরিশাল', rating: 5, message: 'আকীদা কোর্সটা আমার ঈমানি দৃষ্টিভঙ্গি বদলে দিয়েছে। আলহামদুলিল্লাহ্‌।', avatar: 'https://i.pravatar.cc/240?u=t8' }
@@ -1747,11 +1747,11 @@ async function seedDatabase() {
     if (await Blog.countDocuments() === 0) {
       await Blog.insertMany([
     { slug: 'def-b1', title: 'রমজানের ফজিলত ও প্রস্তুতি', excerpt: 'রমজান মাসের গুরুত্ব এবং এই মাসকে কাজে লাগানোর প্রায়োগিক গাইডলাইন।', author: 'সম্পাদকীয়', image: 'https://picsum.photos/seed/b1/640/400', content: '<p>রমজান মাস মুমিনের জন্য অসামান্য ফজিলতের মাস। এই লেখায় আমরা রমজানের প্রস্তুতি ও ইবাদতের গুরুত্ব আলোচনা করব।</p>', isPublished: true },
-    { slug: 'def-b2', title: 'কুরআন তিলাওয়াতের আদব', excerpt: 'কুরআন তিলাওয়াতের সময় যেসব আদব মেনে চলা প্রয়ো���ন তার বিস্তারিত আলোচনা।', author: 'মুফতি আব্দুল্লাহ', image: 'https://picsum.photos/seed/b2/640/400', content: '<p>কুরআন তিলাওয়াতের পূর্বে অজু করা, কিবলামুখী হওয়া, ও আউযুবিল্লাহ পড়া — এসব আদব অনুসরণ করা সুন্নত।</p>', isPublished: true },
+    { slug: 'def-b2', title: 'কুরআন তিলাওয়াতের আদব', excerpt: 'কুরআন তিলাওয়াতের সময় যেসব আদব মেনে চলা প্রয়োজন তার বিস্তারিত আলোচনা।', author: 'মুফতি আব্দুল্লাহ', image: 'https://picsum.photos/seed/b2/640/400', content: '<p>কুরআন তিলাওয়াতের পূর্বে অজু করা, কিবলামুখী হওয়া, ও আউযুবিল্লাহ পড়া — এসব আদব অনুসরণ করা সুন্নত।</p>', isPublished: true },
     { slug: 'def-b3', title: 'নামাজে মনোযোগ আনার ১০টি উপায়', excerpt: 'খুশু-খুজু সহকারে সালাত আদায়ের ব্যবহারিক টিপস।', author: 'মাওলানা ইউনুস', image: 'https://picsum.photos/seed/b3/640/400', content: '<p>নামাজ আল্লাহর সাথে সরাসরি কথোপকথনের মাধ্যম। এতে মনোযোগ আনার ১০টি কার্যকর উপায়।</p>', isPublished: true },
     { slug: 'def-b4', title: 'যাকাতের হিসাব কীভাবে করবেন', excerpt: 'নিসাব, সম্পদের ধরন ও যাকাত গণনার সরল পদ্ধতি।', author: 'মুফতি কামাল', image: 'https://picsum.photos/seed/b4/640/400', content: '<p>যাকাত ইসলামের পঞ্চম স্তম্ভ। এই লেখায় নিসাব ও যাকাত গণনার সহজ পদ্ধতি।</p>', isPublished: true },
     { slug: 'def-b5', title: 'সন্তানকে দীনি শিক্ষায় গড়ে তোলা', excerpt: 'প্রাথমিক বয়স থেকেই সন্তানকে দীনের পথে অভ্যস্ত করার কৌশল।', author: 'উস্তাদা ফাতেমা', image: 'https://picsum.photos/seed/b5/640/400', content: '<p>শিশুকাল থেকেই সন্তানকে কুরআন, দুআ ও আদব শেখানো অত্যন্ত গুরুত্বপূর্ণ।</p>', isPublished: true },
-    { slug: 'def-b6', title: 'হালাল উপার্জনের গুরুত্ব', excerpt: 'রিজিকের বরকত পেতে হালাল পথে অর্জনের অনিবার্যতা।', author: 'মুফতি জাকির', image: 'https://picsum.photos/seed/b6/640/400', content: '<p>হালাল উপার্জ��� প্রতিটি মুসলিমের উপর ফরজ। হারামের ভয়াবহতা ও হালালের বরকত।</p>', isPublished: true },
+    { slug: 'def-b6', title: 'হালাল উপার্জনের গুরুত্ব', excerpt: 'রিজিকের বরকত পেতে হালাল পথে অর্জনের অনিবার্যতা।', author: 'মুফতি জাকির', image: 'https://picsum.photos/seed/b6/640/400', content: '<p>হালাল উপার্জন প্রতিটি মুসলিমের উপর ফরজ। হারামের ভয়াবহতা ও হালালের বরকত।</p>', isPublished: true },
     { slug: 'def-b7', title: 'হজ্জের প্রস্তুতি — A to Z', excerpt: 'হজ্জের সফরের আগে যা যা জানা ও প্রস্তুত করা দরকার।', author: 'মুফতি হারুন', image: 'https://picsum.photos/seed/b7/640/400', content: '<p>হজ্জ জীবনের একটি মহান ইবাদত। প্রস্তুতি, নিয়ম ও আদব নিয়ে বিস্তারিত গাইড।</p>', isPublished: true },
     { slug: 'def-b8', title: 'দৈনন্দিন জীবনের ১৫টি গুরুত্বপূর্ণ দুআ', excerpt: 'সকাল-সন্ধ্যা ও বিভিন্ন কাজের আগে-পরে পাঠযোগ্য দুআ।', author: 'ক্বারী আনাস', image: 'https://picsum.photos/seed/b8/640/400', content: '<p>প্রতিদিনের জীবনে যেসব দুআ পাঠ করা সুন্নত — তার একটি সংকলন।</p>', isPublished: true }
       ]);
@@ -1799,7 +1799,7 @@ async function seedDatabase() {
 
     const joinExists = await Settings.findOne({ key: 'joinSection' });
     if (!joinExists) {
-      await Settings.create({ key: 'joinSection', value: { title: 'আজই যুক্ত হোন', subtitle: 'দীনি জ্ঞানার্জনের উন্মুক্ত প্ল্যাটফর্ম, তাহযীব ইনস্টিটিউটের বৃহৎ পরিবারে আজই যুক্ত হোন।', ctaText: 'আজই যুক্ত হোন — বিনামূল্যে', studentsCount: 9000, instructorsCount: 10, materialsCount: 100, contentCount: 200, studentsLabel: 'মোট শিক্ষার্থী', instructorsLabel: 'অভিজ্ঞ উস্তায/উস্তাযা', materialsLabel: 'স্টাডি ম্যাটেরিয়া��', contentLabel: 'লার্নিং কন্টেন্ট', videoUrl: '' } });
+      await Settings.create({ key: 'joinSection', value: { title: 'আজই যুক্ত হোন', subtitle: 'দীনি জ্ঞানার্জনের উন্মুক্ত প্ল্যাটফর্ম, তাহযীব ইনস্টিটিউটের বৃহৎ পরিবারে আজই যুক্ত হোন।', ctaText: 'আজই যুক্ত হোন — বিনামূল্যে', studentsCount: 9000, instructorsCount: 10, materialsCount: 100, contentCount: 200, studentsLabel: 'মোট শিক্ষার্থী', instructorsLabel: 'অভিজ্ঞ উস্তায/উস্তাযা', materialsLabel: 'স্টাডি ম্যাটেরিয়া', contentLabel: 'লার্নিং কন্টেন্ট', videoUrl: '' } });
       console.log('🌱 Seeded joinSection');
     }
 
