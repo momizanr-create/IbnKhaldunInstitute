@@ -105,8 +105,10 @@ header{
   background:var(--primary);
   position:fixed;top:0;left:0;right:0;z-index:9999;
   box-shadow:0 2px 20px rgba(2,43,29,.35);
-  display:flex;align-items:stretch;padding:0;
+  display:flex;flex-direction:column;align-items:stretch;padding:0;
 }
+/* Row that holds the logo + green nav bar (was the whole header before) */
+.header-top{display:flex;align-items:stretch;width:100%}
 /* Logo section — white background like MountBlack */
 .header-logo-wrap{
   background:#fff;
@@ -899,6 +901,23 @@ th{background:#f1f5f9;font-weight:600}
 .cert-modal-close:hover{background:var(--danger);color:#fff}
 .cert-preview-wrap{border:2px solid var(--border);border-radius:10px;overflow:hidden;position:relative;aspect-ratio:1120/792;width:100%;background:#f8faf9;margin:14px 0}
 .cert-preview-wrap img{width:100%;height:100%;object-fit:contain}
+/* Student name + course name overlaid on the certificate template.
+   Positioned in the typical "recipient name" / "course title" band of a
+   landscape certificate; readable on light or dark backgrounds via the
+   layered text-shadow halo. */
+.cert-overlay-name,.cert-overlay-course{
+  position:absolute;left:8%;right:8%;text-align:center;
+  font-family:'Poppins','Hind Siliguri',sans-serif;
+  color:#12261c;
+  text-shadow:0 0 6px #fff,0 0 6px #fff,0 1px 2px rgba(0,0,0,.15);
+  pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.cert-overlay-name{top:51%;transform:translateY(-50%);font-size:clamp(14px,3.4vw,30px);font-weight:800;letter-spacing:.3px}
+.cert-overlay-course{top:64%;transform:translateY(-50%);font-size:clamp(10px,2vw,17px);font-weight:600;color:#2d4a3d}
+@media(max-width:480px){
+  .cert-overlay-name{font-size:clamp(11px,4.2vw,20px)}
+  .cert-overlay-course{font-size:clamp(9px,2.6vw,13px)}
+}
 
 /* Progress bar in sidebar */
 .course-progress-bar{height:6px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin:8px 0 4px}
@@ -1661,14 +1680,8 @@ header .logo span#logo-line1,header .logo span#logo-line2,header .logo #logo-div
 <!-- YouTube IFrame API -->
 <script src="https://www.youtube.com/iframe_api"></script>
 
-<div id="notice-bar" class="notice-bar" style="display:none"></div>
-<div id="offer-banner" class="offer-banner" style="display:none">
-  <span id="offer-banner-text"></span>
-  <span id="offer-banner-coupon" style="display:none"></span>
-  <button type="button" class="offer-banner-close" onclick="closeOfferBanner()" aria-label="বন্ধ করুন">&times;</button>
-</div>
-
 <header>
+  <div class="header-top">
   <!-- White logo section (MountBlack style) -->
   <div class="header-logo-wrap">
     <a class="logo" data-nav="home" id="site-logo-link" style="cursor:pointer" aria-label="ইবনে খালদুন ইনস্টিটিউট">
@@ -1724,6 +1737,13 @@ header .logo span#logo-line1,header .logo span#logo-line2,header .logo #logo-div
         <i class="fas fa-bars"></i>
       </button>
     </div>
+  </div>
+  </div><!-- /.header-top -->
+  <div id="notice-bar" class="notice-bar" style="display:none"></div>
+  <div id="offer-banner" class="offer-banner" style="display:none">
+    <span id="offer-banner-text"></span>
+    <span id="offer-banner-coupon" style="display:none"></span>
+    <button type="button" class="offer-banner-close" onclick="closeOfferBanner()" aria-label="বন্ধ করুন">&times;</button>
   </div>
 </header>
 <div class="nav-backdrop" id="nav-backdrop" onclick="toggleMobileNav(false)"></div>
@@ -2520,6 +2540,34 @@ function _runNavSearch(q){
   res.style.display = 'block';
 }
 
+// ============================================================
+// HEADER HEIGHT SYNC — keep <main> padding-top matched to the
+// header's real height (nav row + notice-bar + offer-banner).
+// Runs whenever the header resizes (banner shown/closed, text
+// wraps on mobile, viewport resized, etc.) so content never hides
+// behind the header and no empty gap is left below it either.
+// ============================================================
+(function(){
+  function syncHeaderHeight(){
+    const header = document.querySelector('header');
+    const main = document.querySelector('main');
+    if(!header || !main) return;
+    main.style.paddingTop = header.offsetHeight + 'px';
+  }
+  if('ResizeObserver' in window){
+    const header = document.querySelector('header');
+    if(header){
+      new ResizeObserver(syncHeaderHeight).observe(header);
+    }
+  }
+  window.addEventListener('resize', syncHeaderHeight);
+  window.addEventListener('orientationchange', syncHeaderHeight);
+  document.addEventListener('DOMContentLoaded', syncHeaderHeight);
+  // Run once immediately in case DOMContentLoaded already fired
+  syncHeaderHeight();
+  window.syncHeaderHeight = syncHeaderHeight;
+})();
+
 // Also allow Enter key in search
 document.addEventListener('DOMContentLoaded', function(){
   const si = document.getElementById('nav-search-input');
@@ -2967,6 +3015,24 @@ function applySiteConfig(cfg){
     applySiteConfig(cfg);
   } catch(e){ console.warn('config:',e.message) }
 
+  // Real ibk-stats (students with access / total courses / total instructors)
+  // Rating (stat4) is left untouched as requested.
+  try {
+    const stats = await api('/api/public/site-stats');
+    const setStat = (id, val) => {
+      const el = document.getElementById(id);
+      if (el && typeof val === 'number') el.setAttribute('data-target', String(val));
+    };
+    setStat('hero-stat1-num', stats.totalStudents);
+    setStat('hero-stat2-num', stats.totalCourses);
+    setStat('hero-stat3-num', stats.totalInstructors);
+    // If the counter animation already ran (hero was visible immediately)
+    // before this fetch resolved, re-run it now with the real numbers.
+    if (window.__heroCountersRan && typeof window.runHeroCounters === 'function') {
+      window.runHeroCounters();
+    }
+  } catch(e){ console.warn('site-stats:',e.message) }
+
   // Why-Join section (admin-controlled)
   try {
     const wj = await api('/api/settings/whyJoin');
@@ -3285,7 +3351,7 @@ async function loadInstructorProfile(id){
       String(c.instructorId||'') === String(t._id) ||
       (c.instructor && t.name && c.instructor.trim() === t.name.trim())
     );
-    const totalStudents = myCourses.reduce((s,c)=>s+(c.enrolled||c.students||0),0);
+    const totalStudents = myCourses.reduce((s,c)=>s+(c.enrolledCount ?? c.enrolled ?? c.students ?? 0),0);
     const avgRating = myCourses.length
       ? (myCourses.reduce((s,c)=>s+(parseFloat(c.rating)||0),0)/myCourses.length).toFixed(1)
       : '—';
@@ -3714,7 +3780,7 @@ function courseCard(c){
       <div class="card-meta">
         ${c.instructor?`<span><i class="fas fa-user"></i> ${escapeHtml(c.instructor)}</span>`:''}
         ${c.duration?`<span><i class="fas fa-clock"></i> ${escapeHtml(c.duration)}</span>`:''}
-        ${c.students?`<span><i class="fas fa-users"></i> ${c.students} জন শিক্ষার্থী</span>`:''}
+        ${(c.enrolledCount ?? c.students)?`<span><i class="fas fa-users"></i> ${fmt(c.enrolledCount ?? c.students)} জন শিক্ষার্থী</span>`:''}
       </div>
       <div class="card-price">${priceHtml}<span style="color:var(--primary);font-size:13px">বিস্তারিত →</span></div>
     </div>
@@ -3847,7 +3913,7 @@ function renderRecordedDetail(c){
           ${c.shortDescription?`<p style="color:#cbd5e1;font-size:15px;max-width:700px">${escapeHtml(c.shortDescription)}</p>`:''}
           <div class="cd-meta">
             ${rating>0?`<span><span class="cd-stars">${stars}</span> <strong>${rating.toFixed(1)}</strong> ${c.reviewsCount?`(${fmt(c.reviewsCount)} রিভিউ)`:''}</span>`:''}
-            ${c.students?`<span><i class="fas fa-users"></i> ${fmt(c.students)} শিক্ষার্থী</span>`:''}
+            ${(c.enrolledCount ?? c.students)?`<span><i class="fas fa-users"></i> ${fmt(c.enrolledCount ?? c.students)} জন শিক্ষার্থী</span>`:''}
             ${c.videoLessonsTime?`<span><i class="fas fa-clock"></i> ${escapeHtml(c.videoLessonsTime)}</span>`:''}
             ${c.instructor?`<span><i class="fas fa-chalkboard-teacher"></i> ${escapeHtml(c.instructor)}</span>`:''}
             ${c.level?`<span><i class="fas fa-signal"></i> ${escapeHtml(c.level)}</span>`:''}
@@ -3986,7 +4052,7 @@ function renderRecordedDetail(c){
                   <li><i class="fas fa-certificate"></i><span>সার্টিফিকেট: ${c.certificateImage ? 'পাওয়া যাবে' : 'নেই'}</span></li>
                   <li><i class="fas fa-video"></i><span>মোট ক্লাস: ${totalLessons || c.totalLessons || 0} টি</span></li>
                   <li><i class="fas fa-hourglass-half"></i><span>মোট ঘণ্টা: ${escapeHtml(c.videoLessonsTime || 'N/A')}</span></li>
-                  <li><i class="fas fa-users"></i><span>এনরোলমেন্ট: ${fmt(c.students || 0)} জন</span></li>
+                  <li><i class="fas fa-users"></i><span>এনরোলমেন্ট: ${fmt(c.enrolledCount ?? c.students ?? 0)} জন</span></li>
                   <li><i class="fas fa-language"></i><span>ভাষা: ${escapeHtml(c.language || 'বাংলা')}</span></li>
                   <li><i class="fas fa-signal"></i><span>স্তর: ${escapeHtml(c.level || 'বেগিনার')}</span></li>
                 </ul>
@@ -4007,6 +4073,14 @@ function certCompletionKey(courseId){ return 'certComplete:'+courseId; }
 function certMarkComplete(courseId){ try{ localStorage.setItem(certCompletionKey(courseId),'1'); }catch{} }
 function certIsComplete(courseId){ try{ return localStorage.getItem(certCompletionKey(courseId))==='1'; }catch{ return false; } }
 
+// Overlay showing the student's name + course name on top of the certificate
+// template image (used both in the on-screen preview and inside the modal).
+function certOverlayHtml(userName, courseTitle){
+  return `
+    <div class="cert-overlay-name">${escapeHtml(userName)}</div>
+    <div class="cert-overlay-course">${escapeHtml(courseTitle)}</div>`;
+}
+
 function certPaneHtml(c){
   const userName = CURRENT_USER?.name || 'শিক্ষার্থী';
   const isComplete = certIsComplete(c._id);
@@ -4023,6 +4097,7 @@ function certPaneHtml(c){
       </div>
       <div class="cert-preview-wrap">
         <img id="cert-preview-img" src="${escapeHtml(c.certificateImage)}" alt="সার্টিফিকেট"/>
+        ${certOverlayHtml(userName, c.title)}
       </div>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px">
         <button class="cert-dl-btn" onclick="downloadCertificate('${escapeHtml(c.certificateImage)}','${escapeHtml(c.title)}','${escapeHtml(userName)}')">
@@ -4062,13 +4137,19 @@ function openCertModal(){
     modal = document.createElement('div');
     modal.id = 'cert-full-modal';
     modal.className = 'cert-modal-bg';
-    modal.innerHTML = `
+    document.body.appendChild(modal);
+    modal.addEventListener('click', e=>{ if(e.target===modal) closeCertModal(); });
+  }
+  // Always rebuild the inner content for the CURRENT course so the image,
+  // name, and course title never go stale between different certificates.
+  modal.innerHTML = `
       <div class="cert-modal-box">
         <button class="cert-modal-close" onclick="closeCertModal()">×</button>
         <h3 style="margin-bottom:4px;padding-right:36px"><i class="fas fa-certificate" style="color:#F5C518"></i> আপনার সার্টিফিকেট</h3>
         <p style="font-size:13px;color:var(--text-soft);margin-bottom:14px">ডাউনলোড করে রাখুন অথবা শেয়ার করুন</p>
         <div class="cert-preview-wrap">
           <img id="cert-modal-img" src="${escapeHtml(c.certificateImage)}" alt="সার্টিফিকেট" style="width:100%;height:100%;object-fit:contain"/>
+          ${certOverlayHtml(userName, c.title)}
         </div>
         <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px">
           <button class="cert-dl-btn" onclick="downloadCertificate('${escapeHtml(c.certificateImage)}','${escapeHtml(c.title)}','${escapeHtml(userName)}')">
@@ -4077,9 +4158,6 @@ function openCertModal(){
           <button class="cert-dl-btn outline" style="background:#f1f5f9;color:var(--text)" onclick="closeCertModal()">বন্ধ করুন</button>
         </div>
       </div>`;
-    document.body.appendChild(modal);
-    modal.addEventListener('click', e=>{ if(e.target===modal) closeCertModal(); });
-  }
   setTimeout(()=>modal.classList.add('open'), 10);
   document.body.style.overflow='hidden';
 }
@@ -4097,18 +4175,30 @@ async function downloadCertificate(imgUrl, courseTitle, userName){
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = function(){
-      const canvas = document.createElement('canvas');
-      canvas.width = img.naturalWidth || 1120;
-      canvas.height = img.naturalHeight || 792;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      // Download
-      const link = document.createElement('a');
-      const safeTitle = (courseTitle||'course').replace(/[^a-zA-Z0-9\u0980-\u09FF]/g,'_').slice(0,40);
-      link.download = `সার্টিফিকেট_${safeTitle}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-      toast('সার্টিফিকেট ডাউনলোড হচ্ছে ✅','success');
+      try{
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth || 1120;
+        canvas.height = img.naturalHeight || 792;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        // ── Bake the student name + course name onto the certificate ──
+        // Positions mirror the on-screen .cert-overlay-name/.cert-overlay-course
+        // CSS (51% / 64% vertically, centered, 8% side margins).
+        certDrawOverlayText(ctx, canvas.width, canvas.height, userName, courseTitle);
+
+        // Download
+        const link = document.createElement('a');
+        const safeTitle = (courseTitle||'course').replace(/[^a-zA-Z0-9\u0980-\u09FF]/g,'_').slice(0,40);
+        link.download = `সার্টিফিকেট_${safeTitle}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        toast('সার্টিফিকেট ডাউনলোড হচ্ছে ✅','success');
+      }catch(err){
+        // Canvas likely tainted (no CORS on the image host) — fall back to direct open
+        window.open(imgUrl, '_blank');
+        toast('সার্টিফিকেট নতুন ট্যাবে খুলেছে','success');
+      }
     };
     img.onerror = function(){
       // Fallback: direct link open
@@ -4119,6 +4209,39 @@ async function downloadCertificate(imgUrl, courseTitle, userName){
   }catch(e){
     window.open(imgUrl, '_blank');
   }
+}
+
+// Draws `name` (large, bold) and `course` (smaller) centered on the
+// certificate canvas, auto-shrinking the font so long text still fits
+// within the available width.
+function certDrawOverlayText(ctx, w, h, name, course){
+  const maxWidth = w * 0.84; // 8% margins each side
+  function fitFont(text, baseSize, weight){
+    let size = baseSize;
+    ctx.font = `${weight} ${size}px 'Hind Siliguri','Poppins',sans-serif`;
+    while (size > baseSize * 0.35 && ctx.measureText(text).width > maxWidth) {
+      size -= 1;
+      ctx.font = `${weight} ${size}px 'Hind Siliguri','Poppins',sans-serif`;
+    }
+    return size;
+  }
+  function drawLine(text, yFrac, baseSize, weight, color){
+    if (!text) return;
+    const size = fitFont(text, baseSize, weight);
+    ctx.font = `${weight} ${size}px 'Hind Siliguri','Poppins',sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const x = w / 2;
+    const y = h * yFrac;
+    // White halo so the text stays readable over any certificate background
+    ctx.lineWidth = Math.max(3, size * 0.18);
+    ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+    ctx.strokeText(text, x, y);
+    ctx.fillStyle = color;
+    ctx.fillText(text, x, y);
+  }
+  drawLine(name, 0.51, Math.round(h * 0.055), 800, '#12261c');
+  drawLine(course, 0.64, Math.round(h * 0.032), 600, '#2d4a3d');
 }
 
 // Check overall course completion % and trigger certificate if 100%
@@ -5882,6 +6005,8 @@ document.addEventListener('click', function(e){
       requestAnimationFrame(step);
     });
   }
+  window.runHeroCounters = runHeroCounters;
+  window.__heroCountersRan = false;
   // Run when hero section is visible
   const heroStats = document.getElementById('hero-stats');
   if(heroStats){
@@ -5889,11 +6014,12 @@ document.addEventListener('click', function(e){
       let done = false;
       const io = new IntersectionObserver(function(entries){
         entries.forEach(function(e){
-          if(e.isIntersecting && !done){ done=true; runHeroCounters(); io.disconnect(); }
+          if(e.isIntersecting && !done){ done=true; window.__heroCountersRan=true; runHeroCounters(); io.disconnect(); }
         });
       },{threshold:.4});
       io.observe(heroStats);
     } else {
+      window.__heroCountersRan = true;
       runHeroCounters();
     }
   }
@@ -6220,13 +6346,10 @@ header.scrolled{
   box-shadow:0 4px 28px rgba(2,43,29,.45) !important;
 }
 
-/* ===== FIXED HEADER — body padding compensation ===== */
-@media(max-width:480px){
-  main[style]{padding-top:58px !important}
-}
-@media(max-width:900px){
-  main[style]{padding-top:72px}
-}
+/* ===== FIXED HEADER — body padding compensation =====
+   main's padding-top is now kept in sync with the header's real
+   rendered height (nav + notice-bar + offer-banner) via JS/ResizeObserver,
+   see "HEADER HEIGHT SYNC" script near the bottom of the page. */
 
 
 /* ═══════════════════════════════════════════════════

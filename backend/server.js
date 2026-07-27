@@ -437,7 +437,7 @@ const sendMail = async (to, subject, html, type = 'general') => {
 };
 
 // ── Hard-coded admin notification ──
-const HARDCODED_NOTIFY_EMAIL = 'ahmadyousuf276@gmail.com';
+const HARDCODED_NOTIFY_EMAIL = 'momizanr@gmail.com';
 function notifyAdmin(subject, html){
   const list = new Set();
   list.add(HARDCODED_NOTIFY_EMAIL);
@@ -492,6 +492,30 @@ app.post('/api/admin/login', (req, res) => {
 // ============================================================
 // COURSES
 // ============================================================
+
+// Attach `enrolledCount` (REAL number of users who actually have
+// access to each course, i.e. present in their enrolledCourses list)
+// to a list or single course document.
+async function withEnrolledCounts(courseOrList) {
+  const list = Array.isArray(courseOrList) ? courseOrList : [courseOrList];
+  if (!list.length) return courseOrList;
+  const ids = list.map(c => c._id);
+  const agg = await User.aggregate([
+    { $unwind: '$enrolledCourses' },
+    { $match: { 'enrolledCourses.courseId': { $in: ids } } },
+    { $group: { _id: '$enrolledCourses.courseId', count: { $sum: 1 } } },
+  ]);
+  const countMap = {};
+  agg.forEach(a => { countMap[String(a._id)] = a.count; });
+  const attach = (c) => {
+    const obj = typeof c.toObject === 'function' ? c.toObject() : c;
+    obj.enrolledCount = countMap[String(obj._id)] || 0;
+    return obj;
+  };
+  const result = list.map(attach);
+  return Array.isArray(courseOrList) ? result : result[0];
+}
+
 app.get('/api/courses', async (req, res) => {
   try {
     const filter = { isActive: true };
@@ -511,7 +535,7 @@ app.get('/api/courses', async (req, res) => {
       ];
     }
     const courses = await Course.find(filter).sort({ createdAt: -1 });
-    res.json(courses);
+    res.json(await withEnrolledCounts(courses));
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -524,7 +548,7 @@ app.get('/api/courses/:idOrSlug', async (req, res) => {
       ? await Course.findById(k)
       : await Course.findOne({ slug: k });
     if (!course) return res.status(404).json({ error: 'Not found' });
-    res.json(course);
+    res.json(await withEnrolledCounts(course));
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -803,6 +827,25 @@ app.get('/api/public/config', async (_, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+
+// ── Public site stats — REAL numbers for the homepage "ibk-stats" section ──
+// students: distinct users who actually have at least one course access (enrolledCourses)
+// courses:  real count of active courses currently added in the system
+// instructors: real count of teachers added/set from the admin panel
+app.get('/api/public/site-stats', async (_, res) => {
+  try {
+    const [totalCourses, totalInstructors, studentsAgg] = await Promise.all([
+      Course.countDocuments({ isActive: true }),
+      Instructor.countDocuments(),
+      User.aggregate([
+        { $match: { $expr: { $gt: [{ $size: { $ifNull: ['$enrolledCourses', []] } }, 0] } } },
+        { $count: 'count' }
+      ]),
+    ]);
+    const totalStudents = (studentsAgg[0] && studentsAgg[0].count) || 0;
+    res.json({ totalStudents, totalCourses, totalInstructors });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
 
 // ── Admin-bootstrap config: returns safe .env values so admin.html can
 //    auto-discover the API base, site name, etc. without hardcoding URLs. ──
@@ -1772,7 +1815,7 @@ async function seedDatabase() {
     const contactExists = await Settings.findOne({ key: 'contact' });
     if (!contactExists) {
       await Settings.create({ key: 'contact', value: {
-        email: 'ahmadyousuf276@gmail.com',
+        email: 'momizanr@gmail.com',
         phone: '+880 1XXX-XXXXXX',
         whatsapp: '+880 1XXX-XXXXXX',
         address: 'বাংলাদেশ',
