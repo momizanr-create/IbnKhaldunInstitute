@@ -984,6 +984,30 @@ app.post('/api/user/login', async (req, res) => {
     const ok = await bcrypt.compare(password, user.password);
     if (!ok) return res.status(401).json({ error: 'Wrong password' });
     const token = jwt.sign({ id: user._id, email }, JWT_SECRET, { expiresIn: '30d' });
+
+    // ── লগইন নোটিফিকেশন — শিক্ষার্থীর জিমেইলে পাঠানো হয় (সিকিউরিটি এলার্ট)
+    const loginTime = new Date().toLocaleString('bn-BD', {
+      timeZone: 'Asia/Dhaka',
+      year: 'numeric', month: 'long', day: 'numeric',
+      hour: '2-digit', minute: '2-digit',
+    });
+    const ua = (req.get('user-agent') || 'অজানা ডিভাইস').slice(0, 120);
+    sendMail(
+      email,
+      `${SITE_NAME} — নতুন লগইন সতর্কতা 🔓`,
+      `<p>প্রিয় <strong>${user.name}</strong>,</p>
+       <p>আপনার <strong>${SITE_NAME}</strong> অ্যাকাউন্টে সফলভাবে লগইন হয়েছে।</p>
+       <table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:14px">
+         <tr><td style="padding:8px 12px;border-bottom:1px solid #f3f4f6;font-weight:700;width:40%">ইমেইল</td><td style="padding:8px 12px;border-bottom:1px solid #f3f4f6">${email}</td></tr>
+         <tr><td style="padding:8px 12px;border-bottom:1px solid #f3f4f6;font-weight:700">সময়</td><td style="padding:8px 12px;border-bottom:1px solid #f3f4f6">${loginTime}</td></tr>
+         <tr><td style="padding:8px 12px;font-weight:700">ডিভাইস</td><td style="padding:8px 12px">${ua}</td></tr>
+       </table>
+       <div style="background:#fef3c7;border:1px solid #F5C518;border-radius:8px;padding:12px 16px;margin-top:14px;font-size:13px;color:#92400e">
+         ⚠️ যদি আপনি লগইন না করে থাকেন, অবিলম্বে আপনার পাসওয়ার্ড পরিবর্তন করুন এবং আমাদের সাথে যোগাযোগ করুন: <a href="mailto:momizanr@gmail.com">momizanr@gmail.com</a>
+       </div>`,
+      'login'
+    ).catch(e => console.error('login-notify err:', e.message));
+
     res.json({ token, user: { id: user._id, name: user.name, email: user.email, phone: user.phone } });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -1087,6 +1111,26 @@ app.post('/api/access-request', userAuthMiddleware, upload.single('screenshot'),
     };
     if (req.file) data.screenshot = req.file.path;
     const r = await AccessRequest.create(data);
+
+    // ── শিক্ষার্থীকে কনফার্মেশন ইমেইল পাঠানো ──
+    sendMail(
+      user.email,
+      `${SITE_NAME} — কোর্স ক্রয় অনুরোধ পাওয়া গেছে 🛒`,
+      `<p>প্রিয় <strong>${user.name}</strong>,</p>
+       <p>আপনার <strong>${course.title}</strong> কোর্সের ক্রয় অনুরোধ আমরা পেয়েছি।</p>
+       <table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:14px">
+         <tr><td style="padding:8px 12px;border-bottom:1px solid #f3f4f6;font-weight:700;width:40%">কোর্স</td><td style="padding:8px 12px;border-bottom:1px solid #f3f4f6">${course.title}</td></tr>
+         <tr><td style="padding:8px 12px;border-bottom:1px solid #f3f4f6;font-weight:700">পেমেন্ট মাধ্যম</td><td style="padding:8px 12px;border-bottom:1px solid #f3f4f6">${req.body.paymentMethod || '—'}</td></tr>
+         <tr><td style="padding:8px 12px;border-bottom:1px solid #f3f4f6;font-weight:700">TrxID</td><td style="padding:8px 12px;border-bottom:1px solid #f3f4f6">${req.body.trxId || '—'}</td></tr>
+         <tr><td style="padding:8px 12px;font-weight:700">পরিমাণ</td><td style="padding:8px 12px">৳${req.body.amount || '—'}</td></tr>
+       </table>
+       <div style="background:#dcfce7;border:1px solid #16a34a;border-radius:8px;padding:12px 16px;margin-top:14px;font-size:13px;color:#065f46">
+         ✅ পেমেন্ট যাচাই হলে আপনার অ্যাকাউন্টে কোর্স একসেস দেওয়া হবে — সাধারণত ২৪ ঘণ্টার মধ্যে।
+       </div>
+       <p style="margin-top:14px;font-size:13px;color:#6b7280">কোনো সমস্যা হলে যোগাযোগ করুন: <a href="mailto:momizanr@gmail.com">momizanr@gmail.com</a></p>`,
+      'purchase-confirm'
+    ).catch(e => console.error('purchase-confirm mail err:', e.message));
+
     try {
       notifyAdmin(
         `🛒 নতুন রেকর্ডেড কোর্স ক্রয় অনুরোধ — ${SITE_NAME}`,

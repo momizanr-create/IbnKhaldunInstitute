@@ -912,8 +912,8 @@ th{background:#f1f5f9;font-weight:600}
   text-shadow:0 0 6px #fff,0 0 6px #fff,0 1px 2px rgba(0,0,0,.15);
   pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.cert-overlay-name{top:51%;transform:translateY(-50%);font-size:clamp(14px,3.4vw,30px);font-weight:800;letter-spacing:.3px}
-.cert-overlay-course{top:64%;transform:translateY(-50%);font-size:clamp(10px,2vw,17px);font-weight:600;color:#2d4a3d}
+.cert-overlay-name{top:44%;transform:translateY(-50%);font-size:clamp(14px,3.4vw,30px);font-weight:800;letter-spacing:.3px}
+.cert-overlay-course{top:57%;transform:translateY(-50%);font-size:clamp(10px,2vw,17px);font-weight:600;color:#2d4a3d}
 @media(max-width:480px){
   .cert-overlay-name{font-size:clamp(11px,4.2vw,20px)}
   .cert-overlay-course{font-size:clamp(9px,2.6vw,13px)}
@@ -4240,8 +4240,8 @@ function certDrawOverlayText(ctx, w, h, name, course){
     ctx.fillStyle = color;
     ctx.fillText(text, x, y);
   }
-  drawLine(name, 0.51, Math.round(h * 0.055), 800, '#12261c');
-  drawLine(course, 0.64, Math.round(h * 0.032), 600, '#2d4a3d');
+  drawLine(name, 0.44, Math.round(h * 0.055), 800, '#12261c');
+  drawLine(course, 0.57, Math.round(h * 0.032), 600, '#2d4a3d');
 }
 
 // Check overall course completion % and trigger certificate if 100%
