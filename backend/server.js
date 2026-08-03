@@ -890,11 +890,7 @@ app.post('/api/user/send-otp', async (req, res) => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
       return res.status(400).json({ error: 'সঠিক ইমেইল ঠিকানা দিন' });
 
-    // Rate limit: একই email এ ৬০ সেকেন্ডের মধ্যে আবার পাঠানো যাবে না
-    const existing = await Otp.findOne({ email });
-    if (existing && (existing.expiresAt.getTime() - Date.now()) > 1*60*1000) {
-      return res.status(429).json({ error: '১ মিনিট পর আবার চেষ্টা করুন' });
-    }
+    // ── রেট-লিমিট সম্পূর্ণ সরিয়ে দেওয়া হয়েছে — ব্যবহারকারী যতবার ইচ্ছা তত OTP চাইতে পারবেন ──
 
     const otp = String(Math.floor(1000 + Math.random()*9000));
     await Otp.findOneAndUpdate(
@@ -902,12 +898,9 @@ app.post('/api/user/send-otp', async (req, res) => {
       { email, otp, expiresAt: new Date(Date.now() + 5*60*1000), verified: false },
       { upsert: true, new: true }
     );
-    console.log(`📧 Sending OTP to ${email}...`);
+    console.log(`Sending OTP to ${email}...`);
 
-    const ok = await sendMail(
-      email,
-      `${SITE_NAME} — আপনার OTP কোড`,
-      `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>
+    const otpHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>
         <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;background:#f4f7f3;padding:30px;border-radius:12px">
           <div style="background:#066144;color:#fff;padding:18px 24px;border-radius:8px 8px 0 0;text-align:center">
             <h2 style="margin:0;font-size:20px">${SITE_NAME}</h2>
@@ -917,16 +910,20 @@ app.post('/api/user/send-otp', async (req, res) => {
             <div style="background:#f0fdf4;border:2px dashed #066144;border-radius:10px;padding:20px;text-align:center;margin:16px 0">
               <span style="font-size:38px;font-weight:900;letter-spacing:12px;color:#04412e;font-family:monospace">${otp}</span>
             </div>
-            <p style="color:#6b7280;font-size:13px;margin-top:12px">⏱️ এই কোড <strong>৫ মিনিট</strong> পর্যন্ত valid।</p>
-            <p style="color:#6b7280;font-size:13px">🔒 কোডটি কারো সাথে শেয়ার করবেন না।</p>
+            <p style="color:#6b7280;font-size:13px;margin-top:12px">এই কোড <strong>৫ মিনিট</strong> পর্যন্ত valid।</p>
+            <p style="color:#6b7280;font-size:13px">কোডটি কারো সাথে শেয়ার করবেন না।</p>
           </div>
           <p style="text-align:center;color:#9ca3af;font-size:12px;margin-top:14px">ইবনে খালদুন ইনস্টিটিউট</p>
         </div>
-      </body></html>`,
-      'otp'
-    );
+      </body></html>`;
 
-    if (!ok) return res.status(500).json({ error: 'ইমেইল পাঠানো যায়নি। GOOGLE_SCRIPT_URL সঠিকভাবে Render Dashboard-এ সেট আছে কিনা পরীক্ষা করুন।' });
+    // ── OTP মেইল এখন ব্যাকগ্রাউন্ডে পাঠানো হয় (await করা হয় না) —
+    //    যাতে ব্যবহারকারী Google Apps Script-এর রেসপন্স-এর জন্য অপেক্ষা না করেই
+    //    সাথে সাথে "OTP পাঠানো হয়েছে" রেসপন্স পান। এতে ফ্রন্টএন্ডে বিলম্ব অনেক কমে যায়।
+    sendMail(email, `${SITE_NAME} — আপনার OTP কোড`, otpHtml, 'otp')
+      .then(ok => { if (!ok) console.error(`OTP mail failed to send to ${email}`); })
+      .catch(e => console.error('send-otp background error:', e.message));
+
     res.json({ message: 'OTP sent', masked: email.replace(/(.{2}).*(@.*)/, '$1***$2') });
   } catch (e) {
     console.error('send-otp error:', e);
@@ -994,7 +991,7 @@ app.post('/api/user/login', async (req, res) => {
     const ua = (req.get('user-agent') || 'অজানা ডিভাইস').slice(0, 120);
     sendMail(
       email,
-      `${SITE_NAME} — নতুন লগইন সতর্কতা 🔓`,
+      `${SITE_NAME} — নতুন লগইন সতর্কতা`,
       `<p>প্রিয় <strong>${user.name}</strong>,</p>
        <p>আপনার <strong>${SITE_NAME}</strong> অ্যাকাউন্টে সফলভাবে লগইন হয়েছে।</p>
        <table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:14px">
@@ -1003,7 +1000,7 @@ app.post('/api/user/login', async (req, res) => {
          <tr><td style="padding:8px 12px;font-weight:700">ডিভাইস</td><td style="padding:8px 12px">${ua}</td></tr>
        </table>
        <div style="background:#fef3c7;border:1px solid #F5C518;border-radius:8px;padding:12px 16px;margin-top:14px;font-size:13px;color:#92400e">
-         ⚠️ যদি আপনি লগইন না করে থাকেন, অবিলম্বে আপনার পাসওয়ার্ড পরিবর্তন করুন এবং আমাদের সাথে যোগাযোগ করুন: <a href="mailto:momizanr@gmail.com">momizanr@gmail.com</a>
+         যদি আপনি লগইন না করে থাকেন, অবিলম্বে আপনার পাসওয়ার্ড পরিবর্তন করুন এবং আমাদের সাথে যোগাযোগ করুন: <a href="mailto:momizanr@gmail.com">momizanr@gmail.com</a>
        </div>`,
       'login'
     ).catch(e => console.error('login-notify err:', e.message));
@@ -1115,7 +1112,7 @@ app.post('/api/access-request', userAuthMiddleware, upload.single('screenshot'),
     // ── শিক্ষার্থীকে কনফার্মেশন ইমেইল পাঠানো ──
     sendMail(
       user.email,
-      `${SITE_NAME} — কোর্স ক্রয় অনুরোধ পাওয়া গেছে 🛒`,
+      `${SITE_NAME} — কোর্স ক্রয় অনুরোধ পাওয়া গেছে`,
       `<p>প্রিয় <strong>${user.name}</strong>,</p>
        <p>আপনার <strong>${course.title}</strong> কোর্সের ক্রয় অনুরোধ আমরা পেয়েছি।</p>
        <table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:14px">
@@ -1125,7 +1122,7 @@ app.post('/api/access-request', userAuthMiddleware, upload.single('screenshot'),
          <tr><td style="padding:8px 12px;font-weight:700">পরিমাণ</td><td style="padding:8px 12px">৳${req.body.amount || '—'}</td></tr>
        </table>
        <div style="background:#dcfce7;border:1px solid #16a34a;border-radius:8px;padding:12px 16px;margin-top:14px;font-size:13px;color:#065f46">
-         ✅ পেমেন্ট যাচাই হলে আপনার অ্যাকাউন্টে কোর্স একসেস দেওয়া হবে — সাধারণত ২৪ ঘণ্টার মধ্যে।
+         পেমেন্ট যাচাই হলে আপনার অ্যাকাউন্টে কোর্স একসেস দেওয়া হবে — সাধারণত ২৪ ঘণ্টার মধ্যে।
        </div>
        <p style="margin-top:14px;font-size:13px;color:#6b7280">কোনো সমস্যা হলে যোগাযোগ করুন: <a href="mailto:momizanr@gmail.com">momizanr@gmail.com</a></p>`,
       'purchase-confirm'
@@ -1133,7 +1130,7 @@ app.post('/api/access-request', userAuthMiddleware, upload.single('screenshot'),
 
     try {
       notifyAdmin(
-        `🛒 নতুন রেকর্ডেড কোর্স ক্রয় অনুরোধ — ${SITE_NAME}`,
+        `নতুন রেকর্ডেড কোর্স ক্রয় অনুরোধ — ${SITE_NAME}`,
         `<div style="font-family:Arial,sans-serif;max-width:600px">
           <h2 style="color:#7c3aed">নতুন রেকর্ডেড কোর্স ক্রয় অনুরোধ</h2>
           <table style="width:100%;border-collapse:collapse">
@@ -1170,7 +1167,7 @@ app.put('/api/admin/access-requests/:id', authMiddleware, async (req, res) => {
       await User.findByIdAndUpdate(r.userId, {
         $addToSet: { enrolledCourses: { courseId: r.courseId, enrolledAt: new Date() } }
       });
-      sendMail(r.userEmail, `${SITE_NAME} — কোর্স একসেস অনুমোদিত ✅`,
+      sendMail(r.userEmail, `${SITE_NAME} — কোর্স একসেস অনুমোদিত`,
         `<div style="font-family:sans-serif;padding:20px">
           <h2>${SITE_NAME}</h2>
           <p>প্রিয় ${r.userName},</p>
@@ -1212,7 +1209,7 @@ app.post('/api/live-course/purchase', userAuthMiddleware, upload.single('screens
     const r = await LiveCoursePurchase.create(data);
     try {
       notifyAdmin(
-        `📡 নতুন চলমান কোর্স কোর্স অনুরোধ — ${SITE_NAME}`,
+        `নতুন চলমান কোর্স কোর্স অনুরোধ — ${SITE_NAME}`,
         `<div style="font-family:Arial,sans-serif;max-width:600px">
           <h2 style="color:#16a34a">নতুন চলমান (লাইভ) কোর্স ক্রয় অনুরোধ</h2>
           <table style="width:100%;border-collapse:collapse">
@@ -1274,16 +1271,16 @@ app.put('/api/admin/live-purchases/:id', authMiddleware, async (req, res) => {
       await User.findByIdAndUpdate(r.userId, {
         $addToSet: { enrolledCourses: { courseId: r.courseId, enrolledAt: new Date() } }
       });
-      sendMail(r.userEmail, `${SITE_NAME} — লাইভ কোর্স অনুমোদিত ✅ WhatsApp গ্রুপে যোগ দিন`,
+      sendMail(r.userEmail, `${SITE_NAME} — লাইভ কোর্স অনুমোদিত, WhatsApp গ্রুপে যোগ দিন`,
         `<div style="font-family:sans-serif;padding:20px;background:#f4f4f4">
           <div style="background:#fff;padding:24px;border-radius:12px;max-width:600px;margin:auto">
-            <h2 style="color:#16a34a">পেমেন্ট ভেরিফাই হয়েছে ✅</h2>
+            <h2 style="color:#16a34a">পেমেন্ট ভেরিফাই হয়েছে</h2>
             <p>প্রিয় ${r.userName},</p>
             <p>আপনার <b>${r.courseTitle}</b> লাইভ কোর্সের পেমেন্ট ভেরিফাই করা হয়েছে।</p>
             <p>নিচের বাটনে ক্লিক করে WhatsApp গ্রুপে যোগ দিন — এখান থেকেই ক্লাস পরিচালিত হবে:</p>
             <div style="text-align:center;margin:24px 0">
               <a href="${r.whatsappGroupLink || '#'}" style="background:#25D366;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">
-                📱 WhatsApp গ্রুপে যোগ দিন
+                WhatsApp গ্রুপে যোগ দিন
               </a>
             </div>
             ${r.whatsappGroupLink ? `<p style="word-break:break-all;font-size:12px;color:#666">লিংক কাজ না করলে copy করুন: ${r.whatsappGroupLink}</p>` : ''}

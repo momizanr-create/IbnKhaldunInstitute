@@ -73,36 +73,28 @@ function doGet(e) {
 function wrapEmailTemplate(html, type) {
   // Type-specific header color
   let headerColor = PRIMARY_COLOR;
-  let headerIcon  = '📧';
   let headerTitle = INSTITUTE_NAME;
 
   if (type === 'otp') {
     headerColor = PRIMARY_COLOR;
-    headerIcon  = '🔐';
     headerTitle = INSTITUTE_NAME + ' — OTP যাচাইকরণ';
   } else if (type === 'login') {
     headerColor = '#1e40af';
-    headerIcon  = '🔓';
     headerTitle = INSTITUTE_NAME + ' — লগইন সতর্কতা';
   } else if (type === 'purchase' || type === 'purchase-confirm') {
     headerColor = '#7c3aed';
-    headerIcon  = '🛒';
     headerTitle = INSTITUTE_NAME + ' — কোর্স ক্রয় নিশ্চিতকরণ';
   } else if (type === 'access-approved') {
     headerColor = '#065f46';
-    headerIcon  = '✅';
     headerTitle = INSTITUTE_NAME + ' — কোর্স একসেস অনুমোদিত';
   } else if (type === 'access-rejected') {
     headerColor = '#991b1b';
-    headerIcon  = '❌';
     headerTitle = INSTITUTE_NAME + ' — রিকোয়েস্ট আপডেট';
   } else if (type === 'admin-notify') {
     headerColor = '#92400e';
-    headerIcon  = '🔔';
     headerTitle = INSTITUTE_NAME + ' — অ্যাডমিন নোটিফিকেশন';
   } else if (type === 'password-reset') {
     headerColor = '#be185d';
-    headerIcon  = '🔑';
     headerTitle = INSTITUTE_NAME + ' — পাসওয়ার্ড রিসেট';
   }
 
@@ -135,7 +127,6 @@ function wrapEmailTemplate(html, type) {
 <body>
   <div class="wrapper">
     <div class="header">
-      <span class="icon">${headerIcon}</span>
       <h1>${headerTitle}</h1>
     </div>
     <div class="body">
@@ -211,8 +202,8 @@ function buildOTPHtml(otp, purpose) {
     <div class="otp-box">
       <div class="otp-code">${otp}</div>
     </div>
-    <p style="color:#6b7280;font-size:13px">⏱️ এই কোড <strong>৫ মিনিট</strong> পর্যন্ত valid।</p>
-    <p style="color:#6b7280;font-size:13px">🔒 কোডটি কারো সাথে শেয়ার করবেন না।</p>
+    <p style="color:#6b7280;font-size:13px">এই কোড <strong>৫ মিনিট</strong> পর্যন্ত valid।</p>
+    <p style="color:#6b7280;font-size:13px">কোডটি কারো সাথে শেয়ার করবেন না।</p>
   `;
 }
 
@@ -226,7 +217,7 @@ function buildLoginHtml(name, email, time, device) {
       <tr><td>ডিভাইস</td><td>${device}</td></tr>
     </table>
     <div class="alert-box">
-      ⚠️ যদি আপনি লগইন না করে থাকেন, অবিলম্বে আপনার পাসওয়ার্ড পরিবর্তন করুন এবং আমাদের সাথে যোগাযোগ করুন।
+      যদি আপনি লগইন না করে থাকেন, অবিলম্বে আপনার পাসওয়ার্ড পরিবর্তন করুন এবং আমাদের সাথে যোগাযোগ করুন।
     </div>
   `;
 }
