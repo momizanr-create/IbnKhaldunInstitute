@@ -900,22 +900,13 @@ app.post('/api/user/send-otp', async (req, res) => {
     );
     console.log(`Sending OTP to ${email}...`);
 
-    const otpHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>
-        <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;background:#f4f7f3;padding:30px;border-radius:12px">
-          <div style="background:#066144;color:#fff;padding:18px 24px;border-radius:8px 8px 0 0;text-align:center">
-            <h2 style="margin:0;font-size:20px">${SITE_NAME}</h2>
-          </div>
-          <div style="background:#fff;padding:28px 24px;border-radius:0 0 8px 8px">
-            <p style="color:#374151;font-size:16px;margin-bottom:10px">আপনার নিবন্ধন OTP কোড:</p>
-            <div style="background:#f0fdf4;border:2px dashed #066144;border-radius:10px;padding:20px;text-align:center;margin:16px 0">
-              <span style="font-size:38px;font-weight:900;letter-spacing:12px;color:#04412e;font-family:monospace">${otp}</span>
-            </div>
-            <p style="color:#6b7280;font-size:13px;margin-top:12px">এই কোড <strong>৫ মিনিট</strong> পর্যন্ত valid।</p>
-            <p style="color:#6b7280;font-size:13px">কোডটি কারো সাথে শেয়ার করবেন না।</p>
-          </div>
-          <p style="text-align:center;color:#9ca3af;font-size:12px;margin-top:14px">ইবনে খালদুন ইনস্টিটিউট</p>
+    const otpHtml = `
+        <p style="color:#374151;font-size:16px;margin-bottom:10px">আপনার নিবন্ধন OTP কোড:</p>
+        <div style="background:#f0fdf4;border:2px dashed #066144;border-radius:10px;padding:20px;text-align:center;margin:16px 0">
+          <span style="font-size:38px;font-weight:900;letter-spacing:12px;color:#04412e;font-family:monospace">${otp}</span>
         </div>
-      </body></html>`;
+        <p style="color:#6b7280;font-size:13px;margin-top:12px">এই কোড <strong>৫ মিনিট</strong> পর্যন্ত valid।</p>
+        <p style="color:#6b7280;font-size:13px">কোডটি কারো সাথে শেয়ার করবেন না।</p>`;
 
     // ── OTP মেইল এখন ব্যাকগ্রাউন্ডে পাঠানো হয় (await করা হয় না) —
     //    যাতে ব্যবহারকারী Google Apps Script-এর রেসপন্স-এর জন্য অপেক্ষা না করেই
@@ -1168,13 +1159,10 @@ app.put('/api/admin/access-requests/:id', authMiddleware, async (req, res) => {
         $addToSet: { enrolledCourses: { courseId: r.courseId, enrolledAt: new Date() } }
       });
       sendMail(r.userEmail, `${SITE_NAME} — কোর্স একসেস অনুমোদিত`,
-        `<div style="font-family:sans-serif;padding:20px">
-          <h2>${SITE_NAME}</h2>
-          <p>প্রিয় ${r.userName},</p>
+        `<p>প্রিয় ${r.userName},</p>
           <p>আপনার <b>${r.courseTitle}</b> কোর্সের একসেস অনুমোদন করা হয়েছে।</p>
           <p>এখন আপনি ড্যাশবোর্ড থেকে কোর্সটি দেখতে পারবেন।</p>
-          ${r.adminNote ? `<p><b>Note:</b> ${r.adminNote}</p>` : ''}
-        </div>`);
+          ${r.adminNote ? `<p><b>Note:</b> ${r.adminNote}</p>` : ''}`);
     } else if (r.status === 'rejected') {
       sendMail(r.userEmail, `${SITE_NAME} — কোর্স একসেস রিকোয়েস্ট`,
         `<p>দুঃখিত, আপনার রিকোয়েস্ট অনুমোদন করা যায়নি।</p>${r.adminNote ? `<p>${r.adminNote}</p>`:''}`);
@@ -1237,13 +1225,10 @@ app.post('/api/live-course/purchase', userAuthMiddleware, upload.single('screens
     }
 
     sendMail(user.email, `${SITE_NAME} — লাইভ কোর্স পার্সেস রিকোয়েস্ট প্রাপ্ত`,
-      `<div style="font-family:sans-serif;padding:20px">
-        <h2>${SITE_NAME}</h2>
-        <p>প্রিয় ${user.name},</p>
+      `<p>প্রিয় ${user.name},</p>
         <p>আপনার <b>${course.title}</b> কোর্সের পার্সেস রিকোয়েস্ট আমরা পেয়েছি।</p>
         <p>পেমেন্ট ভেরিফাই হলে আপনাকে WhatsApp গ্রুপের লিংক ইমেইলে পাঠানো হবে — সাধারণত ২৪ ঘণ্টার মধ্যে।</p>
-        <p>আপনার দেওয়া WhatsApp নাম্বার: <b>${req.body.whatsappNumber}</b></p>
-       </div>`);
+        <p>আপনার দেওয়া WhatsApp নাম্বার: <b>${req.body.whatsappNumber}</b></p>`);
 
     res.json({ message: 'রিকোয়েস্ট জমা হয়েছে', id: r._id });
   } catch (e) { res.status(500).json({ error: e.message }); }
@@ -1272,23 +1257,17 @@ app.put('/api/admin/live-purchases/:id', authMiddleware, async (req, res) => {
         $addToSet: { enrolledCourses: { courseId: r.courseId, enrolledAt: new Date() } }
       });
       sendMail(r.userEmail, `${SITE_NAME} — লাইভ কোর্স অনুমোদিত, WhatsApp গ্রুপে যোগ দিন`,
-        `<div style="font-family:sans-serif;padding:20px;background:#f4f4f4">
-          <div style="background:#fff;padding:24px;border-radius:12px;max-width:600px;margin:auto">
-            <h2 style="color:#16a34a">পেমেন্ট ভেরিফাই হয়েছে</h2>
-            <p>প্রিয় ${r.userName},</p>
-            <p>আপনার <b>${r.courseTitle}</b> লাইভ কোর্সের পেমেন্ট ভেরিফাই করা হয়েছে।</p>
-            <p>নিচের বাটনে ক্লিক করে WhatsApp গ্রুপে যোগ দিন — এখান থেকেই ক্লাস পরিচালিত হবে:</p>
-            <div style="text-align:center;margin:24px 0">
-              <a href="${r.whatsappGroupLink || '#'}" style="background:#25D366;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">
-                WhatsApp গ্রুপে যোগ দিন
-              </a>
-            </div>
-            ${r.whatsappGroupLink ? `<p style="word-break:break-all;font-size:12px;color:#666">লিংক কাজ না করলে copy করুন: ${r.whatsappGroupLink}</p>` : ''}
-            ${r.adminNote ? `<p><b>Note:</b> ${r.adminNote}</p>`:''}
-            <hr/>
-            <p style="font-size:12px;color:#888">— ${SITE_NAME}</p>
+        `<h2 style="color:#16a34a">পেমেন্ট ভেরিফাই হয়েছে</h2>
+          <p>প্রিয় ${r.userName},</p>
+          <p>আপনার <b>${r.courseTitle}</b> লাইভ কোর্সের পেমেন্ট ভেরিফাই করা হয়েছে।</p>
+          <p>নিচের বাটনে ক্লিক করে WhatsApp গ্রুপে যোগ দিন — এখান থেকেই ক্লাস পরিচালিত হবে:</p>
+          <div style="text-align:center;margin:24px 0">
+            <a href="${r.whatsappGroupLink || '#'}" style="background:#25D366;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">
+              WhatsApp গ্রুপে যোগ দিন
+            </a>
           </div>
-         </div>`);
+          ${r.whatsappGroupLink ? `<p style="word-break:break-all;font-size:12px;color:#666">লিংক কাজ না করলে copy করুন: ${r.whatsappGroupLink}</p>` : ''}
+          ${r.adminNote ? `<p><b>Note:</b> ${r.adminNote}</p>`:''}`);
     } else if (r.status === 'rejected') {
       sendMail(r.userEmail, `${SITE_NAME} — লাইভ কোর্স রিকোয়েস্ট`,
         `<p>দুঃখিত, আপনার পেমেন্ট ভেরিফাই করা যায়নি।</p>${r.adminNote ? `<p>${r.adminNote}</p>`:''}`);
