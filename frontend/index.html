@@ -2262,9 +2262,13 @@ function cdAbsPdfDownloadUrl(u, filename){
   let s = cdAbsPdfUrl(u);
   if(!s) return '';
   if(/res\.cloudinary\.com\/[^/]+\/(image|raw)\/upload\//i.test(s) && !/\/upload\/[^/]*fl_attachment/i.test(s)){
-    const flag = filename
-      ? 'fl_attachment:' + encodeURIComponent(String(filename).replace(/\.pdf$/i,''))
-      : 'fl_attachment';
+    // শুধু ASCII অক্ষর/সংখ্যা/_/- রাখি; বাংলা নাম হলে ভ্যালু বাদ
+    const safe = String(filename || '')
+      .replace(/\.pdf$/i, '')
+      .replace(/[^a-zA-Z0-9_-]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 60);
+    const flag = safe ? 'fl_attachment:' + safe : 'fl_attachment';
     s = s.replace(/\/upload\//, '/upload/' + flag + '/');
   }
   return s;
